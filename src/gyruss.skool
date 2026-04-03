@@ -4,33 +4,33 @@
 s$4000 DEFS $400C
 
 ; Routine at 800C
-c$800C JP $9AB3      ;
+c$800C JP $9AB3      ; RST $08: add_a_to_hl
 
 ; Routine at 800F
-c$800F JP $9AC3      ;
+c$800F JP $9AC3      ; RST $10: vdp_write_byte
 
 ; Routine at 8012
-c$8012 JP $1FD9      ;
+c$8012 JP $1FD9      ; RST $18: WRITE_REGISTER
 
 ; Routine at 8015
-c$8015 JP $BFAE      ;
+c$8015 JP $BFAE      ; RST $20
 
 ; Routine at 8018
-c$8018 JP $AD49      ;
+c$8018 JP $AD49      ; RST $28
 
 ; Routine at 801B
-c$801B JP $AD8B      ;
+c$801B JP $AD8B      ; RST $30
 
 ; Routine at 801E
-c$801E JP $1FDF      ;
+c$801E JP $1FDF      ; RST $38: WRITE_VRAM
 
 ; Routine at 8021
-c$8021 JP $8501      ;
+c$8021 JP $8501      ; Interrupt handler
 
 ; Entry point
 c$8024 LD SP,$73BA   ;
- $8027 OUT ($C0),A   ;
- $8029 LD HL,$7000   ;
+ $8027 OUT ($C0),A   ; Controller enable
+ $8029 LD HL,$7000   ; Clear RAM
  $802C LD DE,$7001   ;
  $802F LD BC,$03B9   ;
  $8032 LD (HL),L     ;
@@ -38,7 +38,7 @@ c$8024 LD SP,$73BA   ;
  $8035 LD HL,$8060   ;
  $8038 LD ($7000),HL ;
  $803B CALL $9ADE    ;
- $803E CALL $90D6    ;
+ $803E CALL $90D6    ; Start screen
  $8041 LD HL,$2A30   ;
  $8044 LD ($7257),HL ;
 *$8047 HALT          ;
@@ -3170,7 +3170,13 @@ c$9AA7 DEC B         ;
  $9AAF DEC H         ;
  $9AB0 LD A,(BC)     ;
  $9AB1 JR NC,$9ABE   ;
-; This entry point is used by the routine at #R$800C.
+
+; Routine at 9AB3
+;
+; Used by the routine at #R$800C.
+;
+; HL = HL + A
+@label=add_a_to_hl
 *$9AB3 PUSH AF       ;
  $9AB4 ADD A,L       ;
  $9AB5 LD L,A        ;
@@ -3190,27 +3196,37 @@ c$9ABB LD L,A        ;
 ; Routine at 9AC3
 ;
 ; Used by the routine at #R$800F.
+;
+; RST $10
+;
+; I:DE Write address
+; I:A byte to write
+@label=vdp_write_byte
 c$9AC3 PUSH AF       ;
  $9AC4 LD A,E        ;
- $9AC5 OUT ($BF),A   ;
+ $9AC5 OUT ($BF),A   ; Set LSB of VDP address
  $9AC7 LD A,D        ;
- $9AC8 OR $40        ;
- $9ACA OUT ($BF),A   ;
+ $9AC8 OR $40        ; Setup write address
+ $9ACA OUT ($BF),A   ; Set MSB of VDP address
  $9ACC POP AF        ;
- $9ACD OUT ($BE),A   ;
+ $9ACD OUT ($BE),A   ; Write byte
  $9ACF RET           ;
 
 ; Routine at 9AD0
 ;
 ; Used by the routine at #R$AFE5.
-c$9AD0 LD A,E        ;
+;
+; I:DE read address
+; O:A byte read
+@label=vdp_read_byte
+c$9AD0 LD A,E        ; Set LSB of VDP address
  $9AD1 OUT ($BF),A   ;
  $9AD3 LD A,D        ;
- $9AD4 OUT ($BF),A   ;
- $9AD6 PUSH IX       ;
+ $9AD4 OUT ($BF),A   ; Set MSB of VDP address
+ $9AD6 PUSH IX       ; Delay
  $9AD8 POP IX        ;
  $9ADA NOP           ;
- $9ADB IN A,($BE)    ;
+ $9ADB IN A,($BE)    ; Read byte
  $9ADD RET           ;
 
 ; Routine at 9ADE
