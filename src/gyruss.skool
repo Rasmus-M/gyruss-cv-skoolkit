@@ -1,7 +1,25 @@
 @start
 @org
 ; Unused
-s$4000 DEFS $400C
+s$4000 DEFS $4000
+
+; ROM header
+b$8000 DEFB $55,$AA
+
+; Pointer to sprite name table
+b$8002 DEFB $00,$00
+
+; Pointer to sprite order table
+b$8004 DEFB $83,$71
+
+; Pointer to temporary storage in RAM
+b$8006 DEFB $A3,$71
+
+; Pointer to controller memory map
+b$8008 DEFB $00,$00
+
+; Pointer to start address
+b$800A DEFB $24,$80
 
 ; Routine at 800C
 c$800C JP $9AB3      ; RST $08: add_a_to_hl
@@ -3170,6 +3188,14 @@ c$9AA7 DEC B         ;
  $9AAF DEC H         ;
  $9AB0 LD A,(BC)     ;
  $9AB1 JR NC,$9ABE   ;
+; This entry point is used by the routine at #R$800C.
+*$9AB3 PUSH AF       ;
+ $9AB4 ADD A,L       ;
+ $9AB5 LD L,A        ;
+ $9AB6 JR NC,$9AB9   ;
+*$9AB8 INC H         ;
+*$9AB9 POP AF        ;
+ $9ABA RET           ;
 
 ; Routine at 9AB3
 ;
@@ -3199,8 +3225,7 @@ c$9ABB LD L,A        ;
 ;
 ; RST $10
 ;
-; I:DE Write address
-; I:A byte to write
+; I:DE Write address I:A byte to write
 @label=vdp_write_byte
 c$9AC3 PUSH AF       ;
  $9AC4 LD A,E        ;

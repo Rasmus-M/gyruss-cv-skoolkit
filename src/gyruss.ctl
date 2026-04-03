@@ -1,13 +1,19 @@
 @ $4000 start
 @ $4000 org
 s $4000 Unused
-S $4000,16396,$400C
+S $4000,16384,$4000
+b $8000 ROM header
+b $8002 Pointer to sprite name table
+b $8004 Pointer to sprite order table
+b $8006 Pointer to temporary storage in RAM
+b $8008 Pointer to controller memory map
+b $800A Pointer to start address
 c $800C Routine at 800C
 C $800C,3 RST $08: add_a_to_hl
 c $800F Routine at 800F
 C $800F,3 RST $10: vdp_write_byte
 c $8012 Routine at 8012
-C $8012,3 RST $18
+C $8012,3 RST $18: WRITE_REGISTER
 c $8015 Routine at 8015
 C $8015,3 RST $20
 c $8018 Routine at 8018
@@ -15,7 +21,7 @@ C $8018,3 RST $28
 c $801B Routine at 801B
 C $801B,3 RST $30
 c $801E Routine at 801E
-C $801E,3 RST $38
+C $801E,3 RST $38: WRITE_VRAM
 c $8021 Routine at 8021
 C $8021,3 Interrupt handler
 c $8024 Entry point
