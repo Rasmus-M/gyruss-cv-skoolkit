@@ -7,28 +7,28 @@ s$4000 DEFS $4000
 b$8000 DEFB $55,$AA
 
 ; Pointer to sprite name table
-b$8002 DEFB $00,$00
+w$8002 DEFW $0000
 
 ; Pointer to sprite order table
-b$8004 DEFB $83,$71
+w$8004 DEFW $7183
 
 ; Pointer to temporary storage in RAM
-b$8006 DEFB $A3,$71
+w$8006 DEFW $71A3
 
 ; Pointer to controller memory map
-b$8008 DEFB $00,$00
+w$8008 DEFW $0000
 
 ; Pointer to start address
-b$800A DEFB $24,$80
+w$800A DEFW $8024
 
 ; Routine at 800C
 c$800C JP $9AB3      ; RST $08: add_a_to_hl
 
 ; Routine at 800F
-c$800F JP $9AC3      ; RST $10: vdp_write_byte
+c$800F JP $9AC3      ; RST $10: vdp_write_byte (DE = address, A = value)
 
 ; Routine at 8012
-c$8012 JP $1FD9      ; RST $18: WRITE_REGISTER
+c$8012 JP $1FD9      ; RST $18: WRITE_REGISTER (B = reg, C = value)
 
 ; Routine at 8015
 c$8015 JP $BFAE      ; RST $20
@@ -40,7 +40,7 @@ c$8018 JP $AD49      ; RST $28
 c$801B JP $AD8B      ; RST $30
 
 ; Routine at 801E
-c$801E JP $1FDF      ; RST $38: WRITE_VRAM
+c$801E JP $1FDF      ; RST $38: WRITE_VRAM (HL = source, DE = dest, BC = count)
 
 ; Routine at 8021
 c$8021 JP $8501      ; Interrupt handler
