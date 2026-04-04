@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at 86E9</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="34526.html">86DE</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#34537">Map</a></td>
+<td class="next">
+Next: <a href="34572.html">870C</a>
+</td>
+</tr>
+</table>
+<div class="description">86E9: Routine at 86E9</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="34526.html">L86DE</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">L86E9</td>
+<td class="address-2"><span id="34537"></span>86E9</td>
+<td class="instruction">CP $12</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34539"></span>86EB</td>
+<td class="instruction">JR C,<a href="34572.html">L870C</a></td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34541"></span>86ED</td>
+<td class="instruction">CP $14</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34543"></span>86EF</td>
+<td class="instruction">JR NC,<a href="34572.html">L870C</a></td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34545"></span>86F1</td>
+<td class="instruction">LD A,($71F2)</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34548"></span>86F4</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34549"></span>86F5</td>
+<td class="instruction">AND $01</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34551"></span>86F7</td>
+<td class="instruction">RET NZ</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34552"></span>86F8</td>
+<td class="instruction">LD A,B</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34553"></span>86F9</td>
+<td class="instruction">AND $0F</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34555"></span>86FB</td>
+<td class="instruction">JR NZ,<a href="34537.html#34565">L86E9_0</a></td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34557"></span>86FD</td>
+<td class="instruction">LD A,(IX+$00)</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34560"></span>8700</td>
+<td class="instruction">XOR $01</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34562"></span>8702</td>
+<td class="instruction">LD (IX+$00),A</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label">L86E9_0</td>
+<td class="address-2"><span id="34565"></span>8705</td>
+<td class="instruction">INC (IX+$05)</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34568"></span>8708</td>
+<td class="instruction">DEC (IX+$01)</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34571"></span>870B</td>
+<td class="instruction">RET</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="34526.html">86DE</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#34537">Map</a></td>
+<td class="next">
+Next: <a href="34572.html">870C</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

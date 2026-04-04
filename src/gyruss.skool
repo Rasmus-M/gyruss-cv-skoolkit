@@ -102,13 +102,13 @@ c$8024 LD SP,$73BA   ;
  $80A8 LD HL,$853C   ;
  $80AB LD DE,$1AF8   ;
  $80AE LD BC,$0005   ;
- $80B1 RST $38       ;
+ $80B1 RST $38       ; WRITE_VRAM
  $80B2 LD DE,$1802   ;
  $80B5 LD A,$31      ;
- $80B7 RST $10       ;
+ $80B7 RST $10       ; vdp_write_byte
  $80B8 INC DE        ;
  $80B9 LD A,$2D      ;
- $80BB RST $10       ;
+ $80BB RST $10       ; vdp_write_byte
  $80BC XOR A         ;
  $80BD CALL $A699    ;
  $80C0 LD A,($71EB)  ;
@@ -116,16 +116,16 @@ c$8024 LD SP,$73BA   ;
  $80C5 JR Z,$80E0    ;
  $80C7 LD DE,$181E   ;
  $80CA LD A,$2D      ;
- $80CC RST $10       ;
+ $80CC RST $10       ; vdp_write_byte
  $80CD INC DE        ;
  $80CE LD A,$32      ;
- $80D0 RST $10       ;
+ $80D0 RST $10       ; vdp_write_byte
  $80D1 LD A,$01      ;
  $80D3 CALL $A699    ;
  $80D6 LD HL,$71FF   ;
  $80D9 LD DE,$1300   ;
  $80DC LD BC,$002D   ;
- $80DF RST $38       ;
+ $80DF RST $38       ; WRITE_VRAM
 *$80E0 LD A,R        ;
  $80E2 LD ($731C),A  ;
  $80E5 CALL $8212    ;
@@ -198,12 +198,12 @@ c$8170 CALL $8D21    ;
  $817B JR NZ,$81AE   ;
  $817D LD DE,$1C00   ;
  $8180 LD A,$D0      ;
- $8182 RST $10       ;
+ $8182 RST $10       ; vdp_write_byte
  $8183 CALL $830E    ;
  $8186 LD HL,$85DD   ;
  $8189 LD DE,$19CB   ;
  $818C LD BC,$0009   ;
- $818F RST $38       ;
+ $818F RST $38       ; WRITE_VRAM
  $8190 LD B,$00      ;
 *$8192 PUSH BC       ;
  $8193 HALT          ;
@@ -235,7 +235,7 @@ c$81AE LD A,($71EB)  ;
  $81C5 LD HL,$71FF   ;
  $81C8 LD DE,$1300   ;
  $81CB LD BC,$002D   ;
- $81CE RST $38       ;
+ $81CE RST $38       ; WRITE_VRAM
  $81CF LD HL,$71A3   ;
  $81D2 LD DE,$71FF   ;
  $81D5 LD BC,$002D   ;
@@ -321,12 +321,12 @@ c$825F ADD A,$0A     ;
  $8261 LD C,A        ;
  $8262 LD A,B        ;
  $8263 ADD A,$30     ;
- $8265 RST $10       ;
+ $8265 RST $10       ; vdp_write_byte
  $8266 LD A,C        ;
 ; This entry point is used by the routine at #R$823E.
 *$8267 INC DE        ;
  $8268 ADD A,$30     ;
- $826A RST $10       ;
+ $826A RST $10       ; vdp_write_byte
  $826B LD A,($7201)  ;
  $826E OR A          ;
  $826F JR NZ,$82BA   ;
@@ -393,7 +393,7 @@ c$82BF POP HL        ;
  $82CD LD C,(HL)     ;
  $82CE LD B,$00      ;
  $82D0 INC HL        ;
- $82D1 RST $38       ;
+ $82D1 RST $38       ; WRITE_VRAM
  $82D2 CALL $830E    ;
  $82D5 LD B,$00      ;
  $82D7 LD A,($7200)  ;
@@ -431,13 +431,13 @@ c$830E LD A,($71EB)  ;
  $8314 LD HL,$8581   ;
  $8317 LD DE,$192C   ;
  $831A LD BC,$0008   ;
- $831D RST $38       ;
+ $831D RST $38       ; WRITE_VRAM
  $831E LD A,($71F1)  ;
  $8321 OR A          ;
  $8322 RET Z         ;
  $8323 LD A,$32      ;
  $8325 LD DE,$1933   ;
- $8328 RST $10       ;
+ $8328 RST $10       ; vdp_write_byte
  $8329 RET           ;
 
 ; Routine at 832A
@@ -574,11 +574,11 @@ c$8429 LD A,($7255)  ;
  $8431 LD HL,$85A6   ;
  $8434 LD DE,$192D   ;
  $8437 LD BC,$0005   ;
- $843A RST $38       ;
+ $843A RST $38       ; WRITE_VRAM
  $843B LD HL,$85AB   ;
  $843E LD DE,$19C9   ;
  $8441 LD BC,$000E   ;
- $8444 RST $38       ;
+ $8444 RST $38       ; WRITE_VRAM
  $8445 POP AF        ;
  $8446 PUSH AF       ;
  $8447 LD B,$30      ;
@@ -592,14 +592,14 @@ c$8429 LD A,($7255)  ;
 ; Used by the routine at #R$8429.
 c$8450 ADD A,$3A     ;
  $8452 LD DE,$19D0   ;
- $8455 RST $10       ;
+ $8455 RST $10       ; vdp_write_byte
  $8456 LD DE,$19D4   ;
- $8459 RST $10       ;
+ $8459 RST $10       ; vdp_write_byte
  $845A LD A,B        ;
  $845B LD DE,$19CF   ;
- $845E RST $10       ;
+ $845E RST $10       ; vdp_write_byte
  $845F LD DE,$19D3   ;
- $8462 RST $10       ;
+ $8462 RST $10       ; vdp_write_byte
  $8463 POP BC        ;
  $8464 LD A,B        ;
  $8465 OR A          ;
@@ -614,11 +614,11 @@ c$846B LD A,$02      ;
  $8470 LD HL,$85B9   ;
  $8473 LD DE,$1928   ;
  $8476 LD BC,$0010   ;
- $8479 RST $38       ;
+ $8479 RST $38       ; WRITE_VRAM
  $847A LD HL,$85C9   ;
  $847D LD DE,$19C6   ;
  $8480 LD BC,$0014   ;
- $8483 RST $38       ;
+ $8483 RST $38       ; WRITE_VRAM
  $8484 LD B,$64      ;
 ; This entry point is used by the routine at #R$8450.
 *$8486 LD HL,$0100   ;
@@ -662,17 +662,19 @@ c$84B1 LD HL,$71F2   ;
 
 ; Routine at 84CB
 ;
-; Used by the routine at #R$90D4.
+; Used by the routine at #R$90D6.
+;
+; Draw graphics
 c$84CB LD D,$00      ;
- $84CD LD E,(HL)     ;
+ $84CD LD E,(HL)     ; $80, DE=$0080 (start index)
  $84CE INC HL        ;
- $84CF LD C,(HL)     ;
- $84D0 LD B,$00      ;
+ $84CF LD C,(HL)     ; $14
+ $84D0 LD B,$00      ; BC=$0014
  $84D2 PUSH BC       ;
- $84D3 POP IY        ;
- $84D5 INC HL        ;
- $84D6 LD A,$03      ;
- $84D8 JP $1FBE      ;
+ $84D3 POP IY        ; IY=$0014 (count = 20 patterns)
+ $84D5 INC HL        ; HL points to graphics data
+ $84D6 LD A,$03      ; Table code (3 = pattern generator table)
+ $84D8 JP $1FBE      ; PUT_VRAM
 
 ; Routine at 84DB
 ;
@@ -720,10 +722,10 @@ c$8501 PUSH IX       ;
  $8514 LD A,H        ;
  $8515 OR L          ;
  $8516 JR NZ,$8522   ;
- $8518 LD BC,$0180   ;
- $851B RST $18       ;
- $851C LD BC,$0701   ;
- $851F RST $18       ;
+ $8518 LD BC,$0180   ; Display off, interrupt off
+ $851B RST $18       ; WRITE_REGISTER
+ $851C LD BC,$0701   ; Black border
+ $851F RST $18       ; WRITE_REGISTER
 *$8520 JR $8520      ;
 
 ; Routine at 8522
@@ -1572,7 +1574,7 @@ c$8B12 LD L,(IY+$02)   ;
 *$8B1E EX DE,HL        ;
  $8B1F LD B,$03        ;
  $8B21 XOR A           ;
-*$8B22 RST $10         ;
+*$8B22 RST $10         ; vdp_write_byte
  $8B23 INC DE          ;
  $8B24 DJNZ $8B22      ;
  $8B26 LD HL,$001D     ;
@@ -1633,7 +1635,7 @@ c$8B12 LD L,(IY+$02)   ;
  $8B97 EX DE,HL        ;
  $8B98 LD HL,$71A3     ;
  $8B9B LD BC,$0048     ;
- $8B9E RST $38         ;
+ $8B9E RST $38         ; WRITE_VRAM
  $8B9F LD A,(IY+$01)   ;
  $8BA2 AND $F8         ;
  $8BA4 LD L,A          ;
@@ -1656,7 +1658,7 @@ c$8B12 LD L,(IY+$02)   ;
  $8BC3 LD A,(IY+$06)   ;
 *$8BC6 EX DE,HL        ;
  $8BC7 LD B,$03        ;
-*$8BC9 RST $10         ;
+*$8BC9 RST $10         ; vdp_write_byte
  $8BCA ADD A,$03       ;
  $8BCC INC DE          ;
  $8BCD DJNZ $8BC9      ;
@@ -2284,48 +2286,48 @@ b$9056 DEFB $00,$03,$07,$0F,$0F,$0F,$07,$07
  $90B6 DEFB $00,$08,$04,$03,$07,$0D,$77,$17
  $90BE DEFB $1B,$15,$0B,$06,$09,$10,$00,$00
  $90C6 DEFB $00,$20,$40,$80,$E0,$F0,$FE,$F8
- $90CE DEFB $F8,$F8,$70,$E8,$84,$40
+ $90CE DEFB $F8,$F8,$70,$E8,$84,$40,$20,$00
 
-; Routine at 90D4
-c$90D4 JR NZ,$90D6   ;
-; This entry point is used by the routine at #R$8024.
-*$90D6 CALL $1F85    ;
+; Routine at 90D6
+;
+; Used by the routine at #R$8024.
+c$90D6 CALL $1F85    ; MODE_1
  $90D9 LD HL,$0800   ;
  $90DC LD A,$01      ;
- $90DE CALL $1FB8    ;
+ $90DE CALL $1FB8    ; INIT_TABLE
  $90E1 LD HL,$1C00   ;
  $90E4 LD A,$00      ;
- $90E6 CALL $1FB8    ;
+ $90E6 CALL $1FB8    ; INIT_TABLE
  $90E9 LD A,$00      ;
  $90EB LD HL,$0000   ;
  $90EE LD DE,$4000   ;
- $90F1 CALL $1F82    ;
- $90F4 CALL $1F7F    ;
+ $90F1 CALL $1F82    ; FILL_VRAM
+ $90F4 CALL $1F7F    ; LOAD_ASCII
  $90F7 LD HL,$B134   ;
  $90FA CALL $84CB    ;
  $90FD LD HL,$71A3   ;
  $9100 LD DE,$0108   ;
  $9103 LD BC,$0008   ;
- $9106 CALL $1FE2    ;
+ $9106 CALL $1FE2    ; READ_VRAM
  $9109 LD HL,$71A3   ;
  $910C LD DE,$01F8   ;
  $910F LD BC,$0008   ;
- $9112 RST $38       ;
+ $9112 RST $38       ; WRITE_VRAM
  $9113 LD HL,$92D6   ;
  $9116 LD DE,$0108   ;
  $9119 LD BC,$0008   ;
- $911C RST $38       ;
+ $911C RST $38       ; WRITE_VRAM
  $911D CALL $921F    ;
- $9120 LD HL,$9380   ;
+ $9120 LD HL,$9380   ; Planet data?
  $9123 LD DE,$18A8   ;
  $9126 LD C,$02      ;
 *$9128 LD B,$06      ;
 *$912A LD A,(HL)     ;
- $912B RST $10       ;
+ $912B RST $10       ; vdp_write_byte
  $912C INC DE        ;
  $912D INC HL        ;
  $912E LD A,(HL)     ;
- $912F RST $10       ;
+ $912F RST $10       ; vdp_write_byte
  $9130 INC DE        ;
  $9131 INC DE        ;
  $9132 INC HL        ;
@@ -2341,15 +2343,15 @@ c$90D4 JR NZ,$90D6   ;
  $9149 LD HL,$92AC   ;
  $914C LD DE,$1AE4   ;
  $914F LD BC,$0017   ;
- $9152 RST $38       ;
- $9153 LD DE,$2000   ;
- $9156 LD HL,$92C3   ;
- $9159 LD BC,$0013   ;
- $915C RST $38       ;
- $915D LD HL,$92DE   ;
- $9160 CALL $84CB    ;
- $9163 LD BC,$01E0   ;
- $9166 RST $18       ;
+ $9152 RST $38       ; WRITE_VRAM
+ $9153 LD DE,$2000   ; Color table address
+ $9156 LD HL,$92C3   ; Colors
+ $9159 LD BC,$0013   ; Update 19 color sets
+ $915C RST $38       ; WRITE_VRAM
+ $915D LD HL,$92DE   ; Gyruss logo
+ $9160 CALL $84CB    ; Upload 20 patterns starting with 128
+ $9163 LD BC,$01E0   ; Display on, interrupt on
+ $9166 RST $18       ; WRITE_REGISTER
 *$9167 HALT          ;
  $9168 CALL $AFFF    ;
  $916B CALL $AE94    ;
@@ -2360,7 +2362,7 @@ c$90D4 JR NZ,$90D6   ;
 
 ; Routine at 9175
 ;
-; Used by the routines at #R$8368, #R$83D0 and #R$90D4.
+; Used by the routines at #R$8368, #R$83D0 and #R$90D6.
 c$9175 ADD A,A       ;
  $9176 JR Z,$91A1    ;
  $9178 LD HL,$9396   ;
@@ -2376,11 +2378,11 @@ c$9175 ADD A,A       ;
  $918C LD HL,$96EE   ;
  $918F LD DE,$2010   ;
  $9192 LD BC,$0010   ;
- $9195 RST $38       ;
+ $9195 RST $38       ; WRITE_VRAM
  $9196 LD DE,$0900   ;
  $9199 LD HL,$96FE   ;
  $919C LD BC,$0098   ;
- $919F RST $38       ;
+ $919F RST $38       ; WRITE_VRAM
  $91A0 RET           ;
 
 ; Routine at 91A1
@@ -2398,7 +2400,7 @@ c$91A1 CALL $920D    ;
  $91B7 LD C,$04      ;
 *$91B9 LD B,$04      ;
 *$91BB LD A,(HL)     ;
- $91BC RST $10       ;
+ $91BC RST $10       ; vdp_write_byte
  $91BD INC DE        ;
  $91BE INC HL        ;
  $91BF DJNZ $91BB    ;
@@ -2426,7 +2428,7 @@ c$91CC PUSH HL         ;
  $91DB LD C,(HL)       ;
  $91DC LD B,$00        ;
  $91DE INC HL          ;
- $91DF RST $38         ;
+ $91DF RST $38         ; WRITE_VRAM
  $91E0 POP HL          ;
  $91E1 LD A,(HL)       ;
  $91E2 INC A           ;
@@ -2459,7 +2461,7 @@ c$91CC PUSH HL         ;
 
 ; Routine at 920D
 ;
-; Used by the routines at #R$8368, #R$90D4, #R$91A1 and #R$91CC.
+; Used by the routines at #R$8368, #R$90D6, #R$91A1 and #R$91CC.
 c$920D PUSH HL       ;
  $920E PUSH DE       ;
  $920F PUSH BC       ;
@@ -2474,7 +2476,7 @@ c$920D PUSH HL       ;
 
 ; Routine at 921F
 ;
-; Used by the routine at #R$90D4.
+; Used by the routine at #R$90D6.
 c$921F LD HL,$0279   ;
  $9222 LD ($726A),HL ;
  $9225 XOR A         ;
@@ -2495,7 +2497,7 @@ c$921F LD HL,$0279   ;
  $9243 PUSH AF       ;
  $9244 CALL $9255    ;
  $9247 POP BC        ;
-*$9248 RST $10       ;
+*$9248 RST $10       ; vdp_write_byte
  $9249 INC DE        ;
  $924A DJNZ $9248    ;
  $924C JR $922F      ;
@@ -2504,7 +2506,7 @@ c$921F LD HL,$0279   ;
 ;
 ; Used by the routine at #R$921F.
 c$924E CALL $9255    ;
- $9251 RST $10       ;
+ $9251 RST $10       ; vdp_write_byte
  $9252 INC DE        ;
  $9253 JR $922F      ;
 
@@ -2553,7 +2555,7 @@ c$9285 LD DE,$1400   ;
  $9297 PUSH DE       ;
  $9298 LD BC,$0048   ;
  $929B LD HL,$71A3   ;
- $929E RST $38       ;
+ $929E RST $38       ; WRITE_VRAM
  $929F POP HL        ;
  $92A0 LD BC,$0048   ;
  $92A3 ADD HL,BC     ;
@@ -2566,21 +2568,27 @@ c$9285 LD DE,$1400   ;
  $92AB RET           ;
 
 ; Data block at 92AC
+@label=copyright_msg
 b$92AC DEFB $1D
 
 ; Message at 92AD
 t$92AD DEFM " 1984  Parker Brothers"
 
-; Colors?
+; Colors
+@label=colors
 b$92C3 DEFB $51,$51,$51,$F1,$F1,$A1,$A1,$A1
  $92CB DEFB $A1,$A1,$A1,$A1,$A1,$A1,$A1,$A1
  $92D3 DEFB $71,$71,$71
 
-; Data block at 92D6
+; Ship pattern
+@label=ship_pattern
 b$92D6 DEFB $18,$18,$3C,$7E,$DB,$81,$00,$00
- $92DE DEFB $80,$14
 
 ; Gyruss logo
+@label=gyruss_logo
+b$92DE DEFB $80,$14
+
+; Logo patterns
 b$92E0 DEFB $7F,$FF,$FF,$FF,$F8,$F8,$F8,$FB
  $92E8 DEFB $FB,$FB,$F8,$F8,$FF,$FF,$FF,$7F
  $92F0 DEFB $FE,$FF,$FF,$FF,$1F,$1F,$00,$FF
@@ -3257,7 +3265,7 @@ c$9AD0 LD A,E        ; Set LSB of VDP address
 ; Routine at 9ADE
 ;
 ; Used by the routine at #R$8024.
-c$9ADE CALL $1FD6      ;
+c$9ADE CALL $1FD6      ; TURN_OFF_SOUND
  $9AE1 LD HL,$727D     ;
  $9AE4 LD DE,$000A     ;
  $9AE7 LD ($7270),HL   ;
@@ -4318,7 +4326,7 @@ c$A6C8 AND $0F       ;
  $A6CA JR Z,$A6CE    ;
  $A6CC LD C,$30      ;
 *$A6CE OR C          ;
- $A6CF RST $10       ;
+ $A6CF RST $10       ; vdp_write_byte
  $A6D0 INC DE        ;
  $A6D1 RET           ;
 
@@ -4335,7 +4343,7 @@ c$A6D2 LD HL,$1AE2   ;
  $A6E1 LD B,A        ;
  $A6E2 LD DE,$1AE2   ;
  $A6E5 LD A,$21      ;
-*$A6E7 RST $10       ;
+*$A6E7 RST $10       ; vdp_write_byte
  $A6E8 INC DE        ;
  $A6E9 DJNZ $A6E7    ;
  $A6EB RET           ;
@@ -4895,7 +4903,7 @@ c$ABFF LD HL,$72CC   ;
  $AC10 LD A,($72CF)  ;
  $AC13 LD C,$04      ;
 *$AC15 LD B,$04      ;
-*$AC17 RST $10       ;
+*$AC17 RST $10       ; vdp_write_byte
  $AC18 INC A         ;
  $AC19 INC DE        ;
  $AC1A DJNZ $AC17    ;
@@ -4920,7 +4928,7 @@ c$AC32 LD DE,$194E   ;
  $AC35 XOR A         ;
  $AC36 LD C,$04      ;
 *$AC38 LD B,$04      ;
-*$AC3A RST $10       ;
+*$AC3A RST $10       ; vdp_write_byte
  $AC3B INC DE        ;
  $AC3C DJNZ $AC3A    ;
  $AC3E LD HL,$001C   ;
@@ -4955,7 +4963,7 @@ b$AC47 DEFB $E5,$7A,$D6,$50,$CB,$3F,$E6,$FC
 
 ; Routine at ACDF
 ;
-; Used by the routines at #R$82BF, #R$90D4 and #R$A33B.
+; Used by the routines at #R$82BF, #R$90D6 and #R$A33B.
 c$ACDF LD IX,$7002     ;
  $ACE3 LD DE,$000C     ;
  $ACE6 LD B,$20        ;
@@ -4970,7 +4978,7 @@ c$ACDF LD IX,$7002     ;
 
 ; Routine at ACF9
 ;
-; Used by the routines at #R$8368, #R$84B1, #R$90D4, #R$A33B and #R$A3E1.
+; Used by the routines at #R$8368, #R$84B1, #R$90D6, #R$A33B and #R$A3E1.
 c$ACF9 LD DE,($73F2) ;
  $ACFD LD HL,$7182   ;
  $AD00 LD A,(HL)     ;
@@ -4997,7 +5005,7 @@ c$ACF9 LD DE,($73F2) ;
  $AD1D POP BC        ;
  $AD1E DJNZ $AD02    ;
  $AD20 LD A,$D0      ;
- $AD22 RST $10       ;
+ $AD22 RST $10       ; vdp_write_byte
  $AD23 LD A,($7182)  ;
  $AD26 CP $05        ;
  $AD28 RET C         ;
@@ -5221,7 +5229,7 @@ c$AE75 LD HL,$7206     ;
 
 ; Routine at AE94
 ;
-; Used by the routine at #R$90D4.
+; Used by the routine at #R$90D6.
 c$AE94 LD A,($72D5)   ;
  $AE97 CP $FF         ;
  $AE99 RET Z          ;
@@ -5397,105 +5405,48 @@ c$AFC2 LD DE,($72DE) ;
 
 ; Data block at AFDD
 b$AFDD DEFB $00,$00,$08,$00,$06,$FF,$06,$FB
-
-; Routine at AFE5
-c$AFE5 DEC B         ;
- $AFE6 EI            ;
- $AFE7 NOP           ;
- $AFE8 LD SP,HL      ;
- $AFE9 RST $38       ;
- $AFEA JP M,$FBFB    ;
- $AFED CALL M,$F9FB  ;
- $AFF0 NOP           ;
- $AFF1 JP M,$FB01    ;
- $AFF4 DEC B         ;
- $AFF5 EI            ;
- $AFF6 DEC B         ;
- $AFF7 NOP           ;
- $AFF8 RLCA          ;
- $AFF9 LD BC,$0505   ;
- $AFFC DEC B         ;
- $AFFD DEC B         ;
- $AFFE LD B,$21      ;
- $B000 CALL PE,$3571 ;
- $B003 RET P         ;
- $B004 LD (HL),$07   ;
- $B006 LD A,($71EB)  ;
- $B009 BIT 0,A       ;
- $B00B JR Z,$B00F    ;
- $B00D LD (HL),$03   ;
-*$B00F LD C,$00      ;
- $B011 CALL $B023    ;
- $B014 LD A,($731A)  ;
- $B017 ADD A,$02     ;
- $B019 CP $0C        ;
- $B01B JR C,$B01E    ;
- $B01D XOR A         ;
-*$B01E LD ($731A),A  ;
- $B021 LD C,$FF      ;
-*$B023 LD A,($731A)  ;
- $B026 LD HL,$B04F   ;
- $B029 RST $08       ;
- $B02A LD E,(HL)     ;
- $B02B INC HL        ;
- $B02C LD D,(HL)     ;
- $B02D LD HL,($73F6) ;
- $B030 EX DE,HL      ;
-*$B031 LD A,(HL)     ;
- $B032 OR A          ;
- $B033 RET Z         ;
- $B034 JP M,$B046    ;
- $B037 CALL $9AD0    ;
- $B03A CP $18        ;
- $B03C JR NC,$B041   ;
- $B03E LD A,(HL)     ;
- $B03F AND C         ;
- $B040 RST $10       ;
-*$B041 INC DE        ;
-; This entry point is used by the routine at #R$B046.
-*$B042 INC HL        ;
- $B043 JP $B031      ;
-
-; Routine at B046
-;
-; Used by the routine at #R$AFE5.
-c$B046 AND $7F       ;
- $B048 ADD A,E       ;
- $B049 LD E,A        ;
- $B04A JR NC,$B042   ;
- $B04C INC D         ;
- $B04D JR $B042      ;
-
-; Data block at B04F
-b$B04F DEFB $5B,$B0,$82,$B0,$A8,$B0,$CD,$B0
- $B057 DEFB $EC,$B0,$0E,$B1,$82,$11,$81,$0B
- $B05F DEFB $FF,$CA,$04,$81,$0C,$9B,$0A,$86
- $B067 DEFB $02,$A0,$03,$89,$13,$8C,$04,$C8
- $B06F DEFB $02,$AD,$09,$88,$0E,$A0,$08,$86
- $B077 DEFB $05,$99,$09,$84,$05,$FF,$E8,$0B
- $B07F DEFB $9E,$11,$00,$FF,$AF,$04,$83,$0E
- $B087 DEFB $98,$0A,$8A,$02,$C0,$03,$92,$0B
- $B08F DEFB $84,$04,$9E,$10,$A3,$0B,$9A,$09
- $B097 DEFB $A3,$10,$85,$0E,$98,$01,$99,$0E
- $B09F DEFB $C0,$08,$8A,$05,$96,$08,$87,$02
- $B0A7 DEFB $00,$CC,$08,$84,$01,$96,$0A,$90
- $B0AF DEFB $02,$FF,$0D,$8D,$0A,$87,$05,$9D
- $B0B7 DEFB $10,$C5,$09,$98,$04,$C5,$10,$86
- $B0BF DEFB $05,$96,$01,$B6,$05,$E0,$08,$8E
- $B0C7 DEFB $05,$94,$0F,$87,$0C,$00,$86,$0A
- $B0CF DEFB $92,$02,$FF,$82,$03,$B2,$09,$92
- $B0D7 DEFB $09,$AA,$10,$C8,$11,$B4,$0B,$D1
- $B0DF DEFB $0A,$96,$10,$BC,$01,$B0,$08,$FF
- $B0E7 DEFB $82,$08,$95,$05,$00,$FF,$8F,$07
- $B0EF DEFB $BB,$10,$FF,$84,$0A,$0B,$01,$02
- $B0F7 DEFB $85,$0E,$96,$09,$82,$03,$96,$02
- $B0FF DEFB $85,$09,$82,$04,$9C,$08,$07,$01
- $B107 DEFB $05,$FF,$84,$10,$BA,$01,$00,$AD
- $B10F DEFB $0C,$FB,$12,$FF,$85,$0C,$81,$0C
- $B117 DEFB $9D,$0F,$82,$08,$89,$01,$91,$08
- $B11F DEFB $84,$0D,$9F,$0B,$92,$08,$87,$07
- $B127 DEFB $02,$82,$0A,$9C,$0C,$81,$08,$FF
- $B12F DEFB $C8,$12,$B7,$01,$00
+ $AFE5 DEFB $05,$FB,$00,$F9,$FF,$FA,$FB,$FB
+ $AFED DEFB $FC,$FB,$F9,$00,$FA,$01,$FB,$05
+ $AFF5 DEFB $FB,$05,$00,$07,$01,$05,$05,$05
+ $AFFD DEFB $05,$06,$21,$EC,$71,$35,$F0,$36
+ $B005 DEFB $07,$3A,$EB,$71,$CB,$47,$28,$02
+ $B00D DEFB $36,$03,$0E,$00,$CD,$23,$B0,$3A
+ $B015 DEFB $1A,$73,$C6,$02,$FE,$0C,$38,$01
+ $B01D DEFB $AF,$32,$1A,$73,$0E,$FF,$3A,$1A
+ $B025 DEFB $73,$21,$4F,$B0,$CF,$5E,$23,$56
+ $B02D DEFB $2A,$F6,$73,$EB,$7E,$B7,$C8,$FA
+ $B035 DEFB $46,$B0,$CD,$D0,$9A,$FE,$18,$30
+ $B03D DEFB $03,$7E,$A1,$D7,$13,$23,$C3,$31
+ $B045 DEFB $B0,$E6,$7F,$83,$5F,$30,$F6,$14
+ $B04D DEFB $18,$F3,$5B,$B0,$82,$B0,$A8,$B0
+ $B055 DEFB $CD,$B0,$EC,$B0,$0E,$B1,$82,$11
+ $B05D DEFB $81,$0B,$FF,$CA,$04,$81,$0C,$9B
+ $B065 DEFB $0A,$86,$02,$A0,$03,$89,$13,$8C
+ $B06D DEFB $04,$C8,$02,$AD,$09,$88,$0E,$A0
+ $B075 DEFB $08,$86,$05,$99,$09,$84,$05,$FF
+ $B07D DEFB $E8,$0B,$9E,$11,$00,$FF,$AF,$04
+ $B085 DEFB $83,$0E,$98,$0A,$8A,$02,$C0,$03
+ $B08D DEFB $92,$0B,$84,$04,$9E,$10,$A3,$0B
+ $B095 DEFB $9A,$09,$A3,$10,$85,$0E,$98,$01
+ $B09D DEFB $99,$0E,$C0,$08,$8A,$05,$96,$08
+ $B0A5 DEFB $87,$02,$00,$CC,$08,$84,$01,$96
+ $B0AD DEFB $0A,$90,$02,$FF,$0D,$8D,$0A,$87
+ $B0B5 DEFB $05,$9D,$10,$C5,$09,$98,$04,$C5
+ $B0BD DEFB $10,$86,$05,$96,$01,$B6,$05,$E0
+ $B0C5 DEFB $08,$8E,$05,$94,$0F,$87,$0C,$00
+ $B0CD DEFB $86,$0A,$92,$02,$FF,$82,$03,$B2
+ $B0D5 DEFB $09,$92,$09,$AA,$10,$C8,$11,$B4
+ $B0DD DEFB $0B,$D1,$0A,$96,$10,$BC,$01,$B0
+ $B0E5 DEFB $08,$FF,$82,$08,$95,$05,$00,$FF
+ $B0ED DEFB $8F,$07,$BB,$10,$FF,$84,$0A,$0B
+ $B0F5 DEFB $01,$02,$85,$0E,$96,$09,$82,$03
+ $B0FD DEFB $96,$02,$85,$09,$82,$04,$9C,$08
+ $B105 DEFB $07,$01,$05,$FF,$84,$10,$BA,$01
+ $B10D DEFB $00,$AD,$0C,$FB,$12,$FF,$85,$0C
+ $B115 DEFB $81,$0C,$9D,$0F,$82,$08,$89,$01
+ $B11D DEFB $91,$08,$84,$0D,$9F,$0B,$92,$08
+ $B125 DEFB $87,$07,$02,$82,$0A,$9C,$0C,$81
+ $B12D DEFB $08,$FF,$C8,$12,$B7,$01,$00
 
 ; Stars
 b$B134 DEFB $01,$12,$00,$00,$00,$08,$00,$00

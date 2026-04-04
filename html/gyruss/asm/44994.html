@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at AFC2</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="44974.html">AFAE</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#44994">Map</a></td>
+<td class="next">
+Next: <a href="45021.html">AFDD</a>
+</td>
+</tr>
+</table>
+<div class="description">AFC2: Routine at AFC2</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="44692.html">LAE94</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">LAFC2</td>
+<td class="address-2"><span id="44994"></span>AFC2</td>
+<td class="instruction">LD DE,($72DE)</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44998"></span>AFC6</td>
+<td class="instruction">LD HL,$0008</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45001"></span>AFC9</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45002"></span>AFCA</td>
+<td class="instruction">LD ($72DE),HL</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45005"></span>AFCD</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45006"></span>AFCE</td>
+<td class="instruction">LD B,$08</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label">LAFC2_0</td>
+<td class="address-2"><span id="45008"></span>AFD0</td>
+<td class="instruction">LD A,$80</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label">LAFC2_1</td>
+<td class="address-2"><span id="45010"></span>AFD2</td>
+<td class="instruction">RL (HL)</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45012"></span>AFD4</td>
+<td class="instruction">RRA</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45013"></span>AFD5</td>
+<td class="instruction">JR NC,<a href="44994.html#45010">LAFC2_1</a></td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45015"></span>AFD7</td>
+<td class="instruction">LD (DE),A</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45016"></span>AFD8</td>
+<td class="instruction">INC DE</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45017"></span>AFD9</td>
+<td class="instruction">INC HL</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45018"></span>AFDA</td>
+<td class="instruction">DJNZ <a href="44994.html#45008">LAFC2_0</a></td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45020"></span>AFDC</td>
+<td class="instruction">RET</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="44974.html">AFAE</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#44994">Map</a></td>
+<td class="next">
+Next: <a href="45021.html">AFDD</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

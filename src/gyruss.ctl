@@ -3,11 +3,17 @@
 s $4000 Unused
 S $4000,16384,$4000
 b $8000 ROM header
+B $8000,2,2
 w $8002 Pointer to sprite name table
+W $8002,2,2
 w $8004 Pointer to sprite order table
+W $8004,2,2
 w $8006 Pointer to temporary storage in RAM
+W $8006,2,2
 w $8008 Pointer to controller memory map
+W $8008,2,2
 w $800A Pointer to start address
+W $800A,2,2
 c $800C Routine at 800C
 C $800C,3 RST $08: add_a_to_hl
 c $800F Routine at 800F
@@ -29,14 +35,23 @@ C $8027,2 Controller enable
 C $8029,3 Clear RAM
 C $803E,3 Start screen
 N $8064 This entry point is used by the routine at #R$81ED.
+C $80B1,1 WRITE_VRAM
+C $80B7,1 vdp_write_byte
+C $80BB,1 vdp_write_byte
+C $80CC,1 vdp_write_byte
+C $80D0,1 vdp_write_byte
+C $80DF,1 WRITE_VRAM
 N $80E8 This entry point is used by the routines at #R$81AE and #R$83D0.
 c $8139 Routine at 8139
 D $8139 Used by the routine at #R$8024.
 c $8170 Routine at 8170
 D $8170 Used by the routine at #R$8139.
+C $8182,1 vdp_write_byte
+C $818F,1 WRITE_VRAM
 c $81AE Routine at 81AE
 D $81AE Used by the routine at #R$8170.
 N $81B9 This entry point is used by the routine at #R$8170.
+C $81CE,1 WRITE_VRAM
 c $81ED Routine at 81ED
 D $81ED Used by the routine at #R$8170.
 c $8212 Routine at 8212
@@ -47,14 +62,19 @@ N $8240 This entry point is used by the routine at #R$8212.
 N $8245 This entry point is used by the routine at #R$8212.
 c $825F Routine at 825F
 D $825F Used by the routine at #R$823E.
+C $8265,1 vdp_write_byte
 N $8267 This entry point is used by the routine at #R$823E.
+C $826A,1 vdp_write_byte
 c $82BA Routine at 82BA
 D $82BA Used by the routine at #R$825F.
 c $82BF Routine at 82BF
 D $82BF Used by the routine at #R$825F.
 N $82C3 This entry point is used by the routines at #R$825F and #R$82BA.
+C $82D1,1 WRITE_VRAM
 c $830E Routine at 830E
 D $830E Used by the routines at #R$8170 and #R$82BF.
+C $831D,1 WRITE_VRAM
+C $8328,1 vdp_write_byte
 c $832A Routine at 832A
 D $832A Used by the routine at #R$8024.
 N $833C This entry point is used by the routines at #R$8450 and #R$846B.
@@ -65,21 +85,41 @@ c $83D0 Routine at 83D0
 D $83D0 Used by the routine at #R$8368.
 c $8429 Routine at 8429
 D $8429 Used by the routine at #R$832A.
+C $843A,1 WRITE_VRAM
+C $8444,1 WRITE_VRAM
 c $8450 Routine at 8450
 D $8450 Used by the routine at #R$8429.
+C $8455,1 vdp_write_byte
+C $8459,1 vdp_write_byte
+C $845E,1 vdp_write_byte
+C $8462,1 vdp_write_byte
 c $846B Routine at 846B
 D $846B Used by the routine at #R$8429.
+C $8479,1 WRITE_VRAM
+C $8483,1 WRITE_VRAM
 N $8486 This entry point is used by the routine at #R$8450.
 c $84B1 Routine at 84B1
 D $84B1 Used by the routines at #R$8024, #R$8139, #R$832A, #R$8368, #R$846B, #R$A33B and #R$A3E1.
 c $84CB Routine at 84CB
 D $84CB Used by the routine at #R$90D4.
+R $84CB Draw graphics
+C $84CD,1 $80, DE=$0080 (start index)
+C $84CF,1 $14
+C $84D0,2 BC=$0014
+C $84D3,2 IY=$0014 (count = 20 patterns)
+C $84D5,1 HL points to graphics data
+C $84D6,2 Table code (3 = pattern generator table)
+C $84D8,3 PUT_VRAM
 c $84DB Routine at 84DB
 D $84DB Used by the routines at #R$8878, #R$8A53, #R$8A76, #R$8C68, #R$8D50, #R$8E9D, #R$900E and #R$AAF1.
 c $84ED Routine at 84ED
 D $84ED Used by the routines at #R$8170 and #R$832A.
 c $8501 Routine at 8501
 D $8501 Used by the routine at #R$8021.
+C $8518,3 Display off, interrupt off
+C $851B,1 WRITE_REGISTER
+C $851C,3 Black border
+C $851F,1 WRITE_REGISTER
 c $8522 Routine at 8522
 D $8522 Used by the routine at #R$8501.
 t $853C Message at 853C
@@ -208,6 +248,9 @@ c $8AE6 Routine at 8AE6
 D $8AE6 Used by the routine at #R$8139.
 c $8B12 Routine at 8B12
 D $8B12 Used by the routines at #R$8F0F, #R$8F55, #R$99D3, #R$9A75 and #R$A808.
+C $8B22,1 vdp_write_byte
+C $8B9E,1 WRITE_VRAM
+C $8BC9,1 vdp_write_byte
 c $8BD9 Routine at 8BD9
 D $8BD9 Used by the routine at #R$8024.
 c $8C07 Routine at 8C07
@@ -253,37 +296,70 @@ D $900E Used by the routines at #R$8E9D and #R$8F55.
 b $9046 Data block at 9046
 B $9046,16,8
 b $9056 Graphics
-B $9056,126,8*15,6
-c $90D4 Routine at 90D4
-N $90D6 This entry point is used by the routine at #R$8024.
+B $9056,128,8
+c $90D6 Routine at 90D6
+D $90D6 Used by the routine at #R$8024.
+C $90D6,3 MODE_1
+C $90DE,3 INIT_TABLE
+C $90E6,3 INIT_TABLE
+C $90F1,3 FILL_VRAM
+C $90F4,3 LOAD_ASCII
+C $9106,3 READ_VRAM
+C $9112,1 WRITE_VRAM
+C $911C,1 WRITE_VRAM
+C $9120,3 Planet data?
+C $912B,1 vdp_write_byte
+C $912F,1 vdp_write_byte
+C $9152,1 WRITE_VRAM
+C $9153,3 Color table address
+C $9156,3 Colors
+C $9159,3 Update 19 color sets
+C $915C,1 WRITE_VRAM
+C $915D,3 Gyruss logo
+C $9160,3 Upload 20 patterns starting with 128
+C $9163,3 Display on, interrupt on
+C $9166,1 WRITE_REGISTER
 c $9175 Routine at 9175
 D $9175 Used by the routines at #R$8368, #R$83D0 and #R$90D4.
+C $9195,1 WRITE_VRAM
+C $919F,1 WRITE_VRAM
 c $91A1 Routine at 91A1
 D $91A1 Used by the routine at #R$9175.
 N $91B4 This entry point is used by the routine at #R$9175.
+C $91BC,1 vdp_write_byte
 c $91CC Routine at 91CC
 D $91CC Used by the routine at #R$9175.
+C $91DF,1 WRITE_VRAM
 c $920D Routine at 920D
 D $920D Used by the routines at #R$8368, #R$90D4, #R$91A1 and #R$91CC.
 c $921F Routine at 921F
 D $921F Used by the routine at #R$90D4.
 N $922F This entry point is used by the routine at #R$924E.
+C $9248,1 vdp_write_byte
 c $924E Routine at 924E
 D $924E Used by the routine at #R$921F.
+C $9251,1 vdp_write_byte
 c $9255 Routine at 9255
 D $9255 Used by the routines at #R$921F and #R$924E.
 N $9257 This entry point is used by the routine at #R$921F.
 c $9285 Routine at 9285
 D $9285 Used by the routine at #R$9175.
+C $929E,1 WRITE_VRAM
 b $92AC Data block at 92AC
+@ $92AC label=copyright_msg
 B $92AC,1,1
 t $92AD Message at 92AD
 T $92AD,22,22
-b $92C3 Colors?
+b $92C3 Colors
+@ $92C3 label=colors
 B $92C3,19,8*2,3
-b $92D6 Data block at 92D6
-B $92D6,10,8,2
-b $92E0 Gyruss logo
+b $92D6 Ship pattern
+@ $92D6 label=ship_pattern
+B $92D6,8,8
+b $92DE Gyruss logo
+@ $92DE label=gyruss_logo
+B $92DE,2,2
+b $92E0 Logo patterns
 B $92E0,160,8
 b $9380 Data block at 9380
 B $9380,53,8*6,5
@@ -352,6 +428,7 @@ D $9A75 Used by the routine at #R$9796.
 c $9A86 Routine at 9A86
 D $9A86 Used by the routines at #R$870C, #R$9796, #R$9861 and #R$98B5.
 c $9AA7 Routine at 9AA7
+N $9AB3 This entry point is used by the routine at #R$800C.
 > $9ABB ; Routine at 9AB3
 > $9ABB ;
 > $9ABB ; Used by the routine at #R$800C.
@@ -386,6 +463,7 @@ C $9AD6,2 Delay
 C $9ADB,2 Read byte
 c $9ADE Routine at 9ADE
 D $9ADE Used by the routine at #R$8024.
+C $9ADE,3 TURN_OFF_SOUND
 c $9B0D Routine at 9B0D
 D $9B0D Used by the routines at #R$9BD9, #R$9C1C and #R$9E91.
 c $9B54 Routine at 9B54
@@ -483,8 +561,10 @@ c $A699 Routine at A699
 D $A699 Used by the routines at #R$8024 and #R$846B.
 c $A6C8 Routine at A6C8
 D $A6C8 Used by the routine at #R$A699.
+C $A6CF,1 vdp_write_byte
 c $A6D2 Routine at A6D2
 D $A6D2 Used by the routines at #R$82BF and #R$A6EC.
+C $A6E7,1 vdp_write_byte
 c $A6EC Routine at A6EC
 D $A6EC Used by the routines at #R$846B and #R$9978.
 c $A73C Routine at A73C
@@ -528,8 +608,10 @@ c $AB72 Routine at AB72
 D $AB72 Used by the routines at #R$8024, #R$8139, #R$832A, #R$846B, #R$A33B and #R$A3E1.
 c $ABFF Routine at ABFF
 D $ABFF Used by the routine at #R$AB72.
+C $AC17,1 vdp_write_byte
 c $AC32 Routine at AC32
 D $AC32 Used by the routine at #R$ABFF.
+C $AC3A,1 vdp_write_byte
 b $AC47 Data block at AC47
 D $AC47 Used by the routine at #R$AB72.
 B $AC47,152,8
@@ -537,6 +619,7 @@ c $ACDF Routine at ACDF
 D $ACDF Used by the routines at #R$82BF, #R$90D4 and #R$A33B.
 c $ACF9 Routine at ACF9
 D $ACF9 Used by the routines at #R$8368, #R$84B1, #R$90D4, #R$A33B and #R$A3E1.
+C $AD22,1 vdp_write_byte
 c $AD49 Routine at AD49
 D $AD49 Used by the routine at #R$8018.
 c $AD64 Routine at AD64
@@ -568,13 +651,7 @@ D $AFAE Used by the routine at #R$AE94.
 c $AFC2 Routine at AFC2
 D $AFC2 Used by the routine at #R$AE94.
 b $AFDD Data block at AFDD
-B $AFDD,8,8
-c $AFE5 Routine at AFE5
-N $B042 This entry point is used by the routine at #R$B046.
-c $B046 Routine at B046
-D $B046 Used by the routine at #R$AFE5.
-b $B04F Data block at B04F
-B $B04F,229,8*28,5
+B $AFDD,343,8*42,7
 b $B134 Stars
 B $B134,144,8
 b $B1C4 Data block at B1C4

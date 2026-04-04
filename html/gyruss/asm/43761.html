@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at AAF1</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="43747.html">AAE3</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#43761">Map</a></td>
+<td class="next">
+Next: <a href="43799.html">AB17</a>
+</td>
+</tr>
+</table>
+<div class="description">AAF1: Routine at AAF1</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="32804.html">L8024</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">LAAF1</td>
+<td class="address-2"><span id="43761"></span>AAF1</td>
+<td class="instruction">LD A,($71EB)</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43764"></span>AAF4</td>
+<td class="instruction">BIT 1,A</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43766"></span>AAF6</td>
+<td class="instruction">RET Z</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43767"></span>AAF7</td>
+<td class="instruction">BIT 2,A</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43769"></span>AAF9</td>
+<td class="instruction">RET NZ</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43770"></span>AAFA</td>
+<td class="instruction">CALL <a href="34011.html">L84DB</a></td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43773"></span>AAFD</td>
+<td class="instruction">LD A,($722C)</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43776"></span>AB00</td>
+<td class="instruction">CP (IY+$04)</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43779"></span>AB03</td>
+<td class="instruction">RET NC</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43780"></span>AB04</td>
+<td class="instruction">LD A,($722B)</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43783"></span>AB07</td>
+<td class="instruction">OR A</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43784"></span>AB08</td>
+<td class="instruction">RET Z</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43785"></span>AB09</td>
+<td class="instruction">LD HL,$722A</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43788"></span>AB0C</td>
+<td class="instruction">LD B,$24</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43790"></span>AB0E</td>
+<td class="instruction">LD A,$80</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label">LAAF1_0</td>
+<td class="address-2"><span id="43792"></span>AB10</td>
+<td class="instruction">CP (HL)</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43793"></span>AB11</td>
+<td class="instruction">JR NC,<a href="43799.html">LAB17</a></td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43795"></span>AB13</td>
+<td class="instruction">DEC HL</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43796"></span>AB14</td>
+<td class="instruction">DJNZ <a href="43761.html#43792">LAAF1_0</a></td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43798"></span>AB16</td>
+<td class="instruction">RET</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="43747.html">AAE3</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#43761">Map</a></td>
+<td class="next">
+Next: <a href="43799.html">AB17</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

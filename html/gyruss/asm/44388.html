@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at AD64</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="44361.html">AD49</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#44388">Map</a></td>
+<td class="next">
+Next: <a href="44427.html">AD8B</a>
+</td>
+</tr>
+</table>
+<div class="description">AD64: Routine at AD64</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="44361.html">LAD49</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">LAD64</td>
+<td class="address-2"><span id="44388"></span>AD64</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44389"></span>AD65</td>
+<td class="instruction">BIT 7,(HL)</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44391"></span>AD67</td>
+<td class="instruction">JR Z,<a href="44388.html#44405">LAD64_1</a></td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44393"></span>AD69</td>
+<td class="instruction">LD HL,$7182</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44396"></span>AD6C</td>
+<td class="instruction">INC (HL)</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44397"></span>AD6D</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44398"></span>AD6E</td>
+<td class="instruction">ADD A,L</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44399"></span>AD6F</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44400"></span>AD70</td>
+<td class="instruction">JP NC,<a href="44388.html#44404">LAD64_0</a></td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44403"></span>AD73</td>
+<td class="instruction">INC H</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label">LAD64_0</td>
+<td class="address-2"><span id="44404"></span>AD74</td>
+<td class="instruction">LD (HL),C</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label">LAD64_1</td>
+<td class="address-2"><span id="44405"></span>AD75</td>
+<td class="instruction">POP IX</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44407"></span>AD77</td>
+<td class="instruction">LD (IX+$07),$00</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44411"></span>AD7B</td>
+<td class="instruction">LD (IX+$03),$00</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44415"></span>AD7F</td>
+<td class="instruction">LD (IX+$04),$FF</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44419"></span>AD83</td>
+<td class="instruction">LD (IX+$08),$F8</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="44423"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="44361.html">LAD49</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">LAD64_2</td>
+<td class="address-2"><span id="44423"></span>AD87</td>
+<td class="instruction">POP BC</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44424"></span>AD88</td>
+<td class="instruction">POP DE</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44425"></span>AD89</td>
+<td class="instruction">POP HL</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44426"></span>AD8A</td>
+<td class="instruction">RET</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="44361.html">AD49</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#44388">Map</a></td>
+<td class="next">
+Next: <a href="44427.html">AD8B</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

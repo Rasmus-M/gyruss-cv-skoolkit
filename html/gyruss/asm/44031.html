@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at ABFF</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="43890.html">AB72</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#44031">Map</a></td>
+<td class="next">
+Next: <a href="44082.html">AC32</a>
+</td>
+</tr>
+</table>
+<div class="description">ABFF: Routine at ABFF</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="43890.html">LAB72</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">LABFF</td>
+<td class="address-2"><span id="44031"></span>ABFF</td>
+<td class="instruction">LD HL,$72CC</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44034"></span>AC02</td>
+<td class="instruction">BIT 0,(HL)</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44036"></span>AC04</td>
+<td class="instruction">RET Z</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44037"></span>AC05</td>
+<td class="instruction">RES 0,(HL)</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44039"></span>AC07</td>
+<td class="instruction">LD A,($722B)</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44042"></span>AC0A</td>
+<td class="instruction">OR A</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44043"></span>AC0B</td>
+<td class="instruction">JR Z,<a href="44082.html">LAC32</a></td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44045"></span>AC0D</td>
+<td class="instruction">LD DE,$194E</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44048"></span>AC10</td>
+<td class="instruction">LD A,($72CF)</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44051"></span>AC13</td>
+<td class="instruction">LD C,$04</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label">LABFF_0</td>
+<td class="address-2"><span id="44053"></span>AC15</td>
+<td class="instruction">LD B,$04</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label">LABFF_1</td>
+<td class="address-2"><span id="44055"></span>AC17</td>
+<td class="instruction">RST $10</td>
+<td class="comment-1" rowspan="1">vdp_write_byte</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44056"></span>AC18</td>
+<td class="instruction">INC A</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44057"></span>AC19</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44058"></span>AC1A</td>
+<td class="instruction">DJNZ <a href="44031.html#44055">LABFF_1</a></td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44060"></span>AC1C</td>
+<td class="instruction">LD HL,$001C</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44063"></span>AC1F</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44064"></span>AC20</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44065"></span>AC21</td>
+<td class="instruction">DEC C</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44066"></span>AC22</td>
+<td class="instruction">JR NZ,<a href="44031.html#44053">LABFF_0</a></td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44068"></span>AC24</td>
+<td class="instruction">LD HL,($72CE)</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44071"></span>AC27</td>
+<td class="instruction">LD A,L</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44072"></span>AC28</td>
+<td class="instruction">LD L,H</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44073"></span>AC29</td>
+<td class="instruction">LD H,A</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44074"></span>AC2A</td>
+<td class="instruction">LD ($72CE),HL</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44077"></span>AC2D</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44078"></span>AC2E</td>
+<td class="instruction">LD ($72CD),A</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44081"></span>AC31</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="43890.html">AB72</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#44031">Map</a></td>
+<td class="next">
+Next: <a href="44082.html">AC32</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>
