@@ -1,7 +1,16 @@
 @ $4000 start
 @ $4000 org
 s $4000 Unused
-S $4000,16384,$4000
+S $4000,12288,$3000
+b $7000 RAM
+B $7000,602,8*75,2
+b $725A Flag
+@ $725A label=interrupt_flag
+B $725A,1,1
+b $725B Data block at 725B
+B $725B,421,8*52,5
+s $7400 Unused
+S $7400,3072,$0C00
 b $8000 ROM header
 B $8000,2,2
 w $8002 Pointer to sprite name table
@@ -29,12 +38,28 @@ C $801B,3 RST $30
 c $801E Routine at 801E
 C $801E,3 RST $38: WRITE_VRAM (HL = source, DE = dest, BC = count)
 c $8021 Routine at 8021
-C $8021,3 Interrupt handler
+C $8021,3 Interrupt routine
 c $8024 Entry point
 C $8027,2 Controller enable
 C $8029,3 Clear RAM
+C $8035,3 Set word
+C $803B,3 Init some RAM locations (sound?)
 C $803E,3 Start screen
-N $8064 This entry point is used by the routine at #R$81ED.
+C $8041,3 Set word
+@ $8047 label=label_at_8047
+C $8047,1 Wait for interrupt
+C $804B,3 Controller 0, segment 0
+C $804E,3 DECODER
+C $8051,2 Test fire
+C $8053,2 Jump if fire pressed
+C $8055,3 Controller 1, segment 0
+C $8058,3 DECODER
+C $805B,2 Test fire
+C $805D,2 Loop until fire pressed
+N $8064 This entry point is used by the routine at #R$81ED. Fire pressed
+C $806A,3 Clear screen
+C $8071,3 FILL_VRAM
+C $807C,3 FILL_VRAM
 C $80B1,1 WRITE_VRAM
 C $80B7,1 vdp_write_byte
 C $80BB,1 vdp_write_byte
@@ -42,8 +67,19 @@ C $80CC,1 vdp_write_byte
 C $80D0,1 vdp_write_byte
 C $80DF,1 WRITE_VRAM
 N $80E8 This entry point is used by the routines at #R$81AE and #R$83D0.
+@ $80E8 label=main_loop
+C $80E8,3 Flag set by interrupt routine
+C $80EB,2 Test flag
+C $80ED,2 Wait until set
+C $80EF,2 Clear flag
+C $80F1,3 READ_REGISTER
+C $80FD,3 READ_REGISTER
+C $8106,3 READ_REGISTER
+C $810F,3 READ_REGISTER
 c $8139 Routine at 8139
 D $8139 Used by the routine at #R$8024.
+C $8146,3 READ_REGISTER
+@ $814F label=label_at_814F
 c $8170 Routine at 8170
 D $8170 Used by the routine at #R$8139.
 C $8182,1 vdp_write_byte
@@ -51,9 +87,14 @@ C $818F,1 WRITE_VRAM
 c $81AE Routine at 81AE
 D $81AE Used by the routine at #R$8170.
 N $81B9 This entry point is used by the routine at #R$8170.
+C $81C2,3 READ_VRAM
 C $81CE,1 WRITE_VRAM
 c $81ED Routine at 81ED
 D $81ED Used by the routine at #R$8170.
+C $81F4,3 Controller 0, segment 1
+C $81F7,3 DECODER
+C $8205,3 Controller 0, segment 0
+C $8208,3 DECODER
 c $8212 Routine at 8212
 D $8212 Used by the routines at #R$8024, #R$81AE and #R$83D0.
 c $823E Routine at 823E
@@ -77,12 +118,15 @@ C $831D,1 WRITE_VRAM
 C $8328,1 vdp_write_byte
 c $832A Routine at 832A
 D $832A Used by the routine at #R$8024.
+C $8334,3 READ_REGISTER
 N $833C This entry point is used by the routines at #R$8450 and #R$846B.
 c $8368 Routine at 8368
 D $8368 Used by the routine at #R$832A.
 N $836D This entry point is used by the routine at #R$832A.
 c $83D0 Routine at 83D0
 D $83D0 Used by the routine at #R$8368.
+C $840E,3 FILL_VRAM
+C $8418,3 FILL_VRAM
 c $8429 Routine at 8429
 D $8429 Used by the routine at #R$832A.
 C $843A,1 WRITE_VRAM
@@ -101,7 +145,7 @@ N $8486 This entry point is used by the routine at #R$8450.
 c $84B1 Routine at 84B1
 D $84B1 Used by the routines at #R$8024, #R$8139, #R$832A, #R$8368, #R$846B, #R$A33B and #R$A3E1.
 c $84CB Routine at 84CB
-D $84CB Used by the routine at #R$90D4.
+D $84CB Used by the routine at #R$90D6.
 R $84CB Draw graphics
 C $84CD,1 $80, DE=$0080 (start index)
 C $84CF,1 $14
@@ -114,14 +158,18 @@ c $84DB Routine at 84DB
 D $84DB Used by the routines at #R$8878, #R$8A53, #R$8A76, #R$8C68, #R$8D50, #R$8E9D, #R$900E and #R$AAF1.
 c $84ED Routine at 84ED
 D $84ED Used by the routines at #R$8170 and #R$832A.
+C $84F4,3 FILL_VRAM
 c $8501 Routine at 8501
 D $8501 Used by the routine at #R$8021.
+@ $8501 label=interrupt_routine
 C $8518,3 Display off, interrupt off
 C $851B,1 WRITE_REGISTER
 C $851C,3 Black border
 C $851F,1 WRITE_REGISTER
+C $8520,2 Loop
 c $8522 Routine at 8522
 D $8522 Used by the routine at #R$8501.
+C $8522,3 Sound player?
 t $853C Message at 853C
 T $853C,5,5
 b $8541 Data block at 8541
@@ -286,6 +334,7 @@ c $8E9D Routine at 8E9D
 D $8E9D Used by the routine at #R$8E2C.
 c $8F0F Routine at 8F0F
 D $8F0F Used by the routine at #R$8E9D.
+C $8F44,3 FILL_VRAM
 c $8F55 Routine at 8F55
 D $8F55 Used by the routine at #R$8E2C.
 N $8FAE This entry point is used by the routine at #R$8FED.
@@ -320,7 +369,7 @@ C $9160,3 Upload 20 patterns starting with 128
 C $9163,3 Display on, interrupt on
 C $9166,1 WRITE_REGISTER
 c $9175 Routine at 9175
-D $9175 Used by the routines at #R$8368, #R$83D0 and #R$90D4.
+D $9175 Used by the routines at #R$8368, #R$83D0 and #R$90D6.
 C $9195,1 WRITE_VRAM
 C $919F,1 WRITE_VRAM
 c $91A1 Routine at 91A1
@@ -331,9 +380,10 @@ c $91CC Routine at 91CC
 D $91CC Used by the routine at #R$9175.
 C $91DF,1 WRITE_VRAM
 c $920D Routine at 920D
-D $920D Used by the routines at #R$8368, #R$90D4, #R$91A1 and #R$91CC.
+D $920D Used by the routines at #R$8368, #R$90D6, #R$91A1 and #R$91CC.
+C $9218,3 FILL_VRAM
 c $921F Routine at 921F
-D $921F Used by the routine at #R$90D4.
+D $921F Used by the routine at #R$90D6.
 N $922F This entry point is used by the routine at #R$924E.
 C $9248,1 vdp_write_byte
 c $924E Routine at 924E
@@ -344,6 +394,7 @@ D $9255 Used by the routines at #R$921F and #R$924E.
 N $9257 This entry point is used by the routine at #R$921F.
 c $9285 Routine at 9285
 D $9285 Used by the routine at #R$9175.
+C $9293,3 READ_VRAM
 C $929E,1 WRITE_VRAM
 b $92AC Data block at 92AC
 @ $92AC label=copyright_msg
@@ -463,6 +514,7 @@ C $9AD6,2 Delay
 C $9ADB,2 Read byte
 c $9ADE Routine at 9ADE
 D $9ADE Used by the routine at #R$8024.
+R $9ADE Sound init?
 C $9ADE,3 TURN_OFF_SOUND
 c $9B0D Routine at 9B0D
 D $9B0D Used by the routines at #R$9BD9, #R$9C1C and #R$9E91.
@@ -478,6 +530,7 @@ c $9B87 Routine at 9B87
 D $9B87 Used by the routines at #R$8139, #R$832A and #R$9C1C.
 c $9B99 Routine at 9B99
 D $9B99 Used by the routine at #R$8522.
+C $9B99,3 Sound player?
 N $9BAE This entry point is used by the routine at #R$9BD9.
 N $9BCA This entry point is used by the routines at #R$9BD9 and #R$9BF8.
 c $9BD9 Routine at 9BD9
@@ -537,6 +590,7 @@ b $9EB6 Data block at 9EB6
 B $9EB6,1029,8*128,5
 c $A2BB Routine at A2BB
 D $A2BB Used by the routine at #R$9B99.
+@ $A2BB label=sound_player
 c $A2F3 Routine at A2F3
 D $A2F3 Used by the routine at #R$A2BB.
 N $A303 This entry point is used by the routine at #R$A31D.
@@ -546,6 +600,7 @@ c $A31D Routine at A31D
 D $A31D Used by the routine at #R$A314.
 c $A33B Routine at A33B
 D $A33B Used by the routine at #R$82BF.
+C $A3CE,3 FILL_VRAM
 c $A3E1 Routine at A3E1
 D $A3E1 Used by the routine at #R$8139.
 c $A471 Routine at A471
@@ -564,11 +619,19 @@ D $A6C8 Used by the routine at #R$A699.
 C $A6CF,1 vdp_write_byte
 c $A6D2 Routine at A6D2
 D $A6D2 Used by the routines at #R$82BF and #R$A6EC.
+C $A6D9,3 FILL_VRAM
 C $A6E7,1 vdp_write_byte
 c $A6EC Routine at A6EC
 D $A6EC Used by the routines at #R$846B and #R$9978.
 c $A73C Routine at A73C
 D $A73C Used by the routines at #R$8024, #R$832A, #R$8368, #R$846B and #R$A33B.
+C $A742,3 Controller
+C $A745,2 Segment 0
+C $A747,3 DECODER
+C $A78B,2 Segment 0
+C $A78D,3 DECODER
+C $A793,2 Segment 1
+C $A795,3 DECODER
 c $A7D5 Routine at A7D5
 D $A7D5 Used by the routine at #R$A73C.
 c $A805 Routine at A805
@@ -606,6 +669,7 @@ D $AB6C Used by the routine at #R$AB53.
 N $AB6F This entry point is used by the routine at #R$AB53.
 c $AB72 Routine at AB72
 D $AB72 Used by the routines at #R$8024, #R$8139, #R$832A, #R$846B, #R$A33B and #R$A3E1.
+C $ABBE,3 FILL_VRAM
 c $ABFF Routine at ABFF
 D $ABFF Used by the routine at #R$AB72.
 C $AC17,1 vdp_write_byte
@@ -616,9 +680,10 @@ b $AC47 Data block at AC47
 D $AC47 Used by the routine at #R$AB72.
 B $AC47,152,8
 c $ACDF Routine at ACDF
-D $ACDF Used by the routines at #R$82BF, #R$90D4 and #R$A33B.
+D $ACDF Used by the routines at #R$82BF, #R$90D6 and #R$A33B.
 c $ACF9 Routine at ACF9
-D $ACF9 Used by the routines at #R$8368, #R$84B1, #R$90D4, #R$A33B and #R$A3E1.
+D $ACF9 Used by the routines at #R$8368, #R$84B1, #R$90D6, #R$A33B and #R$A3E1.
+C $AD13,3 WRITE_VRAM
 C $AD22,1 vdp_write_byte
 c $AD49 Routine at AD49
 D $AD49 Used by the routine at #R$8018.
@@ -630,6 +695,8 @@ D $AD8B Used by the routine at #R$801B.
 c $ADD1 Routine at ADD1
 D $ADD1 Used by the routine at #R$AD8B.
 N $ADD7 This entry point is used by the routine at #R$AD8B.
+C $ADFC,3 READ_VRAM
+C $AE0E,3 WRITE_VRAM
 c $AE2B Routine at AE2B
 D $AE2B Used by the routine at #R$ADD1.
 N $AE4E This entry point is used by the routines at #R$ADD1, #R$AE54 and #R$AE75.
@@ -639,7 +706,8 @@ c $AE75 Routine at AE75
 D $AE75 Used by the routine at #R$AE54.
 N $AE86 This entry point is used by the routine at #R$AE54.
 c $AE94 Routine at AE94
-D $AE94 Used by the routine at #R$90D4.
+D $AE94 Used by the routine at #R$90D6.
+C $AF1F,3 WRITE_VRAM
 c $AF3E Routine at AF3E
 D $AF3E Used by the routine at #R$AE94.
 c $AF55 Routine at AF55

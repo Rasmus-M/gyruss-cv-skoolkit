@@ -1,7 +1,147 @@
 @start
 @org
 ; Unused
-s$4000 DEFS $4000
+s$4000 DEFS $3000
+
+; RAM
+b$7000 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7008 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7010 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7018 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7020 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7028 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7030 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7038 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7040 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7048 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7050 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7058 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7060 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7068 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7070 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7078 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7080 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7088 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7090 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7098 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $70A0 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $70A8 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $70B0 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $70B8 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $70C0 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $70C8 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $70D0 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $70D8 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $70E0 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $70E8 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $70F0 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $70F8 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7100 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7108 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7110 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7118 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7120 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7128 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7130 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7138 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7140 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7148 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7150 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7158 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7160 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7168 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7170 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7178 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7180 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7188 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7190 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7198 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $71A0 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $71A8 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $71B0 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $71B8 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $71C0 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $71C8 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $71D0 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $71D8 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $71E0 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $71E8 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $71F0 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $71F8 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7200 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7208 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7210 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7218 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7220 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7228 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7230 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7238 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7240 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7248 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7250 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7258 DEFB $00,$00
+
+; Flag
+@label=interrupt_flag
+b$725A DEFB $00
+
+; Data block at 725B
+b$725B DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7263 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $726B DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7273 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $727B DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7283 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $728B DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7293 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $729B DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $72A3 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $72AB DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $72B3 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $72BB DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $72C3 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $72CB DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $72D3 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $72DB DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $72E3 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $72EB DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $72F3 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $72FB DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7303 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $730B DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7313 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $731B DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7323 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $732B DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7333 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $733B DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7343 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $734B DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7353 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $735B DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7363 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $736B DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7373 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $737B DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7383 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $738B DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7393 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $739B DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $73A3 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $73AB DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $73B3 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $73BB DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $73C3 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $73CB DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $73D3 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $73DB DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $73E3 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $73EB DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $73F3 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $73FB DEFB $00,$00,$00,$00,$00
+
+; Unused
+s$7400 DEFS $0C00
 
 ; ROM header
 b$8000 DEFB $55,$AA
@@ -43,7 +183,7 @@ c$801B JP $AD8B      ; RST $30
 c$801E JP $1FDF      ; RST $38: WRITE_VRAM (HL = source, DE = dest, BC = count)
 
 ; Routine at 8021
-c$8021 JP $8501      ; Interrupt handler
+c$8021 JP $8501      ; Interrupt routine
 
 ; Entry point
 c$8024 LD SP,$73BA   ;
@@ -53,35 +193,37 @@ c$8024 LD SP,$73BA   ;
  $802F LD BC,$03B9   ;
  $8032 LD (HL),L     ;
  $8033 LDIR          ;
- $8035 LD HL,$8060   ;
+ $8035 LD HL,$8060   ; Set word
  $8038 LD ($7000),HL ;
- $803B CALL $9ADE    ;
+ $803B CALL $9ADE    ; Init some RAM locations (sound?)
  $803E CALL $90D6    ; Start screen
- $8041 LD HL,$2A30   ;
+ $8041 LD HL,$2A30   ; Set word
  $8044 LD ($7257),HL ;
-*$8047 HALT          ;
+@label=label_at_8047
+*$8047 HALT          ; Wait for interrupt
  $8048 CALL $AFFF    ;
- $804B LD HL,$0000   ;
- $804E CALL $1F79    ;
- $8051 BIT 6,H       ;
- $8053 JR NZ,$8064   ;
- $8055 LD HL,$0100   ;
- $8058 CALL $1F79    ;
- $805B BIT 6,H       ;
- $805D JR Z,$8047    ;
+ $804B LD HL,$0000   ; Controller 0, segment 0
+ $804E CALL $1F79    ; DECODER
+ $8051 BIT 6,H       ; Test fire
+ $8053 JR NZ,$8064   ; Jump if fire pressed
+ $8055 LD HL,$0100   ; Controller 1, segment 0
+ $8058 CALL $1F79    ; DECODER
+ $805B BIT 6,H       ; Test fire
+ $805D JR Z,$8047    ; Loop until fire pressed
  $805F LD HL,$71EB   ;
  $8062 SET 7,(HL)    ;
 ; This entry point is used by the routine at #R$81ED.
+; Fire pressed
 *$8064 LD HL,$0000   ;
  $8067 LD ($7257),HL ;
- $806A LD HL,$1800   ;
+ $806A LD HL,$1800   ; Clear screen
  $806D LD DE,$0300   ;
  $8070 XOR A         ;
- $8071 CALL $1F82    ;
+ $8071 CALL $1F82    ; FILL_VRAM
  $8074 LD HL,$201C   ;
  $8077 LD DE,$0004   ;
  $807A LD A,$F1      ;
- $807C CALL $1F82    ;
+ $807C CALL $1F82    ; FILL_VRAM
  $807F LD HL,$71F1   ;
  $8082 LD DE,$71F2   ;
  $8085 XOR A         ;
@@ -130,21 +272,22 @@ c$8024 LD SP,$73BA   ;
  $80E2 LD ($731C),A  ;
  $80E5 CALL $8212    ;
 ; This entry point is used by the routines at #R$81AE and #R$83D0.
-*$80E8 LD HL,$725A   ;
-*$80EB BIT 0,(HL)    ;
- $80ED JR Z,$80EB    ;
- $80EF RES 0,(HL)    ;
- $80F1 CALL $1FDC    ;
+@label=main_loop
+*$80E8 LD HL,$725A   ; Flag set by interrupt routine
+*$80EB BIT 0,(HL)    ; Test flag
+ $80ED JR Z,$80EB    ; Wait until set
+ $80EF RES 0,(HL)    ; Clear flag
+ $80F1 CALL $1FDC    ; READ_REGISTER
  $80F4 CALL $AFFF    ;
  $80F7 CALL $A73C    ;
  $80FA CALL $85E6    ;
- $80FD CALL $1FDC    ;
+ $80FD CALL $1FDC    ; READ_REGISTER
  $8100 CALL $9796    ;
  $8103 CALL $8E2D    ;
- $8106 CALL $1FDC    ;
+ $8106 CALL $1FDC    ; READ_REGISTER
  $8109 CALL $8BD9    ;
  $810C CALL $AAF1    ;
- $810F CALL $1FDC    ;
+ $810F CALL $1FDC    ; READ_REGISTER
  $8112 CALL $8D50    ;
  $8115 CALL $84B1    ;
  $8118 CALL $AB72    ;
@@ -169,9 +312,10 @@ c$8139 CALL $9B87    ;
  $813E CALL $9EA3    ;
  $8141 LD HL,$71EB   ;
  $8144 RES 6,(HL)    ;
- $8146 CALL $1FDC    ;
+ $8146 CALL $1FDC    ; READ_REGISTER
  $8149 CALL $8AE6    ;
  $814C CALL $A3E1    ;
+@label=label_at_814F
 *$814F LD A,($722C)  ;
  $8152 OR A          ;
  $8153 JR NZ,$815E   ;
@@ -231,7 +375,7 @@ c$81AE LD A,($71EB)  ;
 *$81B9 LD HL,$71A3   ;
  $81BC LD DE,$1300   ;
  $81BF LD BC,$002D   ;
- $81C2 CALL $1FE2    ;
+ $81C2 CALL $1FE2    ; READ_VRAM
  $81C5 LD HL,$71FF   ;
  $81C8 LD DE,$1300   ;
  $81CB LD BC,$002D   ;
@@ -254,15 +398,15 @@ c$81AE LD A,($71EB)  ;
 c$81ED LD HL,$4650   ;
  $81F0 LD ($7257),HL ;
 *$81F3 HALT          ;
- $81F4 LD HL,$0001   ;
- $81F7 CALL $1F79    ;
+ $81F4 LD HL,$0001   ; Controller 0, segment 1
+ $81F7 CALL $1F79    ; DECODER
  $81FA LD A,L        ;
  $81FB CP $0A        ;
  $81FD JP Z,$8064    ;
  $8200 CP $0F        ;
  $8202 JP NZ,$0000   ;
- $8205 LD HL,$0000   ;
- $8208 CALL $1F79    ;
+ $8205 LD HL,$0000   ; Controller 0, segment 0
+ $8208 CALL $1F79    ; DECODER
  $820B BIT 6,H       ;
  $820D JP NZ,$8064   ;
  $8210 JR $81F3      ;
@@ -447,7 +591,7 @@ c$832A LD A,$08      ;
  $832C LD ($7259),A  ;
  $832F LD HL,$71EB   ;
  $8332 RES 6,(HL)    ;
- $8334 CALL $1FDC    ;
+ $8334 CALL $1FDC    ; READ_REGISTER
  $8337 BIT 3,(HL)    ;
  $8339 JP NZ,$8429   ;
 ; This entry point is used by the routines at #R$8450 and #R$846B.
@@ -552,11 +696,11 @@ c$83D0 LD HL,$71EB   ;
  $8406 LD HL,$201C   ;
  $8409 LD DE,$0004   ;
  $840C LD A,$F1      ;
- $840E CALL $1F82    ;
+ $840E CALL $1F82    ; FILL_VRAM
  $8411 LD HL,$0700   ;
  $8414 LD DE,$0100   ;
  $8417 XOR A         ;
- $8418 CALL $1F82    ;
+ $8418 CALL $1F82    ; FILL_VRAM
  $841B LD A,($7256)  ;
  $841E PUSH AF       ;
  $841F CALL $8212    ;
@@ -698,7 +842,7 @@ c$84DB PUSH DE       ;
 c$84ED LD HL,$1920   ;
  $84F0 LD DE,$0020   ;
  $84F3 XOR A         ;
- $84F4 CALL $1F82    ;
+ $84F4 CALL $1F82    ; FILL_VRAM
  $84F7 LD HL,$19C0   ;
  $84FA LD DE,$0020   ;
  $84FD XOR A         ;
@@ -707,6 +851,7 @@ c$84ED LD HL,$1920   ;
 ; Routine at 8501
 ;
 ; Used by the routine at #R$8021.
+@label=interrupt_routine
 c$8501 PUSH IX       ;
  $8503 PUSH IY       ;
  $8505 PUSH HL       ;
@@ -726,12 +871,12 @@ c$8501 PUSH IX       ;
  $851B RST $18       ; WRITE_REGISTER
  $851C LD BC,$0701   ; Black border
  $851F RST $18       ; WRITE_REGISTER
-*$8520 JR $8520      ;
+*$8520 JR $8520      ; Loop
 
 ; Routine at 8522
 ;
 ; Used by the routine at #R$8501.
-c$8522 CALL $9B99    ;
+c$8522 CALL $9B99    ; Sound player?
  $8525 LD A,($71EB)  ;
  $8528 BIT 6,A       ;
  $852A CALL Z,$1FDC  ;
@@ -2140,7 +2285,7 @@ c$8F0F PUSH BC       ;
  $8F3F LD DE,$0002   ;
  $8F42 POP BC        ;
  $8F43 LD A,C        ;
- $8F44 CALL $1F82    ;
+ $8F44 CALL $1F82    ; FILL_VRAM
  $8F47 LD A,($7268)  ;
  $8F4A LD (IY+$06),A ;
  $8F4D ADD A,$10     ;
@@ -2468,7 +2613,7 @@ c$920D PUSH HL       ;
  $9210 LD A,$00      ;
  $9212 LD HL,$18E0   ;
  $9215 LD DE,$0020   ;
- $9218 CALL $1F82    ;
+ $9218 CALL $1F82    ; FILL_VRAM
  $921B POP BC        ;
  $921C POP DE        ;
  $921D POP HL        ;
@@ -2550,7 +2695,7 @@ c$9285 LD DE,$1400   ;
  $928C PUSH HL       ;
  $928D LD BC,$0048   ;
  $9290 LD HL,$71A3   ;
- $9293 CALL $1FE2    ;
+ $9293 CALL $1FE2    ; READ_VRAM
  $9296 POP DE        ;
  $9297 PUSH DE       ;
  $9298 LD BC,$0048   ;
@@ -3265,6 +3410,8 @@ c$9AD0 LD A,E        ; Set LSB of VDP address
 ; Routine at 9ADE
 ;
 ; Used by the routine at #R$8024.
+;
+; Sound init?
 c$9ADE CALL $1FD6      ; TURN_OFF_SOUND
  $9AE1 LD HL,$727D     ;
  $9AE4 LD DE,$000A     ;
@@ -3372,7 +3519,7 @@ c$9B87 XOR A         ;
 ; Routine at 9B99
 ;
 ; Used by the routine at #R$8522.
-c$9B99 CALL $A2BB      ;
+c$9B99 CALL $A2BB      ; Sound player?
  $9B9C CALL $9D67      ;
  $9B9F LD A,($727A)    ;
  $9BA2 AND A           ;
@@ -3985,6 +4132,7 @@ b$9EB6 DEFB $35,$39,$3C,$40,$43,$47,$4C,$50
 ; Routine at A2BB
 ;
 ; Used by the routine at #R$9B99.
+@label=sound_player
 c$A2BB LD A,$9F      ;
  $A2BD LD C,$90      ;
  $A2BF LD D,$80      ;
@@ -4122,7 +4270,7 @@ c$A33B LD HL,$80B5     ;
  $A3C7 LD HL,$1A00     ;
  $A3CA LD DE,$0020     ;
  $A3CD XOR A           ;
- $A3CE CALL $1F82      ;
+ $A3CE CALL $1F82      ; FILL_VRAM
  $A3D1 LD A,($71EB)    ;
  $A3D4 BIT 7,A         ;
  $A3D6 RET Z           ;
@@ -4336,7 +4484,7 @@ c$A6C8 AND $0F       ;
 c$A6D2 LD HL,$1AE2   ;
  $A6D5 LD DE,$0009   ;
  $A6D8 XOR A         ;
- $A6D9 CALL $1F82    ;
+ $A6D9 CALL $1F82    ; FILL_VRAM
  $A6DC LD A,($71FF)  ;
  $A6DF DEC A         ;
  $A6E0 RET Z         ;
@@ -4407,9 +4555,9 @@ c$A6EC PUSH DE       ;
 c$A73C LD A,($71F2)    ;
  $A73F AND $01         ;
  $A741 RET NZ          ;
- $A742 LD HL,($71F0)   ;
- $A745 LD L,$00        ;
- $A747 CALL $1F79      ;
+ $A742 LD HL,($71F0)   ; Controller
+ $A745 LD L,$00        ; Segment 0
+ $A747 CALL $1F79      ; DECODER
  $A74A LD H,$00        ;
  $A74C LD DE,$A865     ;
  $A74F ADD HL,DE       ;
@@ -4440,13 +4588,13 @@ c$A73C LD A,($71F2)    ;
  $A786 RET NZ          ;
  $A787 LD HL,($71F0)   ;
  $A78A PUSH HL         ;
- $A78B LD L,$00        ;
- $A78D CALL $1F79      ;
+ $A78B LD L,$00        ; Segment 0
+ $A78D CALL $1F79      ; DECODER
  $A790 LD A,H          ;
  $A791 POP HL          ;
  $A792 PUSH AF         ;
- $A793 LD L,$01        ;
- $A795 CALL $1F79      ;
+ $A793 LD L,$01        ; Segment 1
+ $A795 CALL $1F79      ; DECODER
  $A798 POP AF          ;
  $A799 OR H            ;
  $A79A LD HL,$7256     ;
@@ -4851,7 +4999,7 @@ c$AB72 LD HL,$72CB   ;
  $ABB7 LD ($72D0),HL ;
  $ABBA LD DE,$0080   ;
  $ABBD XOR A         ;
- $ABBE CALL $1F82    ;
+ $ABBE CALL $1F82    ; FILL_VRAM
  $ABC1 LD A,($72CD)  ;
 *$ABC4 LD C,A        ;
  $ABC5 LD B,$00      ;
@@ -4996,7 +5144,7 @@ c$ACF9 LD DE,($73F2) ;
  $AD0E RST $08       ;
  $AD0F LD BC,$0004   ;
  $AD12 PUSH DE       ;
- $AD13 CALL $1FDF    ;
+ $AD13 CALL $1FDF    ; WRITE_VRAM
  $AD16 POP HL        ;
  $AD17 LD BC,$0004   ;
  $AD1A ADD HL,BC     ;
@@ -5143,7 +5291,7 @@ c$ADD1 SRL A         ;
  $ADF5 EX DE,HL      ;
  $ADF6 LD HL,$71A3   ;
  $ADF9 LD BC,$0008   ;
- $ADFC CALL $1FE2    ;
+ $ADFC CALL $1FE2    ; READ_VRAM
  $ADFF LD A,(IX+$0A) ;
  $AE02 ADD A,A       ;
  $AE03 ADD A,A       ;
@@ -5152,7 +5300,7 @@ c$ADD1 SRL A         ;
  $AE06 LD D,$08      ;
  $AE08 LD HL,$71A3   ;
  $AE0B LD BC,$0008   ;
- $AE0E CALL $1FDF    ;
+ $AE0E CALL $1FDF    ; WRITE_VRAM
 *$AE11 LD A,(IX+$00) ;
  $AE14 CP $01        ;
  $AE16 JR Z,$AE2B    ;
@@ -5294,7 +5442,7 @@ c$AE94 LD A,($72D5)   ;
 *$AF15 LD HL,($72DE)  ;
  $AF18 LD DE,($72D8)  ;
  $AF1C LD BC,$0008    ;
- $AF1F CALL $1FDF     ;
+ $AF1F CALL $1FDF     ; WRITE_VRAM
  $AF22 LD HL,($72D8)  ;
  $AF25 LD BC,$0008    ;
  $AF28 ADD HL,BC      ;
