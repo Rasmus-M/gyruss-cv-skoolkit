@@ -17,7 +17,11 @@ b $7183 Sprite allocation table
 B $7183,32,8
 b $71A3 Data block at 71A3
 @ $71A3 label=buffer
-B $71A3,180,8*22,4
+B $71A3,72,8
+b $71EB Byte at 71EB
+B $71EB,1,1
+b $71EC Data block at 71EC
+B $71EC,107,8*13,3
 w $7257 Word at 7257
 @ $7257 label=word_at_7257
 W $7257,2,2
@@ -65,13 +69,14 @@ C $801E,3 WRITE_VRAM (HL = source, DE = dest, BC = count)
 c $8021 NMI
 C $8021,3 Interrupt routine
 c $8024 Entry point
+@ $8024 label=main
 C $8027,2 Controller enable
 C $8029,3 Clear RAM
 C $8035,3 Set word
 C $803B,3 Init some RAM locations (sound?)
 C $803E,3 Start screen
 C $8041,3 Set word
-@ $8047 label=label_at_8047
+@ $8047 label=main_wait_fire
 C $8047,1 Wait for interrupt
 C $804B,3 Controller 0, segment 0
 C $804E,3 DECODER
@@ -415,7 +420,7 @@ C $9139,2 Loop for 2 rows
 C $913B,3 Init something in RAM (sprites?)
 C $913E,2 Planet number
 C $9140,3 Draw planet 6 (Earth)
-C $9143,3 Display ?
+C $9143,3 Upload sprite data
 C $9146,3 Clear row 7
 C $9149,3 Copyright message
 C $914C,3 Name table address
@@ -881,16 +886,44 @@ D $ACDF Used by the routines at #R$82BF, #R$90D6 and #R$A33B.
 C $ACDF,4 Address of sprite data
 C $ACE3,3 Size of each sprite
 C $ACE6,2 Number of sprites
-C $ACE9,3 Number of allocated sprites?
+C $ACE9,3 Number of allocated sprites
 C $ACEC,3 Set index (pattern?)
 C $ACEF,4 Set as unallocated
 C $ACF4,2 Advance to next sprite
 C $ACF6,2 Loop for 32 sprites
-c $ACF9 Routine at ACF9
+c $ACF9 Upload sprite data to VDP
 D $ACF9 Used by the routines at #R$8368, #R$84B1, #R$90D6, #R$A33B and #R$A3E1.
+@ $ACF9 label=upload_sprite_data
+C $ACF9,4 VDP address of sprite allocation table?
+C $ACFD,3 Number of allocated sprites
+C $AD00,1 Get
+C $AD01,1 Store in B
+C $AD03,1 Next allocation
+C $AD04,1 Get sprite index
+C $AD05,1 * 2
+C $AD06,1 * 4
+C $AD08,1 * 8
+C $AD09,1 * 12 (may overflow?)
+C $AD0B,3 Base pattern in sprite data table (why not y?)
 C $AD0E,1 add_a_to_hl
+C $AD0F,3 Write 4 bytes for each sprite
 C $AD13,3 WRITE_VRAM
+C $AD17,3 Add 4 to destination
+C $AD1E,2 Loop for each sprite
+C $AD20,2 End byte
 C $AD22,1 vdp_write_byte
+C $AD23,3 Get number of allocation sprites
+C $AD26,2 Is it < 5
+C $AD28,1 Then return
+N $AD29 Rotate sprite allocation table
+C $AD2B,1 Number of sprites above 4
+C $AD2F,3 From 2nd entry of allocation table
+C $AD32,3 To buffer
+C $AD35,3 Copy 2 bytes
+C $AD3A,3 From 4th to 2nd entry of allocation table
+C $AD3D,1 Copy number of sprites above 4 bytes
+C $AD40,3 From buffer to end of allocation table
+C $AD43,3 Copy 2 bytes
 c $AD49 Allocate sprite (RST $28)
 D $AD49 Used by the routine at #R$8018.
 R $AD49 O:IX holds sprite address
@@ -949,15 +982,15 @@ D $AFAE Used by the routine at #R$AE94.
 c $AFC2 Routine at AFC2
 D $AFC2 Used by the routine at #R$AE94.
 b $AFDD Data block at AFDD
-B $AFDD,343,8*42,7
+c $AFFF
+b $B04F
 b $B134 Stars
 @ $B134 label=stars
 B $B134,2,2
 b $B136 Star patterns
 B $B136,144,8
-b $B1C6 Data block at B1C6
-D $B1C6 Used by the routines at #R$8F0F, #R$8F55, #R$A471, #R$AB72 and #R$ADD1.
-B $B1C6,2080,8
+c $B1C6
+b $B21D
 b $B9E6 Graphics
 B $B9E6,1480,8
 c $BFAE Routine at BFAE

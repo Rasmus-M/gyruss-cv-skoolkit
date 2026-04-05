@@ -23,7 +23,7 @@ Next: <a href="44361.html">AD49</a>
 </td>
 </tr>
 </table>
-<div class="description">ACF9: Routine at ACF9</div>
+<div class="description">ACF9: Upload sprite data to VDP</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -35,31 +35,31 @@ Used by the routines at <a href="33640.html">L8368</a>, <a href="33969.html">L84
 </td>
 </tr>
 <tr>
-<td class="asm-label">LACF9</td>
+<td class="asm-label">upload_sprite_data</td>
 <td class="address-2"><span id="44281"></span>ACF9</td>
 <td class="instruction">LD DE,($73F2)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">VDP address of sprite allocation table?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44285"></span>ACFD</td>
 <td class="instruction">LD HL,<a href="29058.html">allocated_sprites</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Number of allocated sprites</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44288"></span>AD00</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44289"></span>AD01</td>
 <td class="instruction">LD B,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Store in B</td>
 </tr>
 <tr>
-<td class="asm-label">LACF9_0</td>
+<td class="asm-label">upload_sprite_data_0</td>
 <td class="address-2"><span id="44290"></span>AD02</td>
 <td class="instruction">PUSH BC</td>
 <td class="comment-1" rowspan="1"></td>
@@ -68,25 +68,25 @@ Used by the routines at <a href="33640.html">L8368</a>, <a href="33969.html">L84
 <td class="asm-label"></td>
 <td class="address-1"><span id="44291"></span>AD03</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Next allocation</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44292"></span>AD04</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get sprite index</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44293"></span>AD05</td>
 <td class="instruction">ADD A,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">* 2</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44294"></span>AD06</td>
 <td class="instruction">ADD A,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">* 4</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -98,13 +98,13 @@ Used by the routines at <a href="33640.html">L8368</a>, <a href="33969.html">L84
 <td class="asm-label"></td>
 <td class="address-1"><span id="44296"></span>AD08</td>
 <td class="instruction">ADD A,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">* 8</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44297"></span>AD09</td>
 <td class="instruction">ADD A,C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">* 12 (may overflow?)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -116,7 +116,7 @@ Used by the routines at <a href="33640.html">L8368</a>, <a href="33969.html">L84
 <td class="asm-label"></td>
 <td class="address-1"><span id="44299"></span>AD0B</td>
 <td class="instruction">LD HL,$700A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Base pattern in sprite data table (why not y?)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -128,7 +128,7 @@ Used by the routines at <a href="33640.html">L8368</a>, <a href="33969.html">L84
 <td class="asm-label"></td>
 <td class="address-1"><span id="44303"></span>AD0F</td>
 <td class="instruction">LD BC,$0004</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write 4 bytes for each sprite</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -152,7 +152,7 @@ Used by the routines at <a href="33640.html">L8368</a>, <a href="33969.html">L84
 <td class="asm-label"></td>
 <td class="address-1"><span id="44311"></span>AD17</td>
 <td class="instruction">LD BC,$0004</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add 4 to destination</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -181,14 +181,14 @@ Used by the routines at <a href="33640.html">L8368</a>, <a href="33969.html">L84
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44318"></span>AD1E</td>
-<td class="instruction">DJNZ <a href="44281.html#44290">LACF9_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">DJNZ <a href="44281.html#44290">upload_sprite_data_0</a></td>
+<td class="comment-1" rowspan="1">Loop for each sprite</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44320"></span>AD20</td>
 <td class="instruction">LD A,$D0</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">End byte</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -200,19 +200,29 @@ Used by the routines at <a href="33640.html">L8368</a>, <a href="33969.html">L84
 <td class="asm-label"></td>
 <td class="address-1"><span id="44323"></span>AD23</td>
 <td class="instruction">LD A,(<a href="29058.html">allocated_sprites</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get number of allocation sprites</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44326"></span>AD26</td>
 <td class="instruction">CP $05</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Is it &lt; 5</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44328"></span>AD28</td>
 <td class="instruction">RET C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Then return</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="44329"></span>
+<div class="comments">
+<div class="paragraph">
+Rotate sprite allocation table
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -224,7 +234,7 @@ Used by the routines at <a href="33640.html">L8368</a>, <a href="33969.html">L84
 <td class="asm-label"></td>
 <td class="address-1"><span id="44331"></span>AD2B</td>
 <td class="instruction">LD C,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Number of sprites above 4</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -242,19 +252,19 @@ Used by the routines at <a href="33640.html">L8368</a>, <a href="33969.html">L84
 <td class="asm-label"></td>
 <td class="address-1"><span id="44335"></span>AD2F</td>
 <td class="instruction">LD HL,$7185</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">From 2nd entry of allocation table</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44338"></span>AD32</td>
 <td class="instruction">LD DE,<a href="29091.html">buffer</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">To buffer</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44341"></span>AD35</td>
 <td class="instruction">LD BC,$0002</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Copy 2 bytes</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -266,13 +276,13 @@ Used by the routines at <a href="33640.html">L8368</a>, <a href="33969.html">L84
 <td class="asm-label"></td>
 <td class="address-1"><span id="44346"></span>AD3A</td>
 <td class="instruction">LD DE,$7185</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">From 4th to 2nd entry of allocation table</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44349"></span>AD3D</td>
 <td class="instruction">POP BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Copy number of sprites above 4 bytes</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -284,13 +294,13 @@ Used by the routines at <a href="33640.html">L8368</a>, <a href="33969.html">L84
 <td class="asm-label"></td>
 <td class="address-1"><span id="44352"></span>AD40</td>
 <td class="instruction">LD HL,<a href="29091.html">buffer</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">From buffer to end of allocation table</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44355"></span>AD43</td>
 <td class="instruction">LD BC,$0002</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Copy 2 bytes</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
