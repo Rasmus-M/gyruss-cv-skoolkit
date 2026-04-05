@@ -29,7 +29,7 @@ Next: <a href="37324.html">91CC</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="37237.html">L9175</a>.
+Used by the routine at <a href="37237.html">display_planet</a>.
 </div>
 </div>
 </td>
@@ -37,14 +37,14 @@ Used by the routine at <a href="37237.html">L9175</a>.
 <tr>
 <td class="asm-label">L91A1</td>
 <td class="address-2"><span id="37281"></span>91A1</td>
-<td class="instruction">CALL <a href="37389.html">L920D</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL <a href="37389.html">clear_row_7</a></td>
+<td class="comment-1" rowspan="1">Clear row 7</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37284"></span>91A4</td>
-<td class="instruction">LD HL,$71A3</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD HL,<a href="29091.html">buffer</a></td>
+<td class="comment-1" rowspan="1">Clear 16 bytes in RAM</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -73,42 +73,42 @@ Used by the routine at <a href="37237.html">L9175</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37297"></span>91B1</td>
-<td class="instruction">LD HL,$71A3</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD HL,<a href="29091.html">buffer</a></td>
+<td class="comment-1" rowspan="1">Use cleared bytes as planet data</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="37300"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="37237.html">L9175</a>.
+This entry point is used by the routine at <a href="37237.html">display_planet</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L91A1_0</td>
+<td class="asm-label">display_planet_name_table</td>
 <td class="address-2"><span id="37300"></span>91B4</td>
 <td class="instruction">LD DE,$194E</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Address in name table</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37303"></span>91B7</td>
 <td class="instruction">LD C,$04</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">4 rows</td>
+</tr>
+<tr>
+<td class="asm-label">L91A1_0</td>
+<td class="address-2"><span id="37305"></span>91B9</td>
+<td class="instruction">LD B,$04</td>
+<td class="comment-1" rowspan="1">4 columns</td>
 </tr>
 <tr>
 <td class="asm-label">L91A1_1</td>
-<td class="address-2"><span id="37305"></span>91B9</td>
-<td class="instruction">LD B,$04</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label">L91A1_2</td>
 <td class="address-2"><span id="37307"></span>91BB</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get name to write</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -120,61 +120,61 @@ This entry point is used by the routine at <a href="37237.html">L9175</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="37309"></span>91BD</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Next destination</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37310"></span>91BE</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Next source</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37311"></span>91BF</td>
-<td class="instruction">DJNZ <a href="37281.html#37307">L91A1_2</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">DJNZ <a href="37281.html#37307">L91A1_1</a></td>
+<td class="comment-1" rowspan="1">Loop for 4 columns</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37313"></span>91C1</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save source</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37314"></span>91C2</td>
 <td class="instruction">LD HL,$001C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">32 - 4</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37317"></span>91C5</td>
 <td class="instruction">ADD HL,DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">One row down</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37318"></span>91C6</td>
 <td class="instruction">EX DE,HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">To DE</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37319"></span>91C7</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore source</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37320"></span>91C8</td>
 <td class="instruction">DEC C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Row counter</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37321"></span>91C9</td>
-<td class="instruction">JR NZ,<a href="37281.html#37305">L91A1_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="37281.html#37305">L91A1_0</a></td>
+<td class="comment-1" rowspan="1">Loop for 4 rows</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

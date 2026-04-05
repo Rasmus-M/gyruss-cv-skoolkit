@@ -29,7 +29,7 @@ Next: <a href="34011.html">84DB</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="37078.html">L90D6</a>.
+Used by the routine at <a href="37078.html">start_screen</a>.
 </div>
 </div>
 <table class="input">
@@ -37,8 +37,8 @@ Used by the routine at <a href="37078.html">L90D6</a>.
 <th colspan="2">Input</th>
 </tr>
 <tr>
-<td class="register">Draw</td>
-<td class="register-desc">graphics</td>
+<td class="register">Upload</td>
+<td class="register-desc">patterns</td>
 </tr>
 </table>
 </td>
@@ -53,7 +53,7 @@ Used by the routine at <a href="37078.html">L90D6</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="33997"></span>84CD</td>
 <td class="instruction">LD E,(HL)</td>
-<td class="comment-1" rowspan="1">$80, DE=$0080 (start index)</td>
+<td class="comment-1" rowspan="1">DE = start index</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -65,13 +65,13 @@ Used by the routine at <a href="37078.html">L90D6</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="33999"></span>84CF</td>
 <td class="instruction">LD C,(HL)</td>
-<td class="comment-1" rowspan="1">$14</td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34000"></span>84D0</td>
 <td class="instruction">LD B,$00</td>
-<td class="comment-1" rowspan="1">BC=$0014</td>
+<td class="comment-1" rowspan="1">BC = count</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -83,13 +83,13 @@ Used by the routine at <a href="37078.html">L90D6</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="34003"></span>84D3</td>
 <td class="instruction">POP IY</td>
-<td class="comment-1" rowspan="1">IY=$0014 (count = 20 patterns)</td>
+<td class="comment-1" rowspan="1">IY = count</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34005"></span>84D5</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1">HL points to graphics data</td>
+<td class="comment-1" rowspan="1">HL now points to graphics data</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

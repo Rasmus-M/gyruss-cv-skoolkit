@@ -35,7 +35,7 @@ Used by the routine at <a href="32801.html">L8021</a>.
 </td>
 </tr>
 <tr>
-<td class="asm-label">L8501</td>
+<td class="asm-label">interrupt_routine</td>
 <td class="address-2"><span id="34049"></span>8501</td>
 <td class="instruction">PUSH IX</td>
 <td class="comment-1" rowspan="1"></td>
@@ -73,7 +73,7 @@ Used by the routine at <a href="32801.html">L8021</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34057"></span>8509</td>
-<td class="instruction">LD HL,($7257)</td>
+<td class="instruction">LD HL,(<a href="29271.html">word_at_7257</a>)</td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -103,7 +103,7 @@ Used by the routine at <a href="32801.html">L8021</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34065"></span>8511</td>
-<td class="instruction">LD ($7257),HL</td>
+<td class="instruction">LD (<a href="29271.html">word_at_7257</a>),HL</td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -149,10 +149,10 @@ Used by the routine at <a href="32801.html">L8021</a>.
 <td class="comment-1" rowspan="1">WRITE_REGISTER</td>
 </tr>
 <tr>
-<td class="asm-label">L8501_0</td>
+<td class="asm-label">interrupt_routine_0</td>
 <td class="address-2"><span id="34080"></span>8520</td>
-<td class="instruction">JR <a href="34049.html#34080">L8501_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR <a href="34049.html#34080">interrupt_routine_0</a></td>
+<td class="comment-1" rowspan="1">Loop</td>
 </tr>
 </table>
 <table class="asm-navigation">

@@ -2,13 +2,40 @@
 @ $4000 org
 s $4000 Unused
 S $4000,12288,$3000
-b $7000 RAM
-B $7000,602,8*75,2
-b $725A Flag
+w $7000 RAM
+D $7000 Word at 7000
+@ $7000 label=word_at_7000
+W $7000,2,2
+b $7002 Sprite data
+@ $7002 label=sprite_data
+B $7002,384,12
+b $7182 Number of allocated sprites
+@ $7182 label=allocated_sprites
+B $7182,1,1
+b $7183 Sprite allocation table
+@ $7183 label=sprite_alloc_table
+B $7183,32,8
+b $71A3 Data block at 71A3
+@ $71A3 label=buffer
+B $71A3,180,8*22,4
+w $7257 Word at 7257
+@ $7257 label=word_at_7257
+W $7257,2,2
+b $7259 Data block at 7259
+B $7259,1,1
+b $725A Interrupt flag
 @ $725A label=interrupt_flag
 B $725A,1,1
 b $725B Data block at 725B
-B $725B,421,8*52,5
+B $725B,15,8,7
+w $726A Word at 726A
+@ $726A label=word_at_726A
+W $726A,2,2
+b $726C Byte at 726C
+@ $726C label=byte_at_726C
+B $726C,1,1
+b $726D Data block at 726D
+B $726D,403,8*50,3
 s $7400 Unused
 S $7400,3072,$0C00
 b $8000 ROM header
@@ -23,21 +50,19 @@ w $8008 Pointer to controller memory map
 W $8008,2,2
 w $800A Pointer to start address
 W $800A,2,2
-c $800C Routine at 800C
-C $800C,3 RST $08: add_a_to_hl
-c $800F Routine at 800F
-C $800F,3 RST $10: vdp_write_byte (DE = address, A = value)
-c $8012 Routine at 8012
-C $8012,3 RST $18: WRITE_REGISTER (B = reg, C = value)
-c $8015 Routine at 8015
-C $8015,3 RST $20
-c $8018 Routine at 8018
-C $8018,3 RST $28
-c $801B Routine at 801B
-C $801B,3 RST $30
-c $801E Routine at 801E
-C $801E,3 RST $38: WRITE_VRAM (HL = source, DE = dest, BC = count)
-c $8021 Routine at 8021
+c $800C RST $08
+C $800C,3 add_a_to_hl
+c $800F RST $10
+C $800F,3 vdp_write_byte (DE = address, A = value)
+c $8012 RST $18
+C $8012,3 WRITE_REGISTER (B = reg, C = value)
+c $8015 RST $20
+c $8018 RST $28
+C $8018,3 allocate_sprite
+c $801B RST $30
+c $801E RST $38
+C $801E,3 WRITE_VRAM (HL = source, DE = dest, BC = count)
+c $8021 NMI
 C $8021,3 Interrupt routine
 c $8024 Entry point
 C $8027,2 Controller enable
@@ -106,6 +131,7 @@ D $825F Used by the routine at #R$823E.
 C $8265,1 vdp_write_byte
 N $8267 This entry point is used by the routine at #R$823E.
 C $826A,1 vdp_write_byte
+C $827C,1 add_a_to_hl
 c $82BA Routine at 82BA
 D $82BA Used by the routine at #R$825F.
 c $82BF Routine at 82BF
@@ -146,12 +172,11 @@ c $84B1 Routine at 84B1
 D $84B1 Used by the routines at #R$8024, #R$8139, #R$832A, #R$8368, #R$846B, #R$A33B and #R$A3E1.
 c $84CB Routine at 84CB
 D $84CB Used by the routine at #R$90D6.
-R $84CB Draw graphics
-C $84CD,1 $80, DE=$0080 (start index)
-C $84CF,1 $14
-C $84D0,2 BC=$0014
-C $84D3,2 IY=$0014 (count = 20 patterns)
-C $84D5,1 HL points to graphics data
+R $84CB Upload patterns
+C $84CD,1 DE = start index
+C $84D0,2 BC = count
+C $84D3,2 IY = count
+C $84D5,1 HL now points to graphics data
 C $84D6,2 Table code (3 = pattern generator table)
 C $84D8,3 PUT_VRAM
 c $84DB Routine at 84DB
@@ -259,6 +284,7 @@ c $88A7 Routine at 88A7
 D $88A7 Used by the routine at #R$8878.
 c $88BE Routine at 88BE
 D $88BE Used by the routine at #R$8878.
+C $88C4,1 add_a_to_hl
 N $88CF This entry point is used by the routine at #R$8878.
 c $88D4 Routine at 88D4
 D $88D4 Used by the routines at #R$8878 and #R$88BE.
@@ -314,6 +340,7 @@ N $8C57 This entry point is used by the routine at #R$8C30.
 c $8C68 Routine at 8C68
 D $8C68 Used by the routine at #R$8BD9.
 N $8C6D This entry point is used by the routine at #R$8C52.
+C $8CA0,1 add_a_to_hl
 c $8D21 Routine at 8D21
 D $8D21 Used by the routine at #R$8170.
 c $8D50 Routine at 8D50
@@ -346,19 +373,53 @@ b $9046 Data block at 9046
 B $9046,16,8
 b $9056 Graphics
 B $9056,128,8
-c $90D6 Routine at 90D6
+c $90D6 Start screen
 D $90D6 Used by the routine at #R$8024.
-C $90D6,3 MODE_1
+@ $90D6 label=start_screen
+C $90D6,3 MODE_1 (pattern generator table at  $0000, name table at $1800, color table at $2000)
+C $90D9,3 Set sprite generator table at $0800 (was $3800)
 C $90DE,3 INIT_TABLE
+C $90E1,3 Set sprite attribute table at $1C00 (was $1B00)
 C $90E6,3 INIT_TABLE
+C $90E9,2 Clear all VDP RAM
 C $90F1,3 FILL_VRAM
 C $90F4,3 LOAD_ASCII
+C $90F7,3 Stars
+C $90FA,3 Upload 18 star patterns starting with 1
+C $90FD,3 Save pattern 33 from VDP to RAM
 C $9106,3 READ_VRAM
+C $9109,3 Write it back to VDP patern 63
 C $9112,1 WRITE_VRAM
+C $9113,3 Write ship pattern to pattern 33
 C $911C,1 WRITE_VRAM
-C $9120,3 Planet data?
+C $911D,3 Upload patterns to VDP buffer
+C $9120,3 Gyruss logo names
+C $9123,3 Name table address
+C $9126,2 2 rows
+@ $9128 label=logo_row
+C $9128,2 6 letters
+@ $912A label=logo_letter
+C $912A,1 Get name
 C $912B,1 vdp_write_byte
+C $912C,1 Next destination
+C $912D,1 Next source
+C $912E,1 Get name
 C $912F,1 vdp_write_byte
+C $9130,1 Next destination
+C $9131,1 Next destination (skip space)
+C $9132,1 Next source
+C $9133,2 Loop for 6 letters
+C $9135,3 Name table address of next row
+C $9138,1 Row counter
+C $9139,2 Loop for 2 rows
+C $913B,3 Init something in RAM (sprites?)
+C $913E,2 Planet number
+C $9140,3 Draw planet 6 (Earth)
+C $9143,3 Display ?
+C $9146,3 Clear row 7
+C $9149,3 Copyright message
+C $914C,3 Name table address
+C $914F,3 23 bytes
 C $9152,1 WRITE_VRAM
 C $9153,3 Color table address
 C $9156,3 Colors
@@ -368,34 +429,135 @@ C $915D,3 Gyruss logo
 C $9160,3 Upload 20 patterns starting with 128
 C $9163,3 Display on, interrupt on
 C $9166,1 WRITE_REGISTER
-c $9175 Routine at 9175
+@ $9167 label=start_screen_loop
+C $9167,1 Wait for interrupt
+C $9172,2 Loop until ...
+c $9175 Display planet
 D $9175 Used by the routines at #R$8368, #R$83D0 and #R$90D6.
+R $9175 I:A Index of planet (1 based)
+@ $9175 label=display_planet
+C $9175,1 a *= 2
+C $9176,2 If zero then undraw planet
+C $9178,3 Planet table minus 2: #R$9398-2
+C $917B,1 add_a_to_hl
+C $917C,1 Get LSB of planet data
+C $917E,1 Get MSB of planet data
+C $917F,1 Address now in HL
+C $9180,3 Draw to name table
+C $918C,3 Planet colors
+C $918F,3 Address in color table
+C $9192,3 16 color sets
 C $9195,1 WRITE_VRAM
+C $9196,3 Address in sprite pattern table
+C $9199,3 Sprite patterns
+C $919C,3 19 patterns
 C $919F,1 WRITE_VRAM
 c $91A1 Routine at 91A1
 D $91A1 Used by the routine at #R$9175.
+C $91A1,3 Clear row 7
+C $91A4,3 Clear 16 bytes in RAM
+C $91B1,3 Use cleared bytes as planet data
 N $91B4 This entry point is used by the routine at #R$9175.
+@ $91B4 label=display_planet_name_table
+C $91B4,3 Address in name table
+C $91B7,2 4 rows
+C $91B9,2 4 columns
+C $91BB,1 Get name to write
 C $91BC,1 vdp_write_byte
-c $91CC Routine at 91CC
+C $91BD,1 Next destination
+C $91BE,1 Next source
+C $91BF,2 Loop for 4 columns
+C $91C1,1 Save source
+C $91C2,3 32 - 4
+C $91C5,1 One row down
+C $91C6,1 To DE
+C $91C7,1 Restore source
+C $91C8,1 Row counter
+C $91C9,2 Loop for 4 rows
+c $91CC Display planet name and sprites
 D $91CC Used by the routine at #R$9175.
+R $91CC I:HL address of planet name prefixed by length
+@ $91CC label=display_planet_name_and_sprites
+C $91CC,1 Save address
+C $91CD,3 clear_row_7
+C $91D0,2 32
+C $91D2,1 32 - length
+C $91D3,2 (32 - length) / 2
+C $91D5,3 Name table address of row
+C $91D9,1 add_a_to_hl
+C $91DA,1 DE = display address
+C $91DB,1 Get length
+C $91DE,1 Advance source to text
 C $91DF,1 WRITE_VRAM
-c $920D Routine at 920D
+C $91E0,1 Restore address
+C $91E1,1 Get length
+C $91E2,1 Length + 1
+C $91E3,1 add_a_to_hl. Now HL points after text.
+C $91E4,1 Get number of sprites
+C $91E5,1 Next source byte
+C $91E6,1 Get color
+C $91E7,1 Next source byte
+C $91E8,1 Get pattern?
+C $91E9,2 Add 32
+C $91EB,1 Store in E
+C $91EC,1 Next source byte
+C $91ED,1 Allocate sprite
+C $91EE,4 Mark as allocated?
+C $91F2,1 Get y
+C $91F3,1 Store in D
+C $91F4,2 Only use 7 bits of y
+C $91F6,3 Set y
+C $91F9,1 Next source byte
+C $91FA,1 Get x
+C $91FB,3 Set x
+C $91FE,1 Next source byte
+C $91FF,3 Set pattern
+C $9202,3 Set color
+C $9205,2 If bit 7 of y is set
+C $9207,2 Then skip
+C $9209,1 Else increment pattern
+C $920A,2 Loop to next sprite
+c $920D Clear name table row 7
 D $920D Used by the routines at #R$8368, #R$90D6, #R$91A1 and #R$91CC.
+@ $920D label=clear_row_7
+C $9210,2 Space
+C $9212,3 Address in name table (row 7)
+C $9215,3 32 bytes
 C $9218,3 FILL_VRAM
-c $921F Routine at 921F
+c $921F Upload patterns to VDP buffer at $1400
 D $921F Used by the routine at #R$90D6.
+C $921F,3 Number of bytes in block at $9475
+C $9222,3 Save it
+C $9225,1 A = 0
+C $9226,3 Save it
+C $9229,3 Source address
+C $922C,3 Destination buffer in VDP RAM
 N $922F This entry point is used by the routine at #R$924E.
+C $9233,1 Return when done
 C $9248,1 vdp_write_byte
+C $924C,2 Loop
 c $924E Routine at 924E
 D $924E Used by the routine at #R$921F.
 C $9251,1 vdp_write_byte
 c $9255 Routine at 9255
 D $9255 Used by the routines at #R$921F and #R$924E.
 N $9257 This entry point is used by the routine at #R$921F.
-c $9285 Routine at 9285
+c $9285 Copy 135 patterns from VDP RAM buffer into pattern table from 128
 D $9285 Used by the routine at #R$9175.
+R $9285 I:HL Pattern generator table destination address ($0400)
+C $9288,2 Counter
+C $928D,3 Read 9 patterns from $1400 (?)
+C $9290,3 Into buffer
 C $9293,3 READ_VRAM
+C $9296,1 DE = $0400
+C $9298,3 Write 9 patterns from buffer
+C $929B,3 To $0400 (pattern 128)
 C $929E,1 WRITE_VRAM
+C $929F,1 HL = $0400
+C $92A3,1 Advance 9 patterns, HL = $0448
+C $92A4,1 DE = $1400
+C $92A7,1 DE = $1448
+C $92A9,2 Loop 15 times = 135 patterns
 b $92AC Data block at 92AC
 @ $92AC label=copyright_msg
 B $92AC,1,1
@@ -412,32 +574,63 @@ b $92DE Gyruss logo
 B $92DE,2,2
 b $92E0 Logo patterns
 B $92E0,160,8
-b $9380 Data block at 9380
-B $9380,53,8*6,5
+b $9380 Gyruss logo names
+B $9380,24,8
+w $9398 Planet table
+@ $9398 label=planet_table
+W $9398,12,2
+b $93A4 Neptune
+@ $93A4 label=neptune
+B $93A4,17,4*4,1
 t $93B5 Message at 93B5
 T $93B5,7,7
 b $93BC Data block at 93BC
-B $93BC,28,8*3,4
+B $93BC,11,8,3
+b $93C7 Uranus
+@ $93C7 label=uranus
+B $93C7,17,4*4,1
 t $93D8 Message at 93D8
 T $93D8,6,6
 b $93DE Data block at 93DE
-B $93DE,36,8*4,4
+B $93DE,19,8*2,3
+b $93F1 Saturn
+@ $93F1 label=saturn
+B $93F1,17,4*4,1
 t $9402 Message at 9402
 T $9402,6,6
 b $9408 Data block at 9408
-B $9408,32,8
+B $9408,15,8,7
+b $9417 Jupiter
+@ $9417 label=jupiter
+B $9417,17,4*4,1
 t $9428 Message at 9428
 T $9428,7,7
 b $942F Data block at 942F
-B $942F,26,8*3,2
+B $942F,9,8,1
+b $9438 Mars
+@ $9438 label=mars
+B $9438,17,4*4,1
 t $9449 Message at 9449
 T $9449,4,4
 b $944D Data block at 944D
-B $944D,24,8
+B $944D,7,7
+b $9454 Earth
+@ $9454 label=earth
+B $9454,17,4*4,1
 t $9465 Message at 9465
 T $9465,5,5
 b $946A Data block at 946A
-B $946A,812,8*101,4
+B $946A,10,8,2
+b $9474 Data block at 9474
+B $9474,1,1
+b $9475 Data block at 9475
+B $9475,633,8*79,1
+b $96EE Planet colors
+@ $96EE label=planet_colors
+B $96EE,16,8
+b $96FE Planet sprite patterns
+@ $96FE label=planet_sprite_patterns
+B $96FE,152,8
 c $9796 Routine at 9796
 D $9796 Used by the routine at #R$8024.
 N $97F3 This entry point is used by the routines at #R$98B5, #R$9978 and #R$9A49.
@@ -456,6 +649,7 @@ D $9934 Used by the routine at #R$9924.
 N $9936 This entry point is used by the routine at #R$9924.
 c $9978 Routine at 9978
 D $9978 Used by the routine at #R$9934.
+C $9991,1 add_a_to_hl
 N $9999 This entry point is used by the routines at #R$9934, #R$99A0, #R$99D3 and #R$9A08.
 c $99A0 Routine at 99A0
 D $99A0 Used by the routine at #R$98B5.
@@ -463,6 +657,7 @@ c $99B1 Routine at 99B1
 D $99B1 Used by the routine at #R$98B5.
 c $99D3 Routine at 99D3
 D $99D3 Used by the routine at #R$99B1.
+C $99E1,1 add_a_to_hl
 N $99EA This entry point is used by the routine at #R$99B1.
 c $9A08 Routine at 9A08
 D $9A08 Used by the routine at #R$9924.
@@ -638,6 +833,7 @@ c $A805 Routine at A805
 D $A805 Used by the routine at #R$A73C.
 c $A808 Routine at A808
 D $A808 Used by the routines at #R$8368, #R$A33B, #R$A3E1 and #R$A73C.
+C $A833,1 add_a_to_hl
 b $A865 Data block at A865
 B $A865,24,8
 b $A87D Ship sprites
@@ -679,16 +875,46 @@ C $AC3A,1 vdp_write_byte
 b $AC47 Data block at AC47
 D $AC47 Used by the routine at #R$AB72.
 B $AC47,152,8
-c $ACDF Routine at ACDF
+c $ACDF Init sprite data
 D $ACDF Used by the routines at #R$82BF, #R$90D6 and #R$A33B.
+@ $ACDF label=init_sprite_data
+C $ACDF,4 Address of sprite data
+C $ACE3,3 Size of each sprite
+C $ACE6,2 Number of sprites
+C $ACE9,3 Number of allocated sprites?
+C $ACEC,3 Set index (pattern?)
+C $ACEF,4 Set as unallocated
+C $ACF4,2 Advance to next sprite
+C $ACF6,2 Loop for 32 sprites
 c $ACF9 Routine at ACF9
 D $ACF9 Used by the routines at #R$8368, #R$84B1, #R$90D6, #R$A33B and #R$A3E1.
+C $AD0E,1 add_a_to_hl
 C $AD13,3 WRITE_VRAM
 C $AD22,1 vdp_write_byte
-c $AD49 Routine at AD49
+c $AD49 Allocate sprite (RST $28)
 D $AD49 Used by the routine at #R$8018.
+R $AD49 O:IX holds sprite address
+@ $AD49 label=allocate_sprite
+C $AD4C,3 Address of sprite data
+C $AD4F,3 Size of each sprite
+C $AD52,3 Number of sprites and sprite index
+C $AD58,2 If > $7E, sprite is available
+C $AD5A,1 Sprite index++
+C $AD5B,1 Advance to next sprite
+C $AD5C,2 Loop for up to 32 sprites
+C $AD5E,4 Not found, set to address in ROM (?)
+C $AD62,2 And return
 c $AD64 Routine at AD64
 D $AD64 Used by the routine at #R$AD49.
+@ $AD64 label=available_sprite_found
+C $AD64,1 Save sprite address
+C $AD69,3 Allocated sprites
+C $AD6C,1 Record one more
+C $AD6D,1 Read number back
+C $AD6E,1 Add number to HL
+C $AD74,1 Record sprite index in table
+C $AD75,2 IX now holds sprite address
+C $AD77,4 Init sprite
 N $AD87 This entry point is used by the routine at #R$AD49.
 c $AD8B Routine at AD8B
 D $AD8B Used by the routine at #R$801B.
@@ -699,6 +925,7 @@ C $ADFC,3 READ_VRAM
 C $AE0E,3 WRITE_VRAM
 c $AE2B Routine at AE2B
 D $AE2B Used by the routine at #R$ADD1.
+C $AE3E,1 add_a_to_hl
 N $AE4E This entry point is used by the routines at #R$ADD1, #R$AE54 and #R$AE75.
 c $AE54 Routine at AE54
 D $AE54 Used by the routine at #R$ADD1.
@@ -707,6 +934,9 @@ D $AE75 Used by the routine at #R$AE54.
 N $AE86 This entry point is used by the routine at #R$AE54.
 c $AE94 Routine at AE94
 D $AE94 Used by the routine at #R$90D6.
+C $AECA,1 add_a_to_hl
+C $AEDA,1 add_a_to_hl
+C $AEE7,1 add_a_to_hl
 C $AF1F,3 WRITE_VRAM
 c $AF3E Routine at AF3E
 D $AF3E Used by the routine at #R$AE94.
@@ -721,9 +951,13 @@ D $AFC2 Used by the routine at #R$AE94.
 b $AFDD Data block at AFDD
 B $AFDD,343,8*42,7
 b $B134 Stars
-B $B134,144,8
-b $B1C4 Data block at B1C4
-B $B1C4,2082,8*260,2
+@ $B134 label=stars
+B $B134,2,2
+b $B136 Star patterns
+B $B136,144,8
+b $B1C6 Data block at B1C6
+D $B1C6 Used by the routines at #R$8F0F, #R$8F55, #R$A471, #R$AB72 and #R$ADD1.
+B $B1C6,2080,8
 b $B9E6 Graphics
 B $B9E6,1480,8
 c $BFAE Routine at BFAE

@@ -23,7 +23,7 @@ Next: <a href="37237.html">9175</a>
 </td>
 </tr>
 </table>
-<div class="description">90D6: Routine at 90D6</div>
+<div class="description">90D6: Start screen</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -35,16 +35,16 @@ Used by the routine at <a href="32804.html">L8024</a>.
 </td>
 </tr>
 <tr>
-<td class="asm-label">L90D6</td>
+<td class="asm-label">start_screen</td>
 <td class="address-2"><span id="37078"></span>90D6</td>
 <td class="instruction">CALL $1F85</td>
-<td class="comment-1" rowspan="1">MODE_1</td>
+<td class="comment-1" rowspan="1">MODE_1 (pattern generator table at  $0000, name table at $1800, color table at $2000)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37081"></span>90D9</td>
 <td class="instruction">LD HL,$0800</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set sprite generator table at $0800 (was $3800)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -62,7 +62,7 @@ Used by the routine at <a href="32804.html">L8024</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="37089"></span>90E1</td>
 <td class="instruction">LD HL,$1C00</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set sprite attribute table at $1C00 (was $1B00)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -80,7 +80,7 @@ Used by the routine at <a href="32804.html">L8024</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="37097"></span>90E9</td>
 <td class="instruction">LD A,$00</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Clear all VDP RAM</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -109,20 +109,20 @@ Used by the routine at <a href="32804.html">L8024</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37111"></span>90F7</td>
-<td class="instruction">LD HL,<a href="45364.html">LB134</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD HL,<a href="45364.html">stars</a></td>
+<td class="comment-1" rowspan="1">Stars</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37114"></span>90FA</td>
 <td class="instruction">CALL <a href="33995.html">L84CB</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Upload 18 star patterns starting with 1</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37117"></span>90FD</td>
-<td class="instruction">LD HL,$71A3</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD HL,<a href="29091.html">buffer</a></td>
+<td class="comment-1" rowspan="1">Save pattern 33 from VDP to RAM</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -145,8 +145,8 @@ Used by the routine at <a href="32804.html">L8024</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37129"></span>9109</td>
-<td class="instruction">LD HL,$71A3</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD HL,<a href="29091.html">buffer</a></td>
+<td class="comment-1" rowspan="1">Write it back to VDP patern 63</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -170,7 +170,7 @@ Used by the routine at <a href="32804.html">L8024</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="37139"></span>9113</td>
 <td class="instruction">LD HL,<a href="37590.html">ship_pattern</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write ship pattern to pattern 33</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -194,37 +194,37 @@ Used by the routine at <a href="32804.html">L8024</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="37149"></span>911D</td>
 <td class="instruction">CALL <a href="37407.html">L921F</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Upload patterns to VDP buffer</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37152"></span>9120</td>
 <td class="instruction">LD HL,<a href="37760.html">L9380</a></td>
-<td class="comment-1" rowspan="1">Planet data?</td>
+<td class="comment-1" rowspan="1">Gyruss logo names</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37155"></span>9123</td>
 <td class="instruction">LD DE,$18A8</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Name table address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37158"></span>9126</td>
 <td class="instruction">LD C,$02</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">2 rows</td>
 </tr>
 <tr>
-<td class="asm-label">L90D6_0</td>
+<td class="asm-label">logo_row</td>
 <td class="address-2"><span id="37160"></span>9128</td>
 <td class="instruction">LD B,$06</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">6 letters</td>
 </tr>
 <tr>
-<td class="asm-label">L90D6_1</td>
+<td class="asm-label">logo_letter</td>
 <td class="address-2"><span id="37162"></span>912A</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get name</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -236,19 +236,19 @@ Used by the routine at <a href="32804.html">L8024</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="37164"></span>912C</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Next destination</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37165"></span>912D</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Next source</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37166"></span>912E</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get name</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -260,91 +260,91 @@ Used by the routine at <a href="32804.html">L8024</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="37168"></span>9130</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Next destination</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37169"></span>9131</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Next destination (skip space)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37170"></span>9132</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Next source</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37171"></span>9133</td>
-<td class="instruction">DJNZ <a href="37078.html#37162">L90D6_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">DJNZ <a href="37078.html#37162">logo_letter</a></td>
+<td class="comment-1" rowspan="1">Loop for 6 letters</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37173"></span>9135</td>
 <td class="instruction">LD DE,$18C8</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Name table address of next row</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37176"></span>9138</td>
 <td class="instruction">DEC C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Row counter</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37177"></span>9139</td>
-<td class="instruction">JR NZ,<a href="37078.html#37160">L90D6_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="37078.html#37160">logo_row</a></td>
+<td class="comment-1" rowspan="1">Loop for 2 rows</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37179"></span>913B</td>
-<td class="instruction">CALL <a href="44255.html">LACDF</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL <a href="44255.html">init_sprite_data</a></td>
+<td class="comment-1" rowspan="1">Init something in RAM (sprites?)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37182"></span>913E</td>
 <td class="instruction">LD A,$06</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Planet number</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37184"></span>9140</td>
-<td class="instruction">CALL <a href="37237.html">L9175</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL <a href="37237.html">display_planet</a></td>
+<td class="comment-1" rowspan="1">Draw planet 6 (Earth)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37187"></span>9143</td>
 <td class="instruction">CALL <a href="44281.html">LACF9</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Display ?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37190"></span>9146</td>
-<td class="instruction">CALL <a href="37389.html">L920D</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL <a href="37389.html">clear_row_7</a></td>
+<td class="comment-1" rowspan="1">Clear row 7</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37193"></span>9149</td>
 <td class="instruction">LD HL,<a href="37548.html">copyright_msg</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Copyright message</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37196"></span>914C</td>
 <td class="instruction">LD DE,$1AE4</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Name table address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37199"></span>914F</td>
 <td class="instruction">LD BC,$0017</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">23 bytes</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -401,10 +401,10 @@ Used by the routine at <a href="32804.html">L8024</a>.
 <td class="comment-1" rowspan="1">WRITE_REGISTER</td>
 </tr>
 <tr>
-<td class="asm-label">L90D6_2</td>
+<td class="asm-label">start_screen_loop</td>
 <td class="address-2"><span id="37223"></span>9167</td>
 <td class="instruction">HALT</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Wait for interrupt</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -433,8 +433,8 @@ Used by the routine at <a href="32804.html">L8024</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37234"></span>9172</td>
-<td class="instruction">JR C,<a href="37078.html#37223">L90D6_2</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR C,<a href="37078.html#37223">start_screen_loop</a></td>
+<td class="comment-1" rowspan="1">Loop until ...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

@@ -23,82 +23,82 @@ Next: <a href="44281.html">ACF9</a>
 </td>
 </tr>
 </table>
-<div class="description">ACDF: Routine at ACDF</div>
+<div class="description">ACDF: Init sprite data</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="33471.html">L82BF</a>, <a href="37078.html">L90D6</a> and <a href="41787.html">LA33B</a>.
+Used by the routines at <a href="33471.html">L82BF</a>, <a href="37078.html">start_screen</a> and <a href="41787.html">LA33B</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">LACDF</td>
+<td class="asm-label">init_sprite_data</td>
 <td class="address-2"><span id="44255"></span>ACDF</td>
-<td class="instruction">LD IX,$7002</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">LD IX,<a href="28674.html">sprite_data</a></td>
+<td class="comment-1" rowspan="1">Address of sprite data</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44259"></span>ACE3</td>
 <td class="instruction">LD DE,$000C</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Size of each sprite</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44262"></span>ACE6</td>
 <td class="instruction">LD B,$20</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Number of sprites</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44264"></span>ACE8</td>
 <td class="instruction">XOR A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44265"></span>ACE9</td>
-<td class="instruction">LD ($7182),A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">LD (<a href="29058.html">allocated_sprites</a>),A</td>
+<td class="comment-1" rowspan="1">Number of allocated sprites?</td>
 </tr>
 <tr>
-<td class="asm-label">LACDF_0</td>
+<td class="asm-label">init_sprite_data_0</td>
 <td class="address-2"><span id="44268"></span>ACEC</td>
 <td class="instruction">LD (IX+$0A),A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set index (pattern?)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44271"></span>ACEF</td>
 <td class="instruction">LD (IX+$00),$FF</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set as unallocated</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44275"></span>ACF3</td>
 <td class="instruction">INC A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44276"></span>ACF4</td>
 <td class="instruction">ADD IX,DE</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Advance to next sprite</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44278"></span>ACF6</td>
-<td class="instruction">DJNZ <a href="44255.html#44268">LACDF_0</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">DJNZ <a href="44255.html#44268">init_sprite_data_0</a></td>
+<td class="comment-1" rowspan="1">Loop for 32 sprites</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44280"></span>ACF8</td>
 <td class="instruction">RET</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 </table>
 <table class="asm-navigation">

@@ -46,7 +46,7 @@ Next: <a href="33081.html">8139</a>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32809"></span>8029</td>
-<td class="instruction">LD HL,$7000</td>
+<td class="instruction">LD HL,<a href="28672.html">word_at_7000</a></td>
 <td class="comment-1" rowspan="1">Clear RAM</td>
 </tr>
 <tr>
@@ -77,43 +77,43 @@ Next: <a href="33081.html">8139</a>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32821"></span>8035</td>
 <td class="instruction">LD HL,$8060</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set word</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32824"></span>8038</td>
-<td class="instruction">LD ($7000),HL</td>
+<td class="instruction">LD (<a href="28672.html">word_at_7000</a>),HL</td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32827"></span>803B</td>
 <td class="instruction">CALL <a href="39646.html">L9ADE</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Init some RAM locations (sound?)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32830"></span>803E</td>
-<td class="instruction">CALL <a href="37078.html">L90D6</a></td>
+<td class="instruction">CALL <a href="37078.html">start_screen</a></td>
 <td class="comment-1" rowspan="1">Start screen</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32833"></span>8041</td>
 <td class="instruction">LD HL,$2A30</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set word</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32836"></span>8044</td>
-<td class="instruction">LD ($7257),HL</td>
+<td class="instruction">LD (<a href="29271.html">word_at_7257</a>),HL</td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">L8024_0</td>
+<td class="asm-label">label_at_8047</td>
 <td class="address-2"><span id="32839"></span>8047</td>
 <td class="instruction">HALT</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Wait for interrupt</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -125,54 +125,54 @@ Next: <a href="33081.html">8139</a>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32843"></span>804B</td>
 <td class="instruction">LD HL,$0000</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Controller 0, segment 0</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32846"></span>804E</td>
 <td class="instruction">CALL $1F79</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">DECODER</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32849"></span>8051</td>
 <td class="instruction">BIT 6,H</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Test fire</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32851"></span>8053</td>
-<td class="instruction">JR NZ,<a href="32804.html#32868">L8024_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="32804.html#32868">L8024_0</a></td>
+<td class="comment-1" rowspan="1">Jump if fire pressed</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32853"></span>8055</td>
 <td class="instruction">LD HL,$0100</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Controller 1, segment 0</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32856"></span>8058</td>
 <td class="instruction">CALL $1F79</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">DECODER</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32859"></span>805B</td>
 <td class="instruction">BIT 6,H</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Test fire</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32861"></span>805D</td>
-<td class="instruction">JR Z,<a href="32804.html#32839">L8024_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="32804.html#32839">label_at_8047</a></td>
+<td class="comment-1" rowspan="1">Loop until fire pressed</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32863"></span>805F</td>
-<td class="instruction">LD HL,$71EB</td>
+<td class="instruction">LD HL,<a href="29091.html#29163">$71EB</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -186,13 +186,13 @@ Next: <a href="33081.html">8139</a>
 <span id="32868"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="33261.html">L81ED</a>.
+This entry point is used by the routine at <a href="33261.html">L81ED</a>. Fire pressed
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L8024_1</td>
+<td class="asm-label">L8024_0</td>
 <td class="address-2"><span id="32868"></span>8064</td>
 <td class="instruction">LD HL,$0000</td>
 <td class="comment-1" rowspan="1"></td>
@@ -200,14 +200,14 @@ This entry point is used by the routine at <a href="33261.html">L81ED</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32871"></span>8067</td>
-<td class="instruction">LD ($7257),HL</td>
+<td class="instruction">LD (<a href="29271.html">word_at_7257</a>),HL</td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32874"></span>806A</td>
 <td class="instruction">LD HL,$1800</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Clear screen</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -225,7 +225,7 @@ This entry point is used by the routine at <a href="33261.html">L81ED</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="32881"></span>8071</td>
 <td class="instruction">CALL $1F82</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">FILL_VRAM</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -249,7 +249,7 @@ This entry point is used by the routine at <a href="33261.html">L81ED</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="32892"></span>807C</td>
 <td class="instruction">CALL $1F82</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">FILL_VRAM</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -290,7 +290,7 @@ This entry point is used by the routine at <a href="33261.html">L81ED</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32908"></span>808C</td>
-<td class="instruction">LD A,($71EB)</td>
+<td class="instruction">LD A,(<a href="29091.html#29163">$71EB</a>)</td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -302,7 +302,7 @@ This entry point is used by the routine at <a href="33261.html">L81ED</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32913"></span>8091</td>
-<td class="instruction">LD ($71EB),A</td>
+<td class="instruction">LD (<a href="29091.html#29163">$71EB</a>),A</td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -428,7 +428,7 @@ This entry point is used by the routine at <a href="33261.html">L81ED</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32960"></span>80C0</td>
-<td class="instruction">LD A,($71EB)</td>
+<td class="instruction">LD A,(<a href="29091.html#29163">$71EB</a>)</td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -440,7 +440,7 @@ This entry point is used by the routine at <a href="33261.html">L81ED</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32965"></span>80C5</td>
-<td class="instruction">JR Z,<a href="32804.html#32992">L8024_2</a></td>
+<td class="instruction">JR Z,<a href="32804.html#32992">L8024_1</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -516,7 +516,7 @@ This entry point is used by the routine at <a href="33261.html">L81ED</a>.
 <td class="comment-1" rowspan="1">WRITE_VRAM</td>
 </tr>
 <tr>
-<td class="asm-label">L8024_2</td>
+<td class="asm-label">L8024_1</td>
 <td class="address-2"><span id="32992"></span>80E0</td>
 <td class="instruction">LD A,R</td>
 <td class="comment-1" rowspan="1"></td>
@@ -544,34 +544,34 @@ This entry point is used by the routines at <a href="33198.html">L81AE</a> and <
 </td>
 </tr>
 <tr>
-<td class="asm-label">L8024_3</td>
+<td class="asm-label">main_loop</td>
 <td class="address-2"><span id="33000"></span>80E8</td>
-<td class="instruction">LD HL,$725A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD HL,<a href="29274.html">interrupt_flag</a></td>
+<td class="comment-1" rowspan="1">Flag set by interrupt routine</td>
 </tr>
 <tr>
-<td class="asm-label">L8024_4</td>
+<td class="asm-label">L8024_2</td>
 <td class="address-2"><span id="33003"></span>80EB</td>
 <td class="instruction">BIT 0,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Test flag</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33005"></span>80ED</td>
-<td class="instruction">JR Z,<a href="32804.html#33003">L8024_4</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="32804.html#33003">L8024_2</a></td>
+<td class="comment-1" rowspan="1">Wait until set</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33007"></span>80EF</td>
 <td class="instruction">RES 0,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Clear flag</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33009"></span>80F1</td>
 <td class="instruction">CALL $1FDC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">READ_REGISTER</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -595,7 +595,7 @@ This entry point is used by the routines at <a href="33198.html">L81AE</a> and <
 <td class="asm-label"></td>
 <td class="address-1"><span id="33021"></span>80FD</td>
 <td class="instruction">CALL $1FDC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">READ_REGISTER</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -613,7 +613,7 @@ This entry point is used by the routines at <a href="33198.html">L81AE</a> and <
 <td class="asm-label"></td>
 <td class="address-1"><span id="33030"></span>8106</td>
 <td class="instruction">CALL $1FDC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">READ_REGISTER</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -631,7 +631,7 @@ This entry point is used by the routines at <a href="33198.html">L81AE</a> and <
 <td class="asm-label"></td>
 <td class="address-1"><span id="33039"></span>810F</td>
 <td class="instruction">CALL $1FDC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">READ_REGISTER</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -666,7 +666,7 @@ This entry point is used by the routines at <a href="33198.html">L81AE</a> and <
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33057"></span>8121</td>
-<td class="instruction">LD A,($71EB)</td>
+<td class="instruction">LD A,(<a href="29091.html#29163">$71EB</a>)</td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -690,7 +690,7 @@ This entry point is used by the routines at <a href="33198.html">L81AE</a> and <
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33067"></span>812B</td>
-<td class="instruction">JR Z,<a href="32804.html#33000">L8024_3</a></td>
+<td class="instruction">JR Z,<a href="32804.html#33000">main_loop</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -720,7 +720,7 @@ This entry point is used by the routines at <a href="33198.html">L81AE</a> and <
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33079"></span>8137</td>
-<td class="instruction">JR <a href="32804.html#33000">L8024_3</a></td>
+<td class="instruction">JR <a href="32804.html#33000">main_loop</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 </table>

@@ -23,13 +23,13 @@ Next: <a href="37454.html">924E</a>
 </td>
 </tr>
 </table>
-<div class="description">921F: Routine at 921F</div>
+<div class="description">921F: Upload patterns to VDP buffer at $1400</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="37078.html">L90D6</a>.
+Used by the routine at <a href="37078.html">start_screen</a>.
 </div>
 </div>
 </td>
@@ -38,37 +38,37 @@ Used by the routine at <a href="37078.html">L90D6</a>.
 <td class="asm-label">L921F</td>
 <td class="address-2"><span id="37407"></span>921F</td>
 <td class="instruction">LD HL,$0279</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Number of bytes in block at $9475</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37410"></span>9222</td>
-<td class="instruction">LD ($726A),HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD (<a href="29290.html">word_at_726A</a>),HL</td>
+<td class="comment-1" rowspan="1">Save it</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37413"></span>9225</td>
 <td class="instruction">XOR A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">A = 0</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37414"></span>9226</td>
-<td class="instruction">LD ($726C),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD (<a href="29292.html">byte_at_726C</a>),A</td>
+<td class="comment-1" rowspan="1">Save it</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37417"></span>9229</td>
-<td class="instruction">LD HL,$9474</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD HL,<a href="38004.html">L9474</a></td>
+<td class="comment-1" rowspan="1">Source address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37420"></span>922C</td>
 <td class="instruction">LD DE,$1400</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Destination buffer in VDP RAM</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -96,7 +96,7 @@ This entry point is used by the routine at <a href="37454.html">L924E</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="37427"></span>9233</td>
 <td class="instruction">RET M</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return when done</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -180,7 +180,7 @@ This entry point is used by the routine at <a href="37454.html">L924E</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="37452"></span>924C</td>
 <td class="instruction">JR <a href="37407.html#37423">L921F_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Loop</td>
 </tr>
 </table>
 <table class="asm-navigation">
