@@ -5586,9 +5586,12 @@ c$AF55 XOR A         ;
  $AF67 LD ($72D5),A  ;
  $AF6A RET           ;
 
-; Routine at AF6B
+; Take 8 bytes pointed to by $72DE
+; and place them after bit reversed.
+; Return address of reversed bytes in $72DE.
 ;
 ; Used by the routine at #R$AE94.
+@label=flip_horz
 c$AF6B LD HL,($72DE) ;
  $AF6E PUSH HL       ;
  $AF6F POP IY        ;
@@ -5616,9 +5619,12 @@ c$AF6B LD HL,($72DE) ;
  $AFAB DJNZ $AF7A    ;
  $AFAD RET           ;
 
-; Routine at AFAE
+; Take 8 bytes pointed to by $72DE
+; and place them after in reverse order.
+; Return address of reversed bytes in $72DE.
 ;
 ; Used by the routine at #R$AE94.
+@label=flip_vert
 c$AFAE LD DE,($72DE) ;
  $AFB2 LD HL,$0010   ;
  $AFB5 ADD HL,DE     ;

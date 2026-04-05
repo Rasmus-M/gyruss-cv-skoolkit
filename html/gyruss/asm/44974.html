@@ -23,7 +23,7 @@ Next: <a href="44994.html">AFC2</a>
 </td>
 </tr>
 </table>
-<div class="description">AFAE: Routine at AFAE</div>
+<div class="description">AFAE: Take 8 bytes pointed to by $72DE and place them after in reverse order. Return address of reversed bytes in $72DE.</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -35,7 +35,7 @@ Used by the routine at <a href="44692.html">LAE94</a>.
 </td>
 </tr>
 <tr>
-<td class="asm-label">LAFAE</td>
+<td class="asm-label">flip_vert</td>
 <td class="address-2"><span id="44974"></span>AFAE</td>
 <td class="instruction">LD DE,($72DE)</td>
 <td class="comment-0" rowspan="1"></td>
@@ -59,7 +59,7 @@ Used by the routine at <a href="44692.html">LAE94</a>.
 <td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">LAFAE_0</td>
+<td class="asm-label">flip_vert_0</td>
 <td class="address-2"><span id="44984"></span>AFB8</td>
 <td class="instruction">LD A,(DE)</td>
 <td class="comment-0" rowspan="1"></td>
@@ -85,7 +85,7 @@ Used by the routine at <a href="44692.html">LAE94</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44988"></span>AFBC</td>
-<td class="instruction">DJNZ <a href="44974.html#44984">LAFAE_0</a></td>
+<td class="instruction">DJNZ <a href="44974.html#44984">flip_vert_0</a></td>
 <td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>

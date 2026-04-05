@@ -975,22 +975,29 @@ c $AF3E Routine at AF3E
 D $AF3E Used by the routine at #R$AE94.
 c $AF55 Routine at AF55
 D $AF55 Used by the routine at #R$AF3E.
-c $AF6B Routine at AF6B
+c $AF6B Take 8 bytes pointed to by $72DE and place them after bit reversed. Return address of reversed bytes in $72DE.
 D $AF6B Used by the routine at #R$AE94.
-c $AFAE Routine at AFAE
+@ $AF6B label=flip_horz
+c $AFAE Take 8 bytes pointed to by $72DE and place them after in reverse order. Return address of reversed bytes in $72DE.
 D $AFAE Used by the routine at #R$AE94.
+@ $AFAE label=flip_vert
 c $AFC2 Routine at AFC2
 D $AFC2 Used by the routine at #R$AE94.
 b $AFDD Data block at AFDD
-c $AFFF
-b $B04F
+B $AFDD,34,8*4,2
+c $AFFF Routine at AFFF
+D $AFFF Used by the routines at #R$8024, #R$8139, #R$8170, #R$832A, #R$8368, #R$846B, #R$90D6, #R$A33B and #R$A3E1.
+b $B04F Data block at B04F
+B $B04F,229,8*28,5
 b $B134 Stars
 @ $B134 label=stars
 B $B134,2,2
 b $B136 Star patterns
 B $B136,144,8
-c $B1C6
-b $B21D
+c $B1C6 Routine at B1C6
+D $B1C6 Used by the routines at #R$8F0F, #R$8F55, #R$A471, #R$AB72 and #R$ADD1.
+b $B21D Data block at B21D
+B $B21D,1993,8*249,1
 b $B9E6 Graphics
 B $B9E6,1480,8
 c $BFAE Routine at BFAE
