@@ -20,8 +20,10 @@ b $71A3 Data block at 71A3
 B $71A3,72,8
 b $71EB Byte at 71EB
 B $71EB,1,1
-b $71EC Data block at 71EC
-B $71EC,107,8*13,3
+b $71EC Byte at 71EC (used by star routine)
+B $71EC,1,1
+b $71ED Data block at 71ED
+B $71ED,106,8*13,2
 w $7257 Word at 7257
 @ $7257 label=word_at_7257
 W $7257,2,2
@@ -39,7 +41,15 @@ b $726C Byte at 726C
 @ $726C label=byte_at_726C
 B $726C,1,1
 b $726D Data block at 726D
-B $726D,403,8*50,3
+B $726D,173,8*21,5
+b $731A Byte at 731A (used by star routine)
+B $731A,1,1
+b $731B Data block at 731B
+B $731B,219,8*27,3
+w $73F6 Word at 73F6 (used by star routine)
+W $73F6,2,2
+b $73F8 Data block at 73F8
+B $73F8,8,8
 s $7400 Unused
 S $7400,3072,$0C00
 b $8000 ROM header
@@ -985,10 +995,73 @@ c $AFC2 Routine at AFC2
 D $AFC2 Used by the routine at #R$AE94.
 b $AFDD Data block at AFDD
 B $AFDD,34,8*4,2
-c $AFFF Routine at AFFF
+c $AFFF Display stars
 D $AFFF Used by the routines at #R$8024, #R$8139, #R$8170, #R$832A, #R$8368, #R$846B, #R$90D6, #R$A33B and #R$A3E1.
-b $B04F Data block at B04F
-B $B04F,229,8*28,5
+@ $AFFF label=display_stars
+C $AFFF,3 Counter from 7 to 0
+C $B002,1 Count down
+C $B003,1 Return
+C $B004,2 Reset counter to 7
+C $B006,3 Get some flag
+C $B009,2 Test bit 0
+C $B00D,2 If bit 0 is set then reset counter to 3
+C $B00F,2 Parameter
+C $B014,3 Get value
+C $B017,2 Add 2
+C $B019,2 < 12 ?
+C $B01B,2 Yes, skip ahead
+C $B01E,3 Set value to zero
+C $B021,2 Parameter
+c $B023 Display star frame
+D $B023 Used by the routine at #R$AFFF.
+R $B023 I:C mask $00 or $FF
+@ $B023 label=display_star_frame
+C $B023,3 0, 2, 4, 6, 8, 10
+C $B026,3 Table of pointers
+C $B029,1 add_a_to_hl
+C $B02A,1 Get LSB
+C $B02C,1 Get MSB
+C $B02D,3 Get VDP address (always 0)
+C $B030,1 Now HL holds address of star frame table to use
+C $B031,1 Get byte from table
+C $B033,1 Zero terminates
+C $B034,3 If bit 7 is set it's a change of VDP address
+C $B037,3 vdp_read_byte from DE
+C $B03A,2 >= 18
+C $B03C,2 Then skip writing
+C $B03E,1 Get byte from table
+C $B03F,1 Apply mask
+C $B040,1 vdp_write_byte A to DE
+C $B041,1 Next VDP address
+C $B042,1 Next table address
+C $B043,3 Loop
+C $B046,2 Reset bit 7
+C $B048,1 Add VDP address LSB
+C $B049,1 Write back to E
+C $B04A,2 Loop if no carry
+C $B04C,1 Increment MSB if carry
+C $B04D,2 Loop
+w $B04F Star frame lookup
+@ $B04F label=star_frame_lookup
+W $B04F,12,2
+b $B05B Star frame 0
+@ $B05B label=star_frame_0
+B $B05B,39,8*4,7
+b $B082 Star frame 1
+@ $B082 label=star_frame_1
+B $B082,38,8*4,6
+b $B0A8 Star frame 2
+@ $B0A8 label=star_frame_2
+B $B0A8,37,8*4,5
+b $B0CD Star frame 3
+@ $B0CD label=star_frame_3
+B $B0CD,31,8*3,7
+b $B0EC Star frame 4
+@ $B0EC label=star_frame_4
+B $B0EC,34,8*4,2
+b $B10E Star frame 5
+@ $B10E label=star_frame_5
+B $B10E,38,8*4,6
 b $B134 Stars
 @ $B134 label=stars
 B $B134,2,2

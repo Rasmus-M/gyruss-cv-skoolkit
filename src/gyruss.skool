@@ -70,21 +70,24 @@ b$71A3 DEFB $00,$00,$00,$00,$00,$00,$00,$00
 ; Byte at 71EB
 b$71EB DEFB $00
 
-; Data block at 71EC
-b$71EC DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $71F4 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $71FC DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7204 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $720C DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7214 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $721C DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7224 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $722C DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7234 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $723C DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7244 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $724C DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7254 DEFB $00,$00,$00
+; Byte at 71EC (used by star routine)
+b$71EC DEFB $00
+
+; Data block at 71ED
+b$71ED DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $71F5 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $71FD DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7205 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $720D DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7215 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $721D DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7225 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $722D DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7235 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $723D DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7245 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $724D DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7255 DEFB $00,$00
 
 ; Word at 7257
 @label=word_at_7257
@@ -131,36 +134,46 @@ b$726D DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $72FD DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $7305 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $730D DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7315 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $731D DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7325 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $732D DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7335 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $733D DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7345 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $734D DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7355 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $735D DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7365 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $736D DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7375 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $737D DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7385 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $738D DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7395 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $739D DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $73A5 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $73AD DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $73B5 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $73BD DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $73C5 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $73CD DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $73D5 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $73DD DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $73E5 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $73ED DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $73F5 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $73FD DEFB $00,$00,$00
+ $7315 DEFB $00,$00,$00,$00,$00
+
+; Byte at 731A (used by star routine)
+b$731A DEFB $00
+
+; Data block at 731B
+b$731B DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7323 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $732B DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7333 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $733B DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7343 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $734B DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7353 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $735B DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7363 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $736B DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7373 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $737B DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7383 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $738B DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7393 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $739B DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $73A3 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $73AB DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $73B3 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $73BB DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $73C3 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $73CB DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $73D3 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $73DB DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $73E3 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $73EB DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $73F3 DEFB $00,$00,$00
+
+; Word at 73F6 (used by star routine)
+w$73F6 DEFW $0000
+
+; Data block at 73F8
+b$73F8 DEFB $00,$00,$00,$00,$00,$00,$00,$00
 
 ; Unused
 s$7400 DEFS $0C00
@@ -5586,9 +5599,8 @@ c$AF55 XOR A         ;
  $AF67 LD ($72D5),A  ;
  $AF6A RET           ;
 
-; Take 8 bytes pointed to by $72DE
-; and place them after bit reversed.
-; Return address of reversed bytes in $72DE.
+; Take 8 bytes pointed to by $72DE and place them after bit reversed. Return
+; address of reversed bytes in $72DE.
 ;
 ; Used by the routine at #R$AE94.
 @label=flip_horz
@@ -5619,8 +5631,7 @@ c$AF6B LD HL,($72DE) ;
  $AFAB DJNZ $AF7A    ;
  $AFAD RET           ;
 
-; Take 8 bytes pointed to by $72DE
-; and place them after in reverse order.
+; Take 8 bytes pointed to by $72DE and place them after in reverse order.
 ; Return address of reversed bytes in $72DE.
 ;
 ; Used by the routine at #R$AE94.
@@ -5663,85 +5674,118 @@ b$AFDD DEFB $00,$00,$08,$00,$06,$FF,$06,$FB
  $AFF5 DEFB $FB,$05,$00,$07,$01,$05,$05,$05
  $AFFD DEFB $05,$06
 
-; Routine at AFFF
+; Display stars
 ;
 ; Used by the routines at #R$8024, #R$8139, #R$8170, #R$832A, #R$8368, #R$846B,
 ; #R$90D6, #R$A33B and #R$A3E1.
-c$AFFF LD HL,$71EC   ;
- $B002 DEC (HL)      ;
- $B003 RET P         ;
- $B004 LD (HL),$07   ;
- $B006 LD A,($71EB)  ;
- $B009 BIT 0,A       ;
+@label=display_stars
+c$AFFF LD HL,$71EC   ; Counter from 7 to 0
+ $B002 DEC (HL)      ; Count down
+ $B003 RET P         ; Return
+ $B004 LD (HL),$07   ; Reset counter to 7
+ $B006 LD A,($71EB)  ; Get some flag
+ $B009 BIT 0,A       ; Test bit 0
  $B00B JR Z,$B00F    ;
- $B00D LD (HL),$03   ;
-*$B00F LD C,$00      ;
+ $B00D LD (HL),$03   ; If bit 0 is set then reset counter to 3
+*$B00F LD C,$00      ; Parameter
  $B011 CALL $B023    ;
- $B014 LD A,($731A)  ;
- $B017 ADD A,$02     ;
- $B019 CP $0C        ;
- $B01B JR C,$B01E    ;
+ $B014 LD A,($731A)  ; Get value
+ $B017 ADD A,$02     ; Add 2
+ $B019 CP $0C        ; < 12 ?
+ $B01B JR C,$B01E    ; Yes, skip ahead
  $B01D XOR A         ;
-*$B01E LD ($731A),A  ;
- $B021 LD C,$FF      ;
-*$B023 LD A,($731A)  ;
- $B026 LD HL,$B04F   ;
- $B029 RST $08       ;
- $B02A LD E,(HL)     ;
- $B02B INC HL        ;
- $B02C LD D,(HL)     ;
- $B02D LD HL,($73F6) ;
- $B030 EX DE,HL      ;
-*$B031 LD A,(HL)     ;
- $B032 OR A          ;
- $B033 RET Z         ;
- $B034 JP M,$B046    ;
- $B037 CALL $9AD0    ;
- $B03A CP $18        ;
- $B03C JR NC,$B041   ;
- $B03E LD A,(HL)     ;
- $B03F AND C         ;
- $B040 RST $10       ;
-*$B041 INC DE        ;
-*$B042 INC HL        ;
- $B043 JP $B031      ;
-*$B046 AND $7F       ;
- $B048 ADD A,E       ;
- $B049 LD E,A        ;
- $B04A JR NC,$B042   ;
- $B04C INC D         ;
- $B04D JR $B042      ;
+*$B01E LD ($731A),A  ; Set value to zero
+ $B021 LD C,$FF      ; Parameter
 
-; Data block at B04F
-b$B04F DEFB $5B,$B0,$82,$B0,$A8,$B0,$CD,$B0
- $B057 DEFB $EC,$B0,$0E,$B1,$82,$11,$81,$0B
- $B05F DEFB $FF,$CA,$04,$81,$0C,$9B,$0A,$86
- $B067 DEFB $02,$A0,$03,$89,$13,$8C,$04,$C8
- $B06F DEFB $02,$AD,$09,$88,$0E,$A0,$08,$86
- $B077 DEFB $05,$99,$09,$84,$05,$FF,$E8,$0B
- $B07F DEFB $9E,$11,$00,$FF,$AF,$04,$83,$0E
- $B087 DEFB $98,$0A,$8A,$02,$C0,$03,$92,$0B
- $B08F DEFB $84,$04,$9E,$10,$A3,$0B,$9A,$09
- $B097 DEFB $A3,$10,$85,$0E,$98,$01,$99,$0E
- $B09F DEFB $C0,$08,$8A,$05,$96,$08,$87,$02
- $B0A7 DEFB $00,$CC,$08,$84,$01,$96,$0A,$90
- $B0AF DEFB $02,$FF,$0D,$8D,$0A,$87,$05,$9D
- $B0B7 DEFB $10,$C5,$09,$98,$04,$C5,$10,$86
- $B0BF DEFB $05,$96,$01,$B6,$05,$E0,$08,$8E
- $B0C7 DEFB $05,$94,$0F,$87,$0C,$00,$86,$0A
- $B0CF DEFB $92,$02,$FF,$82,$03,$B2,$09,$92
- $B0D7 DEFB $09,$AA,$10,$C8,$11,$B4,$0B,$D1
- $B0DF DEFB $0A,$96,$10,$BC,$01,$B0,$08,$FF
- $B0E7 DEFB $82,$08,$95,$05,$00,$FF,$8F,$07
- $B0EF DEFB $BB,$10,$FF,$84,$0A,$0B,$01,$02
- $B0F7 DEFB $85,$0E,$96,$09,$82,$03,$96,$02
- $B0FF DEFB $85,$09,$82,$04,$9C,$08,$07,$01
- $B107 DEFB $05,$FF,$84,$10,$BA,$01,$00,$AD
- $B10F DEFB $0C,$FB,$12,$FF,$85,$0C,$81,$0C
- $B117 DEFB $9D,$0F,$82,$08,$89,$01,$91,$08
- $B11F DEFB $84,$0D,$9F,$0B,$92,$08,$87,$07
- $B127 DEFB $02,$82,$0A,$9C,$0C,$81,$08,$FF
- $B12F DEFB $C8,$12,$B7,$01,$00
+; Display star frame
+;
+; Used by the routine at #R$AFFF.
+;
+; I:C mask $00 or $FF
+@label=display_star_frame
+c$B023 LD A,($731A)  ; 0, 2, 4, 6, 8, 10
+ $B026 LD HL,$B04F   ; Table of pointers
+ $B029 RST $08       ; add_a_to_hl
+ $B02A LD E,(HL)     ; Get LSB
+ $B02B INC HL        ;
+ $B02C LD D,(HL)     ; Get MSB
+ $B02D LD HL,($73F6) ; Get VDP address (always 0)
+ $B030 EX DE,HL      ; Now HL holds address of star frame table to use
+*$B031 LD A,(HL)     ; Get byte from table
+ $B032 OR A          ;
+ $B033 RET Z         ; Zero terminates
+ $B034 JP M,$B046    ; If bit 7 is set it's a change of VDP address
+ $B037 CALL $9AD0    ; vdp_read_byte from DE
+ $B03A CP $18        ; >= 18
+ $B03C JR NC,$B041   ; Then skip writing
+ $B03E LD A,(HL)     ; Get byte from table
+ $B03F AND C         ; Apply mask
+ $B040 RST $10       ; vdp_write_byte A to DE
+*$B041 INC DE        ; Next VDP address
+*$B042 INC HL        ; Next table address
+ $B043 JP $B031      ; Loop
+*$B046 AND $7F       ; Reset bit 7
+ $B048 ADD A,E       ; Add VDP address LSB
+ $B049 LD E,A        ; Write back to E
+ $B04A JR NC,$B042   ; Loop if no carry
+ $B04C INC D         ; Increment MSB if carry
+ $B04D JR $B042      ; Loop
+
+; Star frame lookup
+@label=star_frame_lookup
+w$B04F DEFW $B05B
+ $B051 DEFW $B082
+ $B053 DEFW $B0A8
+ $B055 DEFW $B0CD
+ $B057 DEFW $B0EC
+ $B059 DEFW $B10E
+
+; Star frame 0
+@label=star_frame_0
+b$B05B DEFB $82,$11,$81,$0B,$FF,$CA,$04,$81
+ $B063 DEFB $0C,$9B,$0A,$86,$02,$A0,$03,$89
+ $B06B DEFB $13,$8C,$04,$C8,$02,$AD,$09,$88
+ $B073 DEFB $0E,$A0,$08,$86,$05,$99,$09,$84
+ $B07B DEFB $05,$FF,$E8,$0B,$9E,$11,$00
+
+; Star frame 1
+@label=star_frame_1
+b$B082 DEFB $FF,$AF,$04,$83,$0E,$98,$0A,$8A
+ $B08A DEFB $02,$C0,$03,$92,$0B,$84,$04,$9E
+ $B092 DEFB $10,$A3,$0B,$9A,$09,$A3,$10,$85
+ $B09A DEFB $0E,$98,$01,$99,$0E,$C0,$08,$8A
+ $B0A2 DEFB $05,$96,$08,$87,$02,$00
+
+; Star frame 2
+@label=star_frame_2
+b$B0A8 DEFB $CC,$08,$84,$01,$96,$0A,$90,$02
+ $B0B0 DEFB $FF,$0D,$8D,$0A,$87,$05,$9D,$10
+ $B0B8 DEFB $C5,$09,$98,$04,$C5,$10,$86,$05
+ $B0C0 DEFB $96,$01,$B6,$05,$E0,$08,$8E,$05
+ $B0C8 DEFB $94,$0F,$87,$0C,$00
+
+; Star frame 3
+@label=star_frame_3
+b$B0CD DEFB $86,$0A,$92,$02,$FF,$82,$03,$B2
+ $B0D5 DEFB $09,$92,$09,$AA,$10,$C8,$11,$B4
+ $B0DD DEFB $0B,$D1,$0A,$96,$10,$BC,$01,$B0
+ $B0E5 DEFB $08,$FF,$82,$08,$95,$05,$00
+
+; Star frame 4
+@label=star_frame_4
+b$B0EC DEFB $FF,$8F,$07,$BB,$10,$FF,$84,$0A
+ $B0F4 DEFB $0B,$01,$02,$85,$0E,$96,$09,$82
+ $B0FC DEFB $03,$96,$02,$85,$09,$82,$04,$9C
+ $B104 DEFB $08,$07,$01,$05,$FF,$84,$10,$BA
+ $B10C DEFB $01,$00
+
+; Star frame 5
+@label=star_frame_5
+b$B10E DEFB $AD,$0C,$FB,$12,$FF,$85,$0C,$81
+ $B116 DEFB $0C,$9D,$0F,$82,$08,$89,$01,$91
+ $B11E DEFB $08,$84,$0D,$9F,$0B,$92,$08,$87
+ $B126 DEFB $07,$02,$82,$0A,$9C,$0C,$81,$08
+ $B12E DEFB $FF,$C8,$12,$B7,$01,$00
 
 ; Stars
 @label=stars
