@@ -2492,6 +2492,7 @@ b$9056 DEFB $00,$03,$07,$0F,$0F,$0F,$07,$07
  $90BE DEFB $1B,$15,$0B,$06,$09,$10,$00,$00
  $90C6 DEFB $00,$20,$40,$80,$E0,$F0,$FE,$F8
  $90CE DEFB $F8,$F8,$70,$E8,$84,$40,$20,$00
+
 ; Start screen
 ;
 ; Used by the routine at #R$8024.
@@ -5514,12 +5515,12 @@ c$AE75 LD HL,$7206     ;
  $AE8E LD (IX+$08),$F8 ;
  $AE92 JR $AE4E        ;
 
-; Fill VDP RAM from $2100 to $3868 with data - perhaps flipped and shifted
-; character pattern? 8 new bytes are generated with each call.
+; Fill VDP RAM from $2100 to $3868 with character patterns that may be flipped and shifted.
+; One new pattern is generated with each call. Are these used?
 ;
 ; Used by the routine at #R$90D6.
 c$AE94 LD A,($72D5)   ; Get counter
- $AE97 CP $FF         ; If max malue
+ $AE97 CP $FF         ; If maxed out
  $AE99 RET Z          ; Then return
  $AE9A LD HL,($72D8)  ; Get word (only used locally)
  $AE9D LD A,H         ; Is it zero?
@@ -5541,57 +5542,57 @@ c$AE94 LD A,($72D5)   ; Get counter
  $AEC0 INC HL         ;
  $AEC1 LD ($72DC),HL  ; Save updated pointer, e.g. $72E0
 *$AEC4 LD A,($72D5)   ; Get counter
- $AEC7 LD HL,$B8DD    ;
+ $AEC7 LD HL,$B8DD    ; Table of 29 bytes (offsets into table at $B8FA)
  $AECA RST $08        ; add_a_to_hl
- $AECB LD E,(HL)      ;
+ $AECB LD E,(HL)      ; Load DE with value from table
  $AECC LD D,$00       ;
- $AECE LD HL,$B8FA    ;
- $AED1 ADD HL,DE      ;
- $AED2 LD ($72DA),HL  ;
- $AED5 LD A,($72D7)   ;
- $AED8 INC A          ;
- $AED9 ADD A,A        ;
+ $AECE LD HL,$B8FA    ; Table of pointers to graphics
+ $AED1 ADD HL,DE      ; Add offset
+ $AED2 LD ($72DA),HL  ; Save address of pointer
+ $AED5 LD A,($72D7)   ; Get counter
+ $AED8 INC A          ; Increment
+ $AED9 ADD A,A        ; Double
  $AEDA RST $08        ; add_a_to_hl
- $AEDB LD E,(HL)      ;
+ $AEDB LD E,(HL)      ; Get LSB of pointer
  $AEDC INC HL         ;
- $AEDD LD D,(HL)      ;
- $AEDE EX DE,HL       ;
- $AEDF LD A,($72D6)   ;
- $AEE2 AND $03        ;
- $AEE4 ADD A,A        ;
- $AEE5 ADD A,A        ;
- $AEE6 ADD A,A        ;
+ $AEDD LD D,(HL)      ; Get MSB of pointer
+ $AEDE EX DE,HL       ; Now HL pointer to graphics
+ $AEDF LD A,($72D6)   ; Get counter
+ $AEE2 AND $03        ; 0, 1, 2, 3
+ $AEE4 ADD A,A        ; 0, 2, 4, 6
+ $AEE5 ADD A,A        ; 0, 4, 8, 12
+ $AEE6 ADD A,A        ; 0, 8, 16, 32
  $AEE7 RST $08        ; add_a_to_hl
- $AEE8 LD DE,$71A3    ;
- $AEEB LD ($72DE),DE  ;
- $AEEF LD BC,$0008    ;
- $AEF2 LDIR           ;
- $AEF4 LD HL,($72DA)  ;
- $AEF7 INC HL         ;
- $AEF8 LD A,(HL)      ;
- $AEF9 OR A           ;
- $AEFA JR Z,$AF15     ;
- $AEFC LD IX,$72D6    ;
- $AF00 BIT 2,(IX+$00) ;
- $AF04 JR Z,$AF09     ;
+ $AEE8 LD DE,$71A3    ; Buffer
+ $AEEB LD ($72DE),DE  ; Store as source address
+ $AEEF LD BC,$0008    ; Copy 8 bytes
+ $AEF2 LDIR           ; of graphics data info buffer
+ $AEF4 LD HL,($72DA)  ; Get address of graphics pointer
+ $AEF7 INC HL         ; To MSB
+ $AEF8 LD A,(HL)      ; Get MSB
+ $AEF9 OR A           ; Is it 0, i.e. not a real address?
+ $AEFA JR Z,$AF15     ; Then skip ahead
+ $AEFC LD IX,$72D6    ; Address of counter
+ $AF00 BIT 2,(IX+$00) ; Is bit 2 set?
+ $AF04 JR Z,$AF09     ; If not, skip ahead
  $AF06 CALL $AF6B     ; flip_horz
-*$AF09 BIT 3,(IX+$00) ;
- $AF0D JR NZ,$AF15    ;
+*$AF09 BIT 3,(IX+$00) ; Is bit 3 set?
+ $AF0D JR NZ,$AF15    ; If not, skip ahead
  $AF0F CALL $AFAE     ; flip_vert
  $AF12 CALL $AFC2     ; shift_left
-*$AF15 LD HL,($72DE)  ;
- $AF18 LD DE,($72D8)  ;
- $AF1C LD BC,$0008    ;
+*$AF15 LD HL,($72DE)  ; Source for writing to DP RAM
+ $AF18 LD DE,($72D8)  ; Destination
+ $AF1C LD BC,$0008    ; 8 bytes
  $AF1F CALL $1FDF     ; WRITE_VRAM
  $AF22 LD HL,($72D8)  ; Get destination address
  $AF25 LD BC,$0008    ;
  $AF28 ADD HL,BC      ; Add 8
  $AF29 LD ($72D8),HL  ; Write back
 @label=inc_counters_1
- $AF2C LD IX,($72DA)  ;
+ $AF2C LD IX,($72DA)  ; Get address of graphics pointer
  $AF30 LD A,($72D7)   ; Get counter
  $AF33 INC A          ; Increment it
- $AF34 CP (IX+$00)    ; When it reaches ?
+ $AF34 CP (IX+$00)    ; When it reaches LSB of graphics pointer
  $AF37 JR NC,$AF3E    ; Then increment other counters
  $AF39 LD ($72D7),A   ; Otherwise store new value
  $AF3C SCF            ; Set carry flag
@@ -5599,7 +5600,7 @@ c$AE94 LD A,($72D5)   ; Get counter
 @label=inc_counters_2
 *$AF3E XOR A          ;
  $AF3F LD ($72D7),A   ; Set counter at $72D7 to zero
- $AF42 LD A,(IX+$01)  ; Get ?
+ $AF42 LD A,(IX+$01)  ; Get MSB of graphics pointer
  $AF45 OR A           ; If zero
  $AF46 JR Z,$AF55     ; Then increment other counters
  $AF48 LD A,($72D6)   ; Get counter
@@ -5619,7 +5620,7 @@ c$AE94 LD A,($72D5)   ; Get counter
  $AF63 CP L           ; When it reaches $1D (29)
  $AF64 RET C          ;
  $AF65 LD A,$FF       ;
- $AF67 LD ($72D5),A   ; Then set it to $FF
+ $AF67 LD ($72D5),A   ; Then set it to $FF (done)
  $AF6A RET            ;
 
 ; Take 8 bytes pointed to by $72DE and place them after, bit reversed. Returns
@@ -6117,43 +6118,132 @@ b$B21D DEFB $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
  $B8D5 DEFB $02,$05,$01,$05,$01,$05,$01,$05
 
 ; Data block at B8DD
-; #UDGTABLE
-; { #UDGARRAY8,,4($B8DD-$B9E6-8)(graphics-B8DD.png) }
-; TABLE#
 b$B8DD DEFB $00,$0A,$14,$1E,$22,$2C,$36,$3A
  $B8E5 DEFB $3E,$42,$46,$4A,$4E,$52,$56,$60
  $B8ED DEFB $6A,$74,$7E,$88,$92,$9C,$A6,$B0
- $B8F5 DEFB $BA,$C4,$CE,$D8,$E2,$04,$02,$E6
- $B8FD DEFB $B9,$06,$BA,$26,$BA,$46,$BA,$04
- $B905 DEFB $02,$66,$BA,$86,$BA,$A6,$BA,$C6
- $B90D DEFB $BA,$04,$00,$E6,$BA,$EE,$BA,$F6
- $B915 DEFB $BA,$FE,$BA,$01,$00,$06,$BB,$04
- $B91D DEFB $00,$0E,$BB,$16,$BB,$1E,$BB,$26
- $B925 DEFB $BB,$04,$00,$2E,$BB,$36,$BB,$3E
- $B92D DEFB $BB,$46,$BB,$01,$00,$4E,$BB,$01
- $B935 DEFB $00,$56,$BB,$01,$00,$5E,$BB,$01
- $B93D DEFB $00,$66,$BB,$01,$00,$6E,$BB,$01
- $B945 DEFB $00,$76,$BB,$01,$00,$7E,$BB,$01
- $B94D DEFB $00,$E6,$BD,$04,$02,$86,$BB,$A6
- $B955 DEFB $BB,$C6,$BB,$E6,$BB,$04,$02,$06
- $B95D DEFB $BC,$26,$BC,$46,$BC,$66,$BC,$04
- $B965 DEFB $02,$86,$BC,$A6,$BC,$C6,$BC,$E6
- $B96D DEFB $BC,$04,$02,$06,$BD,$26,$BD,$46
- $B975 DEFB $BD,$66,$BD,$04,$00,$86,$BD,$8E
- $B97D DEFB $BD,$96,$BD,$9E,$BD,$04,$00,$A6
- $B985 DEFB $BD,$AE,$BD,$B6,$BD,$BE,$BD,$04
- $B98D DEFB $00,$C6,$BD,$CE,$BD,$D6,$BD,$DE
- $B995 DEFB $BD,$04,$02,$EE,$BD,$0E,$BE,$1E
- $B99D DEFB $BE,$1E,$BE,$04,$02,$4E,$BE,$6E
- $B9A5 DEFB $BE,$7E,$BE,$7E,$BE,$04,$02,$AE
- $B9AD DEFB $BE,$CE,$BE,$DE,$BE,$DE,$BE,$04
- $B9B5 DEFB $02,$0E,$BF,$0E,$BF,$0E,$BF,$0E
- $B9BD DEFB $BF,$04,$02,$2E,$BF,$2E,$BF,$2E
- $B9C5 DEFB $BF,$2E,$BF,$04,$00,$4E,$BF,$56
- $B9CD DEFB $BF,$5E,$BF,$66,$BF,$04,$00,$6E
- $B9D5 DEFB $BF,$76,$BF,$7E,$BF,$86,$BF,$04
- $B9DD DEFB $00,$8E,$BF,$96,$BF,$9E,$BF,$A6
- $B9E5 DEFB $BF
+ $B8F5 DEFB $BA,$C4,$CE,$D8,$E2
+
+; Data block at B8FA
+b$B8FA DEFB $04,$02
+
+; Data block at B8FC
+w$B8FC DEFW $B9E6
+ $B8FE DEFW $BA06
+ $B900 DEFW $BA26
+ $B902 DEFW $BA46
+ $B904 DEFW $0204
+ $B906 DEFW $BA66
+ $B908 DEFW $BA86
+ $B90A DEFW $BAA6
+ $B90C DEFW $BAC6
+ $B90E DEFW $0004
+ $B910 DEFW $BAE6
+ $B912 DEFW $BAEE
+ $B914 DEFW $BAF6
+ $B916 DEFW $BAFE
+ $B918 DEFW $0001
+ $B91A DEFW $BB06
+ $B91C DEFW $0004
+ $B91E DEFW $BB0E
+ $B920 DEFW $BB16
+ $B922 DEFW $BB1E
+ $B924 DEFW $BB26
+ $B926 DEFW $0004
+ $B928 DEFW $BB2E
+ $B92A DEFW $BB36
+ $B92C DEFW $BB3E
+ $B92E DEFW $BB46
+ $B930 DEFW $0001
+ $B932 DEFW $BB4E
+ $B934 DEFW $0001
+ $B936 DEFW $BB56
+ $B938 DEFW $0001
+ $B93A DEFW $BB5E
+ $B93C DEFW $0001
+ $B93E DEFW $BB66
+ $B940 DEFW $0001
+ $B942 DEFW $BB6E
+ $B944 DEFW $0001
+ $B946 DEFW $BB76
+ $B948 DEFW $0001
+ $B94A DEFW $BB7E
+ $B94C DEFW $0001
+ $B94E DEFW $BDE6
+ $B950 DEFW $0204
+ $B952 DEFW $BB86
+ $B954 DEFW $BBA6
+ $B956 DEFW $BBC6
+ $B958 DEFW $BBE6
+ $B95A DEFW $0204
+ $B95C DEFW $BC06
+ $B95E DEFW $BC26
+ $B960 DEFW $BC46
+ $B962 DEFW $BC66
+ $B964 DEFW $0204
+ $B966 DEFW $BC86
+ $B968 DEFW $BCA6
+ $B96A DEFW $BCC6
+ $B96C DEFW $BCE6
+ $B96E DEFW $0204
+ $B970 DEFW $BD06
+ $B972 DEFW $BD26
+ $B974 DEFW $BD46
+ $B976 DEFW $BD66
+ $B978 DEFW $0004
+ $B97A DEFW $BD86
+ $B97C DEFW $BD8E
+ $B97E DEFW $BD96
+ $B980 DEFW $BD9E
+ $B982 DEFW $0004
+ $B984 DEFW $BDA6
+ $B986 DEFW $BDAE
+ $B988 DEFW $BDB6
+ $B98A DEFW $BDBE
+ $B98C DEFW $0004
+ $B98E DEFW $BDC6
+ $B990 DEFW $BDCE
+ $B992 DEFW $BDD6
+ $B994 DEFW $BDDE
+ $B996 DEFW $0204
+ $B998 DEFW $BDEE
+ $B99A DEFW $BE0E
+ $B99C DEFW $BE1E
+ $B99E DEFW $BE1E
+ $B9A0 DEFW $0204
+ $B9A2 DEFW $BE4E
+ $B9A4 DEFW $BE6E
+ $B9A6 DEFW $BE7E
+ $B9A8 DEFW $BE7E
+ $B9AA DEFW $0204
+ $B9AC DEFW $BEAE
+ $B9AE DEFW $BECE
+ $B9B0 DEFW $BEDE
+ $B9B2 DEFW $BEDE
+ $B9B4 DEFW $0204
+ $B9B6 DEFW $BF0E
+ $B9B8 DEFW $BF0E
+ $B9BA DEFW $BF0E
+ $B9BC DEFW $BF0E
+ $B9BE DEFW $0204
+ $B9C0 DEFW $BF2E
+ $B9C2 DEFW $BF2E
+ $B9C4 DEFW $BF2E
+ $B9C6 DEFW $BF2E
+ $B9C8 DEFW $0004
+ $B9CA DEFW $BF4E
+ $B9CC DEFW $BF56
+ $B9CE DEFW $BF5E
+ $B9D0 DEFW $BF66
+ $B9D2 DEFW $0004
+ $B9D4 DEFW $BF6E
+ $B9D6 DEFW $BF76
+ $B9D8 DEFW $BF7E
+ $B9DA DEFW $BF86
+ $B9DC DEFW $0004
+ $B9DE DEFW $BF8E
+ $B9E0 DEFW $BF96
+ $B9E2 DEFW $BF9E
+ $B9E4 DEFW $BFA6
 
 ; Graphics
 ; #UDGTABLE

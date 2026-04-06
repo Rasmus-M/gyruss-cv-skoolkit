@@ -996,10 +996,10 @@ D $AE54 Used by the routine at #R$ADD1.
 c $AE75 Routine at AE75
 D $AE75 Used by the routine at #R$AE54.
 N $AE86 This entry point is used by the routine at #R$AE54.
-c $AE94 Fill VDP RAM from $2100 to $3868 with data - perhaps flipped and shifted character pattern? 8 new bytes are generated with each call.
+c $AE94 Fill VDP RAM from $2100 to $3868 with character patterns that may be flipped and shifted. One new pattern is generated with each call. Are these used?
 D $AE94 Used by the routine at #R$90D6.
 C $AE94,3 Get counter
-C $AE97,2 If max malue
+C $AE97,2 If maxed out
 C $AE99,1 Then return
 C $AE9A,3 Get word (only used locally)
 C $AE9D,1 Is it zero?
@@ -1015,26 +1015,60 @@ C $AEBD,1 Write $00
 C $AEBF,1 Write $21
 C $AEC1,3 Save updated pointer, e.g. $72E0
 C $AEC4,3 Get counter
+C $AEC7,3 Table of 29 bytes (offsets into table at $B8FA)
 C $AECA,1 add_a_to_hl
+C $AECB,1 Load DE with value from table
+C $AECE,3 Table of pointers to graphics
+C $AED1,1 Add offset
+C $AED2,3 Save address of pointer
+C $AED5,3 Get counter
+C $AED8,1 Increment
+C $AED9,1 Double
 C $AEDA,1 add_a_to_hl
+C $AEDB,1 Get LSB of pointer
+C $AEDD,1 Get MSB of pointer
+C $AEDE,1 Now HL pointer to graphics
+C $AEDF,3 Get counter
+C $AEE2,2 0, 1, 2, 3
+C $AEE4,1 0, 2, 4, 6
+C $AEE5,1 0, 4, 8, 12
+C $AEE6,1 0, 8, 16, 32
 C $AEE7,1 add_a_to_hl
+C $AEE8,3 Buffer
+C $AEEB,4 Store as source address
+C $AEEF,3 Copy 8 bytes
+C $AEF2,2 of graphics data info buffer
+C $AEF4,3 Get address of graphics pointer
+C $AEF7,1 To MSB
+C $AEF8,1 Get MSB
+C $AEF9,1 Is it 0, i.e. not a real address?
+C $AEFA,2 Then skip ahead
+C $AEFC,4 Address of counter
+C $AF00,4 Is bit 2 set?
+C $AF04,2 If not, skip ahead
 C $AF06,3 flip_horz
+C $AF09,4 Is bit 3 set?
+C $AF0D,2 If not, skip ahead
 C $AF0F,3 flip_vert
 C $AF12,3 shift_left
+C $AF15,3 Source for writing to DP RAM
+C $AF18,4 Destination
+C $AF1C,3 8 bytes
 C $AF1F,3 WRITE_VRAM
 C $AF22,3 Get destination address
 C $AF28,1 Add 8
 C $AF29,3 Write back
 @ $AF2C label=inc_counters_1
+C $AF2C,4 Get address of graphics pointer
 C $AF30,3 Get counter
 C $AF33,1 Increment it
-C $AF34,3 When it reaches ?
+C $AF34,3 When it reaches LSB of graphics pointer
 C $AF37,2 Then increment other counters
 C $AF39,3 Otherwise store new value
 C $AF3C,1 Set carry flag
 @ $AF3E label=inc_counters_2
 C $AF3F,3 Set counter at $72D7 to zero
-C $AF42,3 Get ?
+C $AF42,3 Get MSB of graphics pointer
 C $AF45,1 If zero
 C $AF46,2 Then increment other counters
 C $AF48,3 Get counter
@@ -1048,7 +1082,7 @@ C $AF56,3 Set counter at $72D6 to zero
 C $AF59,3 Increment counter at $72D5
 C $AF5D,3 Get counter
 C $AF63,1 When it reaches $1D (29)
-C $AF67,3 Then set it to $FF
+C $AF67,3 Then set it to $FF (done)
 c $AF6B Take 8 bytes pointed to by $72DE and place them after, bit reversed. Returns address of reversed bytes in $72DE.
 D $AF6B Used by the routine at #R$AE94.
 @ $AF6B label=flip_horz
@@ -1136,8 +1170,12 @@ c $B1C6 Routine at B1C6
 D $B1C6 Used by the routines at #R$8F0F, #R$8F55, #R$A471, #R$AB72 and #R$ADD1.
 b $B21D Data block at B21D
 B $B21D,1728,8
-b $B8DD Data block at B8DD #UDGTABLE { #UDGARRAY8,,4($B8DD-$B9E6-8)(graphics-B8DD.png) } TABLE#
-B $B8DD,265,8*33,1
+b $B8DD Data block at B8DD
+B $B8DD,29,8*3,5
+b $B8FA Data block at B8FA
+B $B8FA,2,2
+w $B8FC Data block at B8FC
+W $B8FC,234,2
 b $B9E6 Graphics #UDGTABLE { #UDGARRAY8,,4($B9E6-$BFAE-8)(graphics-B9E6.png) } TABLE#
 B $B9E6,1480,8
 c $BFAE Routine at BFAE
