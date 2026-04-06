@@ -70,7 +70,8 @@ b$71A3 DEFB $00,$00,$00,$00,$00,$00,$00,$00
 ; Byte at 71EB
 b$71EB DEFB $00
 
-; Byte at 71EC (used by star routine)
+; Stars move countdown
+@label=stars_countdown
 b$71EC DEFB $00
 
 ; Data block at 71ED
@@ -136,7 +137,8 @@ b$726D DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $730D DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $7315 DEFB $00,$00,$00,$00,$00
 
-; Byte at 731A (used by star routine)
+; Star frame
+@label=star_frame
 b$731A DEFB $00
 
 ; Data block at 731B
@@ -169,7 +171,8 @@ b$731B DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $73EB DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $73F3 DEFB $00,$00,$00
 
-; Word at 73F6 (used by star routine)
+; Stars VDP address
+@label=stars_vdp_address
 w$73F6 DEFW $0000
 
 ; Data block at 73F8
@@ -5687,15 +5690,15 @@ c$AFFF LD HL,$71EC   ; Counter from 7 to 0
  $B009 BIT 0,A       ; Test bit 0
  $B00B JR Z,$B00F    ;
  $B00D LD (HL),$03   ; If bit 0 is set then reset counter to 3
-*$B00F LD C,$00      ; Parameter
+*$B00F LD C,$00      ; Set mask to undraw
  $B011 CALL $B023    ;
- $B014 LD A,($731A)  ; Get value
+ $B014 LD A,($731A)  ; Get star frame
  $B017 ADD A,$02     ; Add 2
  $B019 CP $0C        ; < 12 ?
  $B01B JR C,$B01E    ; Yes, skip ahead
  $B01D XOR A         ;
-*$B01E LD ($731A),A  ; Set value to zero
- $B021 LD C,$FF      ; Parameter
+*$B01E LD ($731A),A  ; Set star frame to zero
+ $B021 LD C,$FF      ; Set mask to draw
 
 ; Display star frame
 ;

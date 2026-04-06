@@ -20,7 +20,8 @@ b $71A3 Data block at 71A3
 B $71A3,72,8
 b $71EB Byte at 71EB
 B $71EB,1,1
-b $71EC Byte at 71EC (used by star routine)
+b $71EC Stars move countdown
+@ $71EC label=stars_countdown
 B $71EC,1,1
 b $71ED Data block at 71ED
 B $71ED,106,8*13,2
@@ -42,11 +43,13 @@ b $726C Byte at 726C
 B $726C,1,1
 b $726D Data block at 726D
 B $726D,173,8*21,5
-b $731A Byte at 731A (used by star routine)
+b $731A Star frame
+@ $731A label=star_frame
 B $731A,1,1
 b $731B Data block at 731B
 B $731B,219,8*27,3
-w $73F6 Word at 73F6 (used by star routine)
+w $73F6 Stars VDP address
+@ $73F6 label=stars_vdp_address
 W $73F6,2,2
 b $73F8 Data block at 73F8
 B $73F8,8,8
@@ -1005,13 +1008,13 @@ C $B004,2 Reset counter to 7
 C $B006,3 Get some flag
 C $B009,2 Test bit 0
 C $B00D,2 If bit 0 is set then reset counter to 3
-C $B00F,2 Parameter
-C $B014,3 Get value
+C $B00F,2 Set mask to undraw
+C $B014,3 Get star frame
 C $B017,2 Add 2
 C $B019,2 < 12 ?
 C $B01B,2 Yes, skip ahead
-C $B01E,3 Set value to zero
-C $B021,2 Parameter
+C $B01E,3 Set star frame to zero
+C $B021,2 Set mask to draw
 c $B023 Display star frame
 D $B023 Used by the routine at #R$AFFF.
 R $B023 I:C mask $00 or $FF
