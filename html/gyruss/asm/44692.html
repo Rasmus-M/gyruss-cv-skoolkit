@@ -19,11 +19,11 @@ Prev: <a href="44661.html">AE75</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#44692">Map</a></td>
 <td class="next">
-Next: <a href="44862.html">AF3E</a>
+Next: <a href="44907.html">AF6B</a>
 </td>
 </tr>
 </table>
-<div class="description">AE94: Routine at AE94</div>
+<div class="description">AE94: Fill VDP RAM from $2100 to $3868 with data - perhaps flipped and shifted character pattern? 8 new bytes are generated with each call.</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -37,32 +37,32 @@ Used by the routine at <a href="37078.html">start_screen</a>.
 <tr>
 <td class="asm-label">LAE94</td>
 <td class="address-2"><span id="44692"></span>AE94</td>
-<td class="instruction">LD A,(<a href="29293.html#29397">$72D5</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD A,(<a href="29397.html">L72D5</a>)</td>
+<td class="comment-1" rowspan="1">Get counter</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44695"></span>AE97</td>
 <td class="instruction">CP $FF</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If max malue</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44697"></span>AE99</td>
 <td class="instruction">RET Z</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Then return</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44698"></span>AE9A</td>
-<td class="instruction">LD HL,($72D8)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD HL,(<a href="29400.html">L72D8</a>)</td>
+<td class="comment-1" rowspan="1">Get word (only used locally)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44701"></span>AE9D</td>
 <td class="instruction">LD A,H</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Is it zero?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -74,43 +74,43 @@ Used by the routine at <a href="37078.html">start_screen</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44703"></span>AE9F</td>
 <td class="instruction">JR NZ,<a href="44692.html#44717">LAE94_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">No - skip ahead</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44705"></span>AEA1</td>
 <td class="instruction">LD HL,$2100</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Yes - set it to $2100</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44708"></span>AEA4</td>
-<td class="instruction">LD ($72D8),HL</td>
+<td class="instruction">LD (<a href="29400.html">L72D8</a>),HL</td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44711"></span>AEA7</td>
-<td class="instruction">LD HL,$72E0</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD HL,<a href="29408.html">L72E0</a></td>
+<td class="comment-1" rowspan="1">Set another word to $72E0 (pointer to a RAM block)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44714"></span>AEAA</td>
-<td class="instruction">LD ($72DC),HL</td>
+<td class="instruction">LD (<a href="29404.html">L72DC</a>),HL</td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label">LAE94_0</td>
 <td class="address-2"><span id="44717"></span>AEAD</td>
-<td class="instruction">LD A,($72D6)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD A,(<a href="29398.html">L72D6</a>)</td>
+<td class="comment-1" rowspan="1">Get counter</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44720"></span>AEB0</td>
-<td class="instruction">LD HL,$72D7</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD HL,<a href="29399.html">L72D7</a></td>
+<td class="comment-1" rowspan="1">And next counter</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -122,25 +122,25 @@ Used by the routine at <a href="37078.html">start_screen</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44724"></span>AEB4</td>
 <td class="instruction">JR NZ,<a href="44692.html#44740">LAE94_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If any is non-zero skip ahead</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44726"></span>AEB6</td>
-<td class="instruction">LD HL,($72DC)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD HL,(<a href="29404.html">L72DC</a>)</td>
+<td class="comment-1" rowspan="1">HL = $72E0</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44729"></span>AEB9</td>
-<td class="instruction">LD DE,($72D8)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD DE,(<a href="29400.html">L72D8</a>)</td>
+<td class="comment-1" rowspan="1">DE = $2100 initially</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44733"></span>AEBD</td>
 <td class="instruction">LD (HL),E</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write $00</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -152,7 +152,7 @@ Used by the routine at <a href="37078.html">start_screen</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44735"></span>AEBF</td>
 <td class="instruction">LD (HL),D</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write $21</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -163,19 +163,19 @@ Used by the routine at <a href="37078.html">start_screen</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44737"></span>AEC1</td>
-<td class="instruction">LD ($72DC),HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD (<a href="29404.html">L72DC</a>),HL</td>
+<td class="comment-1" rowspan="1">Save updated pointer, e.g. $72E0</td>
 </tr>
 <tr>
 <td class="asm-label">LAE94_1</td>
 <td class="address-2"><span id="44740"></span>AEC4</td>
-<td class="instruction">LD A,(<a href="29293.html#29397">$72D5</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD A,(<a href="29397.html">L72D5</a>)</td>
+<td class="comment-1" rowspan="1">Get counter</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44743"></span>AEC7</td>
-<td class="instruction">LD HL,<a href="45597.html#47325">$B8DD</a></td>
+<td class="instruction">LD HL,<a href="47325.html">LB8DD</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -211,13 +211,13 @@ Used by the routine at <a href="37078.html">start_screen</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44754"></span>AED2</td>
-<td class="instruction">LD ($72DA),HL</td>
+<td class="instruction">LD (<a href="29402.html">L72DA</a>),HL</td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44757"></span>AED5</td>
-<td class="instruction">LD A,($72D7)</td>
+<td class="instruction">LD A,(<a href="29399.html">L72D7</a>)</td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -265,7 +265,7 @@ Used by the routine at <a href="37078.html">start_screen</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44767"></span>AEDF</td>
-<td class="instruction">LD A,($72D6)</td>
+<td class="instruction">LD A,(<a href="29398.html">L72D6</a>)</td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -307,7 +307,7 @@ Used by the routine at <a href="37078.html">start_screen</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44779"></span>AEEB</td>
-<td class="instruction">LD ($72DE),DE</td>
+<td class="instruction">LD (<a href="29406.html">L72DE</a>),DE</td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -325,7 +325,7 @@ Used by the routine at <a href="37078.html">start_screen</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44788"></span>AEF4</td>
-<td class="instruction">LD HL,($72DA)</td>
+<td class="instruction">LD HL,(<a href="29402.html">L72DA</a>)</td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -355,7 +355,7 @@ Used by the routine at <a href="37078.html">start_screen</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44796"></span>AEFC</td>
-<td class="instruction">LD IX,$72D6</td>
+<td class="instruction">LD IX,<a href="29398.html">L72D6</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -374,7 +374,7 @@ Used by the routine at <a href="37078.html">start_screen</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44806"></span>AF06</td>
 <td class="instruction">CALL <a href="44907.html">flip_horz</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">flip_horz</td>
 </tr>
 <tr>
 <td class="asm-label">LAE94_2</td>
@@ -392,24 +392,24 @@ Used by the routine at <a href="37078.html">start_screen</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44815"></span>AF0F</td>
 <td class="instruction">CALL <a href="44974.html">flip_vert</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">flip_vert</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44818"></span>AF12</td>
-<td class="instruction">CALL <a href="44994.html">LAFC2</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL <a href="44994.html">shift_left</a></td>
+<td class="comment-1" rowspan="1">shift_left</td>
 </tr>
 <tr>
 <td class="asm-label">LAE94_3</td>
 <td class="address-2"><span id="44821"></span>AF15</td>
-<td class="instruction">LD HL,($72DE)</td>
+<td class="instruction">LD HL,(<a href="29406.html">L72DE</a>)</td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44824"></span>AF18</td>
-<td class="instruction">LD DE,($72D8)</td>
+<td class="instruction">LD DE,(<a href="29400.html">L72D8</a>)</td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -427,8 +427,8 @@ Used by the routine at <a href="37078.html">start_screen</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44834"></span>AF22</td>
-<td class="instruction">LD HL,($72D8)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD HL,(<a href="29400.html">L72D8</a>)</td>
+<td class="comment-1" rowspan="1">Get destination address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -440,59 +440,197 @@ Used by the routine at <a href="37078.html">start_screen</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44840"></span>AF28</td>
 <td class="instruction">ADD HL,BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add 8</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44841"></span>AF29</td>
-<td class="instruction">LD ($72D8),HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD (<a href="29400.html">L72D8</a>),HL</td>
+<td class="comment-1" rowspan="1">Write back</td>
 </tr>
 <tr>
-<td class="asm-label"></td>
+<td class="asm-label">inc_counters_1</td>
 <td class="address-1"><span id="44844"></span>AF2C</td>
-<td class="instruction">LD IX,($72DA)</td>
+<td class="instruction">LD IX,(<a href="29402.html">L72DA</a>)</td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44848"></span>AF30</td>
-<td class="instruction">LD A,($72D7)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD A,(<a href="29399.html">L72D7</a>)</td>
+<td class="comment-1" rowspan="1">Get counter</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44851"></span>AF33</td>
 <td class="instruction">INC A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Increment it</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44852"></span>AF34</td>
 <td class="instruction">CP (IX+$00)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">When it reaches ?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44855"></span>AF37</td>
-<td class="instruction">JR NC,<a href="44862.html">LAF3E</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NC,<a href="44692.html#44862">inc_counters_2</a></td>
+<td class="comment-1" rowspan="1">Then increment other counters</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44857"></span>AF39</td>
-<td class="instruction">LD ($72D7),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD (<a href="29399.html">L72D7</a>),A</td>
+<td class="comment-1" rowspan="1">Otherwise store new value</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44860"></span>AF3C</td>
 <td class="instruction">SCF</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set carry flag</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44861"></span>AF3D</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label">inc_counters_2</td>
+<td class="address-2"><span id="44862"></span>AF3E</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44863"></span>AF3F</td>
+<td class="instruction">LD (<a href="29399.html">L72D7</a>),A</td>
+<td class="comment-1" rowspan="1">Set counter at $72D7 to zero</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44866"></span>AF42</td>
+<td class="instruction">LD A,(IX+$01)</td>
+<td class="comment-1" rowspan="1">Get ?</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44869"></span>AF45</td>
+<td class="instruction">OR A</td>
+<td class="comment-1" rowspan="1">If zero</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44870"></span>AF46</td>
+<td class="instruction">JR Z,<a href="44692.html#44885">inc_counters_3</a></td>
+<td class="comment-1" rowspan="1">Then increment other counters</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44872"></span>AF48</td>
+<td class="instruction">LD A,(<a href="29398.html">L72D6</a>)</td>
+<td class="comment-1" rowspan="1">Get counter</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44875"></span>AF4B</td>
+<td class="instruction">INC A</td>
+<td class="comment-1" rowspan="1">Increment it</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44876"></span>AF4C</td>
+<td class="instruction">CP $10</td>
+<td class="comment-1" rowspan="1">When it reaches 10</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44878"></span>AF4E</td>
+<td class="instruction">JR NC,<a href="44692.html#44885">inc_counters_3</a></td>
+<td class="comment-1" rowspan="1">Then increment other counters</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44880"></span>AF50</td>
+<td class="instruction">LD (<a href="29398.html">L72D6</a>),A</td>
+<td class="comment-1" rowspan="1">Otherwise store new value</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44883"></span>AF53</td>
+<td class="instruction">SCF</td>
+<td class="comment-1" rowspan="1">Set carry flag</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44884"></span>AF54</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label">inc_counters_3</td>
+<td class="address-2"><span id="44885"></span>AF55</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44886"></span>AF56</td>
+<td class="instruction">LD (<a href="29398.html">L72D6</a>),A</td>
+<td class="comment-1" rowspan="1">Set counter at $72D6 to zero</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44889"></span>AF59</td>
+<td class="instruction">LD A,(<a href="29397.html">L72D5</a>)</td>
+<td class="comment-1" rowspan="1">Increment counter at $72D5</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44892"></span>AF5C</td>
+<td class="instruction">INC A</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44893"></span>AF5D</td>
+<td class="instruction">LD (<a href="29397.html">L72D5</a>),A</td>
+<td class="comment-1" rowspan="1">Get counter</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44896"></span>AF60</td>
+<td class="instruction">LD HL,$001D</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44899"></span>AF63</td>
+<td class="instruction">CP L</td>
+<td class="comment-1" rowspan="1">When it reaches $1D (29)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44900"></span>AF64</td>
+<td class="instruction">RET C</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44901"></span>AF65</td>
+<td class="instruction">LD A,$FF</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44903"></span>AF67</td>
+<td class="instruction">LD (<a href="29397.html">L72D5</a>),A</td>
+<td class="comment-1" rowspan="1">Then set it to $FF</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44906"></span>AF6A</td>
 <td class="instruction">RET</td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
@@ -504,7 +642,7 @@ Prev: <a href="44661.html">AE75</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#44692">Map</a></td>
 <td class="next">
-Next: <a href="44862.html">AF3E</a>
+Next: <a href="44907.html">AF6B</a>
 </td>
 </tr>
 </table>

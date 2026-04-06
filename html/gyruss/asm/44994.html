@@ -23,7 +23,7 @@ Next: <a href="45021.html">AFDD</a>
 </td>
 </tr>
 </table>
-<div class="description">AFC2: Routine at AFC2</div>
+<div class="description">AFC2: Take 8 bytes pointed to by $72DE and place them after, left shifted one bit. Returns address of shifted bytes in $72DE.</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -35,9 +35,9 @@ Used by the routine at <a href="44692.html">LAE94</a>.
 </td>
 </tr>
 <tr>
-<td class="asm-label">LAFC2</td>
+<td class="asm-label">shift_left</td>
 <td class="address-2"><span id="44994"></span>AFC2</td>
-<td class="instruction">LD DE,($72DE)</td>
+<td class="instruction">LD DE,(<a href="29406.html">L72DE</a>)</td>
 <td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
@@ -55,7 +55,7 @@ Used by the routine at <a href="44692.html">LAE94</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45002"></span>AFCA</td>
-<td class="instruction">LD ($72DE),HL</td>
+<td class="instruction">LD (<a href="29406.html">L72DE</a>),HL</td>
 <td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
@@ -71,13 +71,13 @@ Used by the routine at <a href="44692.html">LAE94</a>.
 <td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">LAFC2_0</td>
+<td class="asm-label">shift_left_0</td>
 <td class="address-2"><span id="45008"></span>AFD0</td>
 <td class="instruction">LD A,$80</td>
 <td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">LAFC2_1</td>
+<td class="asm-label">shift_left_1</td>
 <td class="address-2"><span id="45010"></span>AFD2</td>
 <td class="instruction">RL (HL)</td>
 <td class="comment-0" rowspan="1"></td>
@@ -91,7 +91,7 @@ Used by the routine at <a href="44692.html">LAE94</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45013"></span>AFD5</td>
-<td class="instruction">JR NC,<a href="44994.html#45010">LAFC2_1</a></td>
+<td class="instruction">JR NC,<a href="44994.html#45010">shift_left_1</a></td>
 <td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
@@ -115,7 +115,7 @@ Used by the routine at <a href="44692.html">LAE94</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45018"></span>AFDA</td>
-<td class="instruction">DJNZ <a href="44994.html#45008">LAFC2_0</a></td>
+<td class="instruction">DJNZ <a href="44994.html#45008">shift_left_0</a></td>
 <td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>

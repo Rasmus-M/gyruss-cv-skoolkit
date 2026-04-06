@@ -23,7 +23,7 @@ Next: <a href="44885.html">AF55</a>
 </td>
 </tr>
 </table>
-<div class="description">AF3E: Routine at AF3E</div>
+<div class="description">AF3E: Increment counters 2</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -38,73 +38,73 @@ Used by the routine at <a href="44692.html">LAE94</a>.
 <td class="asm-label">LAF3E</td>
 <td class="address-2"><span id="44862"></span>AF3E</td>
 <td class="instruction">XOR A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44863"></span>AF3F</td>
-<td class="instruction">LD ($72D7),A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">LD (<a href="29399.html">L72D7</a>),A</td>
+<td class="comment-1" rowspan="1">Set counter at $72D7 to zero</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44866"></span>AF42</td>
 <td class="instruction">LD A,(IX+$01)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get ?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44869"></span>AF45</td>
 <td class="instruction">OR A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If zero</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44870"></span>AF46</td>
 <td class="instruction">JR Z,<a href="44885.html">LAF55</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Then increment other counters</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44872"></span>AF48</td>
-<td class="instruction">LD A,($72D6)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">LD A,(<a href="29398.html">L72D6</a>)</td>
+<td class="comment-1" rowspan="1">Get counter</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44875"></span>AF4B</td>
 <td class="instruction">INC A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Increment it</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44876"></span>AF4C</td>
 <td class="instruction">CP $10</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">When it reaches 10</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44878"></span>AF4E</td>
 <td class="instruction">JR NC,<a href="44885.html">LAF55</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Then increment other counters</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44880"></span>AF50</td>
-<td class="instruction">LD ($72D6),A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">LD (<a href="29398.html">L72D6</a>),A</td>
+<td class="comment-1" rowspan="1">Otherwise store new value</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44883"></span>AF53</td>
 <td class="instruction">SCF</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set carry flag</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44884"></span>AF54</td>
 <td class="instruction">RET</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 </table>
 <table class="asm-navigation">

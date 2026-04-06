@@ -127,15 +127,37 @@ b$726D DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $72BD DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $72C5 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $72CD DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $72D5 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $72DD DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $72E5 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $72ED DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $72F5 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $72FD DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7305 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $730D DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7315 DEFB $00,$00,$00,$00,$00
+
+; Byte at 72D5
+b$72D5 DEFB $00
+
+; Byte at 72D6
+b$72D6 DEFB $00
+
+; Byte at 72D6
+b$72D7 DEFB $00
+
+; Word at 72D8
+w$72D8 DEFW $0000
+
+; Word at 72DA
+w$72DA DEFW $0000
+
+; Word at 72DC
+w$72DC DEFW $0000
+
+; Word at 72DE
+w$72DE DEFW $0000
+
+; Data block at 72E0
+b$72E0 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $72E8 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $72F0 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $72F8 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7300 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7308 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7310 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7318 DEFB $00,$00
 
 ; Star frame
 @label=star_frame
@@ -2470,7 +2492,6 @@ b$9056 DEFB $00,$03,$07,$0F,$0F,$0F,$07,$07
  $90BE DEFB $1B,$15,$0B,$06,$09,$10,$00,$00
  $90C6 DEFB $00,$20,$40,$80,$E0,$F0,$FE,$F8
  $90CE DEFB $F8,$F8,$70,$E8,$84,$40,$20,$00
-
 ; Start screen
 ;
 ; Used by the routine at #R$8024.
@@ -2541,11 +2562,11 @@ c$90D6 CALL $1F85    ; MODE_1 (pattern generator table at  $0000, name table at
  $9166 RST $18       ; WRITE_REGISTER
 @label=start_screen_loop
 *$9167 HALT          ; Wait for interrupt
- $9168 CALL $AFFF    ;
+ $9168 CALL $AFFF    ; Draw stars
  $916B CALL $AE94    ;
- $916E RET NC        ;
+ $916E RET NC        ; Return is no carry
  $916F CALL $AE94    ;
- $9172 JR C,$9167    ; Loop until ...
+ $9172 JR C,$9167    ; Loop until no carry
  $9174 RET           ;
 
 ; Display planet
@@ -4822,6 +4843,9 @@ b$A865 DEFB $FF,$20,$30,$28,$00,$FF,$38,$FF
  $A875 DEFB $03,$01,$00,$FC,$05,$F9,$08,$FE
 
 ; Ship sprites
+; #UDGTABLE
+; { #UDGARRAY1,,4($A87D-$AA7D-8)(graphics-A87D.png) }
+; TABLE#
 b$A87D DEFB $00,$01,$07,$07,$0F,$1F,$3F,$78
  $A885 DEFB $60,$01,$01,$00,$00,$00,$00,$00
  $A88D DEFB $80,$C0,$F0,$F0,$F8,$FC,$FE,$8F
@@ -5490,32 +5514,33 @@ c$AE75 LD HL,$7206     ;
  $AE8E LD (IX+$08),$F8 ;
  $AE92 JR $AE4E        ;
 
-; Routine at AE94
+; Fill VDP RAM from $2100 to $3868 with data - perhaps flipped and shifted
+; character pattern? 8 new bytes are generated with each call.
 ;
 ; Used by the routine at #R$90D6.
-c$AE94 LD A,($72D5)   ;
- $AE97 CP $FF         ;
- $AE99 RET Z          ;
- $AE9A LD HL,($72D8)  ;
- $AE9D LD A,H         ;
+c$AE94 LD A,($72D5)   ; Get counter
+ $AE97 CP $FF         ; If max malue
+ $AE99 RET Z          ; Then return
+ $AE9A LD HL,($72D8)  ; Get word (only used locally)
+ $AE9D LD A,H         ; Is it zero?
  $AE9E OR L           ;
- $AE9F JR NZ,$AEAD    ;
- $AEA1 LD HL,$2100    ;
+ $AE9F JR NZ,$AEAD    ; No - skip ahead
+ $AEA1 LD HL,$2100    ; Yes - set it to $2100
  $AEA4 LD ($72D8),HL  ;
- $AEA7 LD HL,$72E0    ;
+ $AEA7 LD HL,$72E0    ; Set another word to $72E0 (pointer to a RAM block)
  $AEAA LD ($72DC),HL  ;
-*$AEAD LD A,($72D6)   ;
- $AEB0 LD HL,$72D7    ;
+*$AEAD LD A,($72D6)   ; Get counter
+ $AEB0 LD HL,$72D7    ; And next counter
  $AEB3 OR (HL)        ;
- $AEB4 JR NZ,$AEC4    ;
- $AEB6 LD HL,($72DC)  ;
- $AEB9 LD DE,($72D8)  ;
- $AEBD LD (HL),E      ;
+ $AEB4 JR NZ,$AEC4    ; If any is non-zero skip ahead
+ $AEB6 LD HL,($72DC)  ; HL = $72E0
+ $AEB9 LD DE,($72D8)  ; DE = $2100 initially
+ $AEBD LD (HL),E      ; Write $00
  $AEBE INC HL         ;
- $AEBF LD (HL),D      ;
+ $AEBF LD (HL),D      ; Write $21
  $AEC0 INC HL         ;
- $AEC1 LD ($72DC),HL  ;
-*$AEC4 LD A,($72D5)   ;
+ $AEC1 LD ($72DC),HL  ; Save updated pointer, e.g. $72E0
+*$AEC4 LD A,($72D5)   ; Get counter
  $AEC7 LD HL,$B8DD    ;
  $AECA RST $08        ; add_a_to_hl
  $AECB LD E,(HL)      ;
@@ -5549,60 +5574,55 @@ c$AE94 LD A,($72D5)   ;
  $AEFC LD IX,$72D6    ;
  $AF00 BIT 2,(IX+$00) ;
  $AF04 JR Z,$AF09     ;
- $AF06 CALL $AF6B     ;
+ $AF06 CALL $AF6B     ; flip_horz
 *$AF09 BIT 3,(IX+$00) ;
  $AF0D JR NZ,$AF15    ;
- $AF0F CALL $AFAE     ;
- $AF12 CALL $AFC2     ;
+ $AF0F CALL $AFAE     ; flip_vert
+ $AF12 CALL $AFC2     ; shift_left
 *$AF15 LD HL,($72DE)  ;
  $AF18 LD DE,($72D8)  ;
  $AF1C LD BC,$0008    ;
  $AF1F CALL $1FDF     ; WRITE_VRAM
- $AF22 LD HL,($72D8)  ;
+ $AF22 LD HL,($72D8)  ; Get destination address
  $AF25 LD BC,$0008    ;
- $AF28 ADD HL,BC      ;
- $AF29 LD ($72D8),HL  ;
+ $AF28 ADD HL,BC      ; Add 8
+ $AF29 LD ($72D8),HL  ; Write back
+@label=inc_counters_1
  $AF2C LD IX,($72DA)  ;
- $AF30 LD A,($72D7)   ;
- $AF33 INC A          ;
- $AF34 CP (IX+$00)    ;
- $AF37 JR NC,$AF3E    ;
- $AF39 LD ($72D7),A   ;
- $AF3C SCF            ;
+ $AF30 LD A,($72D7)   ; Get counter
+ $AF33 INC A          ; Increment it
+ $AF34 CP (IX+$00)    ; When it reaches ?
+ $AF37 JR NC,$AF3E    ; Then increment other counters
+ $AF39 LD ($72D7),A   ; Otherwise store new value
+ $AF3C SCF            ; Set carry flag
  $AF3D RET            ;
+@label=inc_counters_2
+*$AF3E XOR A          ;
+ $AF3F LD ($72D7),A   ; Set counter at $72D7 to zero
+ $AF42 LD A,(IX+$01)  ; Get ?
+ $AF45 OR A           ; If zero
+ $AF46 JR Z,$AF55     ; Then increment other counters
+ $AF48 LD A,($72D6)   ; Get counter
+ $AF4B INC A          ; Increment it
+ $AF4C CP $10         ; When it reaches 10
+ $AF4E JR NC,$AF55    ; Then increment other counters
+ $AF50 LD ($72D6),A   ; Otherwise store new value
+ $AF53 SCF            ; Set carry flag
+ $AF54 RET            ;
+@label=inc_counters_3
+*$AF55 XOR A          ;
+ $AF56 LD ($72D6),A   ; Set counter at $72D6 to zero
+ $AF59 LD A,($72D5)   ; Increment counter at $72D5
+ $AF5C INC A          ;
+ $AF5D LD ($72D5),A   ; Get counter
+ $AF60 LD HL,$001D    ;
+ $AF63 CP L           ; When it reaches $1D (29)
+ $AF64 RET C          ;
+ $AF65 LD A,$FF       ;
+ $AF67 LD ($72D5),A   ; Then set it to $FF
+ $AF6A RET            ;
 
-; Routine at AF3E
-;
-; Used by the routine at #R$AE94.
-c$AF3E XOR A         ;
- $AF3F LD ($72D7),A  ;
- $AF42 LD A,(IX+$01) ;
- $AF45 OR A          ;
- $AF46 JR Z,$AF55    ;
- $AF48 LD A,($72D6)  ;
- $AF4B INC A         ;
- $AF4C CP $10        ;
- $AF4E JR NC,$AF55   ;
- $AF50 LD ($72D6),A  ;
- $AF53 SCF           ;
- $AF54 RET           ;
-
-; Routine at AF55
-;
-; Used by the routine at #R$AF3E.
-c$AF55 XOR A         ;
- $AF56 LD ($72D6),A  ;
- $AF59 LD A,($72D5)  ;
- $AF5C INC A         ;
- $AF5D LD ($72D5),A  ;
- $AF60 LD HL,$001D   ;
- $AF63 CP L          ;
- $AF64 RET C         ;
- $AF65 LD A,$FF      ;
- $AF67 LD ($72D5),A  ;
- $AF6A RET           ;
-
-; Take 8 bytes pointed to by $72DE and place them after bit reversed. Return
+; Take 8 bytes pointed to by $72DE and place them after, bit reversed. Returns
 ; address of reversed bytes in $72DE.
 ;
 ; Used by the routine at #R$AE94.
@@ -5635,7 +5655,7 @@ c$AF6B LD HL,($72DE) ;
  $AFAD RET           ;
 
 ; Take 8 bytes pointed to by $72DE and place them after in reverse order.
-; Return address of reversed bytes in $72DE.
+; Returns address of reversed bytes in $72DE.
 ;
 ; Used by the routine at #R$AE94.
 @label=flip_vert
@@ -5651,9 +5671,11 @@ c$AFAE LD DE,($72DE) ;
  $AFBE LD ($72DE),HL ;
  $AFC1 RET           ;
 
-; Routine at AFC2
+; Take 8 bytes pointed to by $72DE and place them after, left shifted one bit.
+; Returns address of shifted bytes in $72DE.
 ;
 ; Used by the routine at #R$AE94.
+@label=shift_left
 c$AFC2 LD DE,($72DE) ;
  $AFC6 LD HL,$0008   ;
  $AFC9 ADD HL,DE     ;
@@ -5795,6 +5817,9 @@ b$B10E DEFB $AD,$0C,$FB,$12,$FF,$85,$0C,$81
 b$B134 DEFB $01,$12
 
 ; Star patterns
+; #UDGTABLE
+; { #UDGARRAY8,,4($B136-$B1C6-8)(graphics-B136.png) }
+; TABLE#
 b$B136 DEFB $00,$00,$00,$08,$00,$00,$00,$00
  $B13E DEFB $00,$00,$00,$00,$00,$00,$00,$80
  $B146 DEFB $00,$00,$00,$00,$00,$00,$10,$80
@@ -6090,7 +6115,12 @@ b$B21D DEFB $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
  $B8C5 DEFB $05,$02,$04,$03,$04,$03,$04,$03
  $B8CD DEFB $04,$04,$03,$04,$03,$05,$02,$05
  $B8D5 DEFB $02,$05,$01,$05,$01,$05,$01,$05
- $B8DD DEFB $00,$0A,$14,$1E,$22,$2C,$36,$3A
+
+; Data block at B8DD
+; #UDGTABLE
+; { #UDGARRAY8,,4($B8DD-$B9E6-8)(graphics-B8DD.png) }
+; TABLE#
+b$B8DD DEFB $00,$0A,$14,$1E,$22,$2C,$36,$3A
  $B8E5 DEFB $3E,$42,$46,$4A,$4E,$52,$56,$60
  $B8ED DEFB $6A,$74,$7E,$88,$92,$9C,$A6,$B0
  $B8F5 DEFB $BA,$C4,$CE,$D8,$E2,$04,$02,$E6
@@ -6126,6 +6156,9 @@ b$B21D DEFB $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
  $B9E5 DEFB $BF
 
 ; Graphics
+; #UDGTABLE
+; { #UDGARRAY8,,4($B9E6-$BFAE-8)(graphics-B9E6.png) }
+; TABLE#
 b$B9E6 DEFB $00,$7F,$3E,$63,$41,$00,$00,$00
  $B9EE DEFB $00,$72,$7E,$DC,$0C,$06,$00,$00
  $B9F6 DEFB $10,$18,$18,$FF,$1F,$08,$08,$08

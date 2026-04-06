@@ -42,7 +42,23 @@ b $726C Byte at 726C
 @ $726C label=byte_at_726C
 B $726C,1,1
 b $726D Data block at 726D
-B $726D,173,8*21,5
+B $726D,104,8
+b $72D5 Byte at 72D5
+B $72D5,1,1
+b $72D6 Byte at 72D6
+B $72D6,1,1
+b $72D7 Byte at 72D6
+B $72D7,1,1
+w $72D8 Word at 72D8
+W $72D8,2,2
+w $72DA Word at 72DA
+W $72DA,2,2
+w $72DC Word at 72DC
+W $72DC,2,2
+w $72DE Word at 72DE
+W $72DE,2,2
+b $72E0 Data block at 72E0
+B $72E0,58,8*7,2
 b $731A Star frame
 @ $731A label=star_frame
 B $731A,1,1
@@ -449,7 +465,9 @@ C $9163,3 Display on, interrupt on
 C $9166,1 WRITE_REGISTER
 @ $9167 label=start_screen_loop
 C $9167,1 Wait for interrupt
-C $9172,2 Loop until ...
+C $9168,3 Draw stars
+C $916E,1 Return is no carry
+C $9172,2 Loop until no carry
 c $9175 Display planet
 D $9175 Used by the routines at #R$8368, #R$83D0 and #R$90D6.
 R $9175 I:A Index of planet (1 based)
@@ -854,7 +872,7 @@ D $A808 Used by the routines at #R$8368, #R$A33B, #R$A3E1 and #R$A73C.
 C $A833,1 add_a_to_hl
 b $A865 Data block at A865
 B $A865,24,8
-b $A87D Ship sprites
+b $A87D Ship sprites #UDGTABLE { #UDGARRAY1,,4($A87D-$AA7D-8)(graphics-A87D.png) } TABLE#
 B $A87D,513,8*64,1
 c $AA7E Routine at AA7E
 c $AAA6 Routine at AAA6
@@ -978,24 +996,68 @@ D $AE54 Used by the routine at #R$ADD1.
 c $AE75 Routine at AE75
 D $AE75 Used by the routine at #R$AE54.
 N $AE86 This entry point is used by the routine at #R$AE54.
-c $AE94 Routine at AE94
+c $AE94 Fill VDP RAM from $2100 to $3868 with data - perhaps flipped and shifted character pattern? 8 new bytes are generated with each call.
 D $AE94 Used by the routine at #R$90D6.
+C $AE94,3 Get counter
+C $AE97,2 If max malue
+C $AE99,1 Then return
+C $AE9A,3 Get word (only used locally)
+C $AE9D,1 Is it zero?
+C $AE9F,2 No - skip ahead
+C $AEA1,3 Yes - set it to $2100
+C $AEA7,3 Set another word to $72E0 (pointer to a RAM block)
+C $AEAD,3 Get counter
+C $AEB0,3 And next counter
+C $AEB4,2 If any is non-zero skip ahead
+C $AEB6,3 HL = $72E0
+C $AEB9,4 DE = $2100 initially
+C $AEBD,1 Write $00
+C $AEBF,1 Write $21
+C $AEC1,3 Save updated pointer, e.g. $72E0
+C $AEC4,3 Get counter
 C $AECA,1 add_a_to_hl
 C $AEDA,1 add_a_to_hl
 C $AEE7,1 add_a_to_hl
+C $AF06,3 flip_horz
+C $AF0F,3 flip_vert
+C $AF12,3 shift_left
 C $AF1F,3 WRITE_VRAM
-c $AF3E Routine at AF3E
-D $AF3E Used by the routine at #R$AE94.
-c $AF55 Routine at AF55
-D $AF55 Used by the routine at #R$AF3E.
-c $AF6B Take 8 bytes pointed to by $72DE and place them after bit reversed. Return address of reversed bytes in $72DE.
+C $AF22,3 Get destination address
+C $AF28,1 Add 8
+C $AF29,3 Write back
+@ $AF2C label=inc_counters_1
+C $AF30,3 Get counter
+C $AF33,1 Increment it
+C $AF34,3 When it reaches ?
+C $AF37,2 Then increment other counters
+C $AF39,3 Otherwise store new value
+C $AF3C,1 Set carry flag
+@ $AF3E label=inc_counters_2
+C $AF3F,3 Set counter at $72D7 to zero
+C $AF42,3 Get ?
+C $AF45,1 If zero
+C $AF46,2 Then increment other counters
+C $AF48,3 Get counter
+C $AF4B,1 Increment it
+C $AF4C,2 When it reaches 10
+C $AF4E,2 Then increment other counters
+C $AF50,3 Otherwise store new value
+C $AF53,1 Set carry flag
+@ $AF55 label=inc_counters_3
+C $AF56,3 Set counter at $72D6 to zero
+C $AF59,3 Increment counter at $72D5
+C $AF5D,3 Get counter
+C $AF63,1 When it reaches $1D (29)
+C $AF67,3 Then set it to $FF
+c $AF6B Take 8 bytes pointed to by $72DE and place them after, bit reversed. Returns address of reversed bytes in $72DE.
 D $AF6B Used by the routine at #R$AE94.
 @ $AF6B label=flip_horz
-c $AFAE Take 8 bytes pointed to by $72DE and place them after in reverse order. Return address of reversed bytes in $72DE.
+c $AFAE Take 8 bytes pointed to by $72DE and place them after in reverse order. Returns address of reversed bytes in $72DE.
 D $AFAE Used by the routine at #R$AE94.
 @ $AFAE label=flip_vert
-c $AFC2 Routine at AFC2
+c $AFC2 Take 8 bytes pointed to by $72DE and place them after, left shifted one bit. Returns address of shifted bytes in $72DE.
 D $AFC2 Used by the routine at #R$AE94.
+@ $AFC2 label=shift_left
 b $AFDD Data block at AFDD
 B $AFDD,34,8*4,2
 c $AFFF Display stars
@@ -1068,13 +1130,15 @@ B $B10E,38,8*4,6
 b $B134 Stars
 @ $B134 label=stars
 B $B134,2,2
-b $B136 Star patterns
+b $B136 Star patterns #UDGTABLE { #UDGARRAY8,,4($B136-$B1C6-8)(graphics-B136.png) } TABLE#
 B $B136,144,8
 c $B1C6 Routine at B1C6
 D $B1C6 Used by the routines at #R$8F0F, #R$8F55, #R$A471, #R$AB72 and #R$ADD1.
 b $B21D Data block at B21D
-B $B21D,1993,8*249,1
-b $B9E6 Graphics
+B $B21D,1728,8
+b $B8DD Data block at B8DD #UDGTABLE { #UDGARRAY8,,4($B8DD-$B9E6-8)(graphics-B8DD.png) } TABLE#
+B $B8DD,265,8*33,1
+b $B9E6 Graphics #UDGTABLE { #UDGARRAY8,,4($B9E6-$BFAE-8)(graphics-B9E6.png) } TABLE#
 B $B9E6,1480,8
 c $BFAE Routine at BFAE
 D $BFAE Used by the routine at #R$8015.
