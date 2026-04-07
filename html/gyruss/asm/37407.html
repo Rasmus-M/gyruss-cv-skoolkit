@@ -4,6 +4,7 @@
 <title>Gyruss: Routine at 921F</title>
 <meta charset="utf-8" />
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
 </head>
 <body class="Asm-c">
 <table class="header">
@@ -23,7 +24,7 @@ Next: <a href="37454.html">924E</a>
 </td>
 </tr>
 </table>
-<div class="description">921F: Upload patterns to VDP buffer at $1400</div>
+<div class="description">921F: Decode and upload patterns to VDP buffer at $1400</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -62,13 +63,13 @@ Used by the routine at <a href="37078.html">start_screen</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="37417"></span>9229</td>
 <td class="instruction">LD HL,<a href="38004.html">L9474</a></td>
-<td class="comment-1" rowspan="1">Source address</td>
+<td class="comment-1" rowspan="1">Source address - 1</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37420"></span>922C</td>
 <td class="instruction">LD DE,$1400</td>
-<td class="comment-1" rowspan="1">Destination buffer in VDP RAM</td>
+<td class="comment-1" rowspan="1">Destination address in VDP RAM</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -84,97 +85,97 @@ This entry point is used by the routine at <a href="37454.html">L924E</a>.
 <td class="asm-label">L921F_0</td>
 <td class="address-2"><span id="37423"></span>922F</td>
 <td class="instruction">LD A,($726B)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">MSB of counter</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37426"></span>9232</td>
 <td class="instruction">OR A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Test MSB</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37427"></span>9233</td>
 <td class="instruction">RET M</td>
-<td class="comment-1" rowspan="1">Return when done</td>
+<td class="comment-1" rowspan="1">Return when MSB is negative</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37428"></span>9234</td>
 <td class="instruction">LD B,$01</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Read 1 bit</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37430"></span>9236</td>
 <td class="instruction">CALL <a href="37461.html#37463">L9255_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Read it into A</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37433"></span>9239</td>
 <td class="instruction">OR A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If zero, write multiple bytes</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37434"></span>923A</td>
 <td class="instruction">JR NZ,<a href="37454.html">L924E</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Otherwise jump to write a single byte</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37436"></span>923C</td>
 <td class="instruction">LD B,$05</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Read 5 bits</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37438"></span>923E</td>
 <td class="instruction">CALL <a href="37461.html#37463">L9255_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Read them into A</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37441"></span>9241</td>
 <td class="instruction">ADD A,$02</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add 2 as the base</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37443"></span>9243</td>
 <td class="instruction">PUSH AF</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save number of repeats</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37444"></span>9244</td>
 <td class="instruction">CALL <a href="37461.html">L9255</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get byte to write in A</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37447"></span>9247</td>
 <td class="instruction">POP BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore number of repeats</td>
 </tr>
 <tr>
 <td class="asm-label">L921F_1</td>
 <td class="address-2"><span id="37448"></span>9248</td>
 <td class="instruction">RST $10</td>
-<td class="comment-1" rowspan="1">vdp_write_byte</td>
+<td class="comment-1" rowspan="1">vdp_write_byte in A to DE</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37449"></span>9249</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Next VDP address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37450"></span>924A</td>
 <td class="instruction">DJNZ <a href="37407.html#37448">L921F_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Loop B times</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

@@ -1,0 +1,10 @@
+table.no-border {
+    border-collapse: collapse;
+}
+
+td.no-border {
+    padding: 0;
+    margin: 0;
+    border: none;
+    line-height: 0;
+}

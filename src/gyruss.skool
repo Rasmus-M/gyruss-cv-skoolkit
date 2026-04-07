@@ -2476,6 +2476,10 @@ b$9046 DEFB $01,$FF,$01,$FF,$01,$01,$01,$01
  $904E DEFB $FF,$01,$FF,$01,$FF,$FF,$FF,$FF
 
 ; Graphics
+; #UDGTABLE(no-border, no-border)
+; { #UDGARRAY8,,4($9056-$90C7-16)(graphics-9056.png) }
+; { #UDGARRAY8,,4($905E-$90D5-16)(graphics-905E.png) }
+; TABLE#
 b$9056 DEFB $00,$03,$07,$0F,$0F,$0F,$07,$07
  $905E DEFB $3E,$7C,$FC,$FC,$78,$30,$00,$00
  $9066 DEFB $00,$80,$C0,$E0,$E0,$E0,$C0,$C0
@@ -2544,7 +2548,7 @@ c$90D6 CALL $1F85    ; MODE_1 (pattern generator table at  $0000, name table at
  $9135 LD DE,$18C8   ; Name table address of next row
  $9138 DEC C         ; Row counter
  $9139 JR NZ,$9128   ; Loop for 2 rows
- $913B CALL $ACDF    ; Init something in RAM (sprites?)
+ $913B CALL $ACDF    ; Init sprites
  $913E LD A,$06      ; Planet number
  $9140 CALL $9175    ; Draw planet 6 (Earth)
  $9143 CALL $ACF9    ; Upload sprite data
@@ -2692,70 +2696,72 @@ c$920D PUSH HL       ;
  $921D POP HL        ;
  $921E RET           ;
 
-; Upload patterns to VDP buffer at $1400
+; Decode and upload patterns to VDP buffer at $1400
 ;
 ; Used by the routine at #R$90D6.
+@decode_and_upload_patterns
 c$921F LD HL,$0279   ; Number of bytes in block at $9475
  $9222 LD ($726A),HL ; Save it
  $9225 XOR A         ; A = 0
  $9226 LD ($726C),A  ; Save it
- $9229 LD HL,$9474   ; Source address
- $922C LD DE,$1400   ; Destination buffer in VDP RAM
+ $9229 LD HL,$9474   ; Source address - 1
+ $922C LD DE,$1400   ; Destination address in VDP RAM
 ; This entry point is used by the routine at #R$924E.
-*$922F LD A,($726B)  ;
- $9232 OR A          ;
- $9233 RET M         ; Return when done
- $9234 LD B,$01      ;
- $9236 CALL $9257    ;
- $9239 OR A          ;
- $923A JR NZ,$924E   ;
- $923C LD B,$05      ;
- $923E CALL $9257    ;
- $9241 ADD A,$02     ;
- $9243 PUSH AF       ;
- $9244 CALL $9255    ;
- $9247 POP BC        ;
-*$9248 RST $10       ; vdp_write_byte
- $9249 INC DE        ;
- $924A DJNZ $9248    ;
+*$922F LD A,($726B)  ; MSB of counter
+ $9232 OR A          ; Test MSB
+ $9233 RET M         ; Return when MSB is negative
+ $9234 LD B,$01      ; Read 1 bit
+ $9236 CALL $9257    ; Read it into A
+ $9239 OR A          ; If zero, write multiple bytes
+ $923A JR NZ,$924E   ; Otherwise jump to write a single byte
+ $923C LD B,$05      ; Read 5 bits
+ $923E CALL $9257    ; Read them into A
+ $9241 ADD A,$02     ; Add 2 as the base
+ $9243 PUSH AF       ; Save number of repeats
+ $9244 CALL $9255    ; Get byte to write in A
+ $9247 POP BC        ; Restore number of repeats
+*$9248 RST $10       ; vdp_write_byte in A to DE
+ $9249 INC DE        ; Next VDP address
+ $924A DJNZ $9248    ; Loop B times
  $924C JR $922F      ; Loop
 
-; Routine at 924E
+; Write single byte
 ;
 ; Used by the routine at #R$921F.
-c$924E CALL $9255    ;
- $9251 RST $10       ; vdp_write_byte
- $9252 INC DE        ;
- $9253 JR $922F      ;
+c$924E CALL $9255    ; Get byte to write
+ $9251 RST $10       ; vdp_write_byte in A to DE
+ $9252 INC DE        ; Next VDP address
+ $9253 JR $922F      ; Loop
 
-; Routine at 9255
+; Read B bits into A
 ;
 ; Used by the routines at #R$921F and #R$924E.
-c$9255 LD B,$08      ;
+@read_b_bits_into_a
+c$9255 LD B,$08      ; Read 8 bits
 ; This entry point is used by the routine at #R$921F.
-*$9257 XOR A         ;
-*$9258 PUSH BC       ;
- $9259 PUSH AF       ;
- $925A LD A,($726C)  ;
- $925D DEC A         ;
- $925E JP P,$9271    ;
- $9261 INC HL        ;
- $9262 LD A,(HL)     ;
- $9263 LD ($726D),A  ;
- $9266 LD BC,($726A) ;
- $926A DEC BC        ;
- $926B LD ($726A),BC ;
- $926F LD A,$07      ;
-*$9271 LD ($726C),A  ;
- $9274 LD A,($726D)  ;
- $9277 RLA           ;
- $9278 LD ($726D),A  ;
- $927B RL B          ;
- $927D POP AF        ;
- $927E RR B          ;
- $9280 RLA           ;
- $9281 POP BC        ;
- $9282 DJNZ $9258    ;
+*$9257 XOR A         ; Result
+*$9258 PUSH BC       ; Push number of bits to read
+ $9259 PUSH AF       ; Push result
+ $925A LD A,($726C)  ; Number of bits left in current byte
+ $925D DEC A         ; Decrement
+ $925E JP P,$9271    ; Skip ahead if there are still bits left
+ $9261 INC HL        ; Increment source address
+ $9262 LD A,(HL)     ; get source byte
+ $9263 LD ($726D),A  ; Save source byte
+ $9266 LD BC,($726A) ; Byte counter
+ $926A DEC BC        ; Decrement
+ $926B LD ($726A),BC ; And save
+ $926F LD A,$07      ; 8 bits - 1 left
+*$9271 LD ($726C),A  ; Save bits left
+ $9274 LD A,($726D)  ; Get source byte
+ $9277 RLA           ; Rotate left through carry
+ $9278 LD ($726D),A  ; Save again
+ $927B RL B          ; Rotate carry into bite 0
+ $927D POP AF        ; Pop result
+ $927E RR B          ; Rotate bit 0 into carry
+ $9280 RLA           ; Rotate carry into result
+ $9281 POP BC        ; Pop number of bits to read
+ $9282 DJNZ $9258    ; Repeat for n bits
  $9284 RET           ;
 
 ; Copy 135 patterns from VDP RAM buffer into pattern table from 128
@@ -2809,6 +2815,10 @@ b$92D6 DEFB $18,$18,$3C,$7E,$DB,$81,$00,$00
 b$92DE DEFB $80,$14
 
 ; Logo patterns
+; #UDGTABLE(no-border, no-border)
+; { #UDGARRAY10,,4($92E0-$9377-16)(graphics-92E0.png) }
+; { #UDGARRAY10,,4($92E8-$937F-16)(graphics-92E8.png) }
+; TABLE#
 b$92E0 DEFB $7F,$FF,$FF,$FF,$F8,$F8,$F8,$FB
  $92E8 DEFB $FB,$FB,$F8,$F8,$FF,$FF,$FF,$7F
  $92F0 DEFB $FE,$FF,$FF,$FF,$1F,$1F,$00,$FF
@@ -2937,7 +2947,11 @@ b$946A DEFB $04,$06,$07,$4F,$78,$4F,$80,$67
 ; Data block at 9474
 b$9474 DEFB $80
 
-; Data block at 9475
+; Planet graphics - encoded
+;
+; 0 bit means a run: read next 5 bits and add 2. This is the number of repeats.
+; 1 bit means a single byte.
+; Read next 8 bits for the byte to repeat/not repeat.
 b$9475 DEFB $04,$02,$07,$07,$87,$C7,$E7,$F3
  $947D DEFB $BB,$7D,$7E,$CF,$EF,$EB,$F3,$F5
  $9485 DEFB $FA,$5E,$BE,$BF,$A7,$6F,$AD,$5D
@@ -3025,6 +3039,9 @@ b$96EE DEFB $40,$54,$50,$A0,$AE,$E0,$40,$40
  $96F6 DEFB $60,$60,$A0,$A0,$A0,$65,$50,$50
 
 ; Planet sprite patterns
+; #UDGTABLE
+; { #UDGARRAY19,,4($96FE-$9795-8)(graphics-96FE.png) }
+; TABLE#
 @label=planet_sprite_patterns
 b$96FE DEFB $00,$00,$50,$02,$04,$02,$56,$00
  $9706 DEFB $00,$00,$00,$00,$00,$80,$20,$D0
@@ -4844,8 +4861,9 @@ b$A865 DEFB $FF,$20,$30,$28,$00,$FF,$38,$FF
  $A875 DEFB $03,$01,$00,$FC,$05,$F9,$08,$FE
 
 ; Ship sprites
-; #UDGTABLE
-; { #UDGARRAY1,,4($A87D-$AA7D-8)(graphics-A87D.png) }
+; #UDGTABLE(no-border, no-border)
+; { #UDGARRAY32,,4($A87D-$AA75-16)(graphics-A87D.png) }
+; { #UDGARRAY32,,4($A885-$AA7D-16)(graphics-A885.png) }
 ; TABLE#
 b$A87D DEFB $00,$01,$07,$07,$0F,$1F,$3F,$78
  $A885 DEFB $60,$01,$01,$00,$00,$00,$00,$00
@@ -5819,7 +5837,7 @@ b$B134 DEFB $01,$12
 
 ; Star patterns
 ; #UDGTABLE
-; { #UDGARRAY8,,4($B136-$B1C6-8)(graphics-B136.png) }
+; { #UDGARRAY18,,4($B136-$B1C5-8)(graphics-B136.png) }
 ; TABLE#
 b$B136 DEFB $00,$00,$00,$08,$00,$00,$00,$00
  $B13E DEFB $00,$00,$00,$00,$00,$00,$00,$80
@@ -6247,7 +6265,7 @@ w$B8FC DEFW $B9E6
 
 ; Graphics
 ; #UDGTABLE
-; { #UDGARRAY8,,4($B9E6-$BFAE-8)(graphics-B9E6.png) }
+; { #UDGARRAY37,,4($B9E6-$BFAD-8)(graphics-B9E6.png) }
 ; TABLE#
 b$B9E6 DEFB $00,$7F,$3E,$63,$41,$00,$00,$00
  $B9EE DEFB $00,$72,$7E,$DC,$0C,$06,$00,$00

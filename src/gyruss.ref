@@ -1,3 +1,4 @@
 [Game]
 Game=Gyruss
 LinkOperands=CALL,DEFW,DJNZ,JP,JR,LD
+StyleSheet=skoolkit.css;custom.css

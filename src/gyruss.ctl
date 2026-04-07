@@ -405,7 +405,7 @@ c $900E Routine at 900E
 D $900E Used by the routines at #R$8E9D and #R$8F55.
 b $9046 Data block at 9046
 B $9046,16,8
-b $9056 Graphics
+b $9056 Graphics #UDGTABLE(no-border, no-border) { #UDGARRAY8,,4($9056-$90C7-16)(graphics-9056.png) } { #UDGARRAY8,,4($905E-$90D5-16)(graphics-905E.png) } TABLE#
 B $9056,128,8
 c $90D6 Start screen
 D $90D6 Used by the routine at #R$8024.
@@ -446,7 +446,7 @@ C $9133,2 Loop for 6 letters
 C $9135,3 Name table address of next row
 C $9138,1 Row counter
 C $9139,2 Loop for 2 rows
-C $913B,3 Init something in RAM (sprites?)
+C $913B,3 Init sprites
 C $913E,2 Planet number
 C $9140,3 Draw planet 6 (Earth)
 C $9143,3 Upload sprite data
@@ -560,24 +560,67 @@ C $9210,2 Space
 C $9212,3 Address in name table (row 7)
 C $9215,3 32 bytes
 C $9218,3 FILL_VRAM
-c $921F Upload patterns to VDP buffer at $1400
+c $921F Decode and upload patterns to VDP buffer at $1400
 D $921F Used by the routine at #R$90D6.
+@ $921F decode_and_upload_patterns
 C $921F,3 Number of bytes in block at $9475
 C $9222,3 Save it
 C $9225,1 A = 0
 C $9226,3 Save it
-C $9229,3 Source address
-C $922C,3 Destination buffer in VDP RAM
+C $9229,3 Source address - 1
+C $922C,3 Destination address in VDP RAM
 N $922F This entry point is used by the routine at #R$924E.
-C $9233,1 Return when done
-C $9248,1 vdp_write_byte
+C $922F,3 MSB of counter
+C $9232,1 Test MSB
+C $9233,1 Return when MSB is negative
+C $9234,2 Read 1 bit
+C $9236,3 Read it into A
+C $9239,1 If zero, write multiple bytes
+C $923A,2 Otherwise jump to write a single byte
+C $923C,2 Read 5 bits
+C $923E,3 Read them into A
+C $9241,2 Add 2 as the base
+C $9243,1 Save number of repeats
+C $9244,3 Get byte to write in A
+C $9247,1 Restore number of repeats
+C $9248,1 vdp_write_byte in A to DE
+C $9249,1 Next VDP address
+C $924A,2 Loop B times
 C $924C,2 Loop
-c $924E Routine at 924E
+c $924E Write single byte
 D $924E Used by the routine at #R$921F.
-C $9251,1 vdp_write_byte
-c $9255 Routine at 9255
+C $924E,3 Get byte to write
+C $9251,1 vdp_write_byte in A to DE
+C $9252,1 Next VDP address
+C $9253,2 Loop
+c $9255 Read B bits into A
 D $9255 Used by the routines at #R$921F and #R$924E.
+@ $9255 read_b_bits_into_a
+C $9255,2 Read 8 bits
 N $9257 This entry point is used by the routine at #R$921F.
+C $9257,1 Result
+C $9258,1 Push number of bits to read
+C $9259,1 Push result
+C $925A,3 Number of bits left in current byte
+C $925D,1 Decrement
+C $925E,3 Skip ahead if there are still bits left
+C $9261,1 Increment source address
+C $9262,1 get source byte
+C $9263,3 Save source byte
+C $9266,4 Byte counter
+C $926A,1 Decrement
+C $926B,4 And save
+C $926F,2 8 bits - 1 left
+C $9271,3 Save bits left
+C $9274,3 Get source byte
+C $9277,1 Rotate left through carry
+C $9278,3 Save again
+C $927B,2 Rotate carry into bite 0
+C $927D,1 Pop result
+C $927E,2 Rotate bit 0 into carry
+C $9280,1 Rotate carry into result
+C $9281,1 Pop number of bits to read
+C $9282,2 Repeat for n bits
 c $9285 Copy 135 patterns from VDP RAM buffer into pattern table from 128
 D $9285 Used by the routine at #R$9175.
 R $9285 I:HL Pattern generator table destination address ($0400)
@@ -608,7 +651,7 @@ B $92D6,8,8
 b $92DE Gyruss logo
 @ $92DE label=gyruss_logo
 B $92DE,2,2
-b $92E0 Logo patterns
+b $92E0 Logo patterns #UDGTABLE(no-border, no-border) { #UDGARRAY10,,4($92E0-$9377-16)(graphics-92E0.png) } { #UDGARRAY10,,4($92E8-$937F-16)(graphics-92E8.png) } TABLE#
 B $92E0,160,8
 b $9380 Gyruss logo names
 B $9380,24,8
@@ -659,12 +702,13 @@ b $946A Data block at 946A
 B $946A,10,8,2
 b $9474 Data block at 9474
 B $9474,1,1
-b $9475 Data block at 9475
+b $9475 Planet graphics - encoded
+D $9475 0 bit means a run: read next 5 bits and add 2. This is the number of repeats. 1 bit means a single byte. Read next 8 bits for the byte to repeat/not repeat.
 B $9475,633,8*79,1
 b $96EE Planet colors
 @ $96EE label=planet_colors
 B $96EE,16,8
-b $96FE Planet sprite patterns
+b $96FE Planet sprite patterns #UDGTABLE { #UDGARRAY19,,4($96FE-$9795-8)(graphics-96FE.png) } TABLE#
 @ $96FE label=planet_sprite_patterns
 B $96FE,152,8
 c $9796 Routine at 9796
@@ -872,7 +916,7 @@ D $A808 Used by the routines at #R$8368, #R$A33B, #R$A3E1 and #R$A73C.
 C $A833,1 add_a_to_hl
 b $A865 Data block at A865
 B $A865,24,8
-b $A87D Ship sprites #UDGTABLE { #UDGARRAY1,,4($A87D-$AA7D-8)(graphics-A87D.png) } TABLE#
+b $A87D Ship sprites #UDGTABLE(no-border, no-border) { #UDGARRAY32,,4($A87D-$AA75-16)(graphics-A87D.png) } { #UDGARRAY32,,4($A885-$AA7D-16)(graphics-A885.png) } TABLE#
 B $A87D,513,8*64,1
 c $AA7E Routine at AA7E
 c $AAA6 Routine at AAA6
@@ -1164,7 +1208,7 @@ B $B10E,38,8*4,6
 b $B134 Stars
 @ $B134 label=stars
 B $B134,2,2
-b $B136 Star patterns #UDGTABLE { #UDGARRAY8,,4($B136-$B1C6-8)(graphics-B136.png) } TABLE#
+b $B136 Star patterns #UDGTABLE { #UDGARRAY18,,4($B136-$B1C5-8)(graphics-B136.png) } TABLE#
 B $B136,144,8
 c $B1C6 Routine at B1C6
 D $B1C6 Used by the routines at #R$8F0F, #R$8F55, #R$A471, #R$AB72 and #R$ADD1.
@@ -1176,7 +1220,7 @@ b $B8FA Data block at B8FA
 B $B8FA,2,2
 w $B8FC Data block at B8FC
 W $B8FC,234,2
-b $B9E6 Graphics #UDGTABLE { #UDGARRAY8,,4($B9E6-$BFAE-8)(graphics-B9E6.png) } TABLE#
+b $B9E6 Graphics #UDGTABLE { #UDGARRAY37,,4($B9E6-$BFAD-8)(graphics-B9E6.png) } TABLE#
 B $B9E6,1480,8
 c $BFAE Routine at BFAE
 D $BFAE Used by the routine at #R$8015.

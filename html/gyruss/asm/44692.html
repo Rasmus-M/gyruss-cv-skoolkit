@@ -4,6 +4,7 @@
 <title>Gyruss: Routine at AE94</title>
 <meta charset="utf-8" />
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
 </head>
 <body class="Asm-c">
 <table class="header">
@@ -23,7 +24,7 @@ Next: <a href="44907.html">AF6B</a>
 </td>
 </tr>
 </table>
-<div class="description">AE94: Fill VDP RAM from $2100 to $3868 with data - perhaps flipped and shifted character pattern? 8 new bytes are generated with each call.</div>
+<div class="description">AE94: Fill VDP RAM from $2100 to $3868 with character patterns that may be flipped and shifted. One new pattern is generated with each call. Are these used?</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -44,7 +45,7 @@ Used by the routine at <a href="37078.html">start_screen</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44695"></span>AE97</td>
 <td class="instruction">CP $FF</td>
-<td class="comment-1" rowspan="1">If max malue</td>
+<td class="comment-1" rowspan="1">If maxed out</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -176,7 +177,7 @@ Used by the routine at <a href="37078.html">start_screen</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44743"></span>AEC7</td>
 <td class="instruction">LD HL,<a href="47325.html">LB8DD</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Table of 29 bytes (offsets into table at $B8FA)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -188,7 +189,7 @@ Used by the routine at <a href="37078.html">start_screen</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44747"></span>AECB</td>
 <td class="instruction">LD E,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Load DE with value from table</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -199,38 +200,38 @@ Used by the routine at <a href="37078.html">start_screen</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44750"></span>AECE</td>
-<td class="instruction">LD HL,$B8FA</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD HL,<a href="47354.html">LB8FA</a></td>
+<td class="comment-1" rowspan="1">Table of pointers to graphics</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44753"></span>AED1</td>
 <td class="instruction">ADD HL,DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add offset</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44754"></span>AED2</td>
 <td class="instruction">LD (<a href="29402.html">L72DA</a>),HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save address of pointer</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44757"></span>AED5</td>
 <td class="instruction">LD A,(<a href="29399.html">L72D7</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get counter</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44760"></span>AED8</td>
 <td class="instruction">INC A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Increment</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44761"></span>AED9</td>
 <td class="instruction">ADD A,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Double</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -242,7 +243,7 @@ Used by the routine at <a href="37078.html">start_screen</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44763"></span>AEDB</td>
 <td class="instruction">LD E,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get LSB of pointer</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -254,43 +255,43 @@ Used by the routine at <a href="37078.html">start_screen</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44765"></span>AEDD</td>
 <td class="instruction">LD D,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get MSB of pointer</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44766"></span>AEDE</td>
 <td class="instruction">EX DE,HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Now HL pointer to graphics</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44767"></span>AEDF</td>
 <td class="instruction">LD A,(<a href="29398.html">L72D6</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get counter</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44770"></span>AEE2</td>
 <td class="instruction">AND $03</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">0, 1, 2, 3</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44772"></span>AEE4</td>
 <td class="instruction">ADD A,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">0, 2, 4, 6</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44773"></span>AEE5</td>
 <td class="instruction">ADD A,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">0, 4, 8, 12</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44774"></span>AEE6</td>
 <td class="instruction">ADD A,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">0, 8, 16, 32</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -302,73 +303,73 @@ Used by the routine at <a href="37078.html">start_screen</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44776"></span>AEE8</td>
 <td class="instruction">LD DE,<a href="29091.html">buffer</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Buffer</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44779"></span>AEEB</td>
 <td class="instruction">LD (<a href="29406.html">L72DE</a>),DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Store as source address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44783"></span>AEEF</td>
 <td class="instruction">LD BC,$0008</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Copy 8 bytes</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44786"></span>AEF2</td>
 <td class="instruction">LDIR</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">of graphics data info buffer</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44788"></span>AEF4</td>
 <td class="instruction">LD HL,(<a href="29402.html">L72DA</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get address of graphics pointer</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44791"></span>AEF7</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">To MSB</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44792"></span>AEF8</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get MSB</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44793"></span>AEF9</td>
 <td class="instruction">OR A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Is it 0, i.e. not a real address?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44794"></span>AEFA</td>
 <td class="instruction">JR Z,<a href="44692.html#44821">LAE94_3</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Then skip ahead</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44796"></span>AEFC</td>
 <td class="instruction">LD IX,<a href="29398.html">L72D6</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Address of counter</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44800"></span>AF00</td>
 <td class="instruction">BIT 2,(IX+$00)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Is bit 2 set?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44804"></span>AF04</td>
 <td class="instruction">JR Z,<a href="44692.html#44809">LAE94_2</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If not, skip ahead</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -380,13 +381,13 @@ Used by the routine at <a href="37078.html">start_screen</a>.
 <td class="asm-label">LAE94_2</td>
 <td class="address-2"><span id="44809"></span>AF09</td>
 <td class="instruction">BIT 3,(IX+$00)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Is bit 3 set?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44813"></span>AF0D</td>
 <td class="instruction">JR NZ,<a href="44692.html#44821">LAE94_3</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If not, skip ahead</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -404,19 +405,19 @@ Used by the routine at <a href="37078.html">start_screen</a>.
 <td class="asm-label">LAE94_3</td>
 <td class="address-2"><span id="44821"></span>AF15</td>
 <td class="instruction">LD HL,(<a href="29406.html">L72DE</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Source for writing to DP RAM</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44824"></span>AF18</td>
 <td class="instruction">LD DE,(<a href="29400.html">L72D8</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Destination</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44828"></span>AF1C</td>
 <td class="instruction">LD BC,$0008</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">8 bytes</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -452,7 +453,7 @@ Used by the routine at <a href="37078.html">start_screen</a>.
 <td class="asm-label">inc_counters_1</td>
 <td class="address-1"><span id="44844"></span>AF2C</td>
 <td class="instruction">LD IX,(<a href="29402.html">L72DA</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get address of graphics pointer</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -470,7 +471,7 @@ Used by the routine at <a href="37078.html">start_screen</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44852"></span>AF34</td>
 <td class="instruction">CP (IX+$00)</td>
-<td class="comment-1" rowspan="1">When it reaches ?</td>
+<td class="comment-1" rowspan="1">When it reaches LSB of graphics pointer</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -512,7 +513,7 @@ Used by the routine at <a href="37078.html">start_screen</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44866"></span>AF42</td>
 <td class="instruction">LD A,(IX+$01)</td>
-<td class="comment-1" rowspan="1">Get ?</td>
+<td class="comment-1" rowspan="1">Get MSB of graphics pointer</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -626,7 +627,7 @@ Used by the routine at <a href="37078.html">start_screen</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44903"></span>AF67</td>
 <td class="instruction">LD (<a href="29397.html">L72D5</a>),A</td>
-<td class="comment-1" rowspan="1">Then set it to $FF</td>
+<td class="comment-1" rowspan="1">Then set it to $FF (done)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

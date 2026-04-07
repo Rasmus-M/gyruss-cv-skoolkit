@@ -4,6 +4,7 @@
 <title>Gyruss: Data at 9475</title>
 <meta charset="utf-8" />
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
 </head>
 <body class="Asm-b">
 <table class="header">
@@ -23,11 +24,14 @@ Next: <a href="38638.html">96EE</a>
 </td>
 </tr>
 </table>
-<div class="description">9475: Data block at 9475</div>
+<div class="description">9475: Planet graphics - encoded</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
+<div class="paragraph">
+0 bit means a run: read next 5 bits and add 2. This is the number of repeats. 1 bit means a single byte. Read next 8 bits for the byte to repeat/not repeat.
+</div>
 </div>
 </td>
 </tr>

@@ -4,6 +4,7 @@
 <title>Gyruss: Routine at 9255</title>
 <meta charset="utf-8" />
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
 </head>
 <body class="Asm-c">
 <table class="header">
@@ -23,7 +24,7 @@ Next: <a href="37509.html">9285</a>
 </td>
 </tr>
 </table>
-<div class="description">9255: Routine at 9255</div>
+<div class="description">9255: Read B bits into A</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -38,7 +39,7 @@ Used by the routines at <a href="37407.html">L921F</a> and <a href="37454.html">
 <td class="asm-label">L9255</td>
 <td class="address-2"><span id="37461"></span>9255</td>
 <td class="instruction">LD B,$08</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Read 8 bits</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -54,145 +55,145 @@ This entry point is used by the routine at <a href="37407.html">L921F</a>.
 <td class="asm-label">L9255_0</td>
 <td class="address-2"><span id="37463"></span>9257</td>
 <td class="instruction">XOR A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Result</td>
 </tr>
 <tr>
 <td class="asm-label">L9255_1</td>
 <td class="address-2"><span id="37464"></span>9258</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Push number of bits to read</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37465"></span>9259</td>
 <td class="instruction">PUSH AF</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Push result</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37466"></span>925A</td>
 <td class="instruction">LD A,(<a href="29292.html">byte_at_726C</a>)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Number of bits left in current byte</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37469"></span>925D</td>
 <td class="instruction">DEC A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Decrement</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37470"></span>925E</td>
 <td class="instruction">JP P,<a href="37461.html#37489">L9255_2</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Skip ahead if there are still bits left</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37473"></span>9261</td>
 <td class="instruction">INC HL</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Increment source address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37474"></span>9262</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">get source byte</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37475"></span>9263</td>
 <td class="instruction">LD (<a href="29293.html">L726D</a>),A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save source byte</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37478"></span>9266</td>
 <td class="instruction">LD BC,(<a href="29290.html">word_at_726A</a>)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Byte counter</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37482"></span>926A</td>
 <td class="instruction">DEC BC</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Decrement</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37483"></span>926B</td>
 <td class="instruction">LD (<a href="29290.html">word_at_726A</a>),BC</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">And save</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37487"></span>926F</td>
 <td class="instruction">LD A,$07</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">8 bits - 1 left</td>
 </tr>
 <tr>
 <td class="asm-label">L9255_2</td>
 <td class="address-2"><span id="37489"></span>9271</td>
 <td class="instruction">LD (<a href="29292.html">byte_at_726C</a>),A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save bits left</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37492"></span>9274</td>
 <td class="instruction">LD A,(<a href="29293.html">L726D</a>)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get source byte</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37495"></span>9277</td>
 <td class="instruction">RLA</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Rotate left through carry</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37496"></span>9278</td>
 <td class="instruction">LD (<a href="29293.html">L726D</a>),A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save again</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37499"></span>927B</td>
 <td class="instruction">RL B</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Rotate carry into bite 0</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37501"></span>927D</td>
 <td class="instruction">POP AF</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Pop result</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37502"></span>927E</td>
 <td class="instruction">RR B</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Rotate bit 0 into carry</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37504"></span>9280</td>
 <td class="instruction">RLA</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Rotate carry into result</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37505"></span>9281</td>
 <td class="instruction">POP BC</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Pop number of bits to read</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37506"></span>9282</td>
 <td class="instruction">DJNZ <a href="37461.html#37464">L9255_1</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Repeat for n bits</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37508"></span>9284</td>
 <td class="instruction">RET</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 </table>
 <table class="asm-navigation">
