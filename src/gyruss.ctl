@@ -6,7 +6,7 @@ w $7000 RAM
 D $7000 Word at 7000
 @ $7000 label=word_at_7000
 W $7000,2,2
-b $7002 Sprite data
+b $7002 Sprite data (32 sprites) #TABLE(default, default) { =h Byte offset | =h Purpose } { $00 | Sprite type, or $FF if not allocated } { $01 | Transformation } { $02 | Unknown } { $03 | Unknown } { $04 | Unknown } { $05 | Unknown } { $06 | Unknown } { $07 | Unknown } { $08 | Y } { $09 | X } { $0A | Pattern } { $0B | Color } TABLE#
 @ $7002 label=sprite_data
 B $7002,384,12
 b $7182 Number of allocated sprites
@@ -62,8 +62,11 @@ B $72E0,58,8*7,2
 b $731A Star frame
 @ $731A label=star_frame
 B $731A,1,1
-b $731B Data block at 731B
-B $731B,219,8*27,3
+b $731B Random number
+@ $731B label=random_number
+B $731B,2,2
+b $731D Data block at 731D
+B $731D,217,8*27,1
 w $73F6 Stars VDP address
 @ $73F6 label=stars_vdp_address
 W $73F6,2,2
@@ -90,9 +93,11 @@ C $800F,3 vdp_write_byte (DE = address, A = value)
 c $8012 RST $18
 C $8012,3 WRITE_REGISTER (B = reg, C = value)
 c $8015 RST $20
+C $8015,3 Random number generator
 c $8018 RST $28
 C $8018,3 allocate_sprite
 c $801B RST $30
+C $801B,3 Load sprite pattern
 c $801E RST $38
 C $801E,3 WRITE_VRAM (HL = source, DE = dest, BC = count)
 c $8021 NMI
@@ -125,6 +130,7 @@ C $80BB,1 vdp_write_byte
 C $80CC,1 vdp_write_byte
 C $80D0,1 vdp_write_byte
 C $80DF,1 WRITE_VRAM
+C $80E2,3 Init random number
 N $80E8 This entry point is used by the routines at #R$81AE and #R$83D0.
 @ $80E8 label=main_loop
 C $80E8,3 Flag set by interrupt routine
@@ -183,6 +189,7 @@ N $833C This entry point is used by the routines at #R$8450 and #R$846B.
 c $8368 Routine at 8368
 D $8368 Used by the routine at #R$832A.
 N $836D This entry point is used by the routine at #R$832A.
+C $83BA,4 Set color
 c $83D0 Routine at 83D0
 D $83D0 Used by the routine at #R$8368.
 C $840E,3 FILL_VRAM
@@ -279,10 +286,15 @@ c $8654 Routine at 8654
 D $8654 Used by the routines at #R$870C, #R$873E and #R$8848.
 c $865A Routine at 865A
 D $865A Used by the routine at #R$85E6.
+C $866E,4 Set color
 c $8673 Routine at 8673
 D $8673 Used by the routine at #R$865A.
 c $867D Routine at 867D
 D $867D Used by the routine at #R$865A.
+C $86A5,4 Set color
+C $86BB,4 Set color
+C $86CF,3 Set y
+C $86D7,3 Set x
 c $86DE Routine at 86DE
 D $86DE Used by the routine at #R$867D.
 c $86E9 Routine at 86E9
@@ -295,6 +307,8 @@ c $8790 Routine at 8790
 D $8790 Used by the routine at #R$873E.
 c $87D5 Routine at 87D5
 D $87D5 Used by the routine at #R$8790.
+C $87DD,3 Get pattern
+C $87ED,3 Get pattern
 c $87F5 Routine at 87F5
 D $87F5 Used by the routine at #R$87D5.
 c $8801 Routine at 8801
@@ -303,21 +317,26 @@ c $8811 Routine at 8811
 D $8811 Used by the routine at #R$8801.
 c $8815 Routine at 8815
 D $8815 Used by the routine at #R$8801.
+C $8815,3 Get color
 c $8825 Routine at 8825
 D $8825 Used by the routine at #R$8790.
 N $8835 This entry point is used by the routine at #R$8A2D.
 N $883B This entry point is used by the routine at #R$8848.
 c $8848 Routine at 8848
 D $8848 Used by the routine at #R$8825.
+C $884E,1 Random number
 c $885F Routine at 885F
 D $885F Used by the routine at #R$8790.
 c $8878 Routine at 8878
 D $8878 Used by the routine at #R$885F.
+C $8887,1 Random number
+C $8897,1 Random number
 N $889C This entry point is used by the routine at #R$88BE.
 c $88A7 Routine at 88A7
 D $88A7 Used by the routine at #R$8878.
 c $88BE Routine at 88BE
 D $88BE Used by the routine at #R$8878.
+C $88BE,1 Random number
 C $88C4,1 add_a_to_hl
 N $88CF This entry point is used by the routine at #R$8878.
 c $88D4 Routine at 88D4
@@ -350,6 +369,7 @@ c $8A53 Routine at 8A53
 D $8A53 Used by the routine at #R$85E6.
 c $8A76 Routine at 8A76
 D $8A76 Used by the routines at #R$8790, #R$885F and #R$88FE.
+C $8AB9,4 Set color
 c $8AC0 Routine at 8AC0
 D $8AC0 Used by the routines at #R$8790, #R$87F5, #R$8878 and #R$88D4.
 c $8AE6 Routine at 8AE6
@@ -363,6 +383,7 @@ c $8BD9 Routine at 8BD9
 D $8BD9 Used by the routine at #R$8024.
 c $8C07 Routine at 8C07
 D $8C07 Used by the routine at #R$8BD9.
+C $8C15,1 Random number
 c $8C1E Routine at 8C1E
 D $8C1E Used by the routines at #R$8BD9 and #R$8C07.
 c $8C30 Routine at 8C30
@@ -375,13 +396,22 @@ c $8C68 Routine at 8C68
 D $8C68 Used by the routine at #R$8BD9.
 N $8C6D This entry point is used by the routine at #R$8C52.
 C $8CA0,1 add_a_to_hl
+C $8CAF,3 Set color
 c $8D21 Routine at 8D21
 D $8D21 Used by the routine at #R$8170.
 c $8D50 Routine at 8D50
 D $8D50 Used by the routine at #R$8024.
+C $8D6B,1 Random number
+C $8D8A,4 Set color
+C $8D8E,1 Random number
+C $8DA2,4 Set color
+C $8DBC,4 Set color
 c $8DD7 Routine at 8DD7
 D $8DD7 Used by the routine at #R$8D50.
+C $8DE6,1 Random number
+C $8DFC,4 Set color
 N $8E04 This entry point is used by the routine at #R$8D50.
+C $8E04,1 Random number
 c $8E0D Routine at 8E0D
 c $8E0F Routine at 8E0F
 b $8E11 Data block at 8E11
@@ -391,6 +421,7 @@ N $8E2D This entry point is used by the routines at #R$8024, #R$8139 and #R$A3E1
 c $8E89 Routine at 8E89
 D $8E89 Used by the routine at #R$8E2C.
 N $8E8D This entry point is used by the routines at #R$82BF and #R$8FED.
+C $8E8D,1 Random number
 c $8E9D Routine at 8E9D
 D $8E9D Used by the routine at #R$8E2C.
 c $8F0F Routine at 8F0F
@@ -403,6 +434,8 @@ c $8FED Routine at 8FED
 D $8FED Used by the routine at #R$8F55.
 c $900E Routine at 900E
 D $900E Used by the routines at #R$8E9D and #R$8F55.
+C $9028,4 Set color
+C $903C,1 Random number
 b $9046 Data block at 9046
 B $9046,16,8
 b $9056 Graphics #UDGTABLE(no-border, no-border) { #UDGARRAY8,,4($9056-$90C7-16)(graphics-9056.png) } { #UDGARRAY8,,4($905E-$90D5-16)(graphics-905E.png) } TABLE#
@@ -538,7 +571,7 @@ C $91E9,2 Add 32
 C $91EB,1 Store in E
 C $91EC,1 Next source byte
 C $91ED,1 Allocate sprite
-C $91EE,4 Mark as allocated?
+C $91EE,4 Mark as allocated (set type)
 C $91F2,1 Get y
 C $91F3,1 Store in D
 C $91F4,2 Only use 7 bits of y
@@ -716,6 +749,7 @@ D $9796 Used by the routine at #R$8024.
 N $97F3 This entry point is used by the routines at #R$98B5, #R$9978 and #R$9A49.
 c $9845 Routine at 9845
 D $9845 Used by the routine at #R$9796.
+C $9858,4 Set color
 c $9861 Routine at 9861
 D $9861 Used by the routine at #R$9796.
 N $986E This entry point is used by the routine at #R$98B5.
@@ -743,6 +777,7 @@ c $9A08 Routine at 9A08
 D $9A08 Used by the routine at #R$9924.
 c $9A1C Routine at 9A1C
 D $9A1C Used by the routines at #R$9934, #R$99A0, #R$99B1 and #R$9A08.
+C $9A20,3 Set color
 c $9A38 Routine at 9A38
 D $9A38 Used by the routine at #R$9796.
 c $9A49 Routine at 9A49
@@ -769,16 +804,15 @@ N $9AB3 This entry point is used by the routine at #R$800C.
 > $9ABB *$9AB9 POP AF        ;
 > $9ABB  $9ABA RET           ;
 c $9ABB Routine at 9ABB
-c $9AC3 Routine at 9AC3
+c $9AC3 VDP write byte (RST $10)
 D $9AC3 Used by the routine at #R$800F.
-R $9AC3 RST $10
-N $9AC3 I:DE Write address I:A byte to write
+R $9AC3 I:DE Write address I:A byte to write
 @ $9AC3 label=vdp_write_byte
 C $9AC5,2 Set LSB of VDP address
 C $9AC8,2 Setup write address
 C $9ACA,2 Set MSB of VDP address
 C $9ACD,2 Write byte
-c $9AD0 Routine at 9AD0
+c $9AD0 VDP read byte
 D $9AD0 Used by the routine at #R$AFE5.
 R $9AD0 I:DE read address
 R $9AD0 O:A byte read
@@ -791,6 +825,7 @@ c $9ADE Routine at 9ADE
 D $9ADE Used by the routine at #R$8024.
 R $9ADE Sound init?
 C $9ADE,3 TURN_OFF_SOUND
+C $9B04,4 Set y
 c $9B0D Routine at 9B0D
 D $9B0D Used by the routines at #R$9BD9, #R$9C1C and #R$9E91.
 c $9B54 Routine at 9B54
@@ -826,12 +861,16 @@ c $9C4B Routine at 9C4B
 D $9C4B Used by the routine at #R$9C39.
 c $9C7E Routine at 9C7E
 D $9C7E Used by the routine at #R$9C4B.
+C $9C7E,3 Get y
 N $9C87 This entry point is used by the routine at #R$9C4B.
 N $9C8A This entry point is used by the routines at #R$9BFD, #R$9C1C and #R$9C4B.
 c $9C92 Routine at 9C92
 D $9C92 Used by the routines at #R$9BF8 and #R$9C46.
+C $9C93,3 Get x
+C $9C99,3 Dec x
 c $9CA0 Routine at 9CA0
 D $9CA0 Used by the routine at #R$9C92.
+C $9CA0,3 Set x
 N $9CA3 This entry point is used by the routine at #R$9C92.
 c $9CA8 Routine at 9CA8
 D $9CA8 Used by the routine at #R$9EA3.
@@ -875,12 +914,19 @@ c $A31D Routine at A31D
 D $A31D Used by the routine at #R$A314.
 c $A33B Routine at A33B
 D $A33B Used by the routine at #R$82BF.
+C $A364,4 Set color
+C $A392,4 Set color
+C $A3A4,4 Set color
 C $A3CE,3 FILL_VRAM
 c $A3E1 Routine at A3E1
 D $A3E1 Used by the routine at #R$8139.
+C $A40B,4 Set y
+C $A436,4 Set color
 c $A471 Routine at A471
 D $A471 Used by the routines at #R$A33B and #R$A3E1.
 N $A47D This entry point is used by the routine at #R$A4A0.
+C $A48E,3 Set y
+C $A491,3 Set x
 c $A4A0 Routine at A4A0
 D $A4A0 Used by the routine at #R$A471.
 N $A4A3 This entry point is used by the routine at #R$A471.
@@ -907,8 +953,11 @@ C $A78B,2 Segment 0
 C $A78D,3 DECODER
 C $A793,2 Segment 1
 C $A795,3 DECODER
+C $A7D0,4 Set color
 c $A7D5 Routine at A7D5
 D $A7D5 Used by the routine at #R$A73C.
+C $A7E8,4 Set color
+C $A7FC,4 Set color
 c $A805 Routine at A805
 D $A805 Used by the routine at #R$A73C.
 c $A808 Routine at A808
@@ -936,10 +985,12 @@ c $AAF1 Routine at AAF1
 D $AAF1 Used by the routine at #R$8024.
 c $AB17 Routine at AB17
 D $AB17 Used by the routine at #R$AAF1.
+C $AB2B,3 Set color
 c $AB38 Routine at AB38
 D $AB38 Used by the routines at #R$87F5, #R$98B5, #R$AB17 and #R$AB72.
 c $AB53 Routine at AB53
 D $AB53 Used by the routines at #R$9934 and #R$9A49.
+C $AB5F,3 Get pattern
 c $AB6C Routine at AB6C
 D $AB6C Used by the routine at #R$AB53.
 N $AB6F This entry point is used by the routine at #R$AB53.
@@ -962,7 +1013,7 @@ C $ACDF,4 Address of sprite data
 C $ACE3,3 Size of each sprite
 C $ACE6,2 Number of sprites
 C $ACE9,3 Number of allocated sprites
-C $ACEC,3 Set index (pattern?)
+C $ACEC,3 Set pattern
 C $ACEF,4 Set as unallocated
 C $ACF4,2 Advance to next sprite
 C $ACF6,2 Loop for 32 sprites
@@ -979,13 +1030,13 @@ C $AD05,1 * 2
 C $AD06,1 * 4
 C $AD08,1 * 8
 C $AD09,1 * 12 (may overflow?)
-C $AD0B,3 Base pattern in sprite data table (why not y?)
+C $AD0B,3 First y address in sprite data table
 C $AD0E,1 add_a_to_hl
 C $AD0F,3 Write 4 bytes for each sprite
 C $AD13,3 WRITE_VRAM
 C $AD17,3 Add 4 to destination
 C $AD1E,2 Loop for each sprite
-C $AD20,2 End byte
+C $AD20,2 End marker byte
 C $AD22,1 vdp_write_byte
 C $AD23,3 Get number of allocation sprites
 C $AD26,2 Is it < 5
@@ -1006,7 +1057,7 @@ R $AD49 O:IX holds sprite address
 C $AD4C,3 Address of sprite data
 C $AD4F,3 Size of each sprite
 C $AD52,3 Number of sprites and sprite index
-C $AD58,2 If > $7E, sprite is available
+C $AD58,2 If > $7E (usually $FF), sprite is available
 C $AD5A,1 Sprite index++
 C $AD5B,1 Advance to next sprite
 C $AD5C,2 Loop for up to 32 sprites
@@ -1023,23 +1074,43 @@ C $AD6E,1 Add number to HL
 C $AD74,1 Record sprite index in table
 C $AD75,2 IX now holds sprite address
 C $AD77,4 Init sprite
+C $AD83,4 Set y
 N $AD87 This entry point is used by the routine at #R$AD49.
-c $AD8B Routine at AD8B
+c $AD8B Load sprite pattern (RST $30)
 D $AD8B Used by the routine at #R$801B.
-c $ADD1 Routine at ADD1
-D $ADD1 Used by the routine at #R$AD8B.
-N $ADD7 This entry point is used by the routine at #R$AD8B.
+R $AD8B I:IX points to sprite data
+C $AD90,3 Get sprite type
+C $AD95,3 Table of 29 bytes (offsets into table at $B8FA)
+C $AD99,1 Get graphics pointer offset for sprite type
+C $AD9A,3 Table of pointers to graphics
+C $AD9D,1 HL now pointer to graphics pointer
+C $AD9E,3 Get which transformation we want (flipped, shifted, etc.)
+C $ADA1,3 Address
+C $ADA4,2 Adjust address according to type
+C $ADEE,1 What is B?
+C $ADF1,1 Multiply by 8
+C $ADF4,1 And add DE
+C $ADF5,1 Move HL into DE, which becomes source address
+C $ADF9,3 Read 8 bytes
 C $ADFC,3 READ_VRAM
+C $ADFF,3 Get pattern
+C $AE02,1 Multiply by 8
+C $AE06,2 DE = $800 + pattern * 8
+C $AE08,3 Source
+C $AE0B,3 Write 8 bytes
 C $AE0E,3 WRITE_VRAM
-c $AE2B Routine at AE2B
-D $AE2B Used by the routine at #R$ADD1.
+C $AE21,3 Set y
+C $AE24,3 Set x
 C $AE3E,1 add_a_to_hl
-N $AE4E This entry point is used by the routines at #R$ADD1, #R$AE54 and #R$AE75.
+C $AE43,3 Set y
+C $AE4B,3 Set x
+N $AE4E This entry point is used by the routines at #R$AE54 and #R$AE75.
 c $AE54 Routine at AE54
 D $AE54 Used by the routine at #R$ADD1.
 c $AE75 Routine at AE75
 D $AE75 Used by the routine at #R$AE54.
-N $AE86 This entry point is used by the routine at #R$AE54.
+C $AE8A,4 Set x
+C $AE8E,4 Set y
 c $AE94 Fill VDP RAM from $2100 to $3868 with character patterns that may be flipped and shifted. One new pattern is generated with each call. Are these used?
 D $AE94 Used by the routine at #R$90D6.
 C $AE94,3 Get counter
@@ -1212,18 +1283,36 @@ b $B136 Star patterns #UDGTABLE { #UDGARRAY18,,4($B136-$B1C5-8)(graphics-B136.pn
 B $B136,144,8
 c $B1C6 Routine at B1C6
 D $B1C6 Used by the routines at #R$8F0F, #R$8F55, #R$A471, #R$AB72 and #R$ADD1.
+C $B1D3,1 Multiply by 32
 b $B21D Data block at B21D
 B $B21D,1728,8
-b $B8DD Data block at B8DD
+b $B8DD Graphics pointer offsets
+D $B8DD Offsets into data block at B8FA
 B $B8DD,29,8*3,5
 b $B8FA Data block at B8FA
 B $B8FA,2,2
-w $B8FC Data block at B8FC
-W $B8FC,234,2
+w $B8FC Graphics pointers
+W $B8FC,2,2 Offset $00
+W $B8FE,8,2
+W $B906,2,2 Offset $0A
+W $B908,8,2
+W $B910,2,2 Offset $14
+W $B912,8,2
+W $B91A,2,2 Offset $1E
+W $B91C,2,2
+W $B91E,2,2 Offset $22
+W $B920,8,2
+W $B928,2,2 Offset $2C
+W $B92A,8,2
+W $B932,2,2 Offset $36
+W $B934,2,2
+W $B936,2,2 Offset $3A
+W $B938,174,2
 b $B9E6 Graphics #UDGTABLE { #UDGARRAY37,,4($B9E6-$BFAD-8)(graphics-B9E6.png) } TABLE#
 B $B9E6,1480,8
-c $BFAE Routine at BFAE
+c $BFAE Random number generator (RST $20)
 D $BFAE Used by the routine at #R$8015.
+@ $BFAE label=rnd
 b $BFCF Data block at BFCF
 B $BFCF,49,8*6,1
 s $C000 Unused

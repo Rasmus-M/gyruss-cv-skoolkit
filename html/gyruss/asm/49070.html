@@ -24,7 +24,7 @@ Next: <a href="49103.html">BFCF</a>
 </td>
 </tr>
 </table>
-<div class="description">BFAE: Routine at BFAE</div>
+<div class="description">BFAE: Random number generator (RST $20)</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -36,7 +36,7 @@ Used by the routine at <a href="32789.html">L8015</a>.
 </td>
 </tr>
 <tr>
-<td class="asm-label">LBFAE</td>
+<td class="asm-label">rnd</td>
 <td class="address-2"><span id="49070"></span>BFAE</td>
 <td class="instruction">PUSH IX</td>
 <td class="comment-0" rowspan="1"></td>
@@ -44,7 +44,7 @@ Used by the routine at <a href="32789.html">L8015</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="49072"></span>BFB0</td>
-<td class="instruction">LD IX,<a href="29467.html">L731B</a></td>
+<td class="instruction">LD IX,<a href="29467.html">random_number</a></td>
 <td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
@@ -92,7 +92,7 @@ Used by the routine at <a href="32789.html">L8015</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="49091"></span>BFC3</td>
-<td class="instruction">JP PE,<a href="49070.html#49097">LBFAE_0</a></td>
+<td class="instruction">JP PE,<a href="49070.html#49097">rnd_0</a></td>
 <td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
@@ -102,7 +102,7 @@ Used by the routine at <a href="32789.html">L8015</a>.
 <td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">LBFAE_0</td>
+<td class="asm-label">rnd_0</td>
 <td class="address-2"><span id="49097"></span>BFC9</td>
 <td class="instruction">LD (IX+$00),A</td>
 <td class="comment-0" rowspan="1"></td>

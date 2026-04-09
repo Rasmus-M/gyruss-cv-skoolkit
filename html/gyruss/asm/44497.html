@@ -151,7 +151,7 @@ This entry point is used by the routine at <a href="44427.html">LAD8B</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44526"></span>ADEE</td>
 <td class="instruction">LD L,B</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">What is B?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -163,7 +163,7 @@ This entry point is used by the routine at <a href="44427.html">LAD8B</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44529"></span>ADF1</td>
 <td class="instruction">ADD HL,HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Multiply by 8</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -181,13 +181,13 @@ This entry point is used by the routine at <a href="44427.html">LAD8B</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44532"></span>ADF4</td>
 <td class="instruction">ADD HL,DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">And add DE</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44533"></span>ADF5</td>
 <td class="instruction">EX DE,HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move HL into DE, which becomes source address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -199,7 +199,7 @@ This entry point is used by the routine at <a href="44427.html">LAD8B</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44537"></span>ADF9</td>
 <td class="instruction">LD BC,$0008</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Read 8 bytes</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -211,13 +211,13 @@ This entry point is used by the routine at <a href="44427.html">LAD8B</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44543"></span>ADFF</td>
 <td class="instruction">LD A,(IX+$0A)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get pattern</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44546"></span>AE02</td>
 <td class="instruction">ADD A,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Multiply by 8</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -241,19 +241,19 @@ This entry point is used by the routine at <a href="44427.html">LAD8B</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44550"></span>AE06</td>
 <td class="instruction">LD D,$08</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">DE = $800 + pattern * 8</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44552"></span>AE08</td>
 <td class="instruction">LD HL,<a href="29091.html">buffer</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Source</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44555"></span>AE0B</td>
 <td class="instruction">LD BC,$0008</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write 8 bytes</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -301,13 +301,13 @@ This entry point is used by the routine at <a href="44427.html">LAD8B</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44577"></span>AE21</td>
 <td class="instruction">LD (IX+$08),D</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set y</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44580"></span>AE24</td>
 <td class="instruction">LD (IX+$09),E</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set x</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

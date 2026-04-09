@@ -39,25 +39,25 @@ Used by the routines at <a href="41787.html">LA33B</a> and <a href="41953.html">
 <td class="asm-label">LA471</td>
 <td class="address-2"><span id="42097"></span>A471</td>
 <td class="instruction">LD HL,(<a href="29293.html#29381">$72C5</a>)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42100"></span>A474</td>
 <td class="instruction">LD (<a href="28672.html">word_at_7000</a>),HL</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42103"></span>A477</td>
 <td class="instruction">LD B,$20</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42105"></span>A479</td>
 <td class="instruction">LD IX,<a href="28674.html">sprite_data</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -73,85 +73,85 @@ This entry point is used by the routine at <a href="42144.html">LA4A0</a>.
 <td class="asm-label">LA471_0</td>
 <td class="address-2"><span id="42109"></span>A47D</td>
 <td class="instruction">LD A,(IX+$00)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42112"></span>A480</td>
 <td class="instruction">CP $0D</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42114"></span>A482</td>
 <td class="instruction">JR NZ,<a href="42144.html#42148">LA4A0_1</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42116"></span>A484</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42117"></span>A485</td>
 <td class="instruction">LD D,(IX+$01)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42120"></span>A488</td>
 <td class="instruction">LD E,(IX+$02)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42123"></span>A48B</td>
 <td class="instruction">CALL <a href="45510.html">LB1C6</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42126"></span>A48E</td>
 <td class="instruction">LD (IX+$08),D</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set y</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42129"></span>A491</td>
 <td class="instruction">LD (IX+$09),E</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set x</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42132"></span>A494</td>
 <td class="instruction">LD A,(<a href="29163.html">L71EB</a>)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42135"></span>A497</td>
 <td class="instruction">BIT 2,A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42137"></span>A499</td>
 <td class="instruction">JR NZ,<a href="42144.html">LA4A0</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42139"></span>A49B</td>
 <td class="instruction">INC (IX+$01)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42142"></span>A49E</td>
 <td class="instruction">JR <a href="42144.html#42147">LA4A0_0</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 </table>
 <table class="asm-navigation">
