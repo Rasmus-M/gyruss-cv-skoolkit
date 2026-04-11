@@ -1744,7 +1744,7 @@ B $B9E6,1480,8
 c $BFAE Random number generator (RST $20)
 D $BFAE Used by the routine at #R$8015.
 @ $BFAE label=rnd
-b $BFCF Data block at BFCF
+s $BFCF Unused
 B $BFCF,49,8*6,1
 s $C000 Unused
 S $C000,16384,$4000

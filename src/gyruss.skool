@@ -6711,8 +6711,8 @@ c$BFAE PUSH IX        ;
  $BFCC POP IX         ;
  $BFCE RET            ;
 
-; Data block at BFCF
-b$BFCF DEFB $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+; Unused
+s$BFCF DEFB $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
  $BFD7 DEFB $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
  $BFDF DEFB $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
  $BFE7 DEFB $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
