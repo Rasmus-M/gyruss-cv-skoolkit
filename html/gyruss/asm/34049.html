@@ -74,56 +74,56 @@ Used by the routine at <a href="32801.html">L8021</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34057"></span>8509</td>
-<td class="instruction">LD HL,(<a href="29271.html">word_at_7257</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD HL,(<a href="29271.html">screensaver_countdown</a>)</td>
+<td class="comment-1" rowspan="1">Counter</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34060"></span>850C</td>
 <td class="instruction">LD A,H</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Check if zero</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34061"></span>850D</td>
 <td class="instruction">OR L</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34062"></span>850E</td>
 <td class="instruction">JR Z,<a href="34082.html">L8522</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If counter is 0 then skip ahead</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34064"></span>8510</td>
 <td class="instruction">DEC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Otherwise decrement</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34065"></span>8511</td>
-<td class="instruction">LD (<a href="29271.html">word_at_7257</a>),HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD (<a href="29271.html">screensaver_countdown</a>),HL</td>
+<td class="comment-1" rowspan="1">and save.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34068"></span>8514</td>
 <td class="instruction">LD A,H</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Check again if zero</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34069"></span>8515</td>
 <td class="instruction">OR L</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34070"></span>8516</td>
 <td class="instruction">JR NZ,<a href="34082.html">L8522</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If not then skip ahead, otherwise blank screen</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

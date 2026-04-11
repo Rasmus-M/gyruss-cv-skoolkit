@@ -45,7 +45,7 @@ Used by the routine at <a href="32795.html">L801B</a>.
 </td>
 </tr>
 <tr>
-<td class="asm-label">LAD8B</td>
+<td class="asm-label">load_sprite_pattern</td>
 <td class="address-2"><span id="44427"></span>AD8B</td>
 <td class="instruction">PUSH HL</td>
 <td class="comment-1" rowspan="1"></td>
@@ -83,7 +83,7 @@ Used by the routine at <a href="32795.html">L801B</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44437"></span>AD95</td>
-<td class="instruction">LD HL,<a href="47325.html">LB8DD</a></td>
+<td class="instruction">LD HL,<a href="47325.html">graphics_pointer_offsets_table</a></td>
 <td class="comment-1" rowspan="1">Table of 29 bytes (offsets into table at $B8FA)</td>
 </tr>
 <tr>
@@ -126,12 +126,12 @@ Used by the routine at <a href="32795.html">L801B</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44452"></span>ADA4</td>
 <td class="instruction">BIT 7,A</td>
-<td class="comment-1" rowspan="1">Adjust address according to type</td>
+<td class="comment-1" rowspan="1">If bit 7 of transformation is set, skip ahead with E=0</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44454"></span>ADA6</td>
-<td class="instruction">JR NZ,<a href="44427.html#44471">LAD8B_0</a></td>
+<td class="instruction">JR NZ,<a href="44427.html#44471">load_sprite_pattern_0</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -143,14 +143,14 @@ Used by the routine at <a href="32795.html">L801B</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44458"></span>ADAA</td>
-<td class="instruction">JR C,<a href="44427.html#44471">LAD8B_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR C,<a href="44427.html#44471">load_sprite_pattern_0</a></td>
+<td class="comment-1" rowspan="1">Jump if &lt; $15</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44460"></span>ADAC</td>
 <td class="instruction">INC E</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">E = 1</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -161,14 +161,14 @@ Used by the routine at <a href="32795.html">L801B</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44463"></span>ADAF</td>
-<td class="instruction">JR C,<a href="44427.html#44471">LAD8B_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR C,<a href="44427.html#44471">load_sprite_pattern_0</a></td>
+<td class="comment-1" rowspan="1">Jump if &lt; $1A</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44465"></span>ADB1</td>
 <td class="instruction">INC E</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">E = 2</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -179,17 +179,17 @@ Used by the routine at <a href="32795.html">L801B</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44468"></span>ADB4</td>
-<td class="instruction">JR C,<a href="44427.html#44471">LAD8B_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR C,<a href="44427.html#44471">load_sprite_pattern_0</a></td>
+<td class="comment-1" rowspan="1">Jump if &lt; $22</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44470"></span>ADB6</td>
 <td class="instruction">INC E</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">E = 3</td>
 </tr>
 <tr>
-<td class="asm-label">LAD8B_0</td>
+<td class="asm-label">load_sprite_pattern_0</td>
 <td class="address-2"><span id="44471"></span>ADB7</td>
 <td class="instruction">LD A,E</td>
 <td class="comment-1" rowspan="1"></td>
@@ -203,38 +203,38 @@ Used by the routine at <a href="32795.html">L801B</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44473"></span>ADB9</td>
-<td class="instruction">JR C,<a href="44427.html#44477">LAD8B_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR C,<a href="44427.html#44477">load_sprite_pattern_1</a></td>
+<td class="comment-1" rowspan="1">Jump if LSB of pointer &gt;= E, which is 0..3</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44475"></span>ADBB</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get LSB of pointer</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44476"></span>ADBC</td>
 <td class="instruction">DEC A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Minus 1</td>
 </tr>
 <tr>
-<td class="asm-label">LAD8B_1</td>
+<td class="asm-label">load_sprite_pattern_1</td>
 <td class="address-2"><span id="44477"></span>ADBD</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">To MSB</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44478"></span>ADBE</td>
 <td class="instruction">LD B,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">B = MSB</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44479"></span>ADBF</td>
 <td class="instruction">LD C,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">C = LSB - 1</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -275,7 +275,7 @@ Used by the routine at <a href="32795.html">L801B</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44492"></span>ADCC</td>
-<td class="instruction">JR NZ,<a href="44427.html#44497">LAD8B_2</a></td>
+<td class="instruction">JR NZ,<a href="44427.html#44497">load_sprite_pattern_2</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -287,11 +287,11 @@ Used by the routine at <a href="32795.html">L801B</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44495"></span>ADCF</td>
-<td class="instruction">JR <a href="44427.html#44503">LAD8B_3</a></td>
+<td class="instruction">JR <a href="44427.html#44503">load_sprite_pattern_3</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">LAD8B_2</td>
+<td class="asm-label">load_sprite_pattern_2</td>
 <td class="address-2"><span id="44497"></span>ADD1</td>
 <td class="instruction">SRL A</td>
 <td class="comment-1" rowspan="1"></td>
@@ -299,7 +299,7 @@ Used by the routine at <a href="32795.html">L801B</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44499"></span>ADD3</td>
-<td class="instruction">DJNZ <a href="44427.html#44497">LAD8B_2</a></td>
+<td class="instruction">DJNZ <a href="44427.html#44497">load_sprite_pattern_2</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -315,7 +315,7 @@ Used by the routine at <a href="32795.html">L801B</a>.
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">LAD8B_3</td>
+<td class="asm-label">load_sprite_pattern_3</td>
 <td class="address-2"><span id="44503"></span>ADD7</td>
 <td class="instruction">ADD A,C</td>
 <td class="comment-1" rowspan="1"></td>
@@ -335,7 +335,7 @@ Used by the routine at <a href="32795.html">L801B</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44508"></span>ADDC</td>
-<td class="instruction">JR Z,<a href="44427.html#44561">LAD8B_4</a></td>
+<td class="instruction">JR Z,<a href="44427.html#44561">load_sprite_pattern_4</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -348,7 +348,7 @@ Used by the routine at <a href="32795.html">L801B</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44513"></span>ADE1</td>
 <td class="instruction">LD L,(IX+$00)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Sprite type</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -360,43 +360,43 @@ Used by the routine at <a href="32795.html">L801B</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44518"></span>ADE6</td>
 <td class="instruction">ADD HL,HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">* 2</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44519"></span>ADE7</td>
-<td class="instruction">LD DE,<a href="29408.html">L72E0</a></td>
+<td class="instruction">LD DE,<a href="29408.html">sprite_pattern_vdp_addrs_table</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44522"></span>ADEA</td>
 <td class="instruction">ADD HL,DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><a href="29408.html">sprite_pattern_vdp_addrs_table</a> + sprite type * 2</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44523"></span>ADEB</td>
 <td class="instruction">LD E,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get LSB of VDP address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44524"></span>ADEC</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">TO MSB</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44525"></span>ADED</td>
 <td class="instruction">LD D,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get MSB of VDP address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44526"></span>ADEE</td>
 <td class="instruction">LD L,B</td>
-<td class="comment-1" rowspan="1">What is B?</td>
+<td class="comment-1" rowspan="1">B must be index of pattern to fetch within sprite type.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -414,13 +414,13 @@ Used by the routine at <a href="32795.html">L801B</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44530"></span>ADF2</td>
 <td class="instruction">ADD HL,HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44531"></span>ADF3</td>
 <td class="instruction">ADD HL,HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -438,7 +438,7 @@ Used by the routine at <a href="32795.html">L801B</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44534"></span>ADF6</td>
 <td class="instruction">LD HL,<a href="29091.html">buffer</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Buffer</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -468,19 +468,19 @@ Used by the routine at <a href="32795.html">L801B</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44547"></span>AE03</td>
 <td class="instruction">ADD A,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44548"></span>AE04</td>
 <td class="instruction">ADD A,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44549"></span>AE05</td>
 <td class="instruction">LD E,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -507,22 +507,22 @@ Used by the routine at <a href="32795.html">L801B</a>.
 <td class="comment-1" rowspan="1">WRITE_VRAM</td>
 </tr>
 <tr>
-<td class="asm-label">LAD8B_4</td>
+<td class="asm-label">load_sprite_pattern_4</td>
 <td class="address-2"><span id="44561"></span>AE11</td>
 <td class="instruction">LD A,(IX+$00)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get sprite type</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44564"></span>AE14</td>
 <td class="instruction">CP $01</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If 1,</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44566"></span>AE16</td>
-<td class="instruction">JR Z,<a href="44427.html#44587">LAD8B_5</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="44427.html#44587">load_sprite_pattern_5</a></td>
+<td class="comment-1" rowspan="1">then skip ahead</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -563,11 +563,11 @@ Used by the routine at <a href="32795.html">L801B</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44585"></span>AE29</td>
-<td class="instruction">JR <a href="44427.html#44622">LAD8B_7</a></td>
+<td class="instruction">JR <a href="44427.html#44622">load_sprite_pattern_7</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">LAD8B_5</td>
+<td class="asm-label">load_sprite_pattern_5</td>
 <td class="address-2"><span id="44587"></span>AE2B</td>
 <td class="instruction">LD HL,<a href="45021.html">LAFDD</a></td>
 <td class="comment-1" rowspan="1"></td>
@@ -587,7 +587,7 @@ Used by the routine at <a href="32795.html">L801B</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44595"></span>AE33</td>
-<td class="instruction">JR NZ,<a href="44427.html#44607">LAD8B_6</a></td>
+<td class="instruction">JR NZ,<a href="44427.html#44607">load_sprite_pattern_6</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -621,7 +621,7 @@ Used by the routine at <a href="32795.html">L801B</a>.
 <td class="comment-1" rowspan="1">add_a_to_hl</td>
 </tr>
 <tr>
-<td class="asm-label">LAD8B_6</td>
+<td class="asm-label">load_sprite_pattern_6</td>
 <td class="address-2"><span id="44607"></span>AE3F</td>
 <td class="instruction">LD A,($700A)</td>
 <td class="comment-1" rowspan="1"></td>
@@ -673,7 +673,7 @@ This entry point is used by the routines at <a href="44628.html">LAE54</a> and <
 </td>
 </tr>
 <tr>
-<td class="asm-label">LAD8B_7</td>
+<td class="asm-label">load_sprite_pattern_7</td>
 <td class="address-2"><span id="44622"></span>AE4E</td>
 <td class="instruction">POP IY</td>
 <td class="comment-1" rowspan="1"></td>

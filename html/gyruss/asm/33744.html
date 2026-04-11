@@ -62,68 +62,68 @@ Used by the routine at <a href="33640.html">L8368</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33752"></span>83D8</td>
-<td class="instruction">LD ($7201),A</td>
+<td class="instruction">LD (<a href="29185.html">wave</a>),A</td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33755"></span>83DB</td>
-<td class="instruction">LD ($7202),A</td>
+<td class="instruction">LD (<a href="29186.html">L7202</a>),A</td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33758"></span>83DE</td>
-<td class="instruction">LD A,($7200)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD A,(<a href="29184.html">stage</a>)</td>
+<td class="comment-1" rowspan="1">Stage</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33761"></span>83E1</td>
 <td class="instruction">INC A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Next stage</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33762"></span>83E2</td>
 <td class="instruction">CP $18</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Did we reach 24?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33764"></span>83E4</td>
 <td class="instruction">JR C,<a href="33744.html#33772">L83D0_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">No, skip ahead</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33766"></span>83E6</td>
-<td class="instruction">LD HL,<a href="29165.html#29189">$7205</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD HL,<a href="29189.html">completed_stages</a></td>
+<td class="comment-1" rowspan="1">Get the total stages completed</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33769"></span>83E9</td>
 <td class="instruction">ADD A,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">And add 24</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33770"></span>83EA</td>
 <td class="instruction">LD (HL),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save again</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33771"></span>83EB</td>
 <td class="instruction">XOR A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">And set stage to zero</td>
 </tr>
 <tr>
 <td class="asm-label">L83D0_0</td>
 <td class="address-2"><span id="33772"></span>83EC</td>
-<td class="instruction">LD ($7200),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD (<a href="29184.html">stage</a>),A</td>
+<td class="comment-1" rowspan="1">Save stage</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -140,8 +140,8 @@ Used by the routine at <a href="33640.html">L8368</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33780"></span>83F4</td>
-<td class="instruction">LD A,($7200)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD A,(<a href="29184.html">stage</a>)</td>
+<td class="comment-1" rowspan="1">Stage</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -176,7 +176,7 @@ Used by the routine at <a href="33640.html">L8368</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33792"></span>8400</td>
-<td class="instruction">LD ($7204),A</td>
+<td class="instruction">LD (<a href="29188.html">L7204</a>),A</td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -236,7 +236,7 @@ Used by the routine at <a href="33640.html">L8368</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33819"></span>841B</td>
-<td class="instruction">LD A,($7256)</td>
+<td class="instruction">LD A,(<a href="29270.html">L7256</a>)</td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -248,7 +248,7 @@ Used by the routine at <a href="33640.html">L8368</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33823"></span>841F</td>
-<td class="instruction">CALL <a href="33298.html">L8212</a></td>
+<td class="instruction">CALL <a href="33298.html">init_stage</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -260,7 +260,7 @@ Used by the routine at <a href="33640.html">L8368</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33827"></span>8423</td>
-<td class="instruction">LD ($7256),A</td>
+<td class="instruction">LD (<a href="29270.html">L7256</a>),A</td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>

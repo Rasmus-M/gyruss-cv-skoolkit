@@ -15,18 +15,76 @@ B $7182,1,1
 b $7183 Sprite allocation table
 @ $7183 label=sprite_alloc_table
 B $7183,32,8
-b $71A3 Data block at 71A3
+b $71A3 Temporary storage (72 bytes)
 @ $71A3 label=buffer
 B $71A3,72,8
-b $71EB Byte at 71EB
+b $71EB Status flags #TABLE(default, default) { =h Bit | =h Purpose } { $00 | Unknown } { $01 | Unknown } { $02 | Exits main loop } { $03 | Unknown } { $04 | Unknown } { $05 | Unknown } { $06 | Unknown } { $07 | Two players } TABLE#
+@ $71EB player_status
 B $71EB,1,1
 b $71EC Stars move countdown
 @ $71EC label=stars_countdown
 B $71EC,1,1
-b $71ED Data block at 71ED
-B $71ED,106,8*13,2
-w $7257 Word at 7257
-@ $7257 label=word_at_7257
+b $71ED Byte at 71ED
+B $71ED,1,1
+b $71EE Byte at 71EE
+B $71EE,1,1
+b $71EF Byte at 71EF
+B $71EF,1,1
+b $71F0 Byte at 71F0
+B $71F0,1,1
+b $71F1 Data block at 71F1
+B $71F1,7,7
+b $71F8 Byte at 71F8 (initially set to 6)
+B $71F8,1,1
+b $71F9 Data block at 71F9
+B $71F9,5,5
+b $71FE Byte at 71FE (initially set to 6)
+B $71FE,1,1
+b $71FF Lives
+@ $71FF label=lives
+B $71FF,1,1
+b $7200 Stage (0-23, but starts with 1 during play)
+@ $7200 label=stage
+B $7200,1,1
+b $7201 Wave
+@ $7201 label=wave
+B $7201,1,1
+b $7202 Byte at 7202
+B $7202,1,1
+b $7203 Index (0-7) into #R$8541 (blocks of 8 bytes)
+@ $7203 label=stage_data_index
+B $7203,1,1
+b $7204 Byte at 7204
+B $7204,1,1
+b $7205 When stage reaches 24, this number is added here, and stage is reset to 0
+@ $7205 label=completed_stages
+B $7205,1,1
+b $7206 Byte at 7206
+B $7206,1,1
+b $7207 Byte at 7207
+B $7207,1,1
+b $7208 Data block at 7208
+B $7208,35,8*4,3
+b $722B Byte at 722B
+B $722B,1,1
+b $722C Byte at 722C
+B $722C,1,1
+b $722D Byte at 722D
+B $722D,1,1
+b $722E Data block at 722E
+B $722E,36,8*4,4
+b $7252 Byte at 7252
+B $7252,1,1
+b $7253 Byte at 7253
+B $7253,1,1
+b $7254 Byte at 7254
+B $7254,1,1
+b $7255 Byte at 7255
+B $7255,1,1
+b $7256 Byte at 7256
+B $7256,1,1
+w $7257 Countdown to screen off
+@ $7257 label=screensaver_countdown
 W $7257,2,2
 b $7259 Data block at 7259
 B $7259,1,1
@@ -41,8 +99,22 @@ W $726A,2,2
 b $726C Byte at 726C
 @ $726C label=byte_at_726C
 B $726C,1,1
-b $726D Data block at 726D
-B $726D,104,8
+b $726D Byte at 726D
+B $726D,1,1
+b $726E Byte at 726E
+B $726E,1,1
+b $726F Byte at 726F
+B $726F,1,1
+w $7270 Word at 7270
+W $7270,2,2
+w $7272 Word at 7272
+W $7272,2,2
+w $7274 Word at 7274
+W $7274,2,2
+w $7276 Word at 7276
+W $7276,2,2
+b $7278 Data block at 7278
+B $7278,93,8*11,5
 b $72D5 Byte at 72D5
 B $72D5,1,1
 b $72D6 Byte at 72D6
@@ -57,8 +129,10 @@ w $72DC Word at 72DC
 W $72DC,2,2
 w $72DE Word at 72DE
 W $72DE,2,2
-b $72E0 Data block at 72E0
-B $72E0,58,8*7,2
+w $72E0 Sprite patterns addresses in VDP
+D $72E0 One entry for each of the 29 sprite types.
+@ $72E0 label=sprite_pattern_vdp_addrs_table
+W $72E0,58,2
 b $731A Star frame
 @ $731A label=star_frame
 B $731A,1,1
@@ -109,7 +183,8 @@ C $8029,3 Clear RAM
 C $8035,3 Set word
 C $803B,3 Init some RAM locations (sound?)
 C $803E,3 Start screen
-C $8041,3 Set word
+C $8041,3 180 * 60 frames
+C $8044,3 Set screensaver countdown
 @ $8047 label=main_wait_fire
 C $8047,1 Wait for interrupt
 C $804B,3 Controller 0, segment 0
@@ -121,26 +196,68 @@ C $8058,3 DECODER
 C $805B,2 Test fire
 C $805D,2 Loop until fire pressed
 N $8064 This entry point is used by the routine at #R$81ED. Fire pressed
-C $806A,3 Clear screen
-C $8071,3 FILL_VRAM
+@ $8064 label=new_game
+C $8067,3 Clear screensaver countdown
+C $806A,3 Name table address
+C $806D,3 Name table size
+C $8070,1 Zero
+C $8071,3 FILL_VRAM (clear screen)
+C $8074,3 Last 4 bytes of color table
+C $8077,3 4 bytes
+C $807A,2 Set to white/black
 C $807C,3 FILL_VRAM
+C $807F,3 Clear RAM  from $71F1
+C $8082,3 To $7256
+C $8085,1 ...
+C $8086,1 ...
+C $8087,3 ...
+C $808A,2 ...
+C $8094,2 5 Lives
+C $8096,3 Set lives
+C $8099,1 Increment to 6
+C $809A,3 Set to 6
+C $809D,3 Set to 6
+C $80A0,2 Stage
+C $80A2,3 Set to 1
+C $80A8,3 Display stage message
+C $80AB,3 ...
+C $80AE,3 ...
 C $80B1,1 WRITE_VRAM
+C $80B2,3 Display '1' at the top left corner
+C $80B5,2 ...
 C $80B7,1 vdp_write_byte
+C $80B8,1 Display '-' next to '1'
+C $80B9,2 ...
 C $80BB,1 vdp_write_byte
+C $80BC,1 Parameter to display score
+C $80BD,3 Display score
+C $80C3,2 Test bit for two players
+C $80C5,2 If bit is reset then skip ahead
+C $80C7,3 Display '-' at the top right corner
+C $80CA,2 ...
 C $80CC,1 vdp_write_byte
+C $80CD,1 Display '2' next to '-'
+C $80CE,2 ...
 C $80D0,1 vdp_write_byte
+C $80D6,3 Save player data, starting with lives?
+C $80D9,3 VDP address
+C $80DC,3 45 bytes
 C $80DF,1 WRITE_VRAM
+C $80E0,2 Random number seed
 C $80E2,3 Init random number
+C $80E5,3 Initialize stage
 N $80E8 This entry point is used by the routines at #R$81AE and #R$83D0.
 @ $80E8 label=main_loop
 C $80E8,3 Flag set by interrupt routine
 C $80EB,2 Test flag
 C $80ED,2 Wait until set
 C $80EF,2 Clear flag
-C $80F1,3 READ_REGISTER
+C $80F1,3 READ_REGISTER (read VDP status)
 C $80FD,3 READ_REGISTER
 C $8106,3 READ_REGISTER
 C $810F,3 READ_REGISTER
+C $8121,3 Status
+C $8126,3 Exit main loop
 c $8139 Routine at 8139
 D $8139 Used by the routine at #R$8024.
 C $8146,3 READ_REGISTER
@@ -154,30 +271,127 @@ D $81AE Used by the routine at #R$8170.
 N $81B9 This entry point is used by the routine at #R$8170.
 C $81C2,3 READ_VRAM
 C $81CE,1 WRITE_VRAM
+C $81E2,3 Initialize stage
+C $81EA,3 To main loop
 c $81ED Routine at 81ED
 D $81ED Used by the routine at #R$8170.
+C $81ED,3 300 frames
+C $81F0,3 Set screensaver countdown
 C $81F4,3 Controller 0, segment 1
 C $81F7,3 DECODER
+C $81FD,3 Start a new game
+C $8202,3 Reset
 C $8205,3 Controller 0, segment 0
 C $8208,3 DECODER
-c $8212 Routine at 8212
-D $8212 Used by the routines at #R$8024, #R$81AE and #R$83D0.
-c $823E Routine at 823E
-D $823E Used by the routine at #R$8212.
-N $8240 This entry point is used by the routine at #R$8212.
-N $8245 This entry point is used by the routine at #R$8212.
-c $825F Routine at 825F
-D $825F Used by the routine at #R$823E.
+C $820B,2 Test fire
+C $820D,3 Start a new game
+C $8210,2 Loop
+c $8212 Init stage
+D $8212 Initializa stage and display X WARPS TO Y message Used by the routines at #R$8024, #R$81AE and #R$83D0.
+@ $8212 label=init_stage
+C $8212,3 Clear $28 bytes from $722E
+C $8215,3 ...
+C $8218,3 ...
+C $821B,2 ...
+C $821D,2 ...
+N $8229 Calculate stage data index
+C $8229,3 Get completed stages
+C $822C,1 Test if zero
+C $822D,2 If not, skip ahead to set max value
+C $822F,3 Stage
+C $8234,2 Jump if stage >= 4, to set value = stage / 4 + 1
+C $8236,1 B = stage 1-3
+C $8237,1 A = 0
+C $8238,1 B = 0-2
+C $8239,2 If zero then skip ahead to save value
+C $823B,1 Stage = 2 or 3, set A = 1
+C $823C,2 Skip ahead to save value
+C $823E,2 24
+C $8240,2 Divide stage by 4
+C $8242,2 ...
+C $8244,1 + 1
+C $8245,3 Save value (0 - 7)
+N $8248 Display stage number
+C $8248,3 Current stage
+C $824B,3 Completed stages
+C $824E,1 Add to stage
+C $824F,3 VDP address (stage number tens)
+C $8254,2 Jump if < 10
+C $8256,2 Divide by ten into B
+C $8258,2 ...
+C $825A,2 ...
+C $825C,1 ...
+C $825D,2 ...
+C $825F,2 Restore ones
+C $8261,1 Save in C
+C $8262,1 Tens
+C $8263,2 Add ASCII 0
 C $8265,1 vdp_write_byte
-N $8267 This entry point is used by the routine at #R$823E.
+C $8266,1 Ones
+C $8267,1 Increment VDP address to stage number ones
+C $8268,2 Add ASCII 0
 C $826A,1 vdp_write_byte
+N $826B Display X WARPS TO Y message
+C $826B,3 Check whether you just died
+C $826E,1 So we want to display READY instead
+C $826F,2 And if so jump ahead
+C $8271,3 Get stage
+C $8274,1 Save in B
+C $8275,2 Divide by 2
+C $8277,2 Clamp to 0, 2, 4, 6, 8, 10, 12
+C $8279,3 Base planet table
 C $827C,1 add_a_to_hl
-c $82BA Routine at 82BA
-D $82BA Used by the routine at #R$825F.
-c $82BF Routine at 82BF
-D $82BF Used by the routine at #R$825F.
-N $82C3 This entry point is used by the routines at #R$825F and #R$82BA.
-C $82D1,1 WRITE_VRAM
+C $827D,1 Get LSB of planet data
+C $827E,1 To MSB
+C $827F,1 Get MSB of planet data
+C $8280,3 Planet name offset is 16
+C $8283,1 Add planet data address
+C $8284,1 Save it
+C $8285,3 Buffer address for the string #R$71A3+1
+C $8288,1 Restore stage
+C $8289,2 Clamp to 0, 1, 2, 3 (0 not an option?)
+C $828B,2 If 3 we have reached it's a chance stage
+C $828D,2 Then jump ahead
+C $828F,2 Flip the bits, so we know how many warps TO the planet
+C $8291,2 Add ASCII 0
+C $8293,1 Store number in the buffer
+C $8294,1 Next buffer address
+C $8295,3 WARPS message
+C $8298,3 Copy 5 bytes '_WARP'
+C $829B,2 If the number is less than 2,
+C $829D,2 then skip ahead
+C $829F,1 Otherwise copy one more byte '_WARPS'
+C $82A0,2 Make the copy
+C $82A2,3 Copy _TO_ message
+C $82A5,3 4 bytes
+C $82A8,2 Make the copy
+C $82AA,1 Restore the planet name address
+C $82AB,1 Get length of name
+C $82AC,1 Next byte
+C $82AD,2 Copy planet name
+C $82AF,1 Now HL=destination and DE=source
+C $82B0,3 Buffer address for the string #R$71A3+1
+C $82B3,2 Now HL contain the length of the string
+C $82B5,1 Now DE=length and HL=$71A4
+C $82B6,1 HL=#R$71A3
+C $82B7,1 Set length
+C $82B8,2 Jump ahead
+C $82BA,3 Ready message
+C $82BD,2 Skip ahead
+C $82BF,1 Drop the pushed planet name address
+C $82C0,3 Chance stage message
+C $82C3,2 At this point HL contains a pointer to the length prefixed message to print
+C $82C5,1 32 - string length
+C $82C6,2 / 2 = offset to center line
+C $82C8,3 VDP address of line start
+C $82CB,1 Add address to offset
+C $82CC,1 Copy back to destination
+C $82CD,1 Length
+C $82CE,2 MSB of length
+C $82D0,1 Increment source to text
+C $82D1,1 WRITE_VRAM Display the X WARPS TO Y message
+N $82D2 Now what?
+C $82D7,3 Stage
 c $830E Routine at 830E
 D $830E Used by the routines at #R$8170 and #R$82BF.
 C $831D,1 WRITE_VRAM
@@ -186,12 +400,24 @@ c $832A Routine at 832A
 D $832A Used by the routine at #R$8024.
 C $8334,3 READ_REGISTER
 N $833C This entry point is used by the routines at #R$8450 and #R$846B.
+C $8358,3 Stage
 c $8368 Routine at 8368
 D $8368 Used by the routine at #R$832A.
 N $836D This entry point is used by the routine at #R$832A.
+C $8374,3 Stage
 C $83BA,4 Set color
 c $83D0 Routine at 83D0
 D $83D0 Used by the routine at #R$8368.
+C $83DE,3 Stage
+C $83E1,1 Next stage
+C $83E2,2 Did we reach 24?
+C $83E4,2 No, skip ahead
+C $83E6,3 Get the total stages completed
+C $83E9,1 And add 24
+C $83EA,1 Save again
+C $83EB,1 And set stage to zero
+C $83EC,3 Save stage
+C $83F4,3 Stage
 C $840E,3 FILL_VRAM
 C $8418,3 FILL_VRAM
 c $8429 Routine at 8429
@@ -222,12 +448,29 @@ C $84D6,2 Table code (3 = pattern generator table)
 C $84D8,3 PUT_VRAM
 c $84DB Routine at 84DB
 D $84DB Used by the routines at #R$8878, #R$8A53, #R$8A76, #R$8C68, #R$8D50, #R$8E9D, #R$900E and #R$AAF1.
+C $84DC,3 Get value (0 - 6)
+C $84DF,1 Multiply by 8
+C $84E0,1 ...
+C $84E1,1 ...
+C $84E2,1 Add #R$8541
+C $84E3,2 ...
+C $84E5,4 ...
+C $84E9,2 ...
 c $84ED Routine at 84ED
 D $84ED Used by the routines at #R$8170 and #R$832A.
 C $84F4,3 FILL_VRAM
 c $8501 Routine at 8501
 D $8501 Used by the routine at #R$8021.
 @ $8501 label=interrupt_routine
+C $8509,3 Counter
+C $850C,1 Check if zero
+C $850D,1 ...
+C $850E,2 If counter is 0 then skip ahead
+C $8510,1 Otherwise decrement
+C $8511,3 and save.
+C $8514,1 Check again if zero
+C $8515,1 ...
+C $8516,2 If not then skip ahead, otherwise blank screen
 C $8518,3 Display off, interrupt off
 C $851B,1 WRITE_REGISTER
 C $851C,3 Black border
@@ -237,47 +480,41 @@ c $8522 Routine at 8522
 D $8522 Used by the routine at #R$8501.
 C $8522,3 Sound player?
 t $853C Message at 853C
+@ $853C label=stage_msg
 T $853C,5,5
 b $8541 Data block at 8541
+@ $8541 label=stage_data
 B $8541,64,8
 t $8581 Message at 8581
-T $8581,6,6
-b $8587 Data block at 8587
-B $8587,3,3
-t $858A Message at 858A
-T $858A,5,5
-b $858F Data block at 858F
-B $858F,1,1
-t $8590 Message at 8590
-T $8590,6,6
-b $8596 Data block at 8596
-B $8596,1,1
-t $8597 Message at 8597
-T $8597,5,5
-b $859C Data block at 859C
-B $859C,1,1
-t $859D Message at 859D
-T $859D,5,5
-b $85A2 Data block at 85A2
-B $85A2,4,4
+@ $8581 label=player_msg
+T $8581,8,6:n1:1
+t $8589 Message at 8589
+@ $8589 label=ready_msg
+T $8589,6,n1:5
+t $858F Message at 858F
+@ $858F label=chance_stage_msg
+T $858F,13,n1:6:n1:5
+t $859C Message at 859D
+@ $859C label=warps_msg
+T $859C,6,n1:5
+t $85A2 Message at 85A2
+@ $85A2 label=to_msg
+T $85A2,4,n1:2:n1
 t $85A6 Message at 85A6
-T $85A6,8,8
-b $85AE Data block at 85AE
-B $85AE,7,7
-t $85B5 Message at 85B5
-T $85B5,28,28
-b $85D1 Data block at 85D1
-B $85D1,3,3
-t $85D4 Message at 85D4
-T $85D4,5,5
-b $85D9 Data block at 85D9
-B $85D9,1,1
-t $85DA Message at 85DA
-T $85DA,7,7
-b $85E1 Data block at 85E1
-B $85E1,1,1
-t $85E2 Message at 85E2
-T $85E2,4,4
+@ $85A6 label=bonus_msg
+T $85A6,5,5
+t $85AB Message at 85AB
+@ $85AB label=bonus_numbers_msg
+T $85AB,14,3:n1:1:n1:2:n2:4
+t $85B9 Message at 85B9
+@ $85B9 label=congratulations_msg
+T $85B9,16,16
+t $85C9 Message at 85C9
+@ $85C9 label=perfect_msg
+T $85C9,20,8:n3:5:n1:3
+t $85DD Message at 85DA
+@ $85DD label=game_over_msg
+T $85DD,9,4:n1:4
 c $85E6 Routine at 85E6
 D $85E6 Used by the routines at #R$8024, #R$8139, #R$832A, #R$8368, #R$846B and #R$A3E1.
 N $8600 This entry point is used by the routine at #R$8A41.
@@ -388,6 +625,7 @@ c $8C1E Routine at 8C1E
 D $8C1E Used by the routines at #R$8BD9 and #R$8C07.
 c $8C30 Routine at 8C30
 D $8C30 Used by the routine at #R$8BD9.
+C $8C35,3 Stage
 N $8C3E This entry point is used by the routine at #R$8C07.
 c $8C52 Routine at 8C52
 D $8C52 Used by the routine at #R$8C30.
@@ -395,6 +633,7 @@ N $8C57 This entry point is used by the routine at #R$8C30.
 c $8C68 Routine at 8C68
 D $8C68 Used by the routine at #R$8BD9.
 N $8C6D This entry point is used by the routine at #R$8C52.
+C $8C94,3 Stage
 C $8CA0,1 add_a_to_hl
 C $8CAF,3 Set color
 c $8D21 Routine at 8D21
@@ -418,6 +657,7 @@ b $8E11 Data block at 8E11
 B $8E11,27,8*3,3
 c $8E2C Routine at 8E2C
 N $8E2D This entry point is used by the routines at #R$8024, #R$8139 and #R$A3E1.
+C $8E5C,3 Stage
 c $8E89 Routine at 8E89
 D $8E89 Used by the routine at #R$8E2C.
 N $8E8D This entry point is used by the routines at #R$82BF and #R$8FED.
@@ -1079,6 +1319,7 @@ N $AD87 This entry point is used by the routine at #R$AD49.
 c $AD8B Load sprite pattern (RST $30)
 D $AD8B Used by the routine at #R$801B.
 R $AD8B I:IX points to sprite data
+@ $AD8B label=load_sprite_pattern
 C $AD90,3 Get sprite type
 C $AD95,3 Table of 29 bytes (offsets into table at $B8FA)
 C $AD99,1 Get graphics pointer offset for sprite type
@@ -1086,19 +1327,46 @@ C $AD9A,3 Table of pointers to graphics
 C $AD9D,1 HL now pointer to graphics pointer
 C $AD9E,3 Get which transformation we want (flipped, shifted, etc.)
 C $ADA1,3 Address
-C $ADA4,2 Adjust address according to type
-C $ADEE,1 What is B?
+C $ADA4,2 If bit 7 of transformation is set, skip ahead with E=0
+C $ADAA,2 Jump if < $15
+C $ADAC,1 E = 1
+C $ADAF,2 Jump if < $1A
+C $ADB1,1 E = 2
+C $ADB4,2 Jump if < $22
+C $ADB6,1 E = 3
+C $ADB9,2 Jump if LSB of pointer >= E, which is 0..3
+C $ADBB,1 Get LSB of pointer
+C $ADBC,1 Minus 1
+C $ADBD,1 To MSB
+C $ADBE,1 B = MSB
+C $ADBF,1 C = LSB - 1
+C $ADE1,3 Sprite type
+C $ADE6,1 * 2
+C $ADEA,1 #R$72E0 + sprite type * 2
+C $ADEB,1 Get LSB of VDP address
+C $ADEC,1 TO MSB
+C $ADED,1 Get MSB of VDP address
+C $ADEE,1 B must be index of pattern to fetch within sprite type.
 C $ADF1,1 Multiply by 8
+C $ADF2,1 ...
+C $ADF3,1 ...
 C $ADF4,1 And add DE
 C $ADF5,1 Move HL into DE, which becomes source address
+C $ADF6,3 Buffer
 C $ADF9,3 Read 8 bytes
 C $ADFC,3 READ_VRAM
 C $ADFF,3 Get pattern
 C $AE02,1 Multiply by 8
+C $AE03,1 ...
+C $AE04,1 ...
+C $AE05,1 ...
 C $AE06,2 DE = $800 + pattern * 8
 C $AE08,3 Source
 C $AE0B,3 Write 8 bytes
 C $AE0E,3 WRITE_VRAM
+C $AE11,3 Get sprite type
+C $AE14,2 If 1,
+C $AE16,2 then skip ahead
 C $AE21,3 Set y
 C $AE24,3 Set x
 C $AE3E,1 add_a_to_hl
@@ -1107,12 +1375,15 @@ C $AE4B,3 Set x
 N $AE4E This entry point is used by the routines at #R$AE54 and #R$AE75.
 c $AE54 Routine at AE54
 D $AE54 Used by the routine at #R$ADD1.
+C $AE54,3 Get sprite type
 c $AE75 Routine at AE75
 D $AE75 Used by the routine at #R$AE54.
+N $AE86 This entry point is used by the routine at #R$AE54.
 C $AE8A,4 Set x
 C $AE8E,4 Set y
-c $AE94 Fill VDP RAM from $2100 to $3868 with character patterns that may be flipped and shifted. One new pattern is generated with each call. Are these used?
-D $AE94 Used by the routine at #R$90D6.
+c $AE94 Upload sprite patterns
+D $AE94 Fill VDP RAM from $2100 to $3868 with sprite patterns that may be flipped and shifted. One new pattern is generated with each call. Builds a table of VDP addresses in #R$72E0. Used by the routine at #R$90D6.
+@ $AE94 label=upload_sprite_patterns
 C $AE94,3 Get counter
 C $AE97,2 If maxed out
 C $AE99,1 Then return
@@ -1284,14 +1555,20 @@ B $B136,144,8
 c $B1C6 Routine at B1C6
 D $B1C6 Used by the routines at #R$8F0F, #R$8F55, #R$A471, #R$AB72 and #R$ADD1.
 C $B1D3,1 Multiply by 32
+C $B1D4,1 ...
+C $B1D5,1 ...
+C $B1D6,1 ...
+C $B1D7,1 ...
 b $B21D Data block at B21D
 B $B21D,1728,8
 b $B8DD Graphics pointer offsets
 D $B8DD Offsets into data block at B8FA
+@ $B8DD label=graphics_pointer_offsets_table
 B $B8DD,29,8*3,5
 b $B8FA Data block at B8FA
 B $B8FA,2,2
 w $B8FC Graphics pointers
+@ $B8FC label=graphics_pointers_table
 W $B8FC,2,2 Offset $00
 W $B8FE,8,2
 W $B906,2,2 Offset $0A
@@ -1309,6 +1586,7 @@ W $B934,2,2
 W $B936,2,2 Offset $3A
 W $B938,174,2
 b $B9E6 Graphics #UDGTABLE { #UDGARRAY37,,4($B9E6-$BFAD-8)(graphics-B9E6.png) } TABLE#
+@ $B9E6 label=graphics_patterns
 B $B9E6,1480,8
 c $BFAE Random number generator (RST $20)
 D $BFAE Used by the routine at #R$8015.

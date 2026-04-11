@@ -70,7 +70,7 @@ b$7183 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $7193 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $719B DEFB $00,$00,$00,$00,$00,$00,$00,$00
 
-; Data block at 71A3
+; Temporary storage (72 bytes)
 @label=buffer
 b$71A3 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $71AB DEFB $00,$00,$00,$00,$00,$00,$00,$00
@@ -82,31 +82,121 @@ b$71A3 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $71DB DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $71E3 DEFB $00,$00,$00,$00,$00,$00,$00,$00
 
-; Byte at 71EB
+; Status flags
+; #TABLE(default, default)
+; { =h Bit | =h Purpose }
+; { $00 | Unknown }
+; { $01 | Unknown }
+; { $02 | Exits main loop }
+; { $03 | Unknown }
+; { $04 | Unknown }
+; { $05 | Unknown }
+; { $06 | Unknown }
+; { $07 | Two players }
+; TABLE#
+@player_status
 b$71EB DEFB $00
 
 ; Stars move countdown
 @label=stars_countdown
 b$71EC DEFB $00
 
-; Data block at 71ED
-b$71ED DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $71F5 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $71FD DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7205 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $720D DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7215 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $721D DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7225 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $722D DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7235 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $723D DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7245 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $724D DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7255 DEFB $00,$00
+; Byte at 71ED
+b$71ED DEFB $00
 
-; Word at 7257
-@label=word_at_7257
+; Byte at 71EE
+b$71EE DEFB $00
+
+; Byte at 71EF
+b$71EF DEFB $00
+
+; Byte at 71F0
+b$71F0 DEFB $00
+
+; Data block at 71F1
+b$71F1 DEFB $00,$00,$00,$00,$00,$00,$00
+
+; Byte at 71F8 (initially set to 6)
+b$71F8 DEFB $00
+
+; Data block at 71F9
+b$71F9 DEFB $00,$00,$00,$00,$00
+
+; Byte at 71FE (initially set to 6)
+b$71FE DEFB $00
+
+; Lives
+@label=lives
+b$71FF DEFB $00
+
+; Stage (0-23, but starts with 1 during play)
+@label=stage
+b$7200 DEFB $00
+
+; Wave
+@label=wave
+b$7201 DEFB $00
+
+; Byte at 7202
+b$7202 DEFB $00
+
+; Index (0-7) into #R$8541 (blocks of 8 bytes)
+@label=stage_data_index
+b$7203 DEFB $00
+
+; Byte at 7204
+b$7204 DEFB $00
+
+; When stage reaches 24, this number is added here, and stage is reset to 0
+@label=completed_stages
+b$7205 DEFB $00
+
+; Byte at 7206
+b$7206 DEFB $00
+
+; Byte at 7207
+b$7207 DEFB $00
+
+; Data block at 7208
+b$7208 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7210 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7218 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7220 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7228 DEFB $00,$00,$00
+
+; Byte at 722B
+b$722B DEFB $00
+
+; Byte at 722C
+b$722C DEFB $00
+
+; Byte at 722D
+b$722D DEFB $00
+
+; Data block at 722E
+b$722E DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7236 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $723E DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7246 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $724E DEFB $00,$00,$00,$00
+
+; Byte at 7252
+b$7252 DEFB $00
+
+; Byte at 7253
+b$7253 DEFB $00
+
+; Byte at 7254
+b$7254 DEFB $00
+
+; Byte at 7255
+b$7255 DEFB $00
+
+; Byte at 7256
+b$7256 DEFB $00
+
+; Countdown to screen off
+@label=screensaver_countdown
 w$7257 DEFW $0000
 
 ; Data block at 7259
@@ -128,20 +218,40 @@ w$726A DEFW $0000
 @label=byte_at_726C
 b$726C DEFB $00
 
-; Data block at 726D
-b$726D DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7275 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $727D DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7285 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $728D DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7295 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $729D DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $72A5 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $72AD DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $72B5 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $72BD DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $72C5 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $72CD DEFB $00,$00,$00,$00,$00,$00,$00,$00
+; Byte at 726D
+b$726D DEFB $00
+
+; Byte at 726E
+b$726E DEFB $00
+
+; Byte at 726F
+b$726F DEFB $00
+
+; Word at 7270
+w$7270 DEFW $0000
+
+; Word at 7272
+w$7272 DEFW $0000
+
+; Word at 7274
+w$7274 DEFW $0000
+
+; Word at 7276
+w$7276 DEFW $0000
+
+; Data block at 7278
+b$7278 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7280 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7288 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7290 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7298 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $72A0 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $72A8 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $72B0 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $72B8 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $72C0 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $72C8 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $72D0 DEFB $00,$00,$00,$00,$00
 
 ; Byte at 72D5
 b$72D5 DEFB $00
@@ -164,15 +274,39 @@ w$72DC DEFW $0000
 ; Word at 72DE
 w$72DE DEFW $0000
 
-; Data block at 72E0
-b$72E0 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $72E8 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $72F0 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $72F8 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7300 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7308 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7310 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7318 DEFB $00,$00
+; Sprite patterns addresses in VDP
+;
+; One entry for each of the 29 sprite types.
+@label=sprite_pattern_vdp_addrs_table
+w$72E0 DEFW $0000
+ $72E2 DEFW $0000
+ $72E4 DEFW $0000
+ $72E6 DEFW $0000
+ $72E8 DEFW $0000
+ $72EA DEFW $0000
+ $72EC DEFW $0000
+ $72EE DEFW $0000
+ $72F0 DEFW $0000
+ $72F2 DEFW $0000
+ $72F4 DEFW $0000
+ $72F6 DEFW $0000
+ $72F8 DEFW $0000
+ $72FA DEFW $0000
+ $72FC DEFW $0000
+ $72FE DEFW $0000
+ $7300 DEFW $0000
+ $7302 DEFW $0000
+ $7304 DEFW $0000
+ $7306 DEFW $0000
+ $7308 DEFW $0000
+ $730A DEFW $0000
+ $730C DEFW $0000
+ $730E DEFW $0000
+ $7310 DEFW $0000
+ $7312 DEFW $0000
+ $7314 DEFW $0000
+ $7316 DEFW $0000
+ $7318 DEFW $0000
 
 ; Star frame
 @label=star_frame
@@ -277,8 +411,8 @@ c$8024 LD SP,$73BA   ;
  $8038 LD ($7000),HL ;
  $803B CALL $9ADE    ; Init some RAM locations (sound?)
  $803E CALL $90D6    ; Start screen
- $8041 LD HL,$2A30   ; Set word
- $8044 LD ($7257),HL ;
+ $8041 LD HL,$2A30   ; 180 * 60 frames
+ $8044 LD ($7257),HL ; Set screensaver countdown
 @label=main_wait_fire
 *$8047 HALT          ; Wait for interrupt
  $8048 CALL $AFFF    ;
@@ -293,70 +427,71 @@ c$8024 LD SP,$73BA   ;
  $805F LD HL,$71EB   ;
  $8062 SET 7,(HL)    ;
 ; This entry point is used by the routine at #R$81ED. Fire pressed
+@label=new_game
 *$8064 LD HL,$0000   ;
- $8067 LD ($7257),HL ;
- $806A LD HL,$1800   ; Clear screen
- $806D LD DE,$0300   ;
- $8070 XOR A         ;
- $8071 CALL $1F82    ; FILL_VRAM
- $8074 LD HL,$201C   ;
- $8077 LD DE,$0004   ;
- $807A LD A,$F1      ;
+ $8067 LD ($7257),HL ; Clear screensaver countdown
+ $806A LD HL,$1800   ; Name table address
+ $806D LD DE,$0300   ; Name table size
+ $8070 XOR A         ; Zero
+ $8071 CALL $1F82    ; FILL_VRAM (clear screen)
+ $8074 LD HL,$201C   ; Last 4 bytes of color table
+ $8077 LD DE,$0004   ; 4 bytes
+ $807A LD A,$F1      ; Set to white/black
  $807C CALL $1F82    ; FILL_VRAM
- $807F LD HL,$71F1   ;
- $8082 LD DE,$71F2   ;
- $8085 XOR A         ;
- $8086 LD (HL),A     ;
- $8087 LD BC,$0065   ;
- $808A LDIR          ;
+ $807F LD HL,$71F1   ; Clear RAM  from $71F1
+ $8082 LD DE,$71F2   ; To $7256
+ $8085 XOR A         ; ...
+ $8086 LD (HL),A     ; ...
+ $8087 LD BC,$0065   ; ...
+ $808A LDIR          ; ...
  $808C LD A,($71EB)  ;
  $808F AND $80       ;
  $8091 LD ($71EB),A  ;
- $8094 LD A,$05      ;
- $8096 LD ($71FF),A  ;
- $8099 INC A         ;
- $809A LD ($71F8),A  ;
- $809D LD ($71FE),A  ;
- $80A0 LD A,$01      ;
- $80A2 LD ($7200),A  ;
+ $8094 LD A,$05      ; 5 Lives
+ $8096 LD ($71FF),A  ; Set lives
+ $8099 INC A         ; Increment to 6
+ $809A LD ($71F8),A  ; Set to 6
+ $809D LD ($71FE),A  ; Set to 6
+ $80A0 LD A,$01      ; Stage
+ $80A2 LD ($7200),A  ; Set to 1
  $80A5 CALL $AA7D    ;
- $80A8 LD HL,$853C   ;
- $80AB LD DE,$1AF8   ;
- $80AE LD BC,$0005   ;
+ $80A8 LD HL,$853C   ; Display stage message
+ $80AB LD DE,$1AF8   ; ...
+ $80AE LD BC,$0005   ; ...
  $80B1 RST $38       ; WRITE_VRAM
- $80B2 LD DE,$1802   ;
- $80B5 LD A,$31      ;
+ $80B2 LD DE,$1802   ; Display '1' at the top left corner
+ $80B5 LD A,$31      ; ...
  $80B7 RST $10       ; vdp_write_byte
- $80B8 INC DE        ;
- $80B9 LD A,$2D      ;
+ $80B8 INC DE        ; Display '-' next to '1'
+ $80B9 LD A,$2D      ; ...
  $80BB RST $10       ; vdp_write_byte
- $80BC XOR A         ;
- $80BD CALL $A699    ;
+ $80BC XOR A         ; Parameter to display score
+ $80BD CALL $A699    ; Display score
  $80C0 LD A,($71EB)  ;
- $80C3 BIT 7,A       ;
- $80C5 JR Z,$80E0    ;
- $80C7 LD DE,$181E   ;
- $80CA LD A,$2D      ;
+ $80C3 BIT 7,A       ; Test bit for two players
+ $80C5 JR Z,$80E0    ; If bit is reset then skip ahead
+ $80C7 LD DE,$181E   ; Display '-' at the top right corner
+ $80CA LD A,$2D      ; ...
  $80CC RST $10       ; vdp_write_byte
- $80CD INC DE        ;
- $80CE LD A,$32      ;
+ $80CD INC DE        ; Display '2' next to '-'
+ $80CE LD A,$32      ; ...
  $80D0 RST $10       ; vdp_write_byte
  $80D1 LD A,$01      ;
  $80D3 CALL $A699    ;
- $80D6 LD HL,$71FF   ;
- $80D9 LD DE,$1300   ;
- $80DC LD BC,$002D   ;
+ $80D6 LD HL,$71FF   ; Save player data, starting with lives?
+ $80D9 LD DE,$1300   ; VDP address
+ $80DC LD BC,$002D   ; 45 bytes
  $80DF RST $38       ; WRITE_VRAM
-*$80E0 LD A,R        ;
+*$80E0 LD A,R        ; Random number seed
  $80E2 LD ($731C),A  ; Init random number
- $80E5 CALL $8212    ;
+ $80E5 CALL $8212    ; Initialize stage
 ; This entry point is used by the routines at #R$81AE and #R$83D0.
 @label=main_loop
 *$80E8 LD HL,$725A   ; Flag set by interrupt routine
 *$80EB BIT 0,(HL)    ; Test flag
  $80ED JR Z,$80EB    ; Wait until set
  $80EF RES 0,(HL)    ; Clear flag
- $80F1 CALL $1FDC    ; READ_REGISTER
+ $80F1 CALL $1FDC    ; READ_REGISTER (read VDP status)
  $80F4 CALL $AFFF    ;
  $80F7 CALL $A73C    ;
  $80FA CALL $85E6    ;
@@ -372,9 +507,9 @@ c$8024 LD SP,$73BA   ;
  $8118 CALL $AB72    ;
  $811B LD A,($71F1)  ;
  $811E CALL $A699    ;
- $8121 LD A,($71EB)  ;
+ $8121 LD A,($71EB)  ; Status
  $8124 BIT 2,A       ;
- $8126 JP NZ,$8139   ;
+ $8126 JP NZ,$8139   ; Exit main loop
  $8129 BIT 1,A       ;
  $812B JR Z,$80E8    ;
  $812D LD A,($7206)  ;
@@ -466,160 +601,147 @@ c$81AE LD A,($71EB)  ;
  $81DA LD A,($71F1)  ;
  $81DD XOR $01       ;
  $81DF LD ($71F1),A  ;
-*$81E2 CALL $8212    ;
+*$81E2 CALL $8212    ; Initialize stage
  $81E5 LD HL,$7256   ;
  $81E8 SET 5,(HL)    ;
- $81EA JP $80E8      ;
+ $81EA JP $80E8      ; To main loop
 
 ; Routine at 81ED
 ;
 ; Used by the routine at #R$8170.
-c$81ED LD HL,$4650   ;
- $81F0 LD ($7257),HL ;
+c$81ED LD HL,$4650   ; 300 frames
+ $81F0 LD ($7257),HL ; Set screensaver countdown
 *$81F3 HALT          ;
  $81F4 LD HL,$0001   ; Controller 0, segment 1
  $81F7 CALL $1F79    ; DECODER
  $81FA LD A,L        ;
  $81FB CP $0A        ;
- $81FD JP Z,$8064    ;
+ $81FD JP Z,$8064    ; Start a new game
  $8200 CP $0F        ;
- $8202 JP NZ,$0000   ;
+ $8202 JP NZ,$0000   ; Reset
  $8205 LD HL,$0000   ; Controller 0, segment 0
  $8208 CALL $1F79    ; DECODER
- $820B BIT 6,H       ;
- $820D JP NZ,$8064   ;
- $8210 JR $81F3      ;
+ $820B BIT 6,H       ; Test fire
+ $820D JP NZ,$8064   ; Start a new game
+ $8210 JR $81F3      ; Loop
 
-; Routine at 8212
+; Init stage
 ;
+; Initializa stage and display X WARPS TO Y message
 ; Used by the routines at #R$8024, #R$81AE and #R$83D0.
-c$8212 LD HL,$722E   ;
- $8215 LD DE,$722F   ;
- $8218 LD BC,$0028   ;
- $821B LD (HL),$00   ;
- $821D LDIR          ;
+@label=init_stage
+c$8212 LD HL,$722E   ; Clear $28 bytes from $722E
+ $8215 LD DE,$722F   ; ...
+ $8218 LD BC,$0028   ; ...
+ $821B LD (HL),$00   ; ...
+ $821D LDIR          ; ...
  $821F LD A,$01      ;
  $8221 LD ($71EE),A  ;
  $8224 LD HL,$71EB   ;
  $8227 RES 2,(HL)    ;
- $8229 LD A,($7205)  ;
- $822C OR A          ;
- $822D JR NZ,$823E   ;
- $822F LD A,($7200)  ;
+; Calculate stage data index
+ $8229 LD A,($7205)  ; Get completed stages
+ $822C OR A          ; Test if zero
+ $822D JR NZ,$823E   ; If not, skip ahead to set max value
+ $822F LD A,($7200)  ; Stage
  $8232 CP $04        ;
- $8234 JR NC,$8240   ;
- $8236 LD B,A        ;
- $8237 XOR A         ;
- $8238 DEC B         ;
- $8239 JR Z,$8245    ;
- $823B INC A         ;
- $823C JR $8245      ;
-
-; Routine at 823E
-;
-; Used by the routine at #R$8212.
-c$823E LD A,$18      ;
-; This entry point is used by the routine at #R$8212.
-*$8240 SRL A         ;
- $8242 SRL A         ;
- $8244 INC A         ;
-; This entry point is used by the routine at #R$8212.
-*$8245 LD ($7203),A  ;
- $8248 LD A,($7200)  ;
- $824B LD HL,$7205   ;
- $824E ADD A,(HL)    ;
- $824F LD DE,$1AFE   ;
+ $8234 JR NC,$8240   ; Jump if stage >= 4, to set value = stage / 4 + 1
+ $8236 LD B,A        ; B = stage 1-3
+ $8237 XOR A         ; A = 0
+ $8238 DEC B         ; B = 0-2
+ $8239 JR Z,$8245    ; If zero then skip ahead to save value
+ $823B INC A         ; Stage = 2 or 3, set A = 1
+ $823C JR $8245      ; Skip ahead to save value
+*$823E LD A,$18      ; 24
+*$8240 SRL A         ; Divide stage by 4
+ $8242 SRL A         ; ...
+ $8244 INC A         ; + 1
+*$8245 LD ($7203),A  ; Save value (0 - 7)
+; Display stage number
+ $8248 LD A,($7200)  ; Current stage
+ $824B LD HL,$7205   ; Completed stages
+ $824E ADD A,(HL)    ; Add to stage
+ $824F LD DE,$1AFE   ; VDP address (stage number tens)
  $8252 CP $0A        ;
- $8254 JR C,$8267    ;
- $8256 LD B,$00      ;
-*$8258 SUB $0A       ;
- $825A JR C,$825F    ;
- $825C INC B         ;
- $825D JR $8258      ;
-
-; Routine at 825F
-;
-; Used by the routine at #R$823E.
-c$825F ADD A,$0A     ;
- $8261 LD C,A        ;
- $8262 LD A,B        ;
- $8263 ADD A,$30     ;
+ $8254 JR C,$8267    ; Jump if < 10
+ $8256 LD B,$00      ; Divide by ten into B
+*$8258 SUB $0A       ; ...
+ $825A JR C,$825F    ; ...
+ $825C INC B         ; ...
+ $825D JR $8258      ; ...
+*$825F ADD A,$0A     ; Restore ones
+ $8261 LD C,A        ; Save in C
+ $8262 LD A,B        ; Tens
+ $8263 ADD A,$30     ; Add ASCII 0
  $8265 RST $10       ; vdp_write_byte
- $8266 LD A,C        ;
-; This entry point is used by the routine at #R$823E.
-*$8267 INC DE        ;
- $8268 ADD A,$30     ;
+ $8266 LD A,C        ; Ones
+*$8267 INC DE        ; Increment VDP address to stage number ones
+ $8268 ADD A,$30     ; Add ASCII 0
  $826A RST $10       ; vdp_write_byte
- $826B LD A,($7201)  ;
- $826E OR A          ;
- $826F JR NZ,$82BA   ;
- $8271 LD A,($7200)  ;
- $8274 LD B,A        ;
- $8275 SRL A         ;
- $8277 AND $0E       ;
- $8279 LD HL,$9398   ;
+; Display X WARPS TO Y message
+ $826B LD A,($7201)  ; Check whether you just died
+ $826E OR A          ; So we want to display READY instead
+ $826F JR NZ,$82BA   ; And if so jump ahead
+ $8271 LD A,($7200)  ; Get stage
+ $8274 LD B,A        ; Save in B
+ $8275 SRL A         ; Divide by 2
+ $8277 AND $0E       ; Clamp to 0, 2, 4, 6, 8, 10, 12
+ $8279 LD HL,$9398   ; Base planet table
  $827C RST $08       ; add_a_to_hl
- $827D LD E,(HL)     ;
- $827E INC HL        ;
- $827F LD D,(HL)     ;
- $8280 LD HL,$0010   ;
- $8283 ADD HL,DE     ;
- $8284 PUSH HL       ;
- $8285 LD DE,$71A4   ;
- $8288 LD A,B        ;
- $8289 AND $03       ;
- $828B CP $03        ;
- $828D JR Z,$82BF    ;
- $828F XOR $03       ;
- $8291 ADD A,$30     ;
- $8293 LD (DE),A     ;
- $8294 INC DE        ;
- $8295 LD HL,$859C   ;
- $8298 LD BC,$0005   ;
- $829B CP $31        ;
- $829D JR Z,$82A0    ;
- $829F INC BC        ;
-*$82A0 LDIR          ;
- $82A2 LD HL,$85A2   ;
- $82A5 LD BC,$0004   ;
- $82A8 LDIR          ;
- $82AA POP HL        ;
- $82AB LD C,(HL)     ;
- $82AC INC HL        ;
- $82AD LDIR          ;
- $82AF EX DE,HL      ;
- $82B0 LD DE,$71A4   ;
- $82B3 SBC HL,DE     ;
- $82B5 EX DE,HL      ;
- $82B6 DEC HL        ;
- $82B7 LD (HL),E     ;
- $82B8 JR $82C3      ;
-
-; Routine at 82BA
-;
-; Used by the routine at #R$825F.
-c$82BA LD HL,$8589   ;
- $82BD JR $82C3      ;
-
-; Routine at 82BF
-;
-; Used by the routine at #R$825F.
-c$82BF POP HL        ;
- $82C0 LD HL,$858F   ;
-; This entry point is used by the routines at #R$825F and #R$82BA.
-*$82C3 LD A,$20      ;
- $82C5 SUB (HL)      ;
- $82C6 SRL A         ;
- $82C8 LD DE,$1A00   ;
- $82CB ADD A,E       ;
- $82CC LD E,A        ;
- $82CD LD C,(HL)     ;
- $82CE LD B,$00      ;
- $82D0 INC HL        ;
- $82D1 RST $38       ; WRITE_VRAM
+ $827D LD E,(HL)     ; Get LSB of planet data
+ $827E INC HL        ; To MSB
+ $827F LD D,(HL)     ; Get MSB of planet data
+ $8280 LD HL,$0010   ; Planet name offset is 16
+ $8283 ADD HL,DE     ; Add planet data address
+ $8284 PUSH HL       ; Save it
+ $8285 LD DE,$71A4   ; Buffer address for the string #R$71A3+1
+ $8288 LD A,B        ; Restore stage
+ $8289 AND $03       ; Clamp to 0, 1, 2, 3 (0 not an option?)
+ $828B CP $03        ; If 3 we have reached it's a chance stage
+ $828D JR Z,$82BF    ; Then jump ahead
+ $828F XOR $03       ; Flip the bits, so we know how many warps TO the planet
+ $8291 ADD A,$30     ; Add ASCII 0
+ $8293 LD (DE),A     ; Store number in the buffer
+ $8294 INC DE        ; Next buffer address
+ $8295 LD HL,$859C   ; WARPS message
+ $8298 LD BC,$0005   ; Copy 5 bytes '_WARP'
+ $829B CP $31        ; If the number is less than 2,
+ $829D JR Z,$82A0    ; then skip ahead
+ $829F INC BC        ; Otherwise copy one more byte '_WARPS'
+*$82A0 LDIR          ; Make the copy
+ $82A2 LD HL,$85A2   ; Copy _TO_ message
+ $82A5 LD BC,$0004   ; 4 bytes
+ $82A8 LDIR          ; Make the copy
+ $82AA POP HL        ; Restore the planet name address
+ $82AB LD C,(HL)     ; Get length of name
+ $82AC INC HL        ; Next byte
+ $82AD LDIR          ; Copy planet name
+ $82AF EX DE,HL      ; Now HL=destination and DE=source
+ $82B0 LD DE,$71A4   ; Buffer address for the string #R$71A3+1
+ $82B3 SBC HL,DE     ; Now HL contain the length of the string
+ $82B5 EX DE,HL      ; Now DE=length and HL=$71A4
+ $82B6 DEC HL        ; HL=#R$71A3
+ $82B7 LD (HL),E     ; Set length
+ $82B8 JR $82C3      ; Jump ahead
+*$82BA LD HL,$8589   ; Ready message
+ $82BD JR $82C3      ; Skip ahead
+*$82BF POP HL        ; Drop the pushed planet name address
+ $82C0 LD HL,$858F   ; Chance stage message
+*$82C3 LD A,$20      ; At this point HL contains a pointer to the length
+                     ; prefixed message to print
+ $82C5 SUB (HL)      ; 32 - string length
+ $82C6 SRL A         ; / 2 = offset to center line
+ $82C8 LD DE,$1A00   ; VDP address of line start
+ $82CB ADD A,E       ; Add address to offset
+ $82CC LD E,A        ; Copy back to destination
+ $82CD LD C,(HL)     ; Length
+ $82CE LD B,$00      ; MSB of length
+ $82D0 INC HL        ; Increment source to text
+ $82D1 RST $38       ; WRITE_VRAM Display the X WARPS TO Y message
+; Now what?
  $82D2 CALL $830E    ;
  $82D5 LD B,$00      ;
- $82D7 LD A,($7200)  ;
+ $82D7 LD A,($7200)  ; Stage
  $82DA LD HL,$7205   ;
  $82DD ADD A,(HL)    ;
  $82DE CP $01        ;
@@ -686,7 +808,7 @@ c$832A LD A,$08      ;
  $8350 DJNZ $833E    ;
  $8352 CALL $9B87    ;
  $8355 CALL $84ED    ;
- $8358 LD A,($7200)  ;
+ $8358 LD A,($7200)  ; Stage
  $835B AND $03       ;
  $835D CP $02        ;
  $835F JR NZ,$8368   ;
@@ -703,7 +825,7 @@ c$8368 LD A,$05        ;
 *$836D LD HL,$71EB     ;
  $8370 SET 0,(HL)      ;
  $8372 SET 4,(HL)      ;
- $8374 LD A,($7200)    ;
+ $8374 LD A,($7200)    ; Stage
  $8377 LD B,A          ;
  $8378 AND $03         ;
  $837A CP $02          ;
@@ -753,18 +875,18 @@ c$83D0 LD HL,$71EB   ;
  $83D7 XOR A         ;
  $83D8 LD ($7201),A  ;
  $83DB LD ($7202),A  ;
- $83DE LD A,($7200)  ;
- $83E1 INC A         ;
- $83E2 CP $18        ;
- $83E4 JR C,$83EC    ;
- $83E6 LD HL,$7205   ;
- $83E9 ADD A,(HL)    ;
- $83EA LD (HL),A     ;
- $83EB XOR A         ;
-*$83EC LD ($7200),A  ;
+ $83DE LD A,($7200)  ; Stage
+ $83E1 INC A         ; Next stage
+ $83E2 CP $18        ; Did we reach 24?
+ $83E4 JR C,$83EC    ; No, skip ahead
+ $83E6 LD HL,$7205   ; Get the total stages completed
+ $83E9 ADD A,(HL)    ; And add 24
+ $83EA LD (HL),A     ; Save again
+ $83EB XOR A         ; And set stage to zero
+*$83EC LD ($7200),A  ; Save stage
  $83EF LD HL,$71EB   ;
  $83F2 RES 3,(HL)    ;
- $83F4 LD A,($7200)  ;
+ $83F4 LD A,($7200)  ; Stage
  $83F7 AND $03       ;
  $83F9 CP $03        ;
  $83FB JR NZ,$83FF   ;
@@ -904,14 +1026,14 @@ c$84CB LD D,$00      ;
 ; Used by the routines at #R$8878, #R$8A53, #R$8A76, #R$8C68, #R$8D50, #R$8E9D,
 ; #R$900E and #R$AAF1.
 c$84DB PUSH DE       ;
- $84DC LD A,($7203)  ;
- $84DF ADD A,A       ;
- $84E0 ADD A,A       ;
- $84E1 ADD A,A       ;
- $84E2 LD E,A        ;
- $84E3 LD D,$00      ;
- $84E5 LD IY,$8541   ;
- $84E9 ADD IY,DE     ;
+ $84DC LD A,($7203)  ; Get value (0 - 6)
+ $84DF ADD A,A       ; Multiply by 8
+ $84E0 ADD A,A       ; ...
+ $84E1 ADD A,A       ; ...
+ $84E2 LD E,A        ; Add #R$8541
+ $84E3 LD D,$00      ; ...
+ $84E5 LD IY,$8541   ; ...
+ $84E9 ADD IY,DE     ; ...
  $84EB POP DE        ;
  $84EC RET           ;
 
@@ -937,15 +1059,15 @@ c$8501 PUSH IX       ;
  $8506 PUSH DE       ;
  $8507 PUSH BC       ;
  $8508 PUSH AF       ;
- $8509 LD HL,($7257) ;
- $850C LD A,H        ;
- $850D OR L          ;
- $850E JR Z,$8522    ;
- $8510 DEC HL        ;
- $8511 LD ($7257),HL ;
- $8514 LD A,H        ;
- $8515 OR L          ;
- $8516 JR NZ,$8522   ;
+ $8509 LD HL,($7257) ; Counter
+ $850C LD A,H        ; Check if zero
+ $850D OR L          ; ...
+ $850E JR Z,$8522    ; If counter is 0 then skip ahead
+ $8510 DEC HL        ; Otherwise decrement
+ $8511 LD ($7257),HL ; and save.
+ $8514 LD A,H        ; Check again if zero
+ $8515 OR L          ; ...
+ $8516 JR NZ,$8522   ; If not then skip ahead, otherwise blank screen
  $8518 LD BC,$0180   ; Display off, interrupt off
  $851B RST $18       ; WRITE_REGISTER
  $851C LD BC,$0701   ; Black border
@@ -970,9 +1092,11 @@ c$8522 CALL $9B99    ; Sound player?
  $853A RETN          ;
 
 ; Message at 853C
+@label=stage_msg
 t$853C DEFM "STAGE"
 
 ; Data block at 8541
+@label=stage_data
 b$8541 DEFB $02,$00,$28,$3F,$01,$50,$1E,$00
  $8549 DEFB $02,$01,$28,$3F,$02,$50,$19,$02
  $8551 DEFB $02,$01,$19,$1F,$02,$46,$14,$03
@@ -983,61 +1107,44 @@ b$8541 DEFB $02,$00,$28,$3F,$01,$50,$1E,$00
  $8579 DEFB $01,$03,$0F,$0F,$04,$1E,$05,$03
 
 ; Message at 8581
-t$8581 DEFM "PLAYER"
+@label=player_msg
+t$8581 DEFM "PLAYER",$00,"1"
 
-; Data block at 8587
-b$8587 DEFB $00,$31,$05
+; Message at 8589
+@label=ready_msg
+t$8589 DEFM $05,"READY"
 
-; Message at 858A
-t$858A DEFM "READY"
-
-; Data block at 858F
-b$858F DEFB $0C
-
-; Message at 8590
-t$8590 DEFM "CHANCE"
-
-; Data block at 8596
-b$8596 DEFB $00
-
-; Message at 8597
-t$8597 DEFM "STAGE"
-
-; Data block at 859C
-b$859C DEFB $00
+; Message at 858F
+@label=chance_stage_msg
+t$858F DEFM $0C,"CHANCE",$00,"STAGE"
 
 ; Message at 859D
-t$859D DEFM "WARPS"
+@label=warps_msg
+t$859C DEFM $00,"WARPS"
 
-; Data block at 85A2
-b$85A2 DEFB $00,$54,$4F,$00
+; Message at 85A2
+@label=to_msg
+t$85A2 DEFM $00,"TO",$00
 
 ; Message at 85A6
-t$85A6 DEFM "BONUS100"
+@label=bonus_msg
+t$85A6 DEFM "BONUS"
 
-; Data block at 85AE
-b$85AE DEFB $00,$58,$00,$2E,$2E,$00,$00
+; Message at 85AB
+@label=bonus_numbers_msg
+t$85AB DEFM "100",$00,"X",$00,"..",$00,$00,"..00"
 
-; Message at 85B5
-t$85B5 DEFM "..00CONGRATULATIONS?PERFECT?"
+; Message at 85B9
+@label=congratulations_msg
+t$85B9 DEFM "CONGRATULATIONS?"
 
-; Data block at 85D1
-b$85D1 DEFB $00,$00,$00
-
-; Message at 85D4
-t$85D4 DEFM "10000"
-
-; Data block at 85D9
-b$85D9 DEFB $00
+; Message at 85C9
+@label=perfect_msg
+t$85C9 DEFM "PERFECT?",$00,$00,$00,"10000",$00,"PTS"
 
 ; Message at 85DA
-t$85DA DEFM "PTSGAME"
-
-; Data block at 85E1
-b$85E1 DEFB $00
-
-; Message at 85E2
-t$85E2 DEFM "OVER"
+@label=game_over_msg
+t$85DD DEFM "GAME",$00,"OVER"
 
 ; Routine at 85E6
 ;
@@ -1951,7 +2058,7 @@ c$8C1E XOR A         ;
 c$8C30 LD A,($71F0)  ;
  $8C33 OR A          ;
  $8C34 RET NZ        ;
- $8C35 LD A,($7200)  ;
+ $8C35 LD A,($7200)  ; Stage
  $8C38 AND $FC       ;
  $8C3A LD HL,$7201   ;
  $8C3D ADD A,(HL)    ;
@@ -2007,7 +2114,7 @@ c$8C68 LD HL,$725B    ;
  $8C8D LD A,($71EB)   ;
  $8C90 BIT 3,A        ;
  $8C92 JR Z,$8CA2     ;
- $8C94 LD A,($7200)   ;
+ $8C94 LD A,($7200)   ; Stage
  $8C97 AND $FC        ;
  $8C99 LD HL,$7201    ;
  $8C9C ADD A,(HL)     ;
@@ -2239,7 +2346,7 @@ c$8E2C LD B,D        ;
  $8E56 LD A,($722B)  ;
  $8E59 CP $03        ;
  $8E5B RET C         ;
- $8E5C LD A,($7200)  ;
+ $8E5C LD A,($7200)  ; Stage
  $8E5F SRL A         ;
  $8E61 SRL A         ;
  $8E63 LD B,A        ;
@@ -5396,6 +5503,7 @@ c$AD64 PUSH HL         ; Save sprite address
 ; Used by the routine at #R$801B.
 ;
 ; I:IX points to sprite data
+@label=load_sprite_pattern
 c$AD8B PUSH HL       ;
  $AD8C PUSH DE       ;
  $AD8D PUSH BC       ;
@@ -5410,25 +5518,25 @@ c$AD8B PUSH HL       ;
  $AD9E LD A,(IX+$01) ; Get which transformation we want (flipped, shifted,
                      ; etc.)
  $ADA1 LD DE,$0000   ; Address
- $ADA4 BIT 7,A       ; Adjust address according to type
+ $ADA4 BIT 7,A       ; If bit 7 of transformation is set, skip ahead with E=0
  $ADA6 JR NZ,$ADB7   ;
  $ADA8 CP $15        ;
- $ADAA JR C,$ADB7    ;
- $ADAC INC E         ;
+ $ADAA JR C,$ADB7    ; Jump if < $15
+ $ADAC INC E         ; E = 1
  $ADAD CP $1A        ;
- $ADAF JR C,$ADB7    ;
- $ADB1 INC E         ;
+ $ADAF JR C,$ADB7    ; Jump if < $1A
+ $ADB1 INC E         ; E = 2
  $ADB2 CP $22        ;
- $ADB4 JR C,$ADB7    ;
- $ADB6 INC E         ;
+ $ADB4 JR C,$ADB7    ; Jump if < $22
+ $ADB6 INC E         ; E = 3
 *$ADB7 LD A,E        ;
  $ADB8 CP (HL)       ;
- $ADB9 JR C,$ADBD    ;
- $ADBB LD A,(HL)     ;
- $ADBC DEC A         ;
-*$ADBD INC HL        ;
- $ADBE LD B,(HL)     ;
- $ADBF LD C,A        ;
+ $ADB9 JR C,$ADBD    ; Jump if LSB of pointer >= E, which is 0..3
+ $ADBB LD A,(HL)     ; Get LSB of pointer
+ $ADBC DEC A         ; Minus 1
+*$ADBD INC HL        ; To MSB
+ $ADBE LD B,(HL)     ; B = MSB
+ $ADBF LD C,A        ; C = LSB - 1
  $ADC0 LD A,(IX+$02) ;
  $ADC3 ADD A,$02     ;
  $ADC5 AND $3F       ;
@@ -5447,36 +5555,36 @@ c$AD8B PUSH HL       ;
  $ADD9 CP (IX+$04)   ;
  $ADDC JR Z,$AE11    ;
  $ADDE LD (IX+$04),A ;
- $ADE1 LD L,(IX+$00) ;
+ $ADE1 LD L,(IX+$00) ; Sprite type
  $ADE4 LD H,$00      ;
- $ADE6 ADD HL,HL     ;
+ $ADE6 ADD HL,HL     ; * 2
  $ADE7 LD DE,$72E0   ;
- $ADEA ADD HL,DE     ;
- $ADEB LD E,(HL)     ;
- $ADEC INC HL        ;
- $ADED LD D,(HL)     ;
- $ADEE LD L,B        ; What is B?
+ $ADEA ADD HL,DE     ; #R$72E0 + sprite type * 2
+ $ADEB LD E,(HL)     ; Get LSB of VDP address
+ $ADEC INC HL        ; TO MSB
+ $ADED LD D,(HL)     ; Get MSB of VDP address
+ $ADEE LD L,B        ; B must be index of pattern to fetch within sprite type.
  $ADEF LD H,$00      ;
  $ADF1 ADD HL,HL     ; Multiply by 8
- $ADF2 ADD HL,HL     ;
- $ADF3 ADD HL,HL     ;
+ $ADF2 ADD HL,HL     ; ...
+ $ADF3 ADD HL,HL     ; ...
  $ADF4 ADD HL,DE     ; And add DE
  $ADF5 EX DE,HL      ; Move HL into DE, which becomes source address
- $ADF6 LD HL,$71A3   ;
+ $ADF6 LD HL,$71A3   ; Buffer
  $ADF9 LD BC,$0008   ; Read 8 bytes
  $ADFC CALL $1FE2    ; READ_VRAM
  $ADFF LD A,(IX+$0A) ; Get pattern
  $AE02 ADD A,A       ; Multiply by 8
- $AE03 ADD A,A       ;
- $AE04 ADD A,A       ;
- $AE05 LD E,A        ;
+ $AE03 ADD A,A       ; ...
+ $AE04 ADD A,A       ; ...
+ $AE05 LD E,A        ; ...
  $AE06 LD D,$08      ; DE = $800 + pattern * 8
  $AE08 LD HL,$71A3   ; Source
  $AE0B LD BC,$0008   ; Write 8 bytes
  $AE0E CALL $1FDF    ; WRITE_VRAM
-*$AE11 LD A,(IX+$00) ;
- $AE14 CP $01        ;
- $AE16 JR Z,$AE2B    ;
+*$AE11 LD A,(IX+$00) ; Get sprite type
+ $AE14 CP $01        ; If 1,
+ $AE16 JR Z,$AE2B    ; then skip ahead
  $AE18 LD D,(IX+$01) ;
  $AE1B LD E,(IX+$02) ;
  $AE1E CALL $B1C6    ;
@@ -5510,7 +5618,7 @@ c$AD8B PUSH HL       ;
 ; Routine at AE54
 ;
 ; Used by the routine at #R$ADD1.
-c$AE54 LD A,(IX+$00) ;
+c$AE54 LD A,(IX+$00) ; Get sprite type
  $AE57 CP $0C        ;
  $AE59 JR C,$AE86    ;
  $AE5B CP $0E        ;
@@ -5544,10 +5652,12 @@ c$AE75 LD HL,$7206     ;
  $AE8E LD (IX+$08),$F8 ; Set y
  $AE92 JR $AE4E        ;
 
-; Fill VDP RAM from $2100 to $3868 with character patterns that may be flipped
-; and shifted. One new pattern is generated with each call. Are these used?
+; Upload sprite patterns
 ;
-; Used by the routine at #R$90D6.
+; Fill VDP RAM from $2100 to $3868 with sprite patterns that may be flipped and
+; shifted. One new pattern is generated with each call. Builds a table of VDP
+; addresses in #R$72E0. Used by the routine at #R$90D6.
+@label=upload_sprite_patterns
 c$AE94 LD A,($72D5)   ; Get counter
  $AE97 CP $FF         ; If maxed out
  $AE99 RET Z          ; Then return
@@ -5881,10 +5991,10 @@ c$B1C6 PUSH IX        ;
  $B1D0 LD L,A         ;
  $B1D1 LD H,$00       ;
  $B1D3 ADD HL,HL      ; Multiply by 32
- $B1D4 ADD HL,HL      ;
- $B1D5 ADD HL,HL      ;
- $B1D6 ADD HL,HL      ;
- $B1D7 ADD HL,HL      ;
+ $B1D4 ADD HL,HL      ; ...
+ $B1D5 ADD HL,HL      ; ...
+ $B1D6 ADD HL,HL      ; ...
+ $B1D7 ADD HL,HL      ; ...
  $B1D8 LD A,E         ;
  $B1D9 BIT 4,E        ;
  $B1DB JR Z,$B1DE     ;
@@ -6149,6 +6259,7 @@ b$B21D DEFB $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 ; Graphics pointer offsets
 ;
 ; Offsets into data block at B8FA
+@label=graphics_pointer_offsets_table
 b$B8DD DEFB $00,$0A,$14,$1E,$22,$2C,$36,$3A
  $B8E5 DEFB $3E,$42,$46,$4A,$4E,$52,$56,$60
  $B8ED DEFB $6A,$74,$7E,$88,$92,$9C,$A6,$B0
@@ -6158,6 +6269,7 @@ b$B8DD DEFB $00,$0A,$14,$1E,$22,$2C,$36,$3A
 b$B8FA DEFB $04,$02
 
 ; Graphics pointers
+@label=graphics_pointers_table
 w$B8FC DEFW $B9E6    ; Offset $00
  $B8FE DEFW $BA06
  $B900 DEFW $BA26
@@ -6280,6 +6392,7 @@ w$B8FC DEFW $B9E6    ; Offset $00
 ; #UDGTABLE
 ; { #UDGARRAY37,,4($B9E6-$BFAD-8)(graphics-B9E6.png) }
 ; TABLE#
+@label=graphics_patterns
 b$B9E6 DEFB $00,$7F,$3E,$63,$41,$00,$00,$00
  $B9EE DEFB $00,$72,$7E,$DC,$0C,$06,$00,$00
  $B9F6 DEFB $10,$18,$18,$FF,$1F,$08,$08,$08

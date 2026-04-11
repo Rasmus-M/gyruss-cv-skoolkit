@@ -39,13 +39,13 @@ Used by the routine at <a href="33136.html">L8170</a>.
 <td class="asm-label">L81ED</td>
 <td class="address-2"><span id="33261"></span>81ED</td>
 <td class="instruction">LD HL,$4650</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">300 frames</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33264"></span>81F0</td>
-<td class="instruction">LD (<a href="29271.html">word_at_7257</a>),HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD (<a href="29271.html">screensaver_countdown</a>),HL</td>
+<td class="comment-1" rowspan="1">Set screensaver countdown</td>
 </tr>
 <tr>
 <td class="asm-label">L81ED_0</td>
@@ -80,8 +80,8 @@ Used by the routine at <a href="33136.html">L8170</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33277"></span>81FD</td>
-<td class="instruction">JP Z,<a href="32804.html#32868">main_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JP Z,<a href="32804.html#32868">new_game</a></td>
+<td class="comment-1" rowspan="1">Start a new game</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -93,7 +93,7 @@ Used by the routine at <a href="33136.html">L8170</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="33282"></span>8202</td>
 <td class="instruction">JP NZ,$0000</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Reset</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -111,19 +111,19 @@ Used by the routine at <a href="33136.html">L8170</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="33291"></span>820B</td>
 <td class="instruction">BIT 6,H</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Test fire</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33293"></span>820D</td>
-<td class="instruction">JP NZ,<a href="32804.html#32868">main_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JP NZ,<a href="32804.html#32868">new_game</a></td>
+<td class="comment-1" rowspan="1">Start a new game</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33296"></span>8210</td>
 <td class="instruction">JR <a href="33261.html#33267">L81ED_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Loop</td>
 </tr>
 </table>
 <table class="asm-navigation">

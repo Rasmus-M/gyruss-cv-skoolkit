@@ -20,146 +20,846 @@ Prev: <a href="33261.html">81ED</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#33298">Map</a></td>
 <td class="next">
-Next: <a href="33342.html">823E</a>
+Next: <a href="33550.html">830E</a>
 </td>
 </tr>
 </table>
-<div class="description">8212: Routine at 8212</div>
+<div class="description">8212: Init stage</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="32804.html">main</a>, <a href="33198.html">L81AE</a> and <a href="33744.html">L83D0</a>.
+Initializa stage and display X WARPS TO Y message Used by the routines at <a href="32804.html">main</a>, <a href="33198.html">L81AE</a> and <a href="33744.html">L83D0</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L8212</td>
+<td class="asm-label">init_stage</td>
 <td class="address-2"><span id="33298"></span>8212</td>
-<td class="instruction">LD HL,$722E</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">LD HL,<a href="29230.html">L722E</a></td>
+<td class="comment-1" rowspan="1">Clear $28 bytes from $722E</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33301"></span>8215</td>
 <td class="instruction">LD DE,$722F</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33304"></span>8218</td>
 <td class="instruction">LD BC,$0028</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33307"></span>821B</td>
 <td class="instruction">LD (HL),$00</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33309"></span>821D</td>
 <td class="instruction">LDIR</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33311"></span>821F</td>
 <td class="instruction">LD A,$01</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33313"></span>8221</td>
-<td class="instruction">LD ($71EE),A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">LD (<a href="29166.html">L71EE</a>),A</td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33316"></span>8224</td>
 <td class="instruction">LD HL,<a href="29163.html">L71EB</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33319"></span>8227</td>
 <td class="instruction">RES 2,(HL)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="33321"></span>
+<div class="comments">
+<div class="paragraph">
+Calculate stage data index
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33321"></span>8229</td>
-<td class="instruction">LD A,(<a href="29165.html#29189">$7205</a>)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">LD A,(<a href="29189.html">completed_stages</a>)</td>
+<td class="comment-1" rowspan="1">Get completed stages</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33324"></span>822C</td>
 <td class="instruction">OR A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Test if zero</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33325"></span>822D</td>
-<td class="instruction">JR NZ,<a href="33342.html">L823E</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="33298.html#33342">init_stage_0</a></td>
+<td class="comment-1" rowspan="1">If not, skip ahead to set max value</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33327"></span>822F</td>
-<td class="instruction">LD A,($7200)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">LD A,(<a href="29184.html">stage</a>)</td>
+<td class="comment-1" rowspan="1">Stage</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33330"></span>8232</td>
 <td class="instruction">CP $04</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33332"></span>8234</td>
-<td class="instruction">JR NC,<a href="33342.html#33344">L823E_0</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JR NC,<a href="33298.html#33344">init_stage_1</a></td>
+<td class="comment-1" rowspan="1">Jump if stage &gt;= 4, to set value = stage / 4 + 1</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33334"></span>8236</td>
 <td class="instruction">LD B,A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">B = stage 1-3</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33335"></span>8237</td>
 <td class="instruction">XOR A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">A = 0</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33336"></span>8238</td>
 <td class="instruction">DEC B</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">B = 0-2</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33337"></span>8239</td>
-<td class="instruction">JR Z,<a href="33342.html#33349">L823E_1</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="33298.html#33349">init_stage_2</a></td>
+<td class="comment-1" rowspan="1">If zero then skip ahead to save value</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33339"></span>823B</td>
 <td class="instruction">INC A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stage = 2 or 3, set A = 1</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33340"></span>823C</td>
-<td class="instruction">JR <a href="33342.html#33349">L823E_1</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JR <a href="33298.html#33349">init_stage_2</a></td>
+<td class="comment-1" rowspan="1">Skip ahead to save value</td>
+</tr>
+<tr>
+<td class="asm-label">init_stage_0</td>
+<td class="address-2"><span id="33342"></span>823E</td>
+<td class="instruction">LD A,$18</td>
+<td class="comment-1" rowspan="1">24</td>
+</tr>
+<tr>
+<td class="asm-label">init_stage_1</td>
+<td class="address-2"><span id="33344"></span>8240</td>
+<td class="instruction">SRL A</td>
+<td class="comment-1" rowspan="1">Divide stage by 4</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33346"></span>8242</td>
+<td class="instruction">SRL A</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33348"></span>8244</td>
+<td class="instruction">INC A</td>
+<td class="comment-1" rowspan="1">+ 1</td>
+</tr>
+<tr>
+<td class="asm-label">init_stage_2</td>
+<td class="address-2"><span id="33349"></span>8245</td>
+<td class="instruction">LD (<a href="29187.html">stage_data_index</a>),A</td>
+<td class="comment-1" rowspan="1">Save value (0 - 7)</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="33352"></span>
+<div class="comments">
+<div class="paragraph">
+Display stage number
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33352"></span>8248</td>
+<td class="instruction">LD A,(<a href="29184.html">stage</a>)</td>
+<td class="comment-1" rowspan="1">Current stage</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33355"></span>824B</td>
+<td class="instruction">LD HL,<a href="29189.html">completed_stages</a></td>
+<td class="comment-1" rowspan="1">Completed stages</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33358"></span>824E</td>
+<td class="instruction">ADD A,(HL)</td>
+<td class="comment-1" rowspan="1">Add to stage</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33359"></span>824F</td>
+<td class="instruction">LD DE,$1AFE</td>
+<td class="comment-1" rowspan="1">VDP address (stage number tens)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33362"></span>8252</td>
+<td class="instruction">CP $0A</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33364"></span>8254</td>
+<td class="instruction">JR C,<a href="33298.html#33383">init_stage_5</a></td>
+<td class="comment-1" rowspan="1">Jump if &lt; 10</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33366"></span>8256</td>
+<td class="instruction">LD B,$00</td>
+<td class="comment-1" rowspan="1">Divide by ten into B</td>
+</tr>
+<tr>
+<td class="asm-label">init_stage_3</td>
+<td class="address-2"><span id="33368"></span>8258</td>
+<td class="instruction">SUB $0A</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33370"></span>825A</td>
+<td class="instruction">JR C,<a href="33298.html#33375">init_stage_4</a></td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33372"></span>825C</td>
+<td class="instruction">INC B</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33373"></span>825D</td>
+<td class="instruction">JR <a href="33298.html#33368">init_stage_3</a></td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label">init_stage_4</td>
+<td class="address-2"><span id="33375"></span>825F</td>
+<td class="instruction">ADD A,$0A</td>
+<td class="comment-1" rowspan="1">Restore ones</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33377"></span>8261</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Save in C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33378"></span>8262</td>
+<td class="instruction">LD A,B</td>
+<td class="comment-1" rowspan="1">Tens</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33379"></span>8263</td>
+<td class="instruction">ADD A,$30</td>
+<td class="comment-1" rowspan="1">Add ASCII 0</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33381"></span>8265</td>
+<td class="instruction">RST $10</td>
+<td class="comment-1" rowspan="1">vdp_write_byte</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33382"></span>8266</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="1">Ones</td>
+</tr>
+<tr>
+<td class="asm-label">init_stage_5</td>
+<td class="address-2"><span id="33383"></span>8267</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Increment VDP address to stage number ones</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33384"></span>8268</td>
+<td class="instruction">ADD A,$30</td>
+<td class="comment-1" rowspan="1">Add ASCII 0</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33386"></span>826A</td>
+<td class="instruction">RST $10</td>
+<td class="comment-1" rowspan="1">vdp_write_byte</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="33387"></span>
+<div class="comments">
+<div class="paragraph">
+Display X WARPS TO Y message
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33387"></span>826B</td>
+<td class="instruction">LD A,(<a href="29185.html">wave</a>)</td>
+<td class="comment-1" rowspan="1">Check whether you just died</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33390"></span>826E</td>
+<td class="instruction">OR A</td>
+<td class="comment-1" rowspan="1">So we want to display READY instead</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33391"></span>826F</td>
+<td class="instruction">JR NZ,<a href="33298.html#33466">init_stage_7</a></td>
+<td class="comment-1" rowspan="1">And if so jump ahead</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33393"></span>8271</td>
+<td class="instruction">LD A,(<a href="29184.html">stage</a>)</td>
+<td class="comment-1" rowspan="1">Get stage</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33396"></span>8274</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">Save in B</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33397"></span>8275</td>
+<td class="instruction">SRL A</td>
+<td class="comment-1" rowspan="1">Divide by 2</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33399"></span>8277</td>
+<td class="instruction">AND $0E</td>
+<td class="comment-1" rowspan="1">Clamp to 0, 2, 4, 6, 8, 10, 12</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33401"></span>8279</td>
+<td class="instruction">LD HL,<a href="37784.html">planet_table</a></td>
+<td class="comment-1" rowspan="1">Base planet table</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33404"></span>827C</td>
+<td class="instruction">RST $08</td>
+<td class="comment-1" rowspan="1">add_a_to_hl</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33405"></span>827D</td>
+<td class="instruction">LD E,(HL)</td>
+<td class="comment-1" rowspan="1">Get LSB of planet data</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33406"></span>827E</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">To MSB</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33407"></span>827F</td>
+<td class="instruction">LD D,(HL)</td>
+<td class="comment-1" rowspan="1">Get MSB of planet data</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33408"></span>8280</td>
+<td class="instruction">LD HL,$0010</td>
+<td class="comment-1" rowspan="1">Planet name offset is 16</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33411"></span>8283</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Add planet data address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33412"></span>8284</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Save it</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33413"></span>8285</td>
+<td class="instruction">LD DE,$71A4</td>
+<td class="comment-1" rowspan="1">Buffer address for the string <a href="29091.html">buffer</a>+1</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33416"></span>8288</td>
+<td class="instruction">LD A,B</td>
+<td class="comment-1" rowspan="1">Restore stage</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33417"></span>8289</td>
+<td class="instruction">AND $03</td>
+<td class="comment-1" rowspan="1">Clamp to 0, 1, 2, 3 (0 not an option?)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33419"></span>828B</td>
+<td class="instruction">CP $03</td>
+<td class="comment-1" rowspan="1">If 3 we have reached it's a chance stage</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33421"></span>828D</td>
+<td class="instruction">JR Z,<a href="33298.html#33471">init_stage_8</a></td>
+<td class="comment-1" rowspan="1">Then jump ahead</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33423"></span>828F</td>
+<td class="instruction">XOR $03</td>
+<td class="comment-1" rowspan="1">Flip the bits, so we know how many warps TO the planet</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33425"></span>8291</td>
+<td class="instruction">ADD A,$30</td>
+<td class="comment-1" rowspan="1">Add ASCII 0</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33427"></span>8293</td>
+<td class="instruction">LD (DE),A</td>
+<td class="comment-1" rowspan="1">Store number in the buffer</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33428"></span>8294</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Next buffer address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33429"></span>8295</td>
+<td class="instruction">LD HL,<a href="34204.html">warps_msg</a></td>
+<td class="comment-1" rowspan="1">WARPS message</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33432"></span>8298</td>
+<td class="instruction">LD BC,$0005</td>
+<td class="comment-1" rowspan="1">Copy 5 bytes '_WARP'</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33435"></span>829B</td>
+<td class="instruction">CP $31</td>
+<td class="comment-1" rowspan="1">If the number is less than 2,</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33437"></span>829D</td>
+<td class="instruction">JR Z,<a href="33298.html#33440">init_stage_6</a></td>
+<td class="comment-1" rowspan="1">then skip ahead</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33439"></span>829F</td>
+<td class="instruction">INC BC</td>
+<td class="comment-1" rowspan="1">Otherwise copy one more byte '_WARPS'</td>
+</tr>
+<tr>
+<td class="asm-label">init_stage_6</td>
+<td class="address-2"><span id="33440"></span>82A0</td>
+<td class="instruction">LDIR</td>
+<td class="comment-1" rowspan="1">Make the copy</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33442"></span>82A2</td>
+<td class="instruction">LD HL,<a href="34210.html">to_msg</a></td>
+<td class="comment-1" rowspan="1">Copy _TO_ message</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33445"></span>82A5</td>
+<td class="instruction">LD BC,$0004</td>
+<td class="comment-1" rowspan="1">4 bytes</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33448"></span>82A8</td>
+<td class="instruction">LDIR</td>
+<td class="comment-1" rowspan="1">Make the copy</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33450"></span>82AA</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore the planet name address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33451"></span>82AB</td>
+<td class="instruction">LD C,(HL)</td>
+<td class="comment-1" rowspan="1">Get length of name</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33452"></span>82AC</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Next byte</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33453"></span>82AD</td>
+<td class="instruction">LDIR</td>
+<td class="comment-1" rowspan="1">Copy planet name</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33455"></span>82AF</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">Now HL=destination and DE=source</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33456"></span>82B0</td>
+<td class="instruction">LD DE,$71A4</td>
+<td class="comment-1" rowspan="1">Buffer address for the string <a href="29091.html">buffer</a>+1</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33459"></span>82B3</td>
+<td class="instruction">SBC HL,DE</td>
+<td class="comment-1" rowspan="1">Now HL contain the length of the string</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33461"></span>82B5</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">Now DE=length and HL=$71A4</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33462"></span>82B6</td>
+<td class="instruction">DEC HL</td>
+<td class="comment-1" rowspan="1">HL=<a href="29091.html">buffer</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33463"></span>82B7</td>
+<td class="instruction">LD (HL),E</td>
+<td class="comment-1" rowspan="1">Set length</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33464"></span>82B8</td>
+<td class="instruction">JR <a href="33298.html#33475">init_stage_9</a></td>
+<td class="comment-1" rowspan="1">Jump ahead</td>
+</tr>
+<tr>
+<td class="asm-label">init_stage_7</td>
+<td class="address-2"><span id="33466"></span>82BA</td>
+<td class="instruction">LD HL,<a href="34185.html">ready_msg</a></td>
+<td class="comment-1" rowspan="1">Ready message</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33469"></span>82BD</td>
+<td class="instruction">JR <a href="33298.html#33475">init_stage_9</a></td>
+<td class="comment-1" rowspan="1">Skip ahead</td>
+</tr>
+<tr>
+<td class="asm-label">init_stage_8</td>
+<td class="address-2"><span id="33471"></span>82BF</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Drop the pushed planet name address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33472"></span>82C0</td>
+<td class="instruction">LD HL,<a href="34191.html">chance_stage_msg</a></td>
+<td class="comment-1" rowspan="1">Chance stage message</td>
+</tr>
+<tr>
+<td class="asm-label">init_stage_9</td>
+<td class="address-2"><span id="33475"></span>82C3</td>
+<td class="instruction">LD A,$20</td>
+<td class="comment-1" rowspan="1">At this point HL contains a pointer to the length prefixed message to print</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33477"></span>82C5</td>
+<td class="instruction">SUB (HL)</td>
+<td class="comment-1" rowspan="1">32 - string length</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33478"></span>82C6</td>
+<td class="instruction">SRL A</td>
+<td class="comment-1" rowspan="1">/ 2 = offset to center line</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33480"></span>82C8</td>
+<td class="instruction">LD DE,$1A00</td>
+<td class="comment-1" rowspan="1">VDP address of line start</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33483"></span>82CB</td>
+<td class="instruction">ADD A,E</td>
+<td class="comment-1" rowspan="1">Add address to offset</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33484"></span>82CC</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">Copy back to destination</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33485"></span>82CD</td>
+<td class="instruction">LD C,(HL)</td>
+<td class="comment-1" rowspan="1">Length</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33486"></span>82CE</td>
+<td class="instruction">LD B,$00</td>
+<td class="comment-1" rowspan="1">MSB of length</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33488"></span>82D0</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Increment source to text</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33489"></span>82D1</td>
+<td class="instruction">RST $38</td>
+<td class="comment-1" rowspan="1">WRITE_VRAM Display the X WARPS TO Y message</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="33490"></span>
+<div class="comments">
+<div class="paragraph">
+Now what?
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33490"></span>82D2</td>
+<td class="instruction">CALL <a href="33550.html">L830E</a></td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33493"></span>82D5</td>
+<td class="instruction">LD B,$00</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33495"></span>82D7</td>
+<td class="instruction">LD A,(<a href="29184.html">stage</a>)</td>
+<td class="comment-1" rowspan="1">Stage</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33498"></span>82DA</td>
+<td class="instruction">LD HL,<a href="29189.html">completed_stages</a></td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33501"></span>82DD</td>
+<td class="instruction">ADD A,(HL)</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33502"></span>82DE</td>
+<td class="instruction">CP $01</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33504"></span>82E0</td>
+<td class="instruction">JR Z,<a href="33298.html#33526">init_stage_10</a></td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33506"></span>82E2</td>
+<td class="instruction">AND $03</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33508"></span>82E4</td>
+<td class="instruction">LD B,$05</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33510"></span>82E6</td>
+<td class="instruction">CP $01</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33512"></span>82E8</td>
+<td class="instruction">JR C,<a href="33298.html#33526">init_stage_10</a></td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33514"></span>82EA</td>
+<td class="instruction">LD B,$03</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33516"></span>82EC</td>
+<td class="instruction">JR Z,<a href="33298.html#33526">init_stage_10</a></td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33518"></span>82EE</td>
+<td class="instruction">LD B,$04</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33520"></span>82F0</td>
+<td class="instruction">CP $02</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33522"></span>82F2</td>
+<td class="instruction">JR Z,<a href="33298.html#33526">init_stage_10</a></td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33524"></span>82F4</td>
+<td class="instruction">LD B,$06</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label">init_stage_10</td>
+<td class="address-2"><span id="33526"></span>82F6</td>
+<td class="instruction">LD A,B</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33527"></span>82F7</td>
+<td class="instruction">CALL <a href="40593.html">L9E91</a></td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33530"></span>82FA</td>
+<td class="instruction">CALL <a href="42706.html">LA6D2</a></td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33533"></span>82FD</td>
+<td class="instruction">CALL <a href="44255.html">init_sprite_data</a></td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33536"></span>8300</td>
+<td class="instruction">CALL <a href="41787.html">LA33B</a></td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33539"></span>8303</td>
+<td class="instruction">CALL <a href="36489.html#36493">L8E89_0</a></td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33542"></span>8306</td>
+<td class="instruction">LD HL,<a href="29163.html">L71EB</a></td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33545"></span>8309</td>
+<td class="instruction">RES 4,(HL)</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33547"></span>830B</td>
+<td class="instruction">SET 6,(HL)</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33549"></span>830D</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 </table>
 <table class="asm-navigation">
@@ -169,7 +869,7 @@ Prev: <a href="33261.html">81ED</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#33298">Map</a></td>
 <td class="next">
-Next: <a href="33342.html">823E</a>
+Next: <a href="33550.html">830E</a>
 </td>
 </tr>
 </table>

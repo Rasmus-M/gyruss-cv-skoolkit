@@ -24,19 +24,19 @@ Next: <a href="44907.html">AF6B</a>
 </td>
 </tr>
 </table>
-<div class="description">AE94: Fill VDP RAM from $2100 to $3868 with character patterns that may be flipped and shifted. One new pattern is generated with each call. Are these used?</div>
+<div class="description">AE94: Upload sprite patterns</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="37078.html">start_screen</a>.
+Fill VDP RAM from $2100 to $3868 with sprite patterns that may be flipped and shifted. One new pattern is generated with each call. Builds a table of VDP addresses in <a href="29408.html">sprite_pattern_vdp_addrs_table</a>. Used by the routine at <a href="37078.html">start_screen</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">LAE94</td>
+<td class="asm-label">upload_sprite_patterns</td>
 <td class="address-2"><span id="44692"></span>AE94</td>
 <td class="instruction">LD A,(<a href="29397.html">L72D5</a>)</td>
 <td class="comment-1" rowspan="1">Get counter</td>
@@ -74,7 +74,7 @@ Used by the routine at <a href="37078.html">start_screen</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44703"></span>AE9F</td>
-<td class="instruction">JR NZ,<a href="44692.html#44717">LAE94_0</a></td>
+<td class="instruction">JR NZ,<a href="44692.html#44717">upload_sprite_patterns_0</a></td>
 <td class="comment-1" rowspan="1">No - skip ahead</td>
 </tr>
 <tr>
@@ -92,7 +92,7 @@ Used by the routine at <a href="37078.html">start_screen</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44711"></span>AEA7</td>
-<td class="instruction">LD HL,<a href="29408.html">L72E0</a></td>
+<td class="instruction">LD HL,<a href="29408.html">sprite_pattern_vdp_addrs_table</a></td>
 <td class="comment-1" rowspan="1">Set another word to $72E0 (pointer to a RAM block)</td>
 </tr>
 <tr>
@@ -102,7 +102,7 @@ Used by the routine at <a href="37078.html">start_screen</a>.
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">LAE94_0</td>
+<td class="asm-label">upload_sprite_patterns_0</td>
 <td class="address-2"><span id="44717"></span>AEAD</td>
 <td class="instruction">LD A,(<a href="29398.html">L72D6</a>)</td>
 <td class="comment-1" rowspan="1">Get counter</td>
@@ -122,7 +122,7 @@ Used by the routine at <a href="37078.html">start_screen</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44724"></span>AEB4</td>
-<td class="instruction">JR NZ,<a href="44692.html#44740">LAE94_1</a></td>
+<td class="instruction">JR NZ,<a href="44692.html#44740">upload_sprite_patterns_1</a></td>
 <td class="comment-1" rowspan="1">If any is non-zero skip ahead</td>
 </tr>
 <tr>
@@ -168,7 +168,7 @@ Used by the routine at <a href="37078.html">start_screen</a>.
 <td class="comment-1" rowspan="1">Save updated pointer, e.g. $72E0</td>
 </tr>
 <tr>
-<td class="asm-label">LAE94_1</td>
+<td class="asm-label">upload_sprite_patterns_1</td>
 <td class="address-2"><span id="44740"></span>AEC4</td>
 <td class="instruction">LD A,(<a href="29397.html">L72D5</a>)</td>
 <td class="comment-1" rowspan="1">Get counter</td>
@@ -176,7 +176,7 @@ Used by the routine at <a href="37078.html">start_screen</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44743"></span>AEC7</td>
-<td class="instruction">LD HL,<a href="47325.html">LB8DD</a></td>
+<td class="instruction">LD HL,<a href="47325.html">graphics_pointer_offsets_table</a></td>
 <td class="comment-1" rowspan="1">Table of 29 bytes (offsets into table at $B8FA)</td>
 </tr>
 <tr>
@@ -350,7 +350,7 @@ Used by the routine at <a href="37078.html">start_screen</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44794"></span>AEFA</td>
-<td class="instruction">JR Z,<a href="44692.html#44821">LAE94_3</a></td>
+<td class="instruction">JR Z,<a href="44692.html#44821">upload_sprite_patterns_3</a></td>
 <td class="comment-1" rowspan="1">Then skip ahead</td>
 </tr>
 <tr>
@@ -368,7 +368,7 @@ Used by the routine at <a href="37078.html">start_screen</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44804"></span>AF04</td>
-<td class="instruction">JR Z,<a href="44692.html#44809">LAE94_2</a></td>
+<td class="instruction">JR Z,<a href="44692.html#44809">upload_sprite_patterns_2</a></td>
 <td class="comment-1" rowspan="1">If not, skip ahead</td>
 </tr>
 <tr>
@@ -378,7 +378,7 @@ Used by the routine at <a href="37078.html">start_screen</a>.
 <td class="comment-1" rowspan="1">flip_horz</td>
 </tr>
 <tr>
-<td class="asm-label">LAE94_2</td>
+<td class="asm-label">upload_sprite_patterns_2</td>
 <td class="address-2"><span id="44809"></span>AF09</td>
 <td class="instruction">BIT 3,(IX+$00)</td>
 <td class="comment-1" rowspan="1">Is bit 3 set?</td>
@@ -386,7 +386,7 @@ Used by the routine at <a href="37078.html">start_screen</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44813"></span>AF0D</td>
-<td class="instruction">JR NZ,<a href="44692.html#44821">LAE94_3</a></td>
+<td class="instruction">JR NZ,<a href="44692.html#44821">upload_sprite_patterns_3</a></td>
 <td class="comment-1" rowspan="1">If not, skip ahead</td>
 </tr>
 <tr>
@@ -402,7 +402,7 @@ Used by the routine at <a href="37078.html">start_screen</a>.
 <td class="comment-1" rowspan="1">shift_left</td>
 </tr>
 <tr>
-<td class="asm-label">LAE94_3</td>
+<td class="asm-label">upload_sprite_patterns_3</td>
 <td class="address-2"><span id="44821"></span>AF15</td>
 <td class="instruction">LD HL,(<a href="29406.html">L72DE</a>)</td>
 <td class="comment-1" rowspan="1">Source for writing to DP RAM</td>
