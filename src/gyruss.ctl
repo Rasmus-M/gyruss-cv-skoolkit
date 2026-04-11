@@ -18,7 +18,7 @@ B $7183,32,8
 b $71A3 Temporary storage (72 bytes)
 @ $71A3 label=buffer
 B $71A3,72,8
-b $71EB Status flags #TABLE(default, default) { =h Bit | =h Purpose } { $00 | Unknown } { $01 | Unknown } { $02 | Exits main loop } { $03 | Unknown } { $04 | Unknown } { $05 | Unknown } { $06 | Unknown } { $07 | Two players } TABLE#
+b $71EB Status flags #TABLE(default, default) { =h Bit | =h Purpose } { $00 | Unknown } { $01 | Unknown } { $02 | Exits main loop } { $03 | Unknown } { $04 | Set at stage init } { $05 | Unknown } { $06 | Unknown } { $07 | Two players } TABLE#
 @ $71EB player_status
 B $71EB,1,1
 b $71EC Stars move countdown
@@ -240,15 +240,15 @@ W $8008,2,2
 w $800A Pointer to start address
 W $800A,2,2
 c $800C RST $08
-C $800C,3 add_a_to_hl
+C $800C,3 Add A to HL
 c $800F RST $10
-C $800F,3 vdp_write_byte (DE = address, A = value)
+C $800F,3 Write VDP byte (DE = address, A = value)
 c $8012 RST $18
 C $8012,3 WRITE_REGISTER (B = reg, C = value)
 c $8015 RST $20
 C $8015,3 Random number generator
 c $8018 RST $28
-C $8018,3 allocate_sprite
+C $8018,3 Allocate_sprite
 c $801B RST $30
 C $801B,3 Load sprite pattern
 c $801E RST $38
@@ -304,20 +304,20 @@ C $80AE,3 ...
 C $80B1,1 WRITE_VRAM
 C $80B2,3 Display '1' at the top left corner
 C $80B5,2 ...
-C $80B7,1 vdp_write_byte
+C $80B7,1 Write VDP byte
 C $80B8,1 Display '-' next to '1'
 C $80B9,2 ...
-C $80BB,1 vdp_write_byte
+C $80BB,1 Write VDP byte
 C $80BC,1 Parameter to display score
 C $80BD,3 Display score
 C $80C3,2 Test bit for two players
 C $80C5,2 If bit is reset then skip ahead
 C $80C7,3 Display '-' at the top right corner
 C $80CA,2 ...
-C $80CC,1 vdp_write_byte
+C $80CC,1 Write VDP byte
 C $80CD,1 Display '2' next to '-'
 C $80CE,2 ...
-C $80D0,1 vdp_write_byte
+C $80D0,1 Write VDP byte
 C $80D6,3 Save player data, starting with lives?
 C $80D9,3 VDP address
 C $80DC,3 45 bytes
@@ -343,7 +343,7 @@ C $8146,3 READ_REGISTER
 @ $814F label=label_at_814F
 c $8170 Routine at 8170
 D $8170 Used by the routine at #R$8139.
-C $8182,1 vdp_write_byte
+C $8182,1 Write VDP byte
 C $8183,3 Display player
 C $818F,1 WRITE_VRAM
 c $81AE Routine at 81AE
@@ -406,11 +406,11 @@ C $825F,2 Restore ones
 C $8261,1 Save in C
 C $8262,1 Tens
 C $8263,2 Add ASCII 0
-C $8265,1 vdp_write_byte
+C $8265,1 Write VDP byte
 C $8266,1 Ones
 C $8267,1 Increment VDP address to stage number ones
 C $8268,2 Add ASCII 0
-C $826A,1 vdp_write_byte
+C $826A,1 Write VDP byte
 N $826B Display X WARPS TO Y message
 C $826B,3 Check whether you just died
 C $826E,1 So we want to display READY instead
@@ -420,7 +420,7 @@ C $8274,1 Save in B
 C $8275,2 Divide by 2
 C $8277,2 Clamp to 0, 2, 4, 6, 8, 10, 12
 C $8279,3 Base planet table
-C $827C,1 add_a_to_hl
+C $827C,1 Add A to HL
 C $827D,1 Get LSB of planet data
 C $827E,1 To MSB
 C $827F,1 Get MSB of planet data
@@ -512,7 +512,7 @@ C $8321,1 Is it player 1?
 C $8322,1 The return
 C $8323,2 ASCII 2
 C $8325,3 VDP address
-C $8328,1 vdp_write_byte
+C $8328,1 Write VDP byte
 c $832A Routine at 832A
 D $832A Used by the routine at #R$8024.
 C $8334,3 READ_REGISTER
@@ -523,6 +523,8 @@ D $8368 Used by the routine at #R$832A.
 N $836D This entry point is used by the routine at #R$832A.
 C $8374,3 Stage
 C $83BA,4 Set color
+C $83C2,1 Load sprite pattern
+C $83C7,1 Load sprite pattern
 c $83D0 Routine at 83D0
 D $83D0 Used by the routine at #R$8368.
 C $83DE,3 Stage
@@ -543,10 +545,10 @@ C $843A,1 WRITE_VRAM
 C $8444,1 WRITE_VRAM
 c $8450 Routine at 8450
 D $8450 Used by the routine at #R$8429.
-C $8455,1 vdp_write_byte
-C $8459,1 vdp_write_byte
-C $845E,1 vdp_write_byte
-C $8462,1 vdp_write_byte
+C $8455,1 Write VDP byte
+C $8459,1 Write VDP byte
+C $845E,1 Write VDP byte
+C $8462,1 Write VDP byte
 c $846B Routine at 846B
 D $846B Used by the routine at #R$8429.
 C $8479,1 WRITE_VRAM
@@ -646,7 +648,10 @@ D $8673 Used by the routine at #R$865A.
 c $867D Routine at 867D
 D $867D Used by the routine at #R$865A.
 C $86A5,4 Set color
+C $86AD,1 Load sprite pattern
+C $86B0,1 Allocate sprite
 C $86BB,4 Set color
+C $86CB,1 Load sprite pattern
 C $86CF,3 Set y
 C $86D7,3 Set x
 c $86DE Routine at 86DE
@@ -691,7 +696,7 @@ D $88A7 Used by the routine at #R$8878.
 c $88BE Routine at 88BE
 D $88BE Used by the routine at #R$8878.
 C $88BE,1 Random number
-C $88C4,1 add_a_to_hl
+C $88C4,1 Add A to HL
 N $88CF This entry point is used by the routine at #R$8878.
 c $88D4 Routine at 88D4
 D $88D4 Used by the routines at #R$8878 and #R$88BE.
@@ -718,21 +723,24 @@ D $8A2D Used by the routine at #R$899E.
 c $8A3C Routine at 8A3C
 D $8A3C Used by the routine at #R$899E.
 c $8A41 Routine at 8A41
+C $8A4D,1 Load sprite pattern
 N $8A4E This entry point is used by the routine at #R$867D.
 c $8A53 Routine at 8A53
 D $8A53 Used by the routine at #R$85E6.
 c $8A76 Routine at 8A76
 D $8A76 Used by the routines at #R$8790, #R$885F and #R$88FE.
+C $8AA4,1 Allocate sprite
 C $8AB9,4 Set color
 c $8AC0 Routine at 8AC0
 D $8AC0 Used by the routines at #R$8790, #R$87F5, #R$8878 and #R$88D4.
 c $8AE6 Routine at 8AE6
 D $8AE6 Used by the routine at #R$8139.
+C $8B0C,1 Load sprite pattern
 c $8B12 Routine at 8B12
 D $8B12 Used by the routines at #R$8F0F, #R$8F55, #R$99D3, #R$9A75 and #R$A808.
-C $8B22,1 vdp_write_byte
+C $8B22,1 Write VDP byte
 C $8B9E,1 WRITE_VRAM
-C $8BC9,1 vdp_write_byte
+C $8BC9,1 Write VDP byte
 c $8BD9 Routine at 8BD9
 D $8BD9 Used by the routine at #R$8024.
 c $8C07 Routine at 8C07
@@ -751,19 +759,28 @@ c $8C68 Routine at 8C68
 D $8C68 Used by the routine at #R$8BD9.
 N $8C6D This entry point is used by the routine at #R$8C52.
 C $8C94,3 Stage
-C $8CA0,1 add_a_to_hl
+C $8CA0,1 Add A to HL
+C $8CA2,1 Allocate sprite
 C $8CAF,3 Set color
+C $8CF5,1 Load sprite pattern
 c $8D21 Routine at 8D21
 D $8D21 Used by the routine at #R$8170.
 c $8D50 Routine at 8D50
 D $8D50 Used by the routine at #R$8024.
 C $8D6B,1 Random number
+C $8D81,1 Allocate sprite
 C $8D8A,4 Set color
 C $8D8E,1 Random number
+C $8D98,1 Load sprite pattern
+C $8D99,1 Allocate sprite
 C $8DA2,4 Set color
+C $8DB2,1 Load sprite pattern
+C $8DB3,1 Allocate sprite
 C $8DBC,4 Set color
+C $8DCC,1 Load sprite pattern
 c $8DD7 Routine at 8DD7
 D $8DD7 Used by the routine at #R$8D50.
+C $8DDD,1 Allocate sprite
 C $8DE6,1 Random number
 C $8DFC,4 Set color
 N $8E04 This entry point is used by the routine at #R$8D50.
@@ -797,7 +814,9 @@ c $8FED Routine at 8FED
 D $8FED Used by the routine at #R$8F55.
 c $900E Routine at 900E
 D $900E Used by the routines at #R$8E9D and #R$8F55.
+C $9023,1 Allocate sprite
 C $9028,4 Set color
+C $9038,1 Load sprite pattern
 C $903C,1 Random number
 b $9046 Data block at 9046
 B $9046,16,8
@@ -830,11 +849,11 @@ C $9126,2 2 rows
 C $9128,2 6 letters
 @ $912A label=logo_letter
 C $912A,1 Get name
-C $912B,1 vdp_write_byte
+C $912B,1 Write VDP byte
 C $912C,1 Next destination
 C $912D,1 Next source
 C $912E,1 Get name
-C $912F,1 vdp_write_byte
+C $912F,1 Write VDP byte
 C $9130,1 Next destination
 C $9131,1 Next destination (skip space)
 C $9132,1 Next source
@@ -871,7 +890,7 @@ R $9175 I:A Index of planet (1 based)
 C $9175,1 a *= 2
 C $9176,2 If zero then undraw planet
 C $9178,3 Planet table minus 2: #R$9398-2
-C $917B,1 add_a_to_hl
+C $917B,1 Add A to HL
 C $917C,1 Get LSB of planet data
 C $917E,1 Get MSB of planet data
 C $917F,1 Address now in HL
@@ -895,7 +914,7 @@ C $91B4,3 Address in name table
 C $91B7,2 4 rows
 C $91B9,2 4 columns
 C $91BB,1 Get name to write
-C $91BC,1 vdp_write_byte
+C $91BC,1 Write VDP byte
 C $91BD,1 Next destination
 C $91BE,1 Next source
 C $91BF,2 Loop for 4 columns
@@ -916,7 +935,7 @@ C $91D0,2 32
 C $91D2,1 32 - length
 C $91D3,2 (32 - length) / 2
 C $91D5,3 Name table address of row
-C $91D9,1 add_a_to_hl
+C $91D9,1 Add A to HL
 C $91DA,1 DE = display address
 C $91DB,1 Get length
 C $91DE,1 Advance source to text
@@ -924,7 +943,7 @@ C $91DF,1 WRITE_VRAM
 C $91E0,1 Restore address
 C $91E1,1 Get length
 C $91E2,1 Length + 1
-C $91E3,1 add_a_to_hl. Now HL points after text.
+C $91E3,1 Add A to HL. Now HL points after text.
 C $91E4,1 Get number of sprites
 C $91E5,1 Next source byte
 C $91E6,1 Get color
@@ -979,14 +998,14 @@ C $9241,2 Add 2 as the base
 C $9243,1 Save number of repeats
 C $9244,3 Get byte to write in A
 C $9247,1 Restore number of repeats
-C $9248,1 vdp_write_byte in A to DE
+C $9248,1 Write VDP byte in A to DE
 C $9249,1 Next VDP address
 C $924A,2 Loop B times
 C $924C,2 Loop
 c $924E Write single byte
 D $924E Used by the routine at #R$921F.
 C $924E,3 Get byte to write
-C $9251,1 vdp_write_byte in A to DE
+C $9251,1 Write VDP byte in A to DE
 C $9252,1 Next VDP address
 C $9253,2 Loop
 c $9255 Read B bits into A
@@ -1110,8 +1129,11 @@ B $96FE,152,8
 c $9796 Routine at 9796
 D $9796 Used by the routine at #R$8024.
 N $97F3 This entry point is used by the routines at #R$98B5, #R$9978 and #R$9A49.
+C $983B,1 Load sprite pattern
+C $9843,1 Load sprite pattern
 c $9845 Routine at 9845
 D $9845 Used by the routine at #R$9796.
+C $9845,1 Allocate sprite
 C $9858,4 Set color
 c $9861 Routine at 9861
 D $9861 Used by the routine at #R$9796.
@@ -1126,7 +1148,7 @@ D $9934 Used by the routine at #R$9924.
 N $9936 This entry point is used by the routine at #R$9924.
 c $9978 Routine at 9978
 D $9978 Used by the routine at #R$9934.
-C $9991,1 add_a_to_hl
+C $9991,1 Add A to HL
 N $9999 This entry point is used by the routines at #R$9934, #R$99A0, #R$99D3 and #R$9A08.
 c $99A0 Routine at 99A0
 D $99A0 Used by the routine at #R$98B5.
@@ -1134,7 +1156,7 @@ c $99B1 Routine at 99B1
 D $99B1 Used by the routine at #R$98B5.
 c $99D3 Routine at 99D3
 D $99D3 Used by the routine at #R$99B1.
-C $99E1,1 add_a_to_hl
+C $99E1,1 Add A to HL
 N $99EA This entry point is used by the routine at #R$99B1.
 c $9A08 Routine at 9A08
 D $9A08 Used by the routine at #R$9924.
@@ -1145,6 +1167,7 @@ c $9A38 Routine at 9A38
 D $9A38 Used by the routine at #R$9796.
 c $9A49 Routine at 9A49
 D $9A49 Used by the routine at #R$9A38.
+C $9A68,1 Load sprite pattern
 N $9A69 This entry point is used by the routine at #R$9A75.
 N $9A6D This entry point is used by the routine at #R$9A38.
 c $9A75 Routine at 9A75
@@ -1293,14 +1316,24 @@ c $A31D Routine at A31D
 D $A31D Used by the routine at #R$A314.
 c $A33B Routine at A33B
 D $A33B Used by the routine at #R$82BF.
+C $A341,3 Status flags
+C $A344,2 Set bit 4
+C $A34C,1 Allocate sprite
+C $A359,1 Load sprite pattern
 C $A364,4 Set color
+C $A385,1 Allocate sprite
 C $A392,4 Set color
+C $A396,1 Load sprite pattern
+C $A397,1 Allocate sprite
 C $A3A4,4 Set color
+C $A3A8,1 Load sprite pattern
 C $A3CE,3 FILL_VRAM
 c $A3E1 Routine at A3E1
 D $A3E1 Used by the routine at #R$8139.
 C $A40B,4 Set y
+C $A429,1 Allocate sprite
 C $A436,4 Set color
+C $A43A,1 Load sprite pattern
 c $A471 Routine at A471
 D $A471 Used by the routines at #R$A33B and #R$A3E1.
 N $A47D This entry point is used by the routine at #R$A4A0.
@@ -1316,7 +1349,7 @@ c $A699 Routine at A699
 D $A699 Used by the routines at #R$8024 and #R$846B.
 c $A6C8 Routine at A6C8
 D $A6C8 Used by the routine at #R$A699.
-C $A6CF,1 vdp_write_byte
+C $A6CF,1 Write VDP byte
 c $A6D2 Display lives
 D $A6D2 Used by the routines at #R$82BF and #R$A6EC.
 @ $A6D2 label=display-lives
@@ -1330,7 +1363,7 @@ C $A6E0,1 Return if none to display
 C $A6E1,1 Count
 C $A6E2,3 VDP address
 C $A6E5,2 Ship character
-C $A6E7,1 vdp_write_byte
+C $A6E7,1 Write VDP byte
 C $A6E8,1 Next VDP address
 C $A6E9,2 Loop
 c $A6EC Routine at A6EC
@@ -1340,20 +1373,25 @@ D $A73C Used by the routines at #R$8024, #R$832A, #R$8368, #R$846B and #R$A33B.
 C $A742,3 Controller
 C $A745,2 Segment 0
 C $A747,3 DECODER
+C $A778,1 Load sprite pattern
+C $A77D,1 Load sprite pattern
 C $A78B,2 Segment 0
 C $A78D,3 DECODER
 C $A793,2 Segment 1
 C $A795,3 DECODER
+C $A7C2,1 Allocate sprite
 C $A7D0,4 Set color
 c $A7D5 Routine at A7D5
 D $A7D5 Used by the routine at #R$A73C.
+C $A7D5,1 Allocate sprite
 C $A7E8,4 Set color
+C $A7EC,1 Allocate sprite
 C $A7FC,4 Set color
 c $A805 Routine at A805
 D $A805 Used by the routine at #R$A73C.
 c $A808 Routine at A808
 D $A808 Used by the routines at #R$8368, #R$A33B, #R$A3E1 and #R$A73C.
-C $A833,1 add_a_to_hl
+C $A833,1 Add A to HL
 b $A865 Data block at A865
 B $A865,24,8
 b $A87D Ship sprites #UDGTABLE(no-border, no-border) { #UDGARRAY32,,4($A87D-$AA75-16)(graphics-A87D.png) } { #UDGARRAY32,,4($A885-$AA7D-16)(graphics-A885.png) } TABLE#
@@ -1376,7 +1414,9 @@ c $AAF1 Routine at AAF1
 D $AAF1 Used by the routine at #R$8024.
 c $AB17 Routine at AB17
 D $AB17 Used by the routine at #R$AAF1.
+C $AB1F,1 Allocate sprite
 C $AB2B,3 Set color
+C $AB32,1 Load sprite pattern
 c $AB38 Routine at AB38
 D $AB38 Used by the routines at #R$87F5, #R$98B5, #R$AB17 and #R$AB72.
 c $AB53 Routine at AB53
@@ -1390,10 +1430,10 @@ D $AB72 Used by the routines at #R$8024, #R$8139, #R$832A, #R$846B, #R$A33B and 
 C $ABBE,3 FILL_VRAM
 c $ABFF Routine at ABFF
 D $ABFF Used by the routine at #R$AB72.
-C $AC17,1 vdp_write_byte
+C $AC17,1 Write VDP byte
 c $AC32 Routine at AC32
 D $AC32 Used by the routine at #R$ABFF.
-C $AC3A,1 vdp_write_byte
+C $AC3A,1 Write VDP byte
 b $AC47 Data block at AC47
 D $AC47 Used by the routine at #R$AB72.
 B $AC47,152,8
@@ -1422,13 +1462,13 @@ C $AD06,1 * 4
 C $AD08,1 * 8
 C $AD09,1 * 12 (may overflow?)
 C $AD0B,3 First y address in sprite data table
-C $AD0E,1 add_a_to_hl
+C $AD0E,1 Add A to HL
 C $AD0F,3 Write 4 bytes for each sprite
 C $AD13,3 WRITE_VRAM
 C $AD17,3 Add 4 to destination
 C $AD1E,2 Loop for each sprite
 C $AD20,2 End marker byte
-C $AD22,1 vdp_write_byte
+C $AD22,1 Write VDP byte
 C $AD23,3 Get number of allocation sprites
 C $AD26,2 Is it < 5
 C $AD28,1 Then return
@@ -1520,7 +1560,7 @@ C $AE14,2 If 1,
 C $AE16,2 then skip ahead
 C $AE21,3 Set y
 C $AE24,3 Set x
-C $AE3E,1 add_a_to_hl
+C $AE3E,1 Add A to HL
 C $AE43,3 Set y
 C $AE4B,3 Set x
 N $AE4E This entry point is used by the routines at #R$AE54 and #R$AE75.
@@ -1553,7 +1593,7 @@ C $AEBF,1 Write $21
 C $AEC1,3 Save updated pointer, e.g. $72E0
 C $AEC4,3 Get counter
 C $AEC7,3 Table of 29 bytes (offsets into table at $B8FA)
-C $AECA,1 add_a_to_hl
+C $AECA,1 Add A to HL
 C $AECB,1 Load DE with value from table
 C $AECE,3 Table of pointers to graphics
 C $AED1,1 Add offset
@@ -1561,7 +1601,7 @@ C $AED2,3 Save address of pointer
 C $AED5,3 Get counter
 C $AED8,1 Increment
 C $AED9,1 Double
-C $AEDA,1 add_a_to_hl
+C $AEDA,1 Add A to HL
 C $AEDB,1 Get LSB of pointer
 C $AEDD,1 Get MSB of pointer
 C $AEDE,1 Now HL pointer to graphics
@@ -1570,7 +1610,7 @@ C $AEE2,2 0, 1, 2, 3
 C $AEE4,1 0, 2, 4, 6
 C $AEE5,1 0, 4, 8, 12
 C $AEE6,1 0, 8, 16, 32
-C $AEE7,1 add_a_to_hl
+C $AEE7,1 Add A to HL
 C $AEE8,3 Buffer
 C $AEEB,4 Store as source address
 C $AEEF,3 Copy 8 bytes
@@ -1654,7 +1694,7 @@ R $B023 I:C mask $00 or $FF
 @ $B023 label=display_star_frame
 C $B023,3 0, 2, 4, 6, 8, 10
 C $B026,3 Table of pointers
-C $B029,1 add_a_to_hl
+C $B029,1 Add A to HL
 C $B02A,1 Get LSB
 C $B02C,1 Get MSB
 C $B02D,3 Get VDP address (always 0)
@@ -1667,7 +1707,7 @@ C $B03A,2 >= 18
 C $B03C,2 Then skip writing
 C $B03E,1 Get byte from table
 C $B03F,1 Apply mask
-C $B040,1 vdp_write_byte A to DE
+C $B040,1 Write VDP byte A to DE
 C $B041,1 Next VDP address
 C $B042,1 Next table address
 C $B043,3 Loop

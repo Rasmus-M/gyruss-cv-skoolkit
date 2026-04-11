@@ -89,7 +89,7 @@ b$71A3 DEFB $00,$00,$00,$00,$00,$00,$00,$00
 ; { $01 | Unknown }
 ; { $02 | Exits main loop }
 ; { $03 | Unknown }
-; { $04 | Unknown }
+; { $04 | Set at stage init }
 ; { $05 | Unknown }
 ; { $06 | Unknown }
 ; { $07 | Two players }
@@ -477,10 +477,10 @@ w$8008 DEFW $0000
 w$800A DEFW $8024
 
 ; RST $08
-c$800C JP $9AB3      ; add_a_to_hl
+c$800C JP $9AB3      ; Add A to HL
 
 ; RST $10
-c$800F JP $9AC3      ; vdp_write_byte (DE = address, A = value)
+c$800F JP $9AC3      ; Write VDP byte (DE = address, A = value)
 
 ; RST $18
 c$8012 JP $1FD9      ; WRITE_REGISTER (B = reg, C = value)
@@ -489,7 +489,7 @@ c$8012 JP $1FD9      ; WRITE_REGISTER (B = reg, C = value)
 c$8015 JP $BFAE      ; Random number generator
 
 ; RST $28
-c$8018 JP $AD49      ; allocate_sprite
+c$8018 JP $AD49      ; Allocate_sprite
 
 ; RST $30
 c$801B JP $AD8B      ; Load sprite pattern
@@ -563,10 +563,10 @@ c$8024 LD SP,$73BA   ;
  $80B1 RST $38       ; WRITE_VRAM
  $80B2 LD DE,$1802   ; Display '1' at the top left corner
  $80B5 LD A,$31      ; ...
- $80B7 RST $10       ; vdp_write_byte
+ $80B7 RST $10       ; Write VDP byte
  $80B8 INC DE        ; Display '-' next to '1'
  $80B9 LD A,$2D      ; ...
- $80BB RST $10       ; vdp_write_byte
+ $80BB RST $10       ; Write VDP byte
  $80BC XOR A         ; Parameter to display score
  $80BD CALL $A699    ; Display score
  $80C0 LD A,($71EB)  ;
@@ -574,10 +574,10 @@ c$8024 LD SP,$73BA   ;
  $80C5 JR Z,$80E0    ; If bit is reset then skip ahead
  $80C7 LD DE,$181E   ; Display '-' at the top right corner
  $80CA LD A,$2D      ; ...
- $80CC RST $10       ; vdp_write_byte
+ $80CC RST $10       ; Write VDP byte
  $80CD INC DE        ; Display '2' next to '-'
  $80CE LD A,$32      ; ...
- $80D0 RST $10       ; vdp_write_byte
+ $80D0 RST $10       ; Write VDP byte
  $80D1 LD A,$01      ;
  $80D3 CALL $A699    ;
  $80D6 LD HL,$71FF   ; Save player data, starting with lives?
@@ -658,7 +658,7 @@ c$8170 CALL $8D21    ;
  $817B JR NZ,$81AE   ;
  $817D LD DE,$1C00   ;
  $8180 LD A,$D0      ;
- $8182 RST $10       ; vdp_write_byte
+ $8182 RST $10       ; Write VDP byte
  $8183 CALL $830E    ; Display player
  $8186 LD HL,$85DD   ;
  $8189 LD DE,$19CB   ;
@@ -775,11 +775,11 @@ c$8212 LD HL,$722E   ; Clear $28 bytes from $722E
  $8261 LD C,A        ; Save in C
  $8262 LD A,B        ; Tens
  $8263 ADD A,$30     ; Add ASCII 0
- $8265 RST $10       ; vdp_write_byte
+ $8265 RST $10       ; Write VDP byte
  $8266 LD A,C        ; Ones
 *$8267 INC DE        ; Increment VDP address to stage number ones
  $8268 ADD A,$30     ; Add ASCII 0
- $826A RST $10       ; vdp_write_byte
+ $826A RST $10       ; Write VDP byte
 ; Display X WARPS TO Y message
  $826B LD A,($7201)  ; Check whether you just died
  $826E OR A          ; So we want to display READY instead
@@ -789,7 +789,7 @@ c$8212 LD HL,$722E   ; Clear $28 bytes from $722E
  $8275 SRL A         ; Divide by 2
  $8277 AND $0E       ; Clamp to 0, 2, 4, 6, 8, 10, 12
  $8279 LD HL,$9398   ; Base planet table
- $827C RST $08       ; add_a_to_hl
+ $827C RST $08       ; Add A to HL
  $827D LD E,(HL)     ; Get LSB of planet data
  $827E INC HL        ; To MSB
  $827F LD D,(HL)     ; Get MSB of planet data
@@ -885,7 +885,7 @@ c$830E LD A,($71EB)  ; Status
  $8322 RET Z         ; The return
  $8323 LD A,$32      ; ASCII 2
  $8325 LD DE,$1933   ; VDP address
- $8328 RST $10       ; vdp_write_byte
+ $8328 RST $10       ; Write VDP byte
  $8329 RET           ;
 
 ; Routine at 832A
@@ -962,9 +962,9 @@ c$8368 LD A,$05        ;
  $83B8 JR NZ,$83C2     ;
  $83BA LD (IX+$0B),$0F ; Set color
  $83BE LD (IX+$17),$09 ;
-*$83C2 RST $30         ;
+*$83C2 RST $30         ; Load sprite pattern
  $83C3 LD IX,$700E     ;
- $83C7 RST $30         ;
+ $83C7 RST $30         ; Load sprite pattern
  $83C8 CALL $A808      ;
 *$83CB CALL $84B1      ;
  $83CE JR $838A        ;
@@ -1040,14 +1040,14 @@ c$8429 LD A,($7255)  ;
 ; Used by the routine at #R$8429.
 c$8450 ADD A,$3A     ;
  $8452 LD DE,$19D0   ;
- $8455 RST $10       ; vdp_write_byte
+ $8455 RST $10       ; Write VDP byte
  $8456 LD DE,$19D4   ;
- $8459 RST $10       ; vdp_write_byte
+ $8459 RST $10       ; Write VDP byte
  $845A LD A,B        ;
  $845B LD DE,$19CF   ;
- $845E RST $10       ; vdp_write_byte
+ $845E RST $10       ; Write VDP byte
  $845F LD DE,$19D3   ;
- $8462 RST $10       ; vdp_write_byte
+ $8462 RST $10       ; Write VDP byte
  $8463 POP BC        ;
  $8464 LD A,B        ;
  $8465 OR A          ;
@@ -1368,9 +1368,9 @@ c$867D CP $04          ;
  $86A1 LD (IX+$06),$00 ;
  $86A5 LD (IX+$0B),$0F ; Set color
  $86A9 LD (IX+$04),$FF ;
- $86AD RST $30         ;
+ $86AD RST $30         ; Load sprite pattern
  $86AE PUSH IX         ;
- $86B0 RST $28         ;
+ $86B0 RST $28         ; Allocate sprite
  $86B1 POP IY          ;
  $86B3 LD (IX+$00),$0C ;
  $86B7 LD (IX+$03),$3C ;
@@ -1378,7 +1378,7 @@ c$867D CP $04          ;
  $86BF LD (IX+$01),$00 ;
  $86C3 LD (IX+$02),$00 ;
  $86C7 LD (IX+$06),$00 ;
- $86CB RST $30         ;
+ $86CB RST $30         ; Load sprite pattern
  $86CC LD A,(IY+$08)   ;
  $86CF LD (IX+$08),A   ; Set y
  $86D2 LD A,(IY+$09)   ;
@@ -1659,7 +1659,7 @@ c$88A7 LD A,(IX+$03)  ;
 c$88BE RST $20         ; Random number
  $88BF AND $07         ;
  $88C1 LD HL,$8E25     ;
- $88C4 RST $08         ; add_a_to_hl
+ $88C4 RST $08         ; Add A to HL
  $88C5 LD A,(HL)       ;
  $88C6 LD (IX+$03),A   ;
  $88C9 CP $40          ;
@@ -1890,7 +1890,7 @@ c$8A41 LD A,(IX+$00)   ;
  $8A44 CP (IX+$05)     ;
  $8A47 JR Z,$8A4E      ;
  $8A49 LD (IX+$04),$FF ;
- $8A4D RST $30         ;
+ $8A4D RST $30         ; Load sprite pattern
 ; This entry point is used by the routine at #R$867D.
 *$8A4E POP HL          ;
  $8A4F INC HL          ;
@@ -1940,7 +1940,7 @@ c$8A76 LD A,($71EF)    ;
  $8A9E LD HL,$7252     ;
  $8AA1 INC (HL)        ;
  $8AA2 PUSH IX         ;
- $8AA4 RST $28         ;
+ $8AA4 RST $28         ; Allocate sprite
  $8AA5 POP IY          ;
  $8AA7 PUSH IY         ;
  $8AA9 LD A,(IY+$01)   ;
@@ -1991,7 +1991,7 @@ c$8AE6 LD IX,$7002     ;
  $8B00 LD (IX+$00),$10 ;
  $8B04 LD (IX+$07),$0C ;
  $8B08 LD (IX+$04),$FF ;
- $8B0C RST $30         ;
+ $8B0C RST $30         ; Load sprite pattern
 *$8B0D ADD IX,DE       ;
  $8B0F DJNZ $8AEF      ;
  $8B11 RET             ;
@@ -2008,7 +2008,7 @@ c$8B12 LD L,(IY+$02)   ;
 *$8B1E EX DE,HL        ;
  $8B1F LD B,$03        ;
  $8B21 XOR A           ;
-*$8B22 RST $10         ; vdp_write_byte
+*$8B22 RST $10         ; Write VDP byte
  $8B23 INC DE          ;
  $8B24 DJNZ $8B22      ;
  $8B26 LD HL,$001D     ;
@@ -2092,7 +2092,7 @@ c$8B12 LD L,(IY+$02)   ;
  $8BC3 LD A,(IY+$06)   ;
 *$8BC6 EX DE,HL        ;
  $8BC7 LD B,$03        ;
-*$8BC9 RST $10         ; vdp_write_byte
+*$8BC9 RST $10         ; Write VDP byte
  $8BCA ADD A,$03       ;
  $8BCC INC DE          ;
  $8BCD DJNZ $8BC9      ;
@@ -2222,9 +2222,9 @@ c$8C68 LD HL,$725B    ;
  $8C99 LD HL,$7201    ;
  $8C9C ADD A,(HL)     ;
  $8C9D LD HL,$8E0C    ;
- $8CA0 RST $08        ; add_a_to_hl
+ $8CA0 RST $08        ; Add A to HL
  $8CA1 LD B,(HL)      ;
-*$8CA2 RST $28        ;
+*$8CA2 RST $28        ; Allocate sprite
  $8CA3 LD (IX+$00),B  ;
  $8CA6 LD A,(IY+$03)  ;
  $8CA9 RRA            ;
@@ -2267,7 +2267,7 @@ c$8C68 LD HL,$725B    ;
  $8CEE LD A,($725C)   ;
  $8CF1 OR B           ;
  $8CF2 LD (IX+$03),A  ;
- $8CF5 RST $30        ;
+ $8CF5 RST $30        ; Load sprite pattern
  $8CF6 LD HL,$722C    ;
  $8CF9 INC (HL)       ;
  $8CFA LD HL,$7206    ;
@@ -2346,7 +2346,7 @@ c$8D50 LD A,($71F2)    ;
  $8D7B JR NZ,$8DD7     ;
  $8D7D SET 4,(HL)      ;
  $8D7F SET 3,(HL)      ;
- $8D81 RST $28         ;
+ $8D81 RST $28         ; Allocate sprite
  $8D82 LD (IX+$00),$15 ;
  $8D86 LD (IX+$01),$25 ;
  $8D8A LD (IX+$0B),$0C ; Set color
@@ -2355,8 +2355,8 @@ c$8D50 LD A,($71F2)    ;
  $8D91 LD (IX+$02),A   ;
  $8D94 LD ($7262),A    ;
  $8D97 PUSH AF         ;
- $8D98 RST $30         ;
- $8D99 RST $28         ;
+ $8D98 RST $30         ; Load sprite pattern
+ $8D99 RST $28         ; Allocate sprite
  $8D9A LD (IX+$00),$16 ;
  $8D9E LD (IX+$01),$25 ;
  $8DA2 LD (IX+$0B),$0C ; Set color
@@ -2366,8 +2366,8 @@ c$8D50 LD A,($71F2)    ;
  $8DAA AND $3F         ;
  $8DAC LD (IX+$02),A   ;
  $8DAF LD ($7261),A    ;
- $8DB2 RST $30         ;
- $8DB3 RST $28         ;
+ $8DB2 RST $30         ; Load sprite pattern
+ $8DB3 RST $28         ; Allocate sprite
  $8DB4 LD (IX+$00),$17 ;
  $8DB8 LD (IX+$01),$25 ;
  $8DBC LD (IX+$0B),$0F ; Set color
@@ -2376,7 +2376,7 @@ c$8D50 LD A,($71F2)    ;
  $8DC5 ADD A,$04       ;
  $8DC7 AND $3F         ;
  $8DC9 LD (IX+$02),A   ;
- $8DCC RST $30         ;
+ $8DCC RST $30         ; Load sprite pattern
  $8DCD LD A,($7206)    ;
  $8DD0 ADD A,$03       ;
  $8DD2 LD ($7206),A    ;
@@ -2387,7 +2387,7 @@ c$8D50 LD A,($71F2)    ;
 ; Used by the routine at #R$8D50.
 c$8DD7 BIT 1,(IY+$07)  ;
  $8DDB JR Z,$8E04      ;
- $8DDD RST $28         ;
+ $8DDD RST $28         ; Allocate sprite
  $8DDE LD (IX+$00),$14 ;
  $8DE2 LD (IX+$01),$2A ;
  $8DE6 RST $20         ; Random number
@@ -2685,14 +2685,14 @@ c$900E LD HL,$7269     ;
  $901D JR Z,$9039      ;
  $901F LD HL,$7252     ;
  $9022 INC (HL)        ;
- $9023 RST $28         ;
+ $9023 RST $28         ; Allocate sprite
  $9024 LD (IX+$00),$12 ;
  $9028 LD (IX+$0B),$0A ; Set color
  $902C LD A,(IY+$07)   ;
  $902F LD (IX+$01),A   ;
  $9032 LD A,(IY+$08)   ;
  $9035 LD (IX+$02),A   ;
- $9038 RST $30         ;
+ $9038 RST $30         ; Load sprite pattern
 *$9039 CALL $84DB      ;
  $903C RST $20         ; Random number
  $903D AND $3F         ;
@@ -2765,11 +2765,11 @@ c$90D6 CALL $1F85    ; MODE_1 (pattern generator table at  $0000, name table at
 *$9128 LD B,$06      ; 6 letters
 @label=logo_letter
 *$912A LD A,(HL)     ; Get name
- $912B RST $10       ; vdp_write_byte
+ $912B RST $10       ; Write VDP byte
  $912C INC DE        ; Next destination
  $912D INC HL        ; Next source
  $912E LD A,(HL)     ; Get name
- $912F RST $10       ; vdp_write_byte
+ $912F RST $10       ; Write VDP byte
  $9130 INC DE        ; Next destination
  $9131 INC DE        ; Next destination (skip space)
  $9132 INC HL        ; Next source
@@ -2812,7 +2812,7 @@ c$90D6 CALL $1F85    ; MODE_1 (pattern generator table at  $0000, name table at
 c$9175 ADD A,A       ; a *= 2
  $9176 JR Z,$91A1    ; If zero then undraw planet
  $9178 LD HL,$9396   ; Planet table minus 2: #R$9398-2
- $917B RST $08       ; add_a_to_hl
+ $917B RST $08       ; Add A to HL
  $917C LD E,(HL)     ; Get LSB of planet data
  $917D INC HL        ;
  $917E LD D,(HL)     ; Get MSB of planet data
@@ -2847,7 +2847,7 @@ c$91A1 CALL $920D    ; Clear row 7
  $91B7 LD C,$04      ; 4 rows
 *$91B9 LD B,$04      ; 4 columns
 *$91BB LD A,(HL)     ; Get name to write
- $91BC RST $10       ; vdp_write_byte
+ $91BC RST $10       ; Write VDP byte
  $91BD INC DE        ; Next destination
  $91BE INC HL        ; Next source
  $91BF DJNZ $91BB    ; Loop for 4 columns
@@ -2873,7 +2873,7 @@ c$91CC PUSH HL         ; Save address
  $91D3 SRL A           ; (32 - length) / 2
  $91D5 LD DE,$18E0     ; Name table address of row
  $91D8 EX DE,HL        ;
- $91D9 RST $08         ; add_a_to_hl
+ $91D9 RST $08         ; Add A to HL
  $91DA EX DE,HL        ; DE = display address
  $91DB LD C,(HL)       ; Get length
  $91DC LD B,$00        ;
@@ -2882,7 +2882,7 @@ c$91CC PUSH HL         ; Save address
  $91E0 POP HL          ; Restore address
  $91E1 LD A,(HL)       ; Get length
  $91E2 INC A           ; Length + 1
- $91E3 RST $08         ; add_a_to_hl. Now HL points after text.
+ $91E3 RST $08         ; Add A to HL. Now HL points after text.
  $91E4 LD B,(HL)       ; Get number of sprites
  $91E5 INC HL          ; Next source byte
  $91E6 LD C,(HL)       ; Get color
@@ -2949,7 +2949,7 @@ c$921F LD HL,$0279   ; Number of bytes in block at $9475
  $9243 PUSH AF       ; Save number of repeats
  $9244 CALL $9255    ; Get byte to write in A
  $9247 POP BC        ; Restore number of repeats
-*$9248 RST $10       ; vdp_write_byte in A to DE
+*$9248 RST $10       ; Write VDP byte in A to DE
  $9249 INC DE        ; Next VDP address
  $924A DJNZ $9248    ; Loop B times
  $924C JR $922F      ; Loop
@@ -2958,7 +2958,7 @@ c$921F LD HL,$0279   ; Number of bytes in block at $9475
 ;
 ; Used by the routine at #R$921F.
 c$924E CALL $9255    ; Get byte to write
- $9251 RST $10       ; vdp_write_byte in A to DE
+ $9251 RST $10       ; Write VDP byte in A to DE
  $9252 INC DE        ; Next VDP address
  $9253 JR $922F      ; Loop
 
@@ -3370,16 +3370,16 @@ c$9796 LD A,($7182)    ;
  $9833 RET Z           ;
  $9834 CALL $9845      ;
  $9837 LD (IX+$07),$02 ;
- $983B RST $30         ;
+ $983B RST $30         ; Load sprite pattern
  $983C CALL $9845      ;
  $983F LD (IX+$07),$FE ;
- $9843 RST $30         ;
+ $9843 RST $30         ; Load sprite pattern
  $9844 RET             ;
 
 ; Routine at 9845
 ;
 ; Used by the routine at #R$9796.
-c$9845 RST $28         ;
+c$9845 RST $28         ; Allocate sprite
  $9846 LD (IX+$00),$03 ;
  $984A LD (IX+$01),$00 ;
  $984E LD A,($7004)    ;
@@ -3542,7 +3542,7 @@ c$9978 LD A,($7256)  ;
  $998A LD ($7202),A  ;
 *$998D ADD A,A       ;
  $998E LD HL,$9AA7   ;
- $9991 RST $08       ; add_a_to_hl
+ $9991 RST $08       ; Add A to HL
  $9992 LD D,(HL)     ;
  $9993 INC HL        ;
  $9994 LD A,(HL)     ;
@@ -3593,7 +3593,7 @@ c$99D3 LD A,$04        ;
  $99DC INC (HL)        ;
  $99DD ADD A,A         ;
  $99DE LD HL,$9AA7     ;
- $99E1 RST $08         ; add_a_to_hl
+ $99E1 RST $08         ; Add A to HL
  $99E2 LD D,(HL)       ;
  $99E3 INC HL          ;
  $99E4 LD A,(HL)       ;
@@ -3665,7 +3665,7 @@ c$9A49 CP $0E          ;
  $9A5C LD (IX+$03),$0F ;
  $9A60 LD (IX+$04),$FF ;
  $9A64 LD (IX+$06),$00 ;
- $9A68 RST $30         ;
+ $9A68 RST $30         ; Load sprite pattern
 ; This entry point is used by the routine at #R$9A75.
 *$9A69 LD HL,$7206     ;
  $9A6C DEC (HL)        ;
@@ -4599,15 +4599,15 @@ c$A31D CALL $A303    ;
 ; Used by the routine at #R$82BF.
 c$A33B LD HL,$80B5     ;
  $A33E LD ($72C5),HL   ;
- $A341 LD HL,$71EB     ;
- $A344 SET 4,(HL)      ;
+ $A341 LD HL,$71EB     ; Status flags
+ $A344 SET 4,(HL)      ; Set bit 4
  $A346 LD IY,$A4B2     ;
  $A34A LD B,$06        ;
-*$A34C RST $28         ;
+*$A34C RST $28         ; Allocate sprite
  $A34D LD (IX+$00),$0D ;
  $A351 LD (IX+$01),$00 ;
  $A355 LD (IX+$02),$00 ;
- $A359 RST $30         ;
+ $A359 RST $30         ; Load sprite pattern
  $A35A LD (IX+$01),$16 ;
  $A35E LD A,(IY+$00)   ;
  $A361 LD (IX+$02),A   ;
@@ -4625,18 +4625,18 @@ c$A33B LD HL,$80B5     ;
  $A37F POP BC          ;
  $A380 DJNZ $A36E      ;
  $A382 CALL $ACDF      ;
- $A385 RST $28         ;
+ $A385 RST $28         ; Allocate sprite
  $A386 LD (IX+$00),$00 ;
  $A38A LD (IX+$01),$00 ;
  $A38E LD (IX+$02),$00 ;
  $A392 LD (IX+$0B),$06 ; Set color
- $A396 RST $30         ;
- $A397 RST $28         ;
+ $A396 RST $30         ; Load sprite pattern
+ $A397 RST $28         ; Allocate sprite
  $A398 LD (IX+$00),$01 ;
  $A39C LD (IX+$01),$00 ;
  $A3A0 LD (IX+$02),$00 ;
  $A3A4 LD (IX+$0B),$04 ; Set color
- $A3A8 RST $30         ;
+ $A3A8 RST $30         ; Load sprite pattern
  $A3A9 CALL $A808      ;
  $A3AC CALL $ACF9      ;
  $A3AF LD A,$07        ;
@@ -4692,12 +4692,12 @@ c$A3E1 LD A,$2A        ;
  $A420 LD ($72C7),A    ;
  $A423 LD IY,$A4B8     ;
  $A427 LD B,$06        ;
-*$A429 RST $28         ;
+*$A429 RST $28         ; Allocate sprite
  $A42A LD (IX+$00),$0D ;
  $A42E LD (IX+$01),$00 ;
  $A432 LD (IX+$02),$00 ;
  $A436 LD (IX+$0B),$09 ; Set color
- $A43A RST $30         ;
+ $A43A RST $30         ; Load sprite pattern
  $A43B LD A,($72C7)    ;
  $A43E ADD A,(IY+$00)  ;
  $A441 AND $3F         ;
@@ -4857,7 +4857,7 @@ c$A6C8 AND $0F       ;
  $A6CA JR Z,$A6CE    ;
  $A6CC LD C,$30      ;
 *$A6CE OR C          ;
- $A6CF RST $10       ; vdp_write_byte
+ $A6CF RST $10       ; Write VDP byte
  $A6D0 INC DE        ;
  $A6D1 RET           ;
 
@@ -4875,7 +4875,7 @@ c$A6D2 LD HL,$1AE2   ; VDP address of 'lives'
  $A6E1 LD B,A        ; Count
  $A6E2 LD DE,$1AE2   ; VDP address
  $A6E5 LD A,$21      ; Ship character
-*$A6E7 RST $10       ; vdp_write_byte
+*$A6E7 RST $10       ; Write VDP byte
  $A6E8 INC DE        ; Next VDP address
  $A6E9 DJNZ $A6E7    ; Loop
  $A6EB RET           ;
@@ -4963,9 +4963,9 @@ c$A73C LD A,($71F2)    ;
  $A770 AND $3F         ;
  $A772 LD (IX+$02),A   ;
  $A775 LD (IX+$0E),A   ;
- $A778 RST $30         ;
+ $A778 RST $30         ; Load sprite pattern
  $A779 LD IX,$700E     ;
- $A77D RST $30         ;
+ $A77D RST $30         ; Load sprite pattern
  $A77E CALL $A808      ;
 *$A781 LD A,($71EB)    ;
  $A784 BIT 4,A         ;
@@ -5002,7 +5002,7 @@ c$A73C LD A,($71F2)    ;
  $A7BC SET 0,(HL)      ;
  $A7BE BIT 1,(HL)      ;
  $A7C0 JR NZ,$A7D5     ;
- $A7C2 RST $28         ;
+ $A7C2 RST $28         ; Allocate sprite
  $A7C3 LD HL,($7003)   ;
  $A7C6 LD (IX+$01),L   ;
  $A7C9 LD (IX+$02),H   ;
@@ -5013,7 +5013,7 @@ c$A73C LD A,($71F2)    ;
 ; Routine at A7D5
 ;
 ; Used by the routine at #R$A73C.
-c$A7D5 RST $28         ;
+c$A7D5 RST $28         ; Allocate sprite
  $A7D6 LD HL,($7003)   ;
  $A7D9 PUSH HL         ;
  $A7DA LD (IX+$01),L   ;
@@ -5023,7 +5023,7 @@ c$A7D5 RST $28         ;
  $A7E1 LD (IX+$02),A   ;
  $A7E4 LD (IX+$00),$02 ;
  $A7E8 LD (IX+$0B),$0A ; Set color
- $A7EC RST $28         ;
+ $A7EC RST $28         ; Allocate sprite
  $A7ED POP HL          ;
  $A7EE LD (IX+$01),L   ;
  $A7F1 LD A,H          ;
@@ -5064,7 +5064,7 @@ c$A808 PUSH HL         ;
  $A82D RRCA            ;
  $A82E AND $06         ;
  $A830 LD HL,$A875     ;
- $A833 RST $08         ; add_a_to_hl
+ $A833 RST $08         ; Add A to HL
  $A834 LD A,($700B)    ;
  $A837 ADD A,(HL)      ;
  $A838 LD (IY+$00),A   ;
@@ -5288,14 +5288,14 @@ c$AB17 LD A,(HL)       ;
  $AB18 PUSH AF         ;
  $AB19 CALL $AAE3      ;
  $AB1C CALL $AB38      ;
- $AB1F RST $28         ;
+ $AB1F RST $28         ; Allocate sprite
  $AB20 LD (IX+$02),E   ;
  $AB23 LD (IX+$01),D   ;
  $AB26 LD (IX+$00),$10 ;
  $AB2A POP AF          ;
  $AB2B LD (IX+$0B),A   ; Set color
  $AB2E SET 0,(IX+$07)  ;
- $AB32 RST $30         ;
+ $AB32 RST $30         ; Load sprite pattern
  $AB33 LD HL,$722C     ;
  $AB36 INC (HL)        ;
  $AB37 RET             ;
@@ -5439,7 +5439,7 @@ c$ABFF LD HL,$72CC   ;
  $AC10 LD A,($72CF)  ;
  $AC13 LD C,$04      ;
 *$AC15 LD B,$04      ;
-*$AC17 RST $10       ; vdp_write_byte
+*$AC17 RST $10       ; Write VDP byte
  $AC18 INC A         ;
  $AC19 INC DE        ;
  $AC1A DJNZ $AC17    ;
@@ -5464,7 +5464,7 @@ c$AC32 LD DE,$194E   ;
  $AC35 XOR A         ;
  $AC36 LD C,$04      ;
 *$AC38 LD B,$04      ;
-*$AC3A RST $10       ; vdp_write_byte
+*$AC3A RST $10       ; Write VDP byte
  $AC3B INC DE        ;
  $AC3C DJNZ $AC3A    ;
  $AC3E LD HL,$001C   ;
@@ -5531,7 +5531,7 @@ c$ACF9 LD DE,($73F2) ; VDP address of sprite allocation table?
  $AD09 ADD A,C       ; * 12 (may overflow?)
  $AD0A PUSH HL       ;
  $AD0B LD HL,$700A   ; First y address in sprite data table
- $AD0E RST $08       ; add_a_to_hl
+ $AD0E RST $08       ; Add A to HL
  $AD0F LD BC,$0004   ; Write 4 bytes for each sprite
  $AD12 PUSH DE       ;
  $AD13 CALL $1FDF    ; WRITE_VRAM
@@ -5543,7 +5543,7 @@ c$ACF9 LD DE,($73F2) ; VDP address of sprite allocation table?
  $AD1D POP BC        ;
  $AD1E DJNZ $AD02    ; Loop for each sprite
  $AD20 LD A,$D0      ; End marker byte
- $AD22 RST $10       ; vdp_write_byte
+ $AD22 RST $10       ; Write VDP byte
  $AD23 LD A,($7182)  ; Get number of allocation sprites
  $AD26 CP $05        ; Is it < 5
  $AD28 RET C         ; Then return
@@ -5713,7 +5713,7 @@ c$AD8B PUSH HL       ;
  $AE38 RRA           ;
  $AE39 AND $1E       ;
  $AE3B LD HL,$AFDF   ;
- $AE3E RST $08       ; add_a_to_hl
+ $AE3E RST $08       ; Add A to HL
 *$AE3F LD A,($700A)  ;
  $AE42 ADD A,(HL)    ;
  $AE43 LD (IX+$08),A ; Set y
@@ -5795,7 +5795,7 @@ c$AE94 LD A,($72D5)   ; Get counter
  $AEC1 LD ($72DC),HL  ; Save updated pointer, e.g. $72E0
 *$AEC4 LD A,($72D5)   ; Get counter
  $AEC7 LD HL,$B8DD    ; Table of 29 bytes (offsets into table at $B8FA)
- $AECA RST $08        ; add_a_to_hl
+ $AECA RST $08        ; Add A to HL
  $AECB LD E,(HL)      ; Load DE with value from table
  $AECC LD D,$00       ;
  $AECE LD HL,$B8FA    ; Table of pointers to graphics
@@ -5804,7 +5804,7 @@ c$AE94 LD A,($72D5)   ; Get counter
  $AED5 LD A,($72D7)   ; Get counter
  $AED8 INC A          ; Increment
  $AED9 ADD A,A        ; Double
- $AEDA RST $08        ; add_a_to_hl
+ $AEDA RST $08        ; Add A to HL
  $AEDB LD E,(HL)      ; Get LSB of pointer
  $AEDC INC HL         ;
  $AEDD LD D,(HL)      ; Get MSB of pointer
@@ -5814,7 +5814,7 @@ c$AE94 LD A,($72D5)   ; Get counter
  $AEE4 ADD A,A        ; 0, 2, 4, 6
  $AEE5 ADD A,A        ; 0, 4, 8, 12
  $AEE6 ADD A,A        ; 0, 8, 16, 32
- $AEE7 RST $08        ; add_a_to_hl
+ $AEE7 RST $08        ; Add A to HL
  $AEE8 LD DE,$71A3    ; Buffer
  $AEEB LD ($72DE),DE  ; Store as source address
  $AEEF LD BC,$0008    ; Copy 8 bytes
@@ -5983,7 +5983,7 @@ c$AFFF LD HL,$71EC   ; Counter from 7 to 0
 @label=display_star_frame
 c$B023 LD A,($731A)  ; 0, 2, 4, 6, 8, 10
  $B026 LD HL,$B04F   ; Table of pointers
- $B029 RST $08       ; add_a_to_hl
+ $B029 RST $08       ; Add A to HL
  $B02A LD E,(HL)     ; Get LSB
  $B02B INC HL        ;
  $B02C LD D,(HL)     ; Get MSB
@@ -5998,7 +5998,7 @@ c$B023 LD A,($731A)  ; 0, 2, 4, 6, 8, 10
  $B03C JR NC,$B041   ; Then skip writing
  $B03E LD A,(HL)     ; Get byte from table
  $B03F AND C         ; Apply mask
- $B040 RST $10       ; vdp_write_byte A to DE
+ $B040 RST $10       ; Write VDP byte A to DE
 *$B041 INC DE        ; Next VDP address
 *$B042 INC HL        ; Next table address
  $B043 JP $B031      ; Loop
