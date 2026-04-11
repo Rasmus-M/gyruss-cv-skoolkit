@@ -33,19 +33,10 @@ Next: <a href="39693.html">9B0D</a>
 Used by the routine at <a href="32804.html">main</a>.
 </div>
 </div>
-<table class="input">
-<tr class="asm-input-header">
-<th colspan="2">Input</th>
-</tr>
-<tr>
-<td class="register">Sound</td>
-<td class="register-desc">init?</td>
-</tr>
-</table>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L9ADE</td>
+<td class="asm-label">init_sound</td>
 <td class="address-2"><span id="39646"></span>9ADE</td>
 <td class="instruction">CALL $1FD6</td>
 <td class="comment-1" rowspan="1">TURN_OFF_SOUND</td>
@@ -53,7 +44,7 @@ Used by the routine at <a href="32804.html">main</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39649"></span>9AE1</td>
-<td class="instruction">LD HL,$727D</td>
+<td class="instruction">LD HL,<a href="29309.html">L727D</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -66,7 +57,7 @@ Used by the routine at <a href="32804.html">main</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="39655"></span>9AE7</td>
 <td class="instruction">LD (<a href="29296.html">L7270</a>),HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">$727D</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -78,7 +69,7 @@ Used by the routine at <a href="32804.html">main</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="39659"></span>9AEB</td>
 <td class="instruction">LD (<a href="29298.html">L7272</a>),HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">$7287</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -90,7 +81,7 @@ Used by the routine at <a href="32804.html">main</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="39663"></span>9AEF</td>
 <td class="instruction">LD (<a href="29300.html">L7274</a>),HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">$7291</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -102,7 +93,7 @@ Used by the routine at <a href="32804.html">main</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="39667"></span>9AF3</td>
 <td class="instruction">LD (<a href="29302.html">L7276</a>),HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">$729B</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -113,11 +104,11 @@ Used by the routine at <a href="32804.html">main</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39672"></span>9AF8</td>
-<td class="instruction">LD IX,$727D</td>
+<td class="instruction">LD IX,<a href="29309.html">L727D</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">L9ADE_0</td>
+<td class="asm-label">init_sound_0</td>
 <td class="address-2"><span id="39676"></span>9AFC</td>
 <td class="instruction">LD (IX+$00),$FF</td>
 <td class="comment-1" rowspan="1"></td>
@@ -143,7 +134,7 @@ Used by the routine at <a href="32804.html">main</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39690"></span>9B0A</td>
-<td class="instruction">DJNZ <a href="39646.html#39676">L9ADE_0</a></td>
+<td class="instruction">DJNZ <a href="39646.html#39676">init_sound_0</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>

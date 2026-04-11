@@ -89,8 +89,8 @@ Next: <a href="33081.html">8139</a>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32827"></span>803B</td>
-<td class="instruction">CALL <a href="39646.html">L9ADE</a></td>
-<td class="comment-1" rowspan="1">Init some RAM locations (sound?)</td>
+<td class="instruction">CALL <a href="39646.html">init_sound</a></td>
+<td class="comment-1" rowspan="1">Init sound</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -255,13 +255,13 @@ This entry point is used by the routine at <a href="33261.html">L81ED</a>. Fire 
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32895"></span>807F</td>
-<td class="instruction">LD HL,<a href="29169.html">L71F1</a></td>
+<td class="instruction">LD HL,<a href="29169.html">current_player</a></td>
 <td class="comment-1" rowspan="1">Clear RAM  from $71F1</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32898"></span>8082</td>
-<td class="instruction">LD DE,$71F2</td>
+<td class="instruction">LD DE,<a href="29170.html">L71F2</a></td>
 <td class="comment-1" rowspan="1">To $7256</td>
 </tr>
 <tr>
@@ -655,7 +655,7 @@ This entry point is used by the routines at <a href="33198.html">L81AE</a> and <
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33051"></span>811B</td>
-<td class="instruction">LD A,(<a href="29169.html">L71F1</a>)</td>
+<td class="instruction">LD A,(<a href="29169.html">current_player</a>)</td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>

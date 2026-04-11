@@ -32,8 +32,15 @@ b $71EF Byte at 71EF
 B $71EF,1,1
 b $71F0 Byte at 71F0
 B $71F0,1,1
-b $71F1 Data block at 71F1
-B $71F1,7,7
+b $71F1 Current player (0 or 1)
+@ $71F1 label=current_player
+B $71F1,1,1
+b $71F2 Byte at 71F2
+B $71F2,1,1
+b $71F3 Byte at 71F3
+B $71F3,1,1
+b $71F4 Data block at 71F4
+B $71F4,4,4
 b $71F8 Byte at 71F8 (initially set to 6)
 B $71F8,1,1
 b $71F9 Data block at 71F9
@@ -91,8 +98,34 @@ B $7259,1,1
 b $725A Interrupt flag
 @ $725A label=interrupt_flag
 B $725A,1,1
-b $725B Data block at 725B
-B $725B,15,8,7
+b $725B Byte at 725B
+B $725B,1,1
+b $725C Byte at 725C
+B $725C,1,1
+w $725D Word at 725D
+W $725D,2,2
+b $725F Byte at 725F
+B $725F,1,1
+b $7260 Byte at 7260
+B $7260,1,1
+b $7261 Byte at 7261
+B $7261,1,1
+b $7262 Byte at 7262
+B $7262,1,1
+b $7263 Byte at 7263
+B $7263,1,1
+b $7264 Byte at 7264
+B $7264,1,1
+b $7265 Byte at 7265
+B $7265,1,1
+b $7266 Byte at 7266
+B $7266,1,1
+b $7267 Byte at 7267
+B $7267,1,1
+b $7268 Byte at 7268
+B $7268,1,1
+b $7269 Byte at 7269
+B $7269,1,1
 w $726A Word at 726A
 @ $726A label=word_at_726A
 W $726A,2,2
@@ -105,16 +138,60 @@ b $726E Byte at 726E
 B $726E,1,1
 b $726F Byte at 726F
 B $726F,1,1
-w $7270 Word at 7270
+w $7270 Word at 7270 (sound)
 W $7270,2,2
-w $7272 Word at 7272
+w $7272 Word at 7272 (sound)
 W $7272,2,2
-w $7274 Word at 7274
+w $7274 Word at 7274 (sound)
 W $7274,2,2
-w $7276 Word at 7276
+w $7276 Word at 7276 (sound)
 W $7276,2,2
-b $7278 Data block at 7278
-B $7278,93,8*11,5
+b $7278 Data block at 7278 (sound)
+B $7278,2,2
+b $727A Byte at 727A (sound)
+B $727A,1,1
+b $727B Byte at 727B (sound)
+B $727B,1,1
+b $727C Byte at 727C (sound)
+B $727C,1,1
+b $727D Sound channel 1
+B $727D,10,10
+b $7287 Sound channel 2
+B $7287,10,10
+b $7291 Sound channel 3
+B $7291,10,10
+b $729B Sound channel 4
+B $729B,10,10
+b $72A5 Data block at 72A5
+B $72A5,32,8
+w $72C5 Data block at 72C5
+B $72C5,1,1
+b $72C6 Data block at 72C6
+B $72C6,1,1
+b $72C7 Data block at 72C7
+B $72C7,1,1
+b $72C8 Data block at 72C8
+B $72C8,1,1
+b $72C9 Data block at 72C9
+B $72C9,2,1
+b $72CB Byte at 72CB
+B $72CB,1,1
+b $72CC Data block at 72CC
+B $72CC,1,1
+b $72CD Data block at 72CD
+B $72CD,1,1
+b $72CE Data block at 72CE
+B $72CE,1,1
+b $72CF Data block at 72CF
+B $72CF,1,1
+w $72D0 Data block at 72D0
+W $72D0,2,2
+b $72D2 Data block at 72D2
+B $72D2,1,1
+b $72D3 Data block at 72D3
+B $72D3,1,1
+b $72D4 Data block at 72D4
+B $72D4,1,1
 b $72D5 Byte at 72D5
 B $72D5,1,1
 b $72D6 Byte at 72D6
@@ -139,13 +216,15 @@ B $731A,1,1
 b $731B Random number
 @ $731B label=random_number
 B $731B,2,2
-b $731D Data block at 731D
-B $731D,217,8*27,1
+b $731D Stack
+B $731D,158,8*19,6
+s $73BB Unused
+S $73BB,59,$3B
 w $73F6 Stars VDP address
 @ $73F6 label=stars_vdp_address
 W $73F6,2,2
-b $73F8 Data block at 73F8
-B $73F8,8,8
+s $73F8 Unused
+S $73F8,8,$08
 s $7400 Unused
 S $7400,3072,$0C00
 b $8000 ROM header
@@ -181,7 +260,7 @@ c $8024 Entry point
 C $8027,2 Controller enable
 C $8029,3 Clear RAM
 C $8035,3 Set word
-C $803B,3 Init some RAM locations (sound?)
+C $803B,3 Init sound
 C $803E,3 Start screen
 C $8041,3 180 * 60 frames
 C $8044,3 Set screensaver countdown
@@ -265,6 +344,7 @@ C $8146,3 READ_REGISTER
 c $8170 Routine at 8170
 D $8170 Used by the routine at #R$8139.
 C $8182,1 vdp_write_byte
+C $8183,3 Display player
 C $818F,1 WRITE_VRAM
 c $81AE Routine at 81AE
 D $81AE Used by the routine at #R$8170.
@@ -390,11 +470,48 @@ C $82CD,1 Length
 C $82CE,2 MSB of length
 C $82D0,1 Increment source to text
 C $82D1,1 WRITE_VRAM Display the X WARPS TO Y message
-N $82D2 Now what?
-C $82D7,3 Stage
-c $830E Routine at 830E
+N $82D2 Display ship and stars with music for a short while
+C $82D2,3 Display player if 2 player
+C $82D5,2 For calculating ...
+C $82D7,3 Get stage
+C $82DA,3 Add completed stages
+C $82DD,1 ...
+C $82DE,2 If 1 then skip ahead with B = 0
+C $82E0,2 ...
+C $82E2,2 Stage mod 4
+C $82E4,2 Set B = 5
+C $82E6,2 And skip ahead if stage mod 4 < 1
+C $82E8,2 ...
+C $82EA,2 Set B = 3
+C $82EC,2 And skip ahead if stage mod 4 = 1
+C $82EE,2 Set B = 4
+C $82F0,2 And skip ahead if stage mod 4 = 2
+C $82F2,2 ...
+C $82F4,2 Set B = 6
+C $82F6,1 Set A = B
+C $82F7,3 Play selected tune
+C $82FA,3 Display lives
+C $82FD,3 Init sprite data
+C $8300,3 Display ship and stars
+C $8303,3 Init some variables
+C $8306,3 Reset some status flags
+C $8309,2 ...
+C $830B,2 ...
+c $830E Display player message
 D $830E Used by the routines at #R$8170 and #R$82BF.
+@ $830E display_player
+C $830E,3 Status
+C $8311,2 Check bit for 2 players
+C $8313,1 Return if not set
+C $8314,3 PLAYER 1 message
+C $8317,3 VDP address
+C $831A,3 8 characters
 C $831D,1 WRITE_VRAM
+C $831E,3 Current player
+C $8321,1 Is it player 1?
+C $8322,1 The return
+C $8323,2 ASCII 2
+C $8325,3 VDP address
 C $8328,1 vdp_write_byte
 c $832A Routine at 832A
 D $832A Used by the routine at #R$8024.
@@ -662,6 +779,12 @@ c $8E89 Routine at 8E89
 D $8E89 Used by the routine at #R$8E2C.
 N $8E8D This entry point is used by the routines at #R$82BF and #R$8FED.
 C $8E8D,1 Random number
+C $8E8E,2 0 - 15
+C $8E90,2 5  - 20
+C $8E92,3 Store
+C $8E95,1 A = 0
+C $8E96,3 Set to 0
+C $8E99,3 Set to 0
 c $8E9D Routine at 8E9D
 D $8E9D Used by the routine at #R$8E2C.
 c $8F0F Routine at 8F0F
@@ -1063,11 +1186,17 @@ C $9AD6,2 Delay
 C $9ADB,2 Read byte
 c $9ADE Routine at 9ADE
 D $9ADE Used by the routine at #R$8024.
-R $9ADE Sound init?
+@ $9ADE label=init_sound
 C $9ADE,3 TURN_OFF_SOUND
+C $9AE7,3 $727D
+C $9AEB,3 $7287
+C $9AEF,3 $7291
+C $9AF3,3 $729B
 C $9B04,4 Set y
-c $9B0D Routine at 9B0D
+c $9B0D Play tune?
 D $9B0D Used by the routines at #R$9BD9, #R$9C1C and #R$9E91.
+R $9B0D I:A 0 - 6
+@ $9B0D label=play_tune
 c $9B54 Routine at 9B54
 D $9B54 Used by the routine at #R$9B0D.
 N $9B56 This entry point is used by the routine at #R$9B0D.
@@ -1078,9 +1207,9 @@ D $9B70 Used by the routine at #R$9B59.
 N $9B82 This entry point is used by the routine at #R$9B59.
 c $9B87 Routine at 9B87
 D $9B87 Used by the routines at #R$8139, #R$832A and #R$9C1C.
-c $9B99 Routine at 9B99
+c $9B99 Sound player?
 D $9B99 Used by the routine at #R$8522.
-C $9B99,3 Sound player?
+@ $9B99 label=sound_player
 N $9BAE This entry point is used by the routine at #R$9BD9.
 N $9BCA This entry point is used by the routines at #R$9BD9 and #R$9BF8.
 c $9BD9 Routine at 9BD9
@@ -1136,20 +1265,30 @@ c $9E4A Routine at 9E4A
 D $9E4A Used by the routine at #R$9E01.
 c $9E5C Routine at 9E5C
 c $9E75 Routine at 9E75
-c $9E91 Routine at 9E91
+c $9E91 Play tune (preserve registers)?
 D $9E91 Used by the routines at #R$82BF, #R$832A and #R$846B.
+@ $9E91 label=play_tune_save_regs
+C $9E98,3 Play tune
 c $9EA3 Routine at 9EA3
 D $9EA3 Used by the routines at #R$8139, #R$8368, #R$8C52, #R$8E9D, #R$9934, #R$99A0, #R$99B1, #R$99D3, #R$A33B and #R$A6EC.
 b $9EB6 Data block at 9EB6
 B $9EB6,1029,8*128,5
 c $A2BB Routine at A2BB
 D $A2BB Used by the routine at #R$9B99.
-@ $A2BB label=sound_player
+C $A2BB,2 Mute channel 1
+C $A2C8,2 Mute channel 2
+C $A2D5,2 Mute channel 3
+C $A2E2,2 Mute channel 4
 c $A2F3 Routine at A2F3
 D $A2F3 Used by the routine at #R$A2BB.
 N $A303 This entry point is used by the routine at #R$A31D.
-c $A314 Routine at A314
+c $A314 Send sound data to PSG
 D $A314 Used by the routine at #R$A2BB.
+R $A314 I:A
+R $A314 I:C
+R $A314 I:D
+R $A314 I:IX
+@ $A314 label=output_sound
 c $A31D Routine at A31D
 D $A31D Used by the routine at #R$A314.
 c $A33B Routine at A33B
@@ -1178,10 +1317,22 @@ D $A699 Used by the routines at #R$8024 and #R$846B.
 c $A6C8 Routine at A6C8
 D $A6C8 Used by the routine at #R$A699.
 C $A6CF,1 vdp_write_byte
-c $A6D2 Routine at A6D2
+c $A6D2 Display lives
 D $A6D2 Used by the routines at #R$82BF and #R$A6EC.
+@ $A6D2 label=display-lives
+C $A6D2,3 VDP address of 'lives'
+C $A6D5,3 Count
+C $A6D8,1 Value
 C $A6D9,3 FILL_VRAM
+C $A6DC,3 Get lives
+C $A6DF,1 Display one less live
+C $A6E0,1 Return if none to display
+C $A6E1,1 Count
+C $A6E2,3 VDP address
+C $A6E5,2 Ship character
 C $A6E7,1 vdp_write_byte
+C $A6E8,1 Next VDP address
+C $A6E9,2 Loop
 c $A6EC Routine at A6EC
 D $A6EC Used by the routines at #R$846B and #R$9978.
 c $A73C Routine at A73C
@@ -1559,6 +1710,8 @@ C $B1D4,1 ...
 C $B1D5,1 ...
 C $B1D6,1 ...
 C $B1D7,1 ...
+C $B1FD,3 $60
+C $B20B,3 $80
 b $B21D Data block at B21D
 B $B21D,1728,8
 b $B8DD Graphics pointer offsets

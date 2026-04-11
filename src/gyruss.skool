@@ -113,8 +113,18 @@ b$71EF DEFB $00
 ; Byte at 71F0
 b$71F0 DEFB $00
 
-; Data block at 71F1
-b$71F1 DEFB $00,$00,$00,$00,$00,$00,$00
+; Current player (0 or 1)
+@label=current_player
+b$71F1 DEFB $00
+
+; Byte at 71F2
+b$71F2 DEFB $00
+
+; Byte at 71F3
+b$71F3 DEFB $00
+
+; Data block at 71F4
+b$71F4 DEFB $00,$00,$00,$00
 
 ; Byte at 71F8 (initially set to 6)
 b$71F8 DEFB $00
@@ -206,9 +216,47 @@ b$7259 DEFB $00
 @label=interrupt_flag
 b$725A DEFB $00
 
-; Data block at 725B
-b$725B DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7263 DEFB $00,$00,$00,$00,$00,$00,$00
+; Byte at 725B
+b$725B DEFB $00
+
+; Byte at 725C
+b$725C DEFB $00
+
+; Word at 725D
+w$725D DEFW $0000
+
+; Byte at 725F
+b$725F DEFB $00
+
+; Byte at 7260
+b$7260 DEFB $00
+
+; Byte at 7261
+b$7261 DEFB $00
+
+; Byte at 7262
+b$7262 DEFB $00
+
+; Byte at 7263
+b$7263 DEFB $00
+
+; Byte at 7264
+b$7264 DEFB $00
+
+; Byte at 7265
+b$7265 DEFB $00
+
+; Byte at 7266
+b$7266 DEFB $00
+
+; Byte at 7267
+b$7267 DEFB $00
+
+; Byte at 7268
+b$7268 DEFB $00
+
+; Byte at 7269
+b$7269 DEFB $00
 
 ; Word at 726A
 @label=word_at_726A
@@ -227,31 +275,90 @@ b$726E DEFB $00
 ; Byte at 726F
 b$726F DEFB $00
 
-; Word at 7270
+; Word at 7270 (sound)
 w$7270 DEFW $0000
 
-; Word at 7272
+; Word at 7272 (sound)
 w$7272 DEFW $0000
 
-; Word at 7274
+; Word at 7274 (sound)
 w$7274 DEFW $0000
 
-; Word at 7276
+; Word at 7276 (sound)
 w$7276 DEFW $0000
 
-; Data block at 7278
-b$7278 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7280 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7288 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7290 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7298 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $72A0 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $72A8 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $72B0 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $72B8 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $72C0 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $72C8 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $72D0 DEFB $00,$00,$00,$00,$00
+; Data block at 7278 (sound)
+b$7278 DEFB $00,$00
+
+; Byte at 727A (sound)
+b$727A DEFB $00
+
+; Byte at 727B (sound)
+b$727B DEFB $00
+
+; Byte at 727C (sound)
+b$727C DEFB $00
+
+; Sound channel 1
+b$727D DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+
+; Sound channel 2
+b$7287 DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+
+; Sound channel 3
+b$7291 DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+
+; Sound channel 4
+b$729B DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+
+; Data block at 72A5
+b$72A5 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $72AD DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $72B5 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $72BD DEFB $00,$00,$00,$00,$00,$00,$00,$00
+
+; Data block at 72C5
+w$72C5 DEFB $00
+
+; Data block at 72C6
+b$72C6 DEFB $00
+
+; Data block at 72C7
+b$72C7 DEFB $00
+
+; Data block at 72C8
+b$72C8 DEFB $00
+
+; Data block at 72C9
+b$72C9 DEFB $00
+ $72CA DEFB $00
+
+; Byte at 72CB
+b$72CB DEFB $00
+
+; Data block at 72CC
+b$72CC DEFB $00
+
+; Data block at 72CD
+b$72CD DEFB $00
+
+; Data block at 72CE
+b$72CE DEFB $00
+
+; Data block at 72CF
+b$72CF DEFB $00
+
+; Data block at 72D0
+w$72D0 DEFW $0000
+
+; Data block at 72D2
+b$72D2 DEFB $00
+
+; Data block at 72D3
+b$72D3 DEFB $00
+
+; Data block at 72D4
+b$72D4 DEFB $00
 
 ; Byte at 72D5
 b$72D5 DEFB $00
@@ -316,7 +423,7 @@ b$731A DEFB $00
 @label=random_number
 b$731B DEFB $00,$00
 
-; Data block at 731D
+; Stack
 b$731D DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $7325 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $732D DEFB $00,$00,$00,$00,$00,$00,$00,$00
@@ -336,22 +443,17 @@ b$731D DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $739D DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $73A5 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $73AD DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $73B5 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $73BD DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $73C5 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $73CD DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $73D5 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $73DD DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $73E5 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $73ED DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $73F5 DEFB $00
+ $73B5 DEFB $00,$00,$00,$00,$00,$00
+
+; Unused
+s$73BB DEFS $3B
 
 ; Stars VDP address
 @label=stars_vdp_address
 w$73F6 DEFW $0000
 
-; Data block at 73F8
-b$73F8 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+; Unused
+s$73F8 DEFS $08
 
 ; Unused
 s$7400 DEFS $0C00
@@ -409,7 +511,7 @@ c$8024 LD SP,$73BA   ;
  $8033 LDIR          ;
  $8035 LD HL,$8060   ; Set word
  $8038 LD ($7000),HL ;
- $803B CALL $9ADE    ; Init some RAM locations (sound?)
+ $803B CALL $9ADE    ; Init sound
  $803E CALL $90D6    ; Start screen
  $8041 LD HL,$2A30   ; 180 * 60 frames
  $8044 LD ($7257),HL ; Set screensaver countdown
@@ -557,7 +659,7 @@ c$8170 CALL $8D21    ;
  $817D LD DE,$1C00   ;
  $8180 LD A,$D0      ;
  $8182 RST $10       ; vdp_write_byte
- $8183 CALL $830E    ;
+ $8183 CALL $830E    ; Display player
  $8186 LD HL,$85DD   ;
  $8189 LD DE,$19CB   ;
  $818C LD BC,$0009   ;
@@ -627,8 +729,8 @@ c$81ED LD HL,$4650   ; 300 frames
 
 ; Init stage
 ;
-; Initializa stage and display X WARPS TO Y message
-; Used by the routines at #R$8024, #R$81AE and #R$83D0.
+; Initializa stage and display X WARPS TO Y message Used by the routines at
+; #R$8024, #R$81AE and #R$83D0.
 @label=init_stage
 c$8212 LD HL,$722E   ; Clear $28 bytes from $722E
  $8215 LD DE,$722F   ; ...
@@ -738,50 +840,51 @@ c$8212 LD HL,$722E   ; Clear $28 bytes from $722E
  $82CE LD B,$00      ; MSB of length
  $82D0 INC HL        ; Increment source to text
  $82D1 RST $38       ; WRITE_VRAM Display the X WARPS TO Y message
-; Now what?
- $82D2 CALL $830E    ;
- $82D5 LD B,$00      ;
- $82D7 LD A,($7200)  ; Stage
- $82DA LD HL,$7205   ;
- $82DD ADD A,(HL)    ;
- $82DE CP $01        ;
- $82E0 JR Z,$82F6    ;
- $82E2 AND $03       ;
- $82E4 LD B,$05      ;
- $82E6 CP $01        ;
- $82E8 JR C,$82F6    ;
- $82EA LD B,$03      ;
- $82EC JR Z,$82F6    ;
- $82EE LD B,$04      ;
- $82F0 CP $02        ;
- $82F2 JR Z,$82F6    ;
- $82F4 LD B,$06      ;
-*$82F6 LD A,B        ;
- $82F7 CALL $9E91    ;
- $82FA CALL $A6D2    ;
- $82FD CALL $ACDF    ;
- $8300 CALL $A33B    ;
- $8303 CALL $8E8D    ;
- $8306 LD HL,$71EB   ;
- $8309 RES 4,(HL)    ;
- $830B SET 6,(HL)    ;
+; Display ship and stars with music for a short while
+ $82D2 CALL $830E    ; Display player if 2 player
+ $82D5 LD B,$00      ; For calculating ...
+ $82D7 LD A,($7200)  ; Get stage
+ $82DA LD HL,$7205   ; Add completed stages
+ $82DD ADD A,(HL)    ; ...
+ $82DE CP $01        ; If 1 then skip ahead with B = 0
+ $82E0 JR Z,$82F6    ; ...
+ $82E2 AND $03       ; Stage mod 4
+ $82E4 LD B,$05      ; Set B = 5
+ $82E6 CP $01        ; And skip ahead if stage mod 4 < 1
+ $82E8 JR C,$82F6    ; ...
+ $82EA LD B,$03      ; Set B = 3
+ $82EC JR Z,$82F6    ; And skip ahead if stage mod 4 = 1
+ $82EE LD B,$04      ; Set B = 4
+ $82F0 CP $02        ; And skip ahead if stage mod 4 = 2
+ $82F2 JR Z,$82F6    ; ...
+ $82F4 LD B,$06      ; Set B = 6
+*$82F6 LD A,B        ; Set A = B
+ $82F7 CALL $9E91    ; Play selected tune
+ $82FA CALL $A6D2    ; Display lives
+ $82FD CALL $ACDF    ; Init sprite data
+ $8300 CALL $A33B    ; Display ship and stars
+ $8303 CALL $8E8D    ; Init some variables
+ $8306 LD HL,$71EB   ; Reset some status flags
+ $8309 RES 4,(HL)    ; ...
+ $830B SET 6,(HL)    ; ...
  $830D RET           ;
 
-; Routine at 830E
+; Display player message
 ;
 ; Used by the routines at #R$8170 and #R$82BF.
-c$830E LD A,($71EB)  ;
- $8311 BIT 7,A       ;
- $8313 RET Z         ;
- $8314 LD HL,$8581   ;
- $8317 LD DE,$192C   ;
- $831A LD BC,$0008   ;
+@display_player
+c$830E LD A,($71EB)  ; Status
+ $8311 BIT 7,A       ; Check bit for 2 players
+ $8313 RET Z         ; Return if not set
+ $8314 LD HL,$8581   ; PLAYER 1 message
+ $8317 LD DE,$192C   ; VDP address
+ $831A LD BC,$0008   ; 8 characters
  $831D RST $38       ; WRITE_VRAM
- $831E LD A,($71F1)  ;
- $8321 OR A          ;
- $8322 RET Z         ;
- $8323 LD A,$32      ;
- $8325 LD DE,$1933   ;
+ $831E LD A,($71F1)  ; Current player
+ $8321 OR A          ; Is it player 1?
+ $8322 RET Z         ; The return
+ $8323 LD A,$32      ; ASCII 2
+ $8325 LD DE,$1933   ; VDP address
  $8328 RST $10       ; vdp_write_byte
  $8329 RET           ;
 
@@ -2377,12 +2480,12 @@ c$8E89 XOR A         ;
  $8E8A LD ($7266),A  ;
 ; This entry point is used by the routines at #R$82BF and #R$8FED.
 *$8E8D RST $20       ; Random number
- $8E8E AND $0F       ;
- $8E90 ADD A,$05     ;
- $8E92 LD ($7263),A  ;
- $8E95 XOR A         ;
- $8E96 LD ($7265),A  ;
- $8E99 LD ($7264),A  ;
+ $8E8E AND $0F       ; 0 - 15
+ $8E90 ADD A,$05     ; 5  - 20
+ $8E92 LD ($7263),A  ; Store
+ $8E95 XOR A         ; A = 0
+ $8E96 LD ($7265),A  ; Set to 0
+ $8E99 LD ($7264),A  ; Set to 0
  $8E9C RET           ;
 
 ; Routine at 8E9D
@@ -3681,18 +3784,17 @@ c$9AD0 LD A,E        ; Set LSB of VDP address
 ; Routine at 9ADE
 ;
 ; Used by the routine at #R$8024.
-;
-; Sound init?
+@label=init_sound
 c$9ADE CALL $1FD6      ; TURN_OFF_SOUND
  $9AE1 LD HL,$727D     ;
  $9AE4 LD DE,$000A     ;
- $9AE7 LD ($7270),HL   ;
+ $9AE7 LD ($7270),HL   ; $727D
  $9AEA ADD HL,DE       ;
- $9AEB LD ($7272),HL   ;
+ $9AEB LD ($7272),HL   ; $7287
  $9AEE ADD HL,DE       ;
- $9AEF LD ($7274),HL   ;
+ $9AEF LD ($7274),HL   ; $7291
  $9AF2 ADD HL,DE       ;
- $9AF3 LD ($7276),HL   ;
+ $9AF3 LD ($7276),HL   ; $729B
  $9AF6 LD B,$04        ;
  $9AF8 LD IX,$727D     ;
 *$9AFC LD (IX+$00),$FF ;
@@ -3702,9 +3804,12 @@ c$9ADE CALL $1FD6      ; TURN_OFF_SOUND
  $9B0A DJNZ $9AFC      ;
  $9B0C RET             ;
 
-; Routine at 9B0D
+; Play tune?
 ;
 ; Used by the routines at #R$9BD9, #R$9C1C and #R$9E91.
+;
+; I:A 0 - 6
+@label=play_tune
 c$9B0D CP $07          ;
  $9B0F JR Z,$9B19      ;
  $9B11 LD ($727C),A    ;
@@ -3787,10 +3892,11 @@ c$9B87 XOR A         ;
  $9B95 LD ($729B),A  ;
  $9B98 RET           ;
 
-; Routine at 9B99
+; Sound player?
 ;
 ; Used by the routine at #R$8522.
-c$9B99 CALL $A2BB      ; Sound player?
+@label=sound_player
+c$9B99 CALL $A2BB      ;
  $9B9C CALL $9D67      ;
  $9B9F LD A,($727A)    ;
  $9BA2 AND A           ;
@@ -4235,15 +4341,16 @@ c$9E75 INC (IX+$03)  ;
  $9E8D XOR A         ;
  $9E8E JP $9D3D      ;
 
-; Routine at 9E91
+; Play tune (preserve registers)?
 ;
 ; Used by the routines at #R$82BF, #R$832A and #R$846B.
+@label=play_tune_save_regs
 c$9E91 PUSH BC       ;
  $9E92 PUSH DE       ;
  $9E93 PUSH HL       ;
  $9E94 PUSH IX       ;
  $9E96 PUSH IY       ;
- $9E98 CALL $9B0D    ;
+ $9E98 CALL $9B0D    ; Play tune
  $9E9B POP IY        ;
  $9E9D POP IX        ;
  $9E9F POP HL        ;
@@ -4403,23 +4510,22 @@ b$9EB6 DEFB $35,$39,$3C,$40,$43,$47,$4C,$50
 ; Routine at A2BB
 ;
 ; Used by the routine at #R$9B99.
-@label=sound_player
-c$A2BB LD A,$9F      ;
+c$A2BB LD A,$9F      ; Mute channel 1
  $A2BD LD C,$90      ;
  $A2BF LD D,$80      ;
  $A2C1 LD IX,($7272) ;
  $A2C5 CALL $A314    ;
- $A2C8 LD A,$BF      ;
+ $A2C8 LD A,$BF      ; Mute channel 2
  $A2CA LD C,$B0      ;
  $A2CC LD D,$A0      ;
  $A2CE LD IX,($7274) ;
  $A2D2 CALL $A314    ;
- $A2D5 LD A,$DF      ;
+ $A2D5 LD A,$DF      ; Mute channel 3
  $A2D7 LD C,$D0      ;
  $A2D9 LD D,$C0      ;
  $A2DB LD IX,($7276) ;
  $A2DF CALL $A314    ;
- $A2E2 LD A,$FF      ;
+ $A2E2 LD A,$FF      ; Mute channel 4
  $A2E4 LD C,$F0      ;
  $A2E6 LD IX,($7270) ;
  $A2EA LD E,(IX+$00) ;
@@ -4452,9 +4558,15 @@ c$A2F3 CALL $A303    ;
  $A311 OUT ($FF),A   ;
  $A313 RET           ;
 
-; Routine at A314
+; Send sound data to PSG
 ;
 ; Used by the routine at #R$A2BB.
+;
+; I:A
+; I:C
+; I:D
+; I:IX
+@label=output_sound
 c$A314 LD E,(IX+$00) ;
  $A317 INC E         ;
  $A318 JR NZ,$A31D   ;
@@ -4749,22 +4861,23 @@ c$A6C8 AND $0F       ;
  $A6D0 INC DE        ;
  $A6D1 RET           ;
 
-; Routine at A6D2
+; Display lives
 ;
 ; Used by the routines at #R$82BF and #R$A6EC.
-c$A6D2 LD HL,$1AE2   ;
- $A6D5 LD DE,$0009   ;
- $A6D8 XOR A         ;
+@label=display-lives
+c$A6D2 LD HL,$1AE2   ; VDP address of 'lives'
+ $A6D5 LD DE,$0009   ; Count
+ $A6D8 XOR A         ; Value
  $A6D9 CALL $1F82    ; FILL_VRAM
- $A6DC LD A,($71FF)  ;
- $A6DF DEC A         ;
- $A6E0 RET Z         ;
- $A6E1 LD B,A        ;
- $A6E2 LD DE,$1AE2   ;
- $A6E5 LD A,$21      ;
+ $A6DC LD A,($71FF)  ; Get lives
+ $A6DF DEC A         ; Display one less live
+ $A6E0 RET Z         ; Return if none to display
+ $A6E1 LD B,A        ; Count
+ $A6E2 LD DE,$1AE2   ; VDP address
+ $A6E5 LD A,$21      ; Ship character
 *$A6E7 RST $10       ; vdp_write_byte
- $A6E8 INC DE        ;
- $A6E9 DJNZ $A6E7    ;
+ $A6E8 INC DE        ; Next VDP address
+ $A6E9 DJNZ $A6E7    ; Loop
  $A6EB RET           ;
 
 ; Routine at A6EC
@@ -6018,7 +6131,7 @@ c$B1C6 PUSH IX        ;
  $B1F8 LD A,(HL)      ;
  $B1F9 JR Z,$B1FD     ;
  $B1FB NEG            ;
-*$B1FD ADD A,(IX+$00) ;
+*$B1FD ADD A,(IX+$00) ; $60
  $B200 SUB $04        ;
  $B202 LD D,A         ;
  $B203 INC HL         ;
@@ -6026,7 +6139,7 @@ c$B1C6 PUSH IX        ;
  $B205 BIT 5,E        ;
  $B207 JR NZ,$B20B    ;
  $B209 NEG            ;
-*$B20B ADD A,(IX+$01) ;
+*$B20B ADD A,(IX+$01) ; $80
  $B20E SUB $04        ;
  $B210 LD E,A         ;
  $B211 OR A           ;

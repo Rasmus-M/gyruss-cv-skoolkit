@@ -24,19 +24,28 @@ Next: <a href="39764.html">9B54</a>
 </td>
 </tr>
 </table>
-<div class="description">9B0D: Routine at 9B0D</div>
+<div class="description">9B0D: Play tune?</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="39897.html">L9BD9</a>, <a href="39964.html">L9C1C</a> and <a href="40593.html">L9E91</a>.
+Used by the routines at <a href="39897.html">L9BD9</a>, <a href="39964.html">L9C1C</a> and <a href="40593.html">play_tune_save_regs</a>.
 </div>
 </div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">A</td>
+<td class="register-desc">0 - 6</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L9B0D</td>
+<td class="asm-label">play_tune</td>
 <td class="address-2"><span id="39693"></span>9B0D</td>
 <td class="instruction">CP $07</td>
 <td class="comment-0" rowspan="1"></td>
@@ -44,13 +53,13 @@ Used by the routines at <a href="39897.html">L9BD9</a>, <a href="39964.html">L9C
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39695"></span>9B0F</td>
-<td class="instruction">JR Z,<a href="39693.html#39705">L9B0D_0</a></td>
+<td class="instruction">JR Z,<a href="39693.html#39705">play_tune_0</a></td>
 <td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39697"></span>9B11</td>
-<td class="instruction">LD ($727C),A</td>
+<td class="instruction">LD (<a href="29308.html">L727C</a>),A</td>
 <td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
@@ -66,7 +75,7 @@ Used by the routines at <a href="39897.html">L9BD9</a>, <a href="39964.html">L9C
 <td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">L9B0D_0</td>
+<td class="asm-label">play_tune_0</td>
 <td class="address-2"><span id="39705"></span>9B19</td>
 <td class="instruction">RLCA</td>
 <td class="comment-0" rowspan="1"></td>
@@ -110,7 +119,7 @@ Used by the routines at <a href="39897.html">L9BD9</a>, <a href="39964.html">L9C
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39715"></span>9B23</td>
-<td class="instruction">LD IX,$727D</td>
+<td class="instruction">LD IX,<a href="29309.html">L727D</a></td>
 <td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
@@ -126,7 +135,7 @@ Used by the routines at <a href="39897.html">L9BD9</a>, <a href="39964.html">L9C
 <td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">L9B0D_1</td>
+<td class="asm-label">play_tune_1</td>
 <td class="address-2"><span id="39723"></span>9B2B</td>
 <td class="instruction">LD A,(HL)</td>
 <td class="comment-0" rowspan="1"></td>
@@ -182,7 +191,7 @@ Used by the routines at <a href="39897.html">L9BD9</a>, <a href="39964.html">L9C
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39743"></span>9B3F</td>
-<td class="instruction">DJNZ <a href="39693.html#39723">L9B0D_1</a></td>
+<td class="instruction">DJNZ <a href="39693.html#39723">play_tune_1</a></td>
 <td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
@@ -194,19 +203,19 @@ Used by the routines at <a href="39897.html">L9BD9</a>, <a href="39964.html">L9C
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39747"></span>9B43</td>
-<td class="instruction">LD ($727B),A</td>
+<td class="instruction">LD (<a href="29307.html">L727B</a>),A</td>
 <td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39750"></span>9B46</td>
-<td class="instruction">LD ($727A),A</td>
+<td class="instruction">LD (<a href="29306.html">L727A</a>),A</td>
 <td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39753"></span>9B49</td>
-<td class="instruction">LD A,($727C)</td>
+<td class="instruction">LD A,(<a href="29308.html">L727C</a>)</td>
 <td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>

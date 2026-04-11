@@ -694,7 +694,7 @@ Display X WARPS TO Y message
 <span id="33490"></span>
 <div class="comments">
 <div class="paragraph">
-Now what?
+Display ship and stars with music for a short while
 </div>
 </div>
 </td>
@@ -703,157 +703,157 @@ Now what?
 <td class="asm-label"></td>
 <td class="address-1"><span id="33490"></span>82D2</td>
 <td class="instruction">CALL <a href="33550.html">L830E</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Display player if 2 player</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33493"></span>82D5</td>
 <td class="instruction">LD B,$00</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">For calculating ...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33495"></span>82D7</td>
 <td class="instruction">LD A,(<a href="29184.html">stage</a>)</td>
-<td class="comment-1" rowspan="1">Stage</td>
+<td class="comment-1" rowspan="1">Get stage</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33498"></span>82DA</td>
 <td class="instruction">LD HL,<a href="29189.html">completed_stages</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add completed stages</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33501"></span>82DD</td>
 <td class="instruction">ADD A,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33502"></span>82DE</td>
 <td class="instruction">CP $01</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If 1 then skip ahead with B = 0</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33504"></span>82E0</td>
 <td class="instruction">JR Z,<a href="33298.html#33526">init_stage_10</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33506"></span>82E2</td>
 <td class="instruction">AND $03</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stage mod 4</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33508"></span>82E4</td>
 <td class="instruction">LD B,$05</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set B = 5</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33510"></span>82E6</td>
 <td class="instruction">CP $01</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">And skip ahead if stage mod 4 &lt; 1</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33512"></span>82E8</td>
 <td class="instruction">JR C,<a href="33298.html#33526">init_stage_10</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33514"></span>82EA</td>
 <td class="instruction">LD B,$03</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set B = 3</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33516"></span>82EC</td>
 <td class="instruction">JR Z,<a href="33298.html#33526">init_stage_10</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">And skip ahead if stage mod 4 = 1</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33518"></span>82EE</td>
 <td class="instruction">LD B,$04</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set B = 4</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33520"></span>82F0</td>
 <td class="instruction">CP $02</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">And skip ahead if stage mod 4 = 2</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33522"></span>82F2</td>
 <td class="instruction">JR Z,<a href="33298.html#33526">init_stage_10</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33524"></span>82F4</td>
 <td class="instruction">LD B,$06</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set B = 6</td>
 </tr>
 <tr>
 <td class="asm-label">init_stage_10</td>
 <td class="address-2"><span id="33526"></span>82F6</td>
 <td class="instruction">LD A,B</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set A = B</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33527"></span>82F7</td>
-<td class="instruction">CALL <a href="40593.html">L9E91</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL <a href="40593.html">play_tune_save_regs</a></td>
+<td class="comment-1" rowspan="1">Play selected tune</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33530"></span>82FA</td>
-<td class="instruction">CALL <a href="42706.html">LA6D2</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL <a href="42706.html">display-lives</a></td>
+<td class="comment-1" rowspan="1">Display lives</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33533"></span>82FD</td>
 <td class="instruction">CALL <a href="44255.html">init_sprite_data</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Init sprite data</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33536"></span>8300</td>
 <td class="instruction">CALL <a href="41787.html">LA33B</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Display ship and stars</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33539"></span>8303</td>
 <td class="instruction">CALL <a href="36489.html#36493">L8E89_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Init some variables</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33542"></span>8306</td>
 <td class="instruction">LD HL,<a href="29163.html">L71EB</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Reset some status flags</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33545"></span>8309</td>
 <td class="instruction">RES 4,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33547"></span>830B</td>
 <td class="instruction">SET 6,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
