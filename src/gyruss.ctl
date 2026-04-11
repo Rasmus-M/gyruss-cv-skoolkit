@@ -168,7 +168,7 @@ w $72C5 Data block at 72C5
 B $72C5,1,1
 b $72C6 Data block at 72C6
 B $72C6,1,1
-b $72C7 Data block at 72C7
+b $72C7 Temp sprite data
 B $72C7,1,1
 b $72C8 Data block at 72C8
 B $72C8,1,1
@@ -522,6 +522,7 @@ c $8368 Routine at 8368
 D $8368 Used by the routine at #R$832A.
 N $836D This entry point is used by the routine at #R$832A.
 C $8374,3 Stage
+C $8387,3 Upload sprite data
 C $83BA,4 Set color
 C $83C2,1 Load sprite pattern
 C $83C7,1 Load sprite pattern
@@ -556,6 +557,7 @@ C $8483,1 WRITE_VRAM
 N $8486 This entry point is used by the routine at #R$8450.
 c $84B1 Routine at 84B1
 D $84B1 Used by the routines at #R$8024, #R$8139, #R$832A, #R$8368, #R$846B, #R$A33B and #R$A3E1.
+C $84C8,3 Upload sprite data
 c $84CB Routine at 84CB
 D $84CB Used by the routine at #R$90D6.
 R $84CB Upload patterns
@@ -1318,22 +1320,79 @@ c $A33B Routine at A33B
 D $A33B Used by the routine at #R$82BF.
 C $A341,3 Status flags
 C $A344,2 Set bit 4
+C $A346,4 Sprite init data
+C $A34A,2 Allocate 6 sprites
 C $A34C,1 Allocate sprite
+C $A34D,4 Sprite type is $0D
 C $A359,1 Load sprite pattern
+C $A35E,3 Get init data
 C $A364,4 Set color
+C $A368,2 Next init data
+C $A36A,2 Loop for 6 sprites
+C $A36C,2 20
+C $A375,3 Upload sprite data
+C $A380,2 Loop 20 times
 C $A385,1 Allocate sprite
 C $A392,4 Set color
 C $A396,1 Load sprite pattern
 C $A397,1 Allocate sprite
 C $A3A4,4 Set color
 C $A3A8,1 Load sprite pattern
+C $A3AC,3 Upload sprite data
+C $A3B4,2 60
+C $A3B8,3 Main loop actions
+C $A3BB,3 ...
+C $A3BE,3 ...
+C $A3C1,3 ...
+C $A3C4,1 ...
+C $A3C5,2 Loop 60 times
 C $A3CE,3 FILL_VRAM
 c $A3E1 Routine at A3E1
 D $A3E1 Used by the routine at #R$8139.
+C $A3E9,2 Not allocated
+C $A3EB,3 1st sprite
+C $A3EE,3 2nd sprite
+N $A3F7 Deallocate all sprites that a not type 2
+C $A3F7,4 Sprite data table
+C $A3FB,3 Offset between sprites
+C $A3FE,2 32 sprites
+C $A400,2 If it type 2?
+C $A402,3 ...
+C $A405,2 No, then skip
+C $A407,4 set as not allocated
 C $A40B,4 Set y
+C $A40F,2 Next sprite
+C $A411,2 Loop 32 times
+N $A413 Something else
+C $A413,3 Y and X of 1st sprite
+C $A416,3 Add 4 to each
+C $A419,1 ...
+C $A41A,3 Save it in ...
+C $A41D,3 Byte 2 of 1st sprite
+C $A420,3 Save it temporary
+N $A423 Allocate 6 sprites
+C $A427,2 Allocate 6 sprites
 C $A429,1 Allocate sprite
-C $A436,4 Set color
+C $A42A,4 Sprite type is $0D
+C $A436,4 Set color (pink)
 C $A43A,1 Load sprite pattern
+C $A43B,3 Restore byte 2 of 1st sprite
+C $A43E,3 Add data from table
+C $A441,2 Mod $40
+C $A443,3 Set it on new sprite
+C $A44A,2 Next init data
+C $A44C,2 Loop for 6 sprites
+N $A44E Game loop for 3 seconds
+C $A450,1 Outer loop
+C $A454,3 Upload sprite data
+C $A459,1 Inner loop
+C $A45B,3 Main loop actions
+C $A45E,3 ...
+C $A461,3 ...
+C $A464,3 ...
+C $A467,3 ...
+C $A46B,2 Loop 9 times
+C $A46E,2 Loop 20 times
 c $A471 Routine at A471
 D $A471 Used by the routines at #R$A33B and #R$A3E1.
 N $A47D This entry point is used by the routine at #R$A4A0.
@@ -1343,8 +1402,12 @@ c $A4A0 Routine at A4A0
 D $A4A0 Used by the routine at #R$A471.
 N $A4A3 This entry point is used by the routine at #R$A471.
 N $A4A4 This entry point is used by the routine at #R$A471.
-b $A4B2 Data block at A4B2
-B $A4B2,487,8*60,7
+b $A4B2 Sprite init data (byte 2)
+B $A4B2,6,6
+b $A4B8 Sprite init data (byte 2)
+B $A4B8,6,6
+b $A4BE Data block at A4BE
+B $A4BE,475,8*59,3
 c $A699 Routine at A699
 D $A699 Used by the routines at #R$8024 and #R$846B.
 c $A6C8 Routine at A6C8

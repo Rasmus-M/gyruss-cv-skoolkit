@@ -63,13 +63,13 @@ Used by the routine at <a href="33298.html#33471">init_stage_8</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="41798"></span>A346</td>
 <td class="instruction">LD IY,<a href="42162.html">LA4B2</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Sprite init data</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41802"></span>A34A</td>
 <td class="instruction">LD B,$06</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Allocate 6 sprites</td>
 </tr>
 <tr>
 <td class="asm-label">LA33B_0</td>
@@ -81,7 +81,7 @@ Used by the routine at <a href="33298.html#33471">init_stage_8</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="41805"></span>A34D</td>
 <td class="instruction">LD (IX+$00),$0D</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Sprite type is $0D</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -111,7 +111,7 @@ Used by the routine at <a href="33298.html#33471">init_stage_8</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="41822"></span>A35E</td>
 <td class="instruction">LD A,(IY+$00)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get init data</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -129,19 +129,19 @@ Used by the routine at <a href="33298.html#33471">init_stage_8</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="41832"></span>A368</td>
 <td class="instruction">INC IY</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Next init data</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41834"></span>A36A</td>
 <td class="instruction">DJNZ <a href="41787.html#41804">LA33B_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Loop for 6 sprites</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41836"></span>A36C</td>
 <td class="instruction">LD B,$14</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">20</td>
 </tr>
 <tr>
 <td class="asm-label">LA33B_1</td>
@@ -165,7 +165,7 @@ Used by the routine at <a href="33298.html#33471">init_stage_8</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="41845"></span>A375</td>
 <td class="instruction">CALL <a href="44281.html">upload_sprite_data</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Upload sprite data</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -195,7 +195,7 @@ Used by the routine at <a href="33298.html#33471">init_stage_8</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="41856"></span>A380</td>
 <td class="instruction">DJNZ <a href="41787.html#41838">LA33B_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Loop 20 times</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -285,7 +285,7 @@ Used by the routine at <a href="33298.html#33471">init_stage_8</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="41900"></span>A3AC</td>
 <td class="instruction">CALL <a href="44281.html">upload_sprite_data</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Upload sprite data</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -303,7 +303,7 @@ Used by the routine at <a href="33298.html#33471">init_stage_8</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="41908"></span>A3B4</td>
 <td class="instruction">LD B,$3C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">60</td>
 </tr>
 <tr>
 <td class="asm-label">LA33B_2</td>
@@ -321,37 +321,37 @@ Used by the routine at <a href="33298.html#33471">init_stage_8</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="41912"></span>A3B8</td>
 <td class="instruction">CALL <a href="45055.html">display_stars</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Main loop actions</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41915"></span>A3BB</td>
 <td class="instruction">CALL <a href="42812.html">LA73C</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41918"></span>A3BE</td>
 <td class="instruction">CALL <a href="43890.html">LAB72</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41921"></span>A3C1</td>
 <td class="instruction">CALL <a href="33969.html">L84B1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41924"></span>A3C4</td>
 <td class="instruction">POP BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41925"></span>A3C5</td>
 <td class="instruction">DJNZ <a href="41787.html#41910">LA33B_2</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Loop 60 times</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

@@ -57,19 +57,19 @@ Used by the routine at <a href="33081.html">L8139</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="41961"></span>A3E9</td>
 <td class="instruction">LD A,$7F</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Not allocated</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41963"></span>A3EB</td>
 <td class="instruction">LD (<a href="28674.html">sprite_data</a>),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">1st sprite</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41966"></span>A3EE</td>
 <td class="instruction">LD (<a href="28674.html#28686">$700E</a>),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">2nd sprite</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -90,46 +90,56 @@ Used by the routine at <a href="33081.html">L8139</a>.
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="41975"></span>
+<div class="comments">
+<div class="paragraph">
+Deallocate all sprites that a not type 2
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41975"></span>A3F7</td>
 <td class="instruction">LD IX,<a href="28674.html">sprite_data</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Sprite data table</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41979"></span>A3FB</td>
 <td class="instruction">LD DE,$000C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Offset between sprites</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41982"></span>A3FE</td>
 <td class="instruction">LD B,$20</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">32 sprites</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41984"></span>A400</td>
 <td class="instruction">LD A,$02</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If it type 2?</td>
 </tr>
 <tr>
 <td class="asm-label">LA3E1_0</td>
 <td class="address-2"><span id="41986"></span>A402</td>
 <td class="instruction">CP (IX+$00)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41989"></span>A405</td>
 <td class="instruction">JR NZ,<a href="41953.html#41999">LA3E1_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">No, then skip</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41991"></span>A407</td>
 <td class="instruction">LD (IX+$00),$7F</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">set as not allocated</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -141,61 +151,81 @@ Used by the routine at <a href="33081.html">L8139</a>.
 <td class="asm-label">LA3E1_1</td>
 <td class="address-2"><span id="41999"></span>A40F</td>
 <td class="instruction">ADD IX,DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Next sprite</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42001"></span>A411</td>
 <td class="instruction">DJNZ <a href="41953.html#41986">LA3E1_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Loop 32 times</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="42003"></span>
+<div class="comments">
+<div class="paragraph">
+Something else
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">LA3E1_2</td>
 <td class="address-2"><span id="42003"></span>A413</td>
 <td class="instruction">LD HL,($700A)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Y and X of 1st sprite</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42006"></span>A416</td>
 <td class="instruction">LD BC,$0404</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add 4 to each</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42009"></span>A419</td>
 <td class="instruction">ADD HL,BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42010"></span>A41A</td>
 <td class="instruction">LD (<a href="29381.html">L72C5</a>),HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save it in ...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42013"></span>A41D</td>
 <td class="instruction">LD A,($7004)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Byte 2 of 1st sprite</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42016"></span>A420</td>
 <td class="instruction">LD (<a href="29383.html">L72C7</a>),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save it temporary</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="42019"></span>
+<div class="comments">
+<div class="paragraph">
+Allocate 6 sprites
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42019"></span>A423</td>
-<td class="instruction">LD IY,$A4B8</td>
+<td class="instruction">LD IY,<a href="42168.html">LA4B8</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42023"></span>A427</td>
 <td class="instruction">LD B,$06</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Allocate 6 sprites</td>
 </tr>
 <tr>
 <td class="asm-label">LA3E1_3</td>
@@ -207,7 +237,7 @@ Used by the routine at <a href="33081.html">L8139</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="42026"></span>A42A</td>
 <td class="instruction">LD (IX+$00),$0D</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Sprite type is $0D</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -225,7 +255,7 @@ Used by the routine at <a href="33081.html">L8139</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="42038"></span>A436</td>
 <td class="instruction">LD (IX+$0B),$09</td>
-<td class="comment-1" rowspan="1">Set color</td>
+<td class="comment-1" rowspan="1">Set color (pink)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -237,25 +267,25 @@ Used by the routine at <a href="33081.html">L8139</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="42043"></span>A43B</td>
 <td class="instruction">LD A,(<a href="29383.html">L72C7</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore byte 2 of 1st sprite</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42046"></span>A43E</td>
 <td class="instruction">ADD A,(IY+$00)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add data from table</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42049"></span>A441</td>
 <td class="instruction">AND $3F</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Mod $40</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42051"></span>A443</td>
 <td class="instruction">LD (IX+$02),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set it on new sprite</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -267,13 +297,23 @@ Used by the routine at <a href="33081.html">L8139</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="42058"></span>A44A</td>
 <td class="instruction">INC IY</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Next init data</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42060"></span>A44C</td>
 <td class="instruction">DJNZ <a href="41953.html#42025">LA3E1_3</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Loop for 6 sprites</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="42062"></span>
+<div class="comments">
+<div class="paragraph">
+Game loop for 3 seconds
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -285,7 +325,7 @@ Used by the routine at <a href="33081.html">L8139</a>.
 <td class="asm-label">LA3E1_4</td>
 <td class="address-2"><span id="42064"></span>A450</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Outer loop</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -297,7 +337,7 @@ Used by the routine at <a href="33081.html">L8139</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="42068"></span>A454</td>
 <td class="instruction">CALL <a href="44281.html">upload_sprite_data</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Upload sprite data</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -309,7 +349,7 @@ Used by the routine at <a href="33081.html">L8139</a>.
 <td class="asm-label">LA3E1_5</td>
 <td class="address-2"><span id="42073"></span>A459</td>
 <td class="instruction">HALT</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Inner loop</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -321,31 +361,31 @@ Used by the routine at <a href="33081.html">L8139</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="42075"></span>A45B</td>
 <td class="instruction">CALL <a href="45055.html">display_stars</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Main loop actions</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42078"></span>A45E</td>
 <td class="instruction">CALL <a href="34278.html">L85E6</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42081"></span>A461</td>
 <td class="instruction">CALL <a href="43890.html">LAB72</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42084"></span>A464</td>
 <td class="instruction">CALL <a href="36396.html#36397">L8E2C_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42087"></span>A467</td>
 <td class="instruction">CALL <a href="33969.html">L84B1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -357,7 +397,7 @@ Used by the routine at <a href="33081.html">L8139</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="42091"></span>A46B</td>
 <td class="instruction">DJNZ <a href="41953.html#42073">LA3E1_5</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Loop 9 times</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -369,7 +409,7 @@ Used by the routine at <a href="33081.html">L8139</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="42094"></span>A46E</td>
 <td class="instruction">DJNZ <a href="41953.html#42064">LA3E1_4</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Loop 20 times</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

@@ -323,7 +323,7 @@ w$72C5 DEFB $00
 ; Data block at 72C6
 b$72C6 DEFB $00
 
-; Data block at 72C7
+; Temp sprite data
 b$72C7 DEFB $00
 
 ; Data block at 72C8
@@ -938,7 +938,7 @@ c$8368 LD A,$05        ;
  $8381 SRL A           ;
  $8383 INC A           ;
  $8384 CALL $9175      ;
- $8387 CALL $ACF9      ;
+ $8387 CALL $ACF9      ; Upload sprite data
 *$838A HALT            ;
  $838B CALL $AFFF      ;
  $838E CALL $A73C      ;
@@ -1106,7 +1106,7 @@ c$84B1 LD HL,$71F2   ;
  $84C4 LD A,(HL)     ;
  $84C5 XOR $04       ;
  $84C7 LD (HL),A     ;
-*$84C8 JP $ACF9      ;
+*$84C8 JP $ACF9      ; Upload sprite data
 
 ; Routine at 84CB
 ;
@@ -4601,29 +4601,29 @@ c$A33B LD HL,$80B5     ;
  $A33E LD ($72C5),HL   ;
  $A341 LD HL,$71EB     ; Status flags
  $A344 SET 4,(HL)      ; Set bit 4
- $A346 LD IY,$A4B2     ;
- $A34A LD B,$06        ;
+ $A346 LD IY,$A4B2     ; Sprite init data
+ $A34A LD B,$06        ; Allocate 6 sprites
 *$A34C RST $28         ; Allocate sprite
- $A34D LD (IX+$00),$0D ;
+ $A34D LD (IX+$00),$0D ; Sprite type is $0D
  $A351 LD (IX+$01),$00 ;
  $A355 LD (IX+$02),$00 ;
  $A359 RST $30         ; Load sprite pattern
  $A35A LD (IX+$01),$16 ;
- $A35E LD A,(IY+$00)   ;
+ $A35E LD A,(IY+$00)   ; Get init data
  $A361 LD (IX+$02),A   ;
  $A364 LD (IX+$0B),$09 ; Set color
- $A368 INC IY          ;
- $A36A DJNZ $A34C      ;
- $A36C LD B,$14        ;
+ $A368 INC IY          ; Next init data
+ $A36A DJNZ $A34C      ; Loop for 6 sprites
+ $A36C LD B,$14        ; 20
 *$A36E PUSH BC         ;
  $A36F CALL $A471      ;
  $A372 CALL $A73C      ;
- $A375 CALL $ACF9      ;
+ $A375 CALL $ACF9      ; Upload sprite data
  $A378 HALT            ;
  $A379 CALL $AFFF      ;
  $A37C CALL $AB72      ;
  $A37F POP BC          ;
- $A380 DJNZ $A36E      ;
+ $A380 DJNZ $A36E      ; Loop 20 times
  $A382 CALL $ACDF      ;
  $A385 RST $28         ; Allocate sprite
  $A386 LD (IX+$00),$00 ;
@@ -4638,18 +4638,18 @@ c$A33B LD HL,$80B5     ;
  $A3A4 LD (IX+$0B),$04 ; Set color
  $A3A8 RST $30         ; Load sprite pattern
  $A3A9 CALL $A808      ;
- $A3AC CALL $ACF9      ;
+ $A3AC CALL $ACF9      ; Upload sprite data
  $A3AF LD A,$07        ;
  $A3B1 CALL $9EA3      ;
- $A3B4 LD B,$3C        ;
+ $A3B4 LD B,$3C        ; 60
 *$A3B6 HALT            ;
  $A3B7 PUSH BC         ;
- $A3B8 CALL $AFFF      ;
- $A3BB CALL $A73C      ;
- $A3BE CALL $AB72      ;
- $A3C1 CALL $84B1      ;
- $A3C4 POP BC          ;
- $A3C5 DJNZ $A3B6      ;
+ $A3B8 CALL $AFFF      ; Main loop actions
+ $A3BB CALL $A73C      ; ...
+ $A3BE CALL $AB72      ; ...
+ $A3C1 CALL $84B1      ; ...
+ $A3C4 POP BC          ; ...
+ $A3C5 DJNZ $A3B6      ; Loop 60 times
  $A3C7 LD HL,$1A00     ;
  $A3CA LD DE,$0020     ;
  $A3CD XOR A           ;
@@ -4668,59 +4668,63 @@ c$A33B LD HL,$80B5     ;
 c$A3E1 LD A,$2A        ;
  $A3E3 LD ($7003),A    ;
  $A3E6 CALL $A808      ;
- $A3E9 LD A,$7F        ;
- $A3EB LD ($7002),A    ;
- $A3EE LD ($700E),A    ;
+ $A3E9 LD A,$7F        ; Not allocated
+ $A3EB LD ($7002),A    ; 1st sprite
+ $A3EE LD ($700E),A    ; 2nd sprite
  $A3F1 LD A,($7253)    ;
  $A3F4 OR A            ;
  $A3F5 JR Z,$A413      ;
- $A3F7 LD IX,$7002     ;
- $A3FB LD DE,$000C     ;
- $A3FE LD B,$20        ;
- $A400 LD A,$02        ;
-*$A402 CP (IX+$00)     ;
- $A405 JR NZ,$A40F     ;
- $A407 LD (IX+$00),$7F ;
+; Deallocate all sprites that a not type 2
+ $A3F7 LD IX,$7002     ; Sprite data table
+ $A3FB LD DE,$000C     ; Offset between sprites
+ $A3FE LD B,$20        ; 32 sprites
+ $A400 LD A,$02        ; If it type 2?
+*$A402 CP (IX+$00)     ; ...
+ $A405 JR NZ,$A40F     ; No, then skip
+ $A407 LD (IX+$00),$7F ; set as not allocated
  $A40B LD (IX+$08),$F8 ; Set y
-*$A40F ADD IX,DE       ;
- $A411 DJNZ $A402      ;
-*$A413 LD HL,($700A)   ;
- $A416 LD BC,$0404     ;
- $A419 ADD HL,BC       ;
- $A41A LD ($72C5),HL   ;
- $A41D LD A,($7004)    ;
- $A420 LD ($72C7),A    ;
+*$A40F ADD IX,DE       ; Next sprite
+ $A411 DJNZ $A402      ; Loop 32 times
+; Something else
+*$A413 LD HL,($700A)   ; Y and X of 1st sprite
+ $A416 LD BC,$0404     ; Add 4 to each
+ $A419 ADD HL,BC       ; ...
+ $A41A LD ($72C5),HL   ; Save it in ...
+ $A41D LD A,($7004)    ; Byte 2 of 1st sprite
+ $A420 LD ($72C7),A    ; Save it temporary
+; Allocate 6 sprites
  $A423 LD IY,$A4B8     ;
- $A427 LD B,$06        ;
+ $A427 LD B,$06        ; Allocate 6 sprites
 *$A429 RST $28         ; Allocate sprite
- $A42A LD (IX+$00),$0D ;
+ $A42A LD (IX+$00),$0D ; Sprite type is $0D
  $A42E LD (IX+$01),$00 ;
  $A432 LD (IX+$02),$00 ;
- $A436 LD (IX+$0B),$09 ; Set color
+ $A436 LD (IX+$0B),$09 ; Set color (pink)
  $A43A RST $30         ; Load sprite pattern
- $A43B LD A,($72C7)    ;
- $A43E ADD A,(IY+$00)  ;
- $A441 AND $3F         ;
- $A443 LD (IX+$02),A   ;
+ $A43B LD A,($72C7)    ; Restore byte 2 of 1st sprite
+ $A43E ADD A,(IY+$00)  ; Add data from table
+ $A441 AND $3F         ; Mod $40
+ $A443 LD (IX+$02),A   ; Set it on new sprite
  $A446 LD (IX+$01),$2A ;
- $A44A INC IY          ;
- $A44C DJNZ $A429      ;
+ $A44A INC IY          ; Next init data
+ $A44C DJNZ $A429      ; Loop for 6 sprites
+; Game loop for 3 seconds
  $A44E LD B,$14        ;
-*$A450 PUSH BC         ;
+*$A450 PUSH BC         ; Outer loop
  $A451 CALL $A471      ;
- $A454 CALL $ACF9      ;
+ $A454 CALL $ACF9      ; Upload sprite data
  $A457 LD B,$09        ;
-*$A459 HALT            ;
+*$A459 HALT            ; Inner loop
  $A45A PUSH BC         ;
- $A45B CALL $AFFF      ;
- $A45E CALL $85E6      ;
- $A461 CALL $AB72      ;
- $A464 CALL $8E2D      ;
- $A467 CALL $84B1      ;
+ $A45B CALL $AFFF      ; Main loop actions
+ $A45E CALL $85E6      ; ...
+ $A461 CALL $AB72      ; ...
+ $A464 CALL $8E2D      ; ...
+ $A467 CALL $84B1      ; ...
  $A46A POP BC          ;
- $A46B DJNZ $A459      ;
+ $A46B DJNZ $A459      ; Loop 9 times
  $A46D POP BC          ;
- $A46E DJNZ $A450      ;
+ $A46E DJNZ $A450      ; Loop 20 times
  $A470 RET             ;
 
 ; Routine at A471
@@ -4760,68 +4764,73 @@ c$A4A0 DEC (IX+$01)  ;
  $A4AE LD ($7000),HL ;
  $A4B1 RET           ;
 
-; Data block at A4B2
-b$A4B2 DEFB $10,$16,$1C,$24,$2A,$30,$F0,$EA
- $A4BA DEFB $E4,$1C,$16,$10,$A8,$18,$80,$50
- $A4C2 DEFB $A0,$10,$80,$E0,$B0,$20,$80,$A0
- $A4CA DEFB $88,$38,$80,$80,$12,$14,$63,$51
- $A4D2 DEFB $AE,$AC,$63,$E1,$22,$24,$63,$A1
- $A4DA DEFB $9E,$9C,$63,$81,$1E,$1E,$65,$51
- $A4E2 DEFB $A2,$A2,$65,$E1,$84,$84,$65,$A1
- $A4EA DEFB $3C,$3C,$65,$81,$20,$20,$68,$50
- $A4F2 DEFB $B0,$B0,$68,$E0,$00,$00,$68,$A0
- $A4FA DEFB $3F,$3F,$68,$80,$30,$30,$6B,$50
- $A502 DEFB $8F,$8F,$6B,$E0,$01,$01,$6B,$A0
- $A50A DEFB $81,$81,$6B,$80,$10,$B0,$6E,$51
- $A512 DEFB $10,$B0,$6E,$E1,$90,$30,$6E,$A1
- $A51A DEFB $90,$30,$6E,$81,$10,$B0,$41,$21
- $A522 DEFB $0E,$0E,$A2,$51,$B0,$10,$41,$21
- $A52A DEFB $B2,$B2,$A2,$81,$98,$38,$24,$A1
- $A532 DEFB $9D,$06,$61,$51,$88,$28,$24,$A1
- $A53A DEFB $BC,$23,$61,$81,$1C,$94,$46,$D0
- $A542 DEFB $0C,$B4,$47,$51,$3C,$B4,$46,$D0
- $A54A DEFB $94,$2C,$47,$61,$08,$B8,$89,$D1
- $A552 DEFB $0E,$B2,$8A,$52,$98,$28,$89,$D1
- $A55A DEFB $92,$2E,$8A,$82,$3C,$A4,$2C,$51
- $A562 DEFB $20,$A0,$2D,$A1,$84,$1C,$2C,$51
- $A56A DEFB $00,$80,$2D,$81,$15,$AB,$2F,$D1
- $A572 DEFB $04,$9C,$30,$51,$95,$2B,$2F,$D1
- $A57A DEFB $BC,$23,$30,$81,$2A,$F7,$FB,$A3
- $A582 DEFB $A5,$0D,$A6,$18,$A6,$AE,$A5,$23
- $A58A DEFB $A6,$C0,$A5,$2E,$A6,$38,$A6,$CC
- $A592 DEFB $A5,$42,$A6,$51,$A6,$E3,$A5,$5D
- $A59A DEFB $A6,$6C,$A6,$F8,$A5,$76,$A6,$8A
- $A5A2 DEFB $A6,$D4,$26,$F2,$62,$16,$F4,$F8
- $A5AA DEFB $78,$F1,$A1,$02,$F3,$73,$52,$51
- $A5B2 DEFB $29,$28,$2C,$54,$53,$00,$02,$00
- $A5BA DEFB $06,$00,$07,$D3,$A1,$02,$F3,$83
- $A5C2 DEFB $A2,$43,$00,$01,$00,$05,$00,$07
- $A5CA DEFB $E3,$02,$F6,$72,$56,$54,$3C,$F8
- $A5D2 DEFB $00,$02,$00,$06,$00,$07,$00,$08
- $A5DA DEFB $F8,$89,$E2,$89,$F8,$48,$69,$C2
- $A5E2 DEFB $02,$F6,$36,$F2,$F2,$82,$00,$01
- $A5EA DEFB $00,$03,$00,$05,$00,$07,$82,$2C
- $A5F2 DEFB $24,$26,$C2,$83,$81,$02,$D3,$81
- $A5FA DEFB $68,$64,$62,$91,$98,$00,$03,$94
- $A602 DEFB $92,$A1,$00,$05,$00,$07,$00,$08
- $A60A DEFB $F1,$51,$02,$F3,$33,$F2,$F2,$F2
- $A612 DEFB $F2,$F2,$F2,$F6,$46,$01,$F3,$33
- $A61A DEFB $D2,$13,$21,$19,$18,$A8,$FC,$5C
- $A622 DEFB $01,$E9,$61,$F2,$92,$49,$48,$3C
- $A62A DEFB $88,$FC,$BC,$01,$AC,$E8,$2C,$34
- $A632 DEFB $26,$F2,$A2,$F6,$A6,$01,$F3,$51
- $A63A DEFB $C9,$F8,$58,$8C,$54,$F6,$56,$01
- $A642 DEFB $89,$21,$18,$21,$18,$21,$F2,$F2
- $A64A DEFB $33,$22,$2C,$14,$D8,$EC,$01,$B9
- $A652 DEFB $28,$31,$F2,$52,$61,$68,$64,$A2
- $A65A DEFB $F6,$26,$01,$E3,$F2,$32,$53,$41
- $A662 DEFB $38,$BC,$C8,$14,$3C,$14,$3C,$14
- $A66A DEFB $3C,$01,$E9,$18,$29,$23,$F2,$F2
- $A672 DEFB $D2,$F6,$56,$01,$F3,$F3,$63,$F2
- $A67A DEFB $F2,$F2,$F6,$36,$F2,$14,$36,$14
- $A682 DEFB $36,$14,$36,$14,$36,$14,$36,$01
- $A68A DEFB $F9,$59,$A8,$61,$82,$3C,$64,$E8
- $A692 DEFB $2C,$24,$26,$F2,$C2,$E6,$01
+; Sprite init data (byte 2)
+b$A4B2 DEFB $10,$16,$1C,$24,$2A,$30
+
+; Sprite init data (byte 2)
+b$A4B8 DEFB $F0,$EA,$E4,$1C,$16,$10
+
+; Data block at A4BE
+b$A4BE DEFB $A8,$18,$80,$50,$A0,$10,$80,$E0
+ $A4C6 DEFB $B0,$20,$80,$A0,$88,$38,$80,$80
+ $A4CE DEFB $12,$14,$63,$51,$AE,$AC,$63,$E1
+ $A4D6 DEFB $22,$24,$63,$A1,$9E,$9C,$63,$81
+ $A4DE DEFB $1E,$1E,$65,$51,$A2,$A2,$65,$E1
+ $A4E6 DEFB $84,$84,$65,$A1,$3C,$3C,$65,$81
+ $A4EE DEFB $20,$20,$68,$50,$B0,$B0,$68,$E0
+ $A4F6 DEFB $00,$00,$68,$A0,$3F,$3F,$68,$80
+ $A4FE DEFB $30,$30,$6B,$50,$8F,$8F,$6B,$E0
+ $A506 DEFB $01,$01,$6B,$A0,$81,$81,$6B,$80
+ $A50E DEFB $10,$B0,$6E,$51,$10,$B0,$6E,$E1
+ $A516 DEFB $90,$30,$6E,$A1,$90,$30,$6E,$81
+ $A51E DEFB $10,$B0,$41,$21,$0E,$0E,$A2,$51
+ $A526 DEFB $B0,$10,$41,$21,$B2,$B2,$A2,$81
+ $A52E DEFB $98,$38,$24,$A1,$9D,$06,$61,$51
+ $A536 DEFB $88,$28,$24,$A1,$BC,$23,$61,$81
+ $A53E DEFB $1C,$94,$46,$D0,$0C,$B4,$47,$51
+ $A546 DEFB $3C,$B4,$46,$D0,$94,$2C,$47,$61
+ $A54E DEFB $08,$B8,$89,$D1,$0E,$B2,$8A,$52
+ $A556 DEFB $98,$28,$89,$D1,$92,$2E,$8A,$82
+ $A55E DEFB $3C,$A4,$2C,$51,$20,$A0,$2D,$A1
+ $A566 DEFB $84,$1C,$2C,$51,$00,$80,$2D,$81
+ $A56E DEFB $15,$AB,$2F,$D1,$04,$9C,$30,$51
+ $A576 DEFB $95,$2B,$2F,$D1,$BC,$23,$30,$81
+ $A57E DEFB $2A,$F7,$FB,$A3,$A5,$0D,$A6,$18
+ $A586 DEFB $A6,$AE,$A5,$23,$A6,$C0,$A5,$2E
+ $A58E DEFB $A6,$38,$A6,$CC,$A5,$42,$A6,$51
+ $A596 DEFB $A6,$E3,$A5,$5D,$A6,$6C,$A6,$F8
+ $A59E DEFB $A5,$76,$A6,$8A,$A6,$D4,$26,$F2
+ $A5A6 DEFB $62,$16,$F4,$F8,$78,$F1,$A1,$02
+ $A5AE DEFB $F3,$73,$52,$51,$29,$28,$2C,$54
+ $A5B6 DEFB $53,$00,$02,$00,$06,$00,$07,$D3
+ $A5BE DEFB $A1,$02,$F3,$83,$A2,$43,$00,$01
+ $A5C6 DEFB $00,$05,$00,$07,$E3,$02,$F6,$72
+ $A5CE DEFB $56,$54,$3C,$F8,$00,$02,$00,$06
+ $A5D6 DEFB $00,$07,$00,$08,$F8,$89,$E2,$89
+ $A5DE DEFB $F8,$48,$69,$C2,$02,$F6,$36,$F2
+ $A5E6 DEFB $F2,$82,$00,$01,$00,$03,$00,$05
+ $A5EE DEFB $00,$07,$82,$2C,$24,$26,$C2,$83
+ $A5F6 DEFB $81,$02,$D3,$81,$68,$64,$62,$91
+ $A5FE DEFB $98,$00,$03,$94,$92,$A1,$00,$05
+ $A606 DEFB $00,$07,$00,$08,$F1,$51,$02,$F3
+ $A60E DEFB $33,$F2,$F2,$F2,$F2,$F2,$F2,$F6
+ $A616 DEFB $46,$01,$F3,$33,$D2,$13,$21,$19
+ $A61E DEFB $18,$A8,$FC,$5C,$01,$E9,$61,$F2
+ $A626 DEFB $92,$49,$48,$3C,$88,$FC,$BC,$01
+ $A62E DEFB $AC,$E8,$2C,$34,$26,$F2,$A2,$F6
+ $A636 DEFB $A6,$01,$F3,$51,$C9,$F8,$58,$8C
+ $A63E DEFB $54,$F6,$56,$01,$89,$21,$18,$21
+ $A646 DEFB $18,$21,$F2,$F2,$33,$22,$2C,$14
+ $A64E DEFB $D8,$EC,$01,$B9,$28,$31,$F2,$52
+ $A656 DEFB $61,$68,$64,$A2,$F6,$26,$01,$E3
+ $A65E DEFB $F2,$32,$53,$41,$38,$BC,$C8,$14
+ $A666 DEFB $3C,$14,$3C,$14,$3C,$01,$E9,$18
+ $A66E DEFB $29,$23,$F2,$F2,$D2,$F6,$56,$01
+ $A676 DEFB $F3,$F3,$63,$F2,$F2,$F2,$F6,$36
+ $A67E DEFB $F2,$14,$36,$14,$36,$14,$36,$14
+ $A686 DEFB $36,$14,$36,$01,$F9,$59,$A8,$61
+ $A68E DEFB $82,$3C,$64,$E8,$2C,$24,$26,$F2
+ $A696 DEFB $C2,$E6,$01
 
 ; Routine at A699
 ;
