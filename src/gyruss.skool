@@ -4097,7 +4097,7 @@ c$9CA8 LD A,($727C)  ;
  $9CC1 RLCA          ;
  $9CC2 LD E,A        ;
  $9CC3 LD D,$00      ;
- $9CC5 LD HL,$9CE7   ;
+ $9CC5 LD HL,$9CE7   ; Table address
  $9CC8 ADD HL,DE     ;
  $9CC9 LD A,(HL)     ;
  $9CCA RLCA          ;
@@ -4124,6 +4124,7 @@ c$9CA8 LD A,($727C)  ;
  $9CE6 RET           ;
 
 ; Data block at 9CE7
+@label=table_at_9CE7
 b$9CE7 DEFB $00,$00,$00,$00,$26,$80,$00,$00
  $9CEF DEFB $02,$00,$00,$40,$41,$81,$40,$00
  $9CF7 DEFB $03,$00,$00,$70,$51,$82,$00,$00
@@ -4599,66 +4600,71 @@ c$A33B LD HL,$80B5     ; Set #R$72C5, which will be copied to #R$7000
  $A33E LD ($72C5),HL   ; ...
  $A341 LD HL,$71EB     ; Status flags
  $A344 SET 4,(HL)      ; Set bit 4
+; Allocate 6 sprites
  $A346 LD IY,$A4B2     ; Sprite init data
  $A34A LD B,$06        ; Allocate 6 sprites
 *$A34C RST $28         ; Allocate sprite
  $A34D LD (IX+$00),$0D ; Sprite type is $0D
- $A351 LD (IX+$01),$00 ;
- $A355 LD (IX+$02),$00 ;
+ $A351 LD (IX+$01),$00 ; Polar y
+ $A355 LD (IX+$02),$00 ; Polar x
  $A359 RST $30         ; Load sprite pattern
- $A35A LD (IX+$01),$16 ;
+ $A35A LD (IX+$01),$16 ; Polar y
  $A35E LD A,(IY+$00)   ; Get init data
- $A361 LD (IX+$02),A   ;
+ $A361 LD (IX+$02),A   ; Polar x
  $A364 LD (IX+$0B),$09 ; Set color
  $A368 INC IY          ; Next init data
  $A36A DJNZ $A34C      ; Loop for 6 sprites
+; Game loop 20 times
  $A36C LD B,$14        ; 20
-*$A36E PUSH BC         ;
+*$A36E PUSH BC         ; Save counter
  $A36F CALL $A471      ;
  $A372 CALL $A73C      ;
  $A375 CALL $ACF9      ; Upload sprite data
- $A378 HALT            ;
+ $A378 HALT            ; Wait interrupt
  $A379 CALL $AFFF      ;
  $A37C CALL $AB72      ;
- $A37F POP BC          ;
+ $A37F POP BC          ; Restore counter
  $A380 DJNZ $A36E      ; Loop 20 times
+; Allocate ship etc.
  $A382 CALL $ACDF      ;
  $A385 RST $28         ; Allocate sprite
- $A386 LD (IX+$00),$00 ;
- $A38A LD (IX+$01),$00 ;
- $A38E LD (IX+$02),$00 ;
+ $A386 LD (IX+$00),$00 ; Sprite type (ship)
+ $A38A LD (IX+$01),$00 ; Polar y
+ $A38E LD (IX+$02),$00 ; Polar x
  $A392 LD (IX+$0B),$06 ; Set color
  $A396 RST $30         ; Load sprite pattern
  $A397 RST $28         ; Allocate sprite
- $A398 LD (IX+$00),$01 ;
- $A39C LD (IX+$01),$00 ;
- $A3A0 LD (IX+$02),$00 ;
+ $A398 LD (IX+$00),$01 ; Sprite type is $01
+ $A39C LD (IX+$01),$00 ; Polar y
+ $A3A0 LD (IX+$02),$00 ; Polar x
  $A3A4 LD (IX+$0B),$04 ; Set color
  $A3A8 RST $30         ; Load sprite pattern
  $A3A9 CALL $A808      ;
  $A3AC CALL $ACF9      ; Upload sprite data
  $A3AF LD A,$07        ;
  $A3B1 CALL $9EA3      ;
+; Game loop 60 times
  $A3B4 LD B,$3C        ; 60
-*$A3B6 HALT            ;
- $A3B7 PUSH BC         ;
+*$A3B6 HALT            ; Wait interrupt
+ $A3B7 PUSH BC         ; Save counter
  $A3B8 CALL $AFFF      ; Game loop actions
  $A3BB CALL $A73C      ; ...
  $A3BE CALL $AB72      ; ...
  $A3C1 CALL $84B1      ; ...
- $A3C4 POP BC          ; ...
+ $A3C4 POP BC          ; Restore counter
  $A3C5 DJNZ $A3B6      ; Loop 60 times
- $A3C7 LD HL,$1A00     ;
- $A3CA LD DE,$0020     ;
- $A3CD XOR A           ;
+;
+ $A3C7 LD HL,$1A00     ; Clear warps line
+ $A3CA LD DE,$0020     ; ...
+ $A3CD XOR A           ; ...
  $A3CE CALL $1F82      ; FILL_VRAM
- $A3D1 LD A,($71EB)    ;
- $A3D4 BIT 7,A         ;
- $A3D6 RET Z           ;
- $A3D7 LD HL,$192C     ;
- $A3DA LD DE,$0008     ;
- $A3DD XOR A           ;
- $A3DE JP $1F82        ;
+ $A3D1 LD A,($71EB)    ; Status
+ $A3D4 BIT 7,A         ; Check bit for 2 players
+ $A3D6 RET Z           ; Return if not
+ $A3D7 LD HL,$192C     ; Clear player message
+ $A3DA LD DE,$0008     ; ...
+ $A3DD XOR A           ; ...
+ $A3DE JP $1F82        ; FILL_VRAM and return
 
 ; Routine at A3E1
 ;
@@ -4727,6 +4733,7 @@ c$A3E1 LD A,$2A        ;
 
 ; Routine at A471
 ;
+; Change polar y of sprite types $0D, according to bit 2 of #R$71EB
 ; Used by the routines at #R$A33B and #R$A3E1.
 c$A471 LD HL,($72C5) ; Copy #R$72C5 to #R$7000
  $A474 LD ($7000),HL ; ...
@@ -4739,21 +4746,21 @@ c$A471 LD HL,($72C5) ; Copy #R$72C5 to #R$7000
  $A484 PUSH BC       ; Save counter
  $A485 LD D,(IX+$01) ; Polar y
  $A488 LD E,(IX+$02) ; Polar x
- $A48B CALL $B1C6    ;
+ $A48B CALL $B1C6    ; Polar to screen
  $A48E LD (IX+$08),D ; Set y
  $A491 LD (IX+$09),E ; Set x
  $A494 LD A,($71EB)  ; Status
- $A497 BIT 2,A       ; Test bit, INC or DEC IX+$01
- $A499 JR NZ,$A4A0   ; ...
- $A49B INC (IX+$01)  ; ...
- $A49E JR $A4A3      ; ...
-*$A4A0 DEC (IX+$01)  ; ...
+ $A497 BIT 2,A       ; Test bit
+ $A499 JR NZ,$A4A0   ; If 1, decrement polar y
+ $A49B INC (IX+$01)  ; Else increment polar y
+ $A49E JR $A4A3      ; Skip next
+*$A4A0 DEC (IX+$01)  ; Decrement polar y
 *$A4A3 POP BC        ; Restore counter
 *$A4A4 LD DE,$000C   ; Sprite data size
- $A4A7 ADD IX,DE     ; Add to sprite data addrss
+ $A4A7 ADD IX,DE     ; Next sprite
  $A4A9 DJNZ $A47D    ; Loop 32 times
  $A4AB LD HL,$8060   ; Set #R$7000 back to original value
- $A4AE LD ($7000),HL ; ..
+ $A4AE LD ($7000),HL ; ...
  $A4B1 RET           ;
 
 ; Sprite init data (byte 2)

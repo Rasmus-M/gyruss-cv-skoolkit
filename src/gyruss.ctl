@@ -1270,7 +1270,9 @@ N $9CA3 This entry point is used by the routine at #R$9C92.
 c $9CA8 Routine at 9CA8
 D $9CA8 Used by the routine at #R$9EA3.
 N $9CB5 This entry point is used by the routines at #R$9B54 and #R$9E01.
+C $9CC5,3 Table address
 b $9CE7 Data block at 9CE7
+@ $9CE7 label=table_at_9CE7
 B $9CE7,86,8*10,6
 c $9D3D Routine at 9D3D
 D $9D3D Used by the routines at #R$9DE8 and #R$9E75.
@@ -1323,33 +1325,62 @@ C $A33B,3 Set #R$72C5, which will be copied to #R$7000
 C $A33E,3 ...
 C $A341,3 Status flags
 C $A344,2 Set bit 4
+N $A346 Allocate 6 sprites
 C $A346,4 Sprite init data
 C $A34A,2 Allocate 6 sprites
 C $A34C,1 Allocate sprite
 C $A34D,4 Sprite type is $0D
+C $A351,4 Polar y
+C $A355,4 Polar x
 C $A359,1 Load sprite pattern
+C $A35A,4 Polar y
 C $A35E,3 Get init data
+C $A361,3 Polar x
 C $A364,4 Set color
 C $A368,2 Next init data
 C $A36A,2 Loop for 6 sprites
+N $A36C Game loop 20 times
 C $A36C,2 20
+C $A36E,1 Save counter
 C $A375,3 Upload sprite data
+C $A378,1 Wait interrupt
+C $A37F,1 Restore counter
 C $A380,2 Loop 20 times
+N $A382 Allocate ship etc.
 C $A385,1 Allocate sprite
+C $A386,4 Sprite type (ship)
+C $A38A,4 Polar y
+C $A38E,4 Polar x
 C $A392,4 Set color
 C $A396,1 Load sprite pattern
 C $A397,1 Allocate sprite
+C $A398,4 Sprite type is $01
+C $A39C,4 Polar y
+C $A3A0,4 Polar x
 C $A3A4,4 Set color
 C $A3A8,1 Load sprite pattern
 C $A3AC,3 Upload sprite data
+N $A3B4 Game loop 60 times
 C $A3B4,2 60
+C $A3B6,1 Wait interrupt
+C $A3B7,1 Save counter
 C $A3B8,3 Game loop actions
 C $A3BB,3 ...
 C $A3BE,3 ...
 C $A3C1,3 ...
-C $A3C4,1 ...
+C $A3C4,1 Restore counter
 C $A3C5,2 Loop 60 times
+C $A3C7,3 Clear warps line
+C $A3CA,3 ...
+C $A3CD,1 ...
 C $A3CE,3 FILL_VRAM
+C $A3D1,3 Status
+C $A3D4,2 Check bit for 2 players
+C $A3D6,1 Return if not
+C $A3D7,3 Clear player message
+C $A3DA,3 ...
+C $A3DD,1 ...
+C $A3DE,3 FILL_VRAM and return
 c $A3E1 Routine at A3E1
 D $A3E1 Used by the routine at #R$8139.
 C $A3E9,2 Not allocated
@@ -1397,7 +1428,7 @@ C $A467,3 ...
 C $A46B,2 Loop 9 times
 C $A46E,2 Loop 20 times
 c $A471 Routine at A471
-D $A471 Used by the routines at #R$A33B and #R$A3E1.
+D $A471 Change polar y of sprite types $0D, according to bit 2 of #R$71EB Used by the routines at #R$A33B and #R$A3E1.
 C $A471,3 Copy #R$72C5 to #R$7000
 C $A474,3 ...
 C $A477,2 32 sprites
@@ -1409,20 +1440,21 @@ C $A482,2 If not then move to next sprite
 C $A484,1 Save counter
 C $A485,3 Polar y
 C $A488,3 Polar x
+C $A48B,3 Polar to screen
 C $A48E,3 Set y
 C $A491,3 Set x
 C $A494,3 Status
-C $A497,2 Test bit, INC or DEC IX+$01
-C $A499,2 ...
-C $A49B,3 ...
-C $A49E,2 ...
-C $A4A0,3 ...
+C $A497,2 Test bit
+C $A499,2 If 1, decrement polar y
+C $A49B,3 Else increment polar y
+C $A49E,2 Skip next
+C $A4A0,3 Decrement polar y
 C $A4A3,1 Restore counter
 C $A4A4,3 Sprite data size
-C $A4A7,2 Add to sprite data addrss
+C $A4A7,2 Next sprite
 C $A4A9,2 Loop 32 times
 C $A4AB,3 Set #R$7000 back to original value
-C $A4AE,3 ..
+C $A4AE,3 ...
 b $A4B2 Sprite init data (byte 2)
 B $A4B2,6,6
 b $A4B8 Sprite init data (byte 2)

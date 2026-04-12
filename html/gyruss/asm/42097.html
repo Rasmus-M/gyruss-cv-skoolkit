@@ -30,7 +30,7 @@ Next: <a href="42162.html">A4B2</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="41787.html">LA33B</a> and <a href="41953.html">LA3E1</a>.
+Change polar y of sprite types $0D, according to bit 2 of <a href="29163.html">L71EB</a> Used by the routines at <a href="41787.html">LA33B</a> and <a href="41953.html">LA3E1</a>.
 </div>
 </div>
 </td>
@@ -109,7 +109,7 @@ This entry point is used by the routine at <a href="42097.html#42144">LA471_1</a
 <td class="asm-label"></td>
 <td class="address-1"><span id="42123"></span>A48B</td>
 <td class="instruction">CALL <a href="45510.html">polar_to_screen</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Polar to screen</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -133,31 +133,31 @@ This entry point is used by the routine at <a href="42097.html#42144">LA471_1</a
 <td class="asm-label"></td>
 <td class="address-1"><span id="42135"></span>A497</td>
 <td class="instruction">BIT 2,A</td>
-<td class="comment-1" rowspan="1">Test bit, INC or DEC IX+$01</td>
+<td class="comment-1" rowspan="1">Test bit</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42137"></span>A499</td>
 <td class="instruction">JR NZ,<a href="42097.html#42144">LA471_1</a></td>
-<td class="comment-1" rowspan="1">...</td>
+<td class="comment-1" rowspan="1">If 1, decrement polar y</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42139"></span>A49B</td>
 <td class="instruction">INC (IX+$01)</td>
-<td class="comment-1" rowspan="1">...</td>
+<td class="comment-1" rowspan="1">Else increment polar y</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42142"></span>A49E</td>
 <td class="instruction">JR <a href="42097.html#42147">LA471_2</a></td>
-<td class="comment-1" rowspan="1">...</td>
+<td class="comment-1" rowspan="1">Skip next</td>
 </tr>
 <tr>
 <td class="asm-label">LA471_1</td>
 <td class="address-2"><span id="42144"></span>A4A0</td>
 <td class="instruction">DEC (IX+$01)</td>
-<td class="comment-1" rowspan="1">...</td>
+<td class="comment-1" rowspan="1">Decrement polar y</td>
 </tr>
 <tr>
 <td class="asm-label">LA471_2</td>
@@ -175,7 +175,7 @@ This entry point is used by the routine at <a href="42097.html#42144">LA471_1</a
 <td class="asm-label"></td>
 <td class="address-1"><span id="42151"></span>A4A7</td>
 <td class="instruction">ADD IX,DE</td>
-<td class="comment-1" rowspan="1">Add to sprite data addrss</td>
+<td class="comment-1" rowspan="1">Next sprite</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -193,7 +193,7 @@ This entry point is used by the routine at <a href="42097.html#42144">LA471_1</a
 <td class="asm-label"></td>
 <td class="address-1"><span id="42158"></span>A4AE</td>
 <td class="instruction">LD (<a href="28672.html">screen_center</a>),HL</td>
-<td class="comment-1" rowspan="1">..</td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
