@@ -45,11 +45,11 @@
 </tr>
 <tr>
 <td class="default" colspan="1" rowspan="1">$01</td>
-<td class="" colspan="1" rowspan="1">Transformation</td>
+<td class="" colspan="1" rowspan="1">Polar y (depth, 0 is closest (normal ship position), 116 is furthest away)</td>
 </tr>
 <tr>
 <td class="default" colspan="1" rowspan="1">$02</td>
-<td class="" colspan="1" rowspan="1">Unknown</td>
+<td class="" colspan="1" rowspan="1">Polar x (angle, 0 at bottom center, moving clockwise to 16 at the left side, 32 at the top, and 48 at the right side)</td>
 </tr>
 <tr>
 <td class="default" colspan="1" rowspan="1">$03</td>
@@ -73,11 +73,11 @@
 </tr>
 <tr>
 <td class="default" colspan="1" rowspan="1">$08</td>
-<td class="" colspan="1" rowspan="1">Y</td>
+<td class="" colspan="1" rowspan="1">Screen y</td>
 </tr>
 <tr>
 <td class="default" colspan="1" rowspan="1">$09</td>
-<td class="" colspan="1" rowspan="1">X</td>
+<td class="" colspan="1" rowspan="1">Screen x</td>
 </tr>
 <tr>
 <td class="default" colspan="1" rowspan="1">$0A</td>
@@ -692,15 +692,7 @@
 <td class="map-byte">197</td>
 <td class="map-w"><span id="29381"></span><a href="../asm/29381.html">72C5</a></td>
 <td class="map-w-desc">
-<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/29381.html">Data block at 72C5</a></div>
-</td>
-</tr>
-<tr>
-<td class="map-page">114</td>
-<td class="map-byte">198</td>
-<td class="map-b"><span id="29382"></span><a href="../asm/29382.html">72C6</a></td>
-<td class="map-b-desc">
-<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/29382.html">Data block at 72C6</a></div>
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/29381.html">Word at 72C5, which will be copied to <a href="../asm/28672.html">screen_center</a></a></div>
 </td>
 </tr>
 <tr>
@@ -1253,7 +1245,7 @@
 <td class="map-byte">221</td>
 <td class="map-b"><span id="45021"></span><a href="../asm/45021.html">AFDD</a></td>
 <td class="map-b-desc">
-<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/45021.html">Data block at AFDD</a></div>
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/45021.html">Table at AFDD</a></div>
 </td>
 </tr>
 <tr>
@@ -1337,7 +1329,7 @@
 <td class="map-byte">29</td>
 <td class="map-b"><span id="45597"></span><a href="../asm/45597.html">B21D</a></td>
 <td class="map-b-desc">
-<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/45597.html">Data block at B21D</a></div>
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/45597.html">Polar to screen coordinates lookup table 16 (y, x) pairs (32 bytes) for each depth value (polar y) (y, x) are offsets from center of screen</a></div>
 </td>
 </tr>
 <tr>

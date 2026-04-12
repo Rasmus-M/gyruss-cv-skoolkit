@@ -39,13 +39,13 @@ Used by the routine at <a href="33298.html#33471">init_stage_8</a>.
 <td class="asm-label">LA33B</td>
 <td class="address-2"><span id="41787"></span>A33B</td>
 <td class="instruction">LD HL,<a href="32804.html#32949">$80B5</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set <a href="29381.html">word_at_72C5</a>, which will be copied to <a href="28672.html">screen_center</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41790"></span>A33E</td>
-<td class="instruction">LD (<a href="29381.html">L72C5</a>),HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD (<a href="29381.html">word_at_72C5</a>),HL</td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -321,7 +321,7 @@ Used by the routine at <a href="33298.html#33471">init_stage_8</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="41912"></span>A3B8</td>
 <td class="instruction">CALL <a href="45055.html">display_stars</a></td>
-<td class="comment-1" rowspan="1">Main loop actions</td>
+<td class="comment-1" rowspan="1">Game loop actions</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

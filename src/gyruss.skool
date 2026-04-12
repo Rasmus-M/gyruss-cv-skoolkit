@@ -5,23 +5,23 @@ s$4000 DEFS $3000
 
 ; RAM
 ;
-; Word at 7000
-@label=word_at_7000
+; Screen center
+@label=screen_center
 w$7000 DEFW $0000
 
 ; Sprite data (32 sprites)
 ; #TABLE(default, default)
 ; { =h Byte offset | =h Purpose }
 ; { $00 | Sprite type, or $FF if not allocated }
-; { $01 | Transformation }
-; { $02 | Unknown }
+; { $01 | Polar y (depth, 0 is closest (normal ship position), 116 is furthest away) }
+; { $02 | Polar x (angle, 0 at bottom center, moving clockwise to 16 at the left side, 32 at the top, and 48 at the right side) }
 ; { $03 | Unknown }
 ; { $04 | Unknown }
 ; { $05 | Unknown }
 ; { $06 | Unknown }
 ; { $07 | Unknown }
-; { $08 | Y }
-; { $09 | X }
+; { $08 | Screen y }
+; { $09 | Screen x }
 ; { $0A | Pattern }
 ; { $0B | Color }
 ; TABLE#
@@ -317,11 +317,9 @@ b$72A5 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $72B5 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $72BD DEFB $00,$00,$00,$00,$00,$00,$00,$00
 
-; Data block at 72C5
-w$72C5 DEFB $00
-
-; Data block at 72C6
-b$72C6 DEFB $00
+; Word at 72C5, which will be copied to #R$7000
+@label=word_at_72C5
+w$72C5 DEFW $0000
 
 ; Temp sprite data
 b$72C7 DEFB $00
@@ -2626,8 +2624,8 @@ c$8F55 CALL $900E     ;
  $8FA8 LD (IY+$04),L  ;
  $8FAB LD (IY+$05),H  ;
 ; This entry point is used by the routine at #R$8FED.
-*$8FAE LD D,(IY+$07)  ;
- $8FB1 LD E,(IY+$08)  ;
+*$8FAE LD D,(IY+$07)  ; Polar y
+ $8FB1 LD E,(IY+$08)  ; Polar x
  $8FB4 CALL $B1C6     ;
  $8FB7 LD A,D         ;
  $8FB8 SUB $04        ;
@@ -2864,7 +2862,7 @@ c$91A1 CALL $920D    ; Clear row 7
 ;
 ; Used by the routine at #R$9175.
 ;
-; I:HL address of planet name prefixed by length
+; I:HL Address of planet name prefixed by length
 @label=display_planet_name_and_sprites
 c$91CC PUSH HL         ; Save address
  $91CD CALL $920D      ; clear_row_7
@@ -3768,8 +3766,8 @@ c$9AC3 PUSH AF       ;
 ;
 ; Used by the routine at #R$AFE5.
 ;
-; I:DE read address
-; O:A byte read
+; I:DE Read address
+; O:A Byte read
 @label=vdp_read_byte
 c$9AD0 LD A,E        ; Set LSB of VDP address
  $9AD1 OUT ($BF),A   ;
@@ -3808,7 +3806,7 @@ c$9ADE CALL $1FD6      ; TURN_OFF_SOUND
 ;
 ; Used by the routines at #R$9BD9, #R$9C1C and #R$9E91.
 ;
-; I:A 0 - 6
+; I:A Tune index 0 - 6
 @label=play_tune
 c$9B0D CP $07          ;
  $9B0F JR Z,$9B19      ;
@@ -4597,8 +4595,8 @@ c$A31D CALL $A303    ;
 ; Routine at A33B
 ;
 ; Used by the routine at #R$82BF.
-c$A33B LD HL,$80B5     ;
- $A33E LD ($72C5),HL   ;
+c$A33B LD HL,$80B5     ; Set #R$72C5, which will be copied to #R$7000
+ $A33E LD ($72C5),HL   ; ...
  $A341 LD HL,$71EB     ; Status flags
  $A344 SET 4,(HL)      ; Set bit 4
  $A346 LD IY,$A4B2     ; Sprite init data
@@ -4644,7 +4642,7 @@ c$A33B LD HL,$80B5     ;
  $A3B4 LD B,$3C        ; 60
 *$A3B6 HALT            ;
  $A3B7 PUSH BC         ;
- $A3B8 CALL $AFFF      ; Main loop actions
+ $A3B8 CALL $AFFF      ; Game loop actions
  $A3BB CALL $A73C      ; ...
  $A3BE CALL $AB72      ; ...
  $A3C1 CALL $84B1      ; ...
@@ -4689,7 +4687,7 @@ c$A3E1 LD A,$2A        ;
 *$A413 LD HL,($700A)   ; Y and X of 1st sprite
  $A416 LD BC,$0404     ; Add 4 to each
  $A419 ADD HL,BC       ; ...
- $A41A LD ($72C5),HL   ; Save it in ...
+ $A41A LD ($72C5),HL   ; Save it in #R$72C5, which will be copied to #R$7000
  $A41D LD A,($7004)    ; Byte 2 of 1st sprite
  $A420 LD ($72C7),A    ; Save it temporary
 ; Allocate 6 sprites
@@ -4730,38 +4728,32 @@ c$A3E1 LD A,$2A        ;
 ; Routine at A471
 ;
 ; Used by the routines at #R$A33B and #R$A3E1.
-c$A471 LD HL,($72C5) ;
- $A474 LD ($7000),HL ;
- $A477 LD B,$20      ;
- $A479 LD IX,$7002   ;
+c$A471 LD HL,($72C5) ; Copy #R$72C5 to #R$7000
+ $A474 LD ($7000),HL ; ...
+ $A477 LD B,$20      ; 32 sprites
+ $A479 LD IX,$7002   ; Sprite data
 ; This entry point is used by the routine at #R$A4A0.
-*$A47D LD A,(IX+$00) ;
- $A480 CP $0D        ;
- $A482 JR NZ,$A4A4   ;
- $A484 PUSH BC       ;
- $A485 LD D,(IX+$01) ;
- $A488 LD E,(IX+$02) ;
+*$A47D LD A,(IX+$00) ; Get type
+ $A480 CP $0D        ; Is it $0D?
+ $A482 JR NZ,$A4A4   ; If not then move to next sprite
+ $A484 PUSH BC       ; Save counter
+ $A485 LD D,(IX+$01) ; Polar y
+ $A488 LD E,(IX+$02) ; Polar x
  $A48B CALL $B1C6    ;
  $A48E LD (IX+$08),D ; Set y
  $A491 LD (IX+$09),E ; Set x
- $A494 LD A,($71EB)  ;
- $A497 BIT 2,A       ;
- $A499 JR NZ,$A4A0   ;
- $A49B INC (IX+$01)  ;
- $A49E JR $A4A3      ;
-
-; Routine at A4A0
-;
-; Used by the routine at #R$A471.
-c$A4A0 DEC (IX+$01)  ;
-; This entry point is used by the routine at #R$A471.
-*$A4A3 POP BC        ;
-; This entry point is used by the routine at #R$A471.
-*$A4A4 LD DE,$000C   ;
- $A4A7 ADD IX,DE     ;
- $A4A9 DJNZ $A47D    ;
- $A4AB LD HL,$8060   ;
- $A4AE LD ($7000),HL ;
+ $A494 LD A,($71EB)  ; Status
+ $A497 BIT 2,A       ; Test bit, INC or DEC IX+$01
+ $A499 JR NZ,$A4A0   ; ...
+ $A49B INC (IX+$01)  ; ...
+ $A49E JR $A4A3      ; ...
+*$A4A0 DEC (IX+$01)  ; ...
+*$A4A3 POP BC        ; Restore counter
+*$A4A4 LD DE,$000C   ; Sprite data size
+ $A4A7 ADD IX,DE     ; Add to sprite data addrss
+ $A4A9 DJNZ $A47D    ; Loop 32 times
+ $A4AB LD HL,$8060   ; Set #R$7000 back to original value
+ $A4AE LD ($7000),HL ; ..
  $A4B1 RET           ;
 
 ; Sprite init data (byte 2)
@@ -5624,7 +5616,7 @@ c$AD64 PUSH HL         ; Save sprite address
 ;
 ; Used by the routine at #R$801B.
 ;
-; I:IX points to sprite data
+; I:IX Pointer to sprite data
 @label=load_sprite_pattern
 c$AD8B PUSH HL       ;
  $AD8C PUSH DE       ;
@@ -5707,14 +5699,14 @@ c$AD8B PUSH HL       ;
 *$AE11 LD A,(IX+$00) ; Get sprite type
  $AE14 CP $01        ; If 1,
  $AE16 JR Z,$AE2B    ; then skip ahead
- $AE18 LD D,(IX+$01) ;
- $AE1B LD E,(IX+$02) ;
- $AE1E CALL $B1C6    ;
+ $AE18 LD D,(IX+$01) ; Polar y
+ $AE1B LD E,(IX+$02) ; Polar x
+ $AE1E CALL $B1C6    ; Polar to screen
  $AE21 LD (IX+$08),D ; Set y
  $AE24 LD (IX+$09),E ; Set x
- $AE27 JR C,$AE54    ;
- $AE29 JR $AE4E      ;
-*$AE2B LD HL,$AFDD   ;
+ $AE27 JR C,$AE54    ; If carry, sprite is outside visible screen
+ $AE29 JR $AE4E      ; Return anyway
+*$AE2B LD HL,$AFDD   ; If sprite type is 1, set HL to table address
  $AE2E LD A,(IX+$04) ;
  $AE31 AND $03       ;
  $AE33 JR NZ,$AE3F   ;
@@ -5954,7 +5946,8 @@ c$AFC2 LD DE,($72DE) ;
  $AFDA DJNZ $AFD0    ;
  $AFDC RET           ;
 
-; Data block at AFDD
+; Table at AFDD
+@label=table_at_AFDD
 b$AFDD DEFB $00,$00,$08,$00,$06,$FF,$06,$FB
  $AFE5 DEFB $05,$FB,$00,$F9,$FF,$FA,$FB,$FB
  $AFED DEFB $FC,$FB,$F9,$00,$FA,$01,$FB,$05
@@ -5988,7 +5981,7 @@ c$AFFF LD HL,$71EC   ; Counter from 7 to 0
 ;
 ; Used by the routine at #R$AFFF.
 ;
-; I:C mask $00 or $FF
+; I:C Mask $00 or $FF
 @label=display_star_frame
 c$B023 LD A,($731A)  ; 0, 2, 4, 6, 8, 10
  $B026 LD HL,$B04F   ; Table of pointers
@@ -6101,282 +6094,131 @@ b$B136 DEFB $00,$00,$00,$08,$00,$00,$00,$00
  $B1B6 DEFB $00,$00,$00,$00,$00,$00,$02,$00
  $B1BE DEFB $01,$00,$00,$00,$00,$80,$00,$01
 
-; Routine at B1C6
+; Convert polar to screen coordinates
 ;
 ; Used by the routines at #R$8F0F, #R$8F55, #R$A471, #R$AB72 and #R$ADD1.
+;
+; I:IX Pointer to sprite data
+; I:D Polar y
+; I:E Polar x
+; O:D Screen y
+; O:E Screen x
+; O:Carry flag set if out of screen
+@label=polar_to_screen
 c$B1C6 PUSH IX        ;
  $B1C8 PUSH HL        ;
  $B1C9 PUSH BC        ;
- $B1CA LD A,$0B       ;
- $B1CC ADD A,D        ;
- $B1CD JP M,$B217     ;
- $B1D0 LD L,A         ;
+ $B1CA LD A,$0B       ; 11
+ $B1CC ADD A,D        ; Polar y + 11
+ $B1CD JP M,$B217     ; If this is 128 or more (polar y > 116), then set position outside screen and return
+ $B1D0 LD L,A         ; Calculate table address, starting with y + 11 (11 first table rows are never used?)
  $B1D1 LD H,$00       ;
- $B1D3 ADD HL,HL      ; Multiply by 32
+ $B1D3 ADD HL,HL      ; (y + 11) * 32
  $B1D4 ADD HL,HL      ; ...
  $B1D5 ADD HL,HL      ; ...
  $B1D6 ADD HL,HL      ; ...
  $B1D7 ADD HL,HL      ; ...
- $B1D8 LD A,E         ;
- $B1D9 BIT 4,E        ;
- $B1DB JR Z,$B1DE     ;
- $B1DD CPL            ;
-*$B1DE AND $0F        ;
- $B1E0 ADD A,A        ;
- $B1E1 ADD A,L        ;
- $B1E2 LD L,A         ;
- $B1E3 JR NC,$B1E6    ;
- $B1E5 INC H          ;
-*$B1E6 LD BC,$B21D    ;
- $B1E9 ADD HL,BC      ;
- $B1EA LD A,(HL)      ;
- $B1EB CP $FF         ;
- $B1ED JR Z,$B217     ;
- $B1EF LD IX,$7000    ;
- $B1F3 LD A,E         ;
- $B1F4 RRCA           ;
- $B1F5 XOR E          ;
- $B1F6 BIT 4,A        ;
- $B1F8 LD A,(HL)      ;
- $B1F9 JR Z,$B1FD     ;
- $B1FB NEG            ;
-*$B1FD ADD A,(IX+$00) ; $60
- $B200 SUB $04        ;
- $B202 LD D,A         ;
- $B203 INC HL         ;
- $B204 LD A,(HL)      ;
- $B205 BIT 5,E        ;
- $B207 JR NZ,$B20B    ;
- $B209 NEG            ;
-*$B20B ADD A,(IX+$01) ; $80
- $B20E SUB $04        ;
- $B210 LD E,A         ;
- $B211 OR A           ;
-*$B212 POP BC         ;
- $B213 POP HL         ;
- $B214 POP IX         ;
- $B216 RET            ;
-*$B217 LD DE,$F500    ;
- $B21A SCF            ;
- $B21B JR $B212       ;
+ $B1D8 LD A,E         ; x
+ $B1D9 BIT 4,E        ; Is bit 4 set (top left or lower right quadrants)?
+ $B1DB JR Z,$B1DE     ; Jump if not
+ $B1DD CPL            ; Else invert (0 -> 15, 1 -> 14, etc.)
+*$B1DE AND $0F        ; Use the first 4 inverted bits
+ $B1E0 ADD A,A        ; x2 (2 bytes per x)
+ $B1E1 ADD A,L        ; Add to address
+ $B1E2 LD L,A         ; ...
+ $B1E3 JR NC,$B1E6    ; ...
+ $B1E5 INC H          ; ...
+*$B1E6 LD BC,$B21D    ; Lookup table base address
+ $B1E9 ADD HL,BC      ; Add to address
+ $B1EA LD A,(HL)      ; Get table value
+ $B1EB CP $FF         ; If $FF
+ $B1ED JR Z,$B217     ; Then set position outside screen and return
+ $B1EF LD IX,$7000    ; Center of screen?
+ $B1F3 LD A,E         ; x
+ $B1F4 RRCA           ; Shift right
+ $B1F5 XOR E          ; Bit 4 is now set if bit 5 (left/right) and bit 4 (top left/lower right) were different, i.e. top of screen
+ $B1F6 BIT 4,A        ; Test bit 4 (top of screen)
+ $B1F8 LD A,(HL)      ; Get table value
+ $B1F9 JR Z,$B1FD     ; Skip negating if not top of screen
+ $B1FB NEG            ; -table value
+*$B1FD ADD A,(IX+$00) ; +center y ($60)
+ $B200 SUB $04        ; -4 (adjust for sprite size)
+ $B202 LD D,A         ; Store as sprite y
+ $B203 INC HL         ; Next table address
+ $B204 LD A,(HL)      ; Get table value
+ $B205 BIT 5,E        ; Test bit 5 of x (left/right)
+ $B207 JR NZ,$B20B    ; Skip negating if right
+ $B209 NEG            ; -table value
+*$B20B ADD A,(IX+$01) ; +center x ($80 or $B5 or ?)
+ $B20E SUB $04        ; -4 (adjust for sprite size)
+ $B210 LD E,A         ; Store as sprite x
+ $B211 OR A           ; Clear carry flag?
+*$B212 POP BC         ; Return
+ $B213 POP HL         ; ...
+ $B214 POP IX         ; ...
+ $B216 RET            ; ...
+*$B217 LD DE,$F500    ; Set return position outside screen
+ $B21A SCF            ; Set carry flag
+ $B21B JR $B212       ; To return
 
-; Data block at B21D
-b$B21D DEFB $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
- $B225 DEFB $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
- $B22D DEFB $FF,$FF,$5C,$78,$FF,$FF,$FF,$FF
- $B235 DEFB $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
- $B23D DEFB $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
- $B245 DEFB $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
- $B24D DEFB $5F,$69,$57,$72,$4B,$7B,$FF,$FF
- $B255 DEFB $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
- $B25D DEFB $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
- $B265 DEFB $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
- $B26D DEFB $5A,$63,$52,$6B,$47,$74,$3E,$7A
- $B275 DEFB $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
- $B27D DEFB $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
- $B285 DEFB $FF,$FF,$FF,$FF,$FF,$FF,$5C,$52
- $B28D DEFB $54,$5D,$4C,$64,$43,$6D,$3A,$72
- $B295 DEFB $2E,$78,$23,$7D,$FF,$FF,$FF,$FF
- $B29D DEFB $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
- $B2A5 DEFB $FF,$FF,$FF,$FF,$5D,$43,$56,$4D
- $B2AD DEFB $4E,$56,$47,$5E,$3E,$65,$36,$6B
- $B2B5 DEFB $2B,$70,$20,$75,$17,$77,$0C,$79
- $B2BD DEFB $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
- $B2C5 DEFB $5F,$2A,$5B,$35,$56,$3E,$50,$47
- $B2CD DEFB $49,$50,$42,$57,$3A,$5E,$32,$63
- $B2D5 DEFB $28,$68,$1E,$6C,$15,$6F,$0B,$71
- $B2DD DEFB $5F,$00,$5F,$09,$5D,$14,$5B,$1D
- $B2E5 DEFB $58,$27,$54,$31,$50,$39,$4A,$42
- $B2ED DEFB $43,$4A,$3D,$50,$35,$57,$2E,$5B
- $B2F5 DEFB $25,$60,$1C,$64,$14,$66,$0A,$68
- $B2FD DEFB $5D,$00,$5D,$09,$5B,$14,$59,$1C
- $B305 DEFB $56,$26,$52,$30,$4E,$38,$48,$40
- $B30D DEFB $42,$48,$3C,$4E,$34,$55,$2D,$59
- $B315 DEFB $24,$5E,$1B,$62,$13,$64,$0A,$66
- $B31D DEFB $5B,$00,$5B,$09,$59,$13,$57,$1C
- $B325 DEFB $54,$25,$50,$2F,$4C,$37,$47,$3F
- $B32D DEFB $40,$47,$3A,$4D,$33,$53,$2C,$58
- $B335 DEFB $24,$5C,$1B,$60,$13,$62,$0A,$64
- $B33D DEFB $59,$00,$59,$09,$57,$13,$56,$1B
- $B345 DEFB $53,$25,$4F,$2E,$4B,$35,$45,$3E
- $B34D DEFB $3F,$45,$39,$4B,$32,$51,$2B,$56
- $B355 DEFB $23,$5A,$1A,$5E,$13,$60,$09,$61
- $B35D DEFB $57,$00,$57,$08,$55,$12,$54,$1A
- $B365 DEFB $51,$24,$4D,$2D,$49,$34,$44,$3C
- $B36D DEFB $3E,$44,$38,$49,$31,$4F,$2A,$54
- $B375 DEFB $22,$58,$19,$5C,$12,$5E,$09,$5F
- $B37D DEFB $55,$00,$55,$08,$53,$12,$52,$1A
- $B385 DEFB $4F,$23,$4B,$2C,$47,$33,$42,$3B
- $B38D DEFB $3C,$42,$37,$48,$30,$4E,$29,$52
- $B395 DEFB $21,$56,$19,$59,$12,$5B,$09,$5D
- $B39D DEFB $53,$00,$53,$08,$51,$11,$50,$19
- $B3A5 DEFB $4D,$22,$49,$2B,$46,$32,$41,$39
- $B3AD DEFB $3B,$41,$35,$46,$2E,$4C,$28,$50
- $B3B5 DEFB $20,$54,$18,$57,$11,$59,$09,$5B
- $B3BD DEFB $51,$00,$51,$08,$50,$11,$4E,$19
- $B3C5 DEFB $4B,$21,$48,$2A,$44,$31,$3F,$38
- $B3CD DEFB $39,$3F,$34,$44,$2D,$4A,$27,$4E
- $B3D5 DEFB $20,$52,$18,$55,$11,$57,$08,$59
- $B3DD DEFB $4F,$00,$4F,$08,$4E,$11,$4C,$18
- $B3E5 DEFB $49,$21,$46,$29,$42,$2F,$3D,$37
- $B3ED DEFB $38,$3D,$33,$43,$2C,$48,$26,$4C
- $B3F5 DEFB $1F,$50,$17,$53,$10,$55,$08,$56
- $B3FD DEFB $4D,$00,$4D,$07,$4C,$10,$4A,$17
- $B405 DEFB $47,$20,$44,$28,$41,$2E,$3C,$35
- $B40D DEFB $36,$3C,$31,$41,$2B,$46,$25,$4A
- $B415 DEFB $1E,$4E,$17,$51,$10,$53,$08,$54
- $B41D DEFB $4B,$00,$4B,$07,$4A,$10,$48,$17
- $B425 DEFB $46,$1F,$42,$27,$3F,$2D,$3A,$34
- $B42D DEFB $35,$3A,$30,$3F,$2A,$44,$24,$48
- $B435 DEFB $1D,$4C,$16,$4F,$10,$51,$08,$52
- $B43D DEFB $49,$00,$49,$07,$48,$0F,$46,$16
- $B445 DEFB $44,$1E,$40,$26,$3D,$2C,$39,$33
- $B44D DEFB $34,$39,$2F,$3E,$29,$43,$23,$46
- $B455 DEFB $1D,$4A,$15,$4D,$0F,$4F,$08,$50
- $B45D DEFB $47,$00,$47,$07,$46,$0F,$44,$16
- $B465 DEFB $42,$1D,$3F,$25,$3C,$2B,$37,$31
- $B46D DEFB $32,$37,$2E,$3C,$28,$41,$22,$44
- $B475 DEFB $1C,$48,$15,$4B,$0F,$4C,$07,$4E
- $B47D DEFB $45,$00,$45,$07,$44,$0E,$42,$15
- $B485 DEFB $40,$1C,$3D,$24,$3A,$29,$36,$30
- $B48D DEFB $31,$36,$2C,$3A,$27,$3F,$21,$42
- $B495 DEFB $1B,$46,$14,$49,$0E,$4A,$07,$4B
- $B49D DEFB $43,$00,$43,$06,$42,$0E,$40,$14
- $B4A5 DEFB $3E,$1C,$3B,$23,$38,$28,$34,$2E
- $B4AD DEFB $2F,$34,$2B,$38,$25,$3D,$20,$40
- $B4B5 DEFB $1A,$44,$14,$46,$0E,$48,$07,$49
- $B4BD DEFB $41,$00,$41,$06,$40,$0E,$3E,$14
- $B4C5 DEFB $3C,$1B,$39,$22,$37,$27,$33,$2D
- $B4CD DEFB $2E,$33,$2A,$37,$24,$3B,$20,$3F
- $B4D5 DEFB $19,$42,$13,$44,$0E,$46,$07,$47
- $B4DD DEFB $3F,$00,$3F,$06,$3E,$0D,$3D,$13
- $B4E5 DEFB $3A,$1A,$38,$21,$35,$26,$31,$2C
- $B4ED DEFB $2D,$31,$28,$35,$23,$39,$1F,$3D
- $B4F5 DEFB $19,$40,$12,$42,$0D,$44,$07,$45
- $B4FD DEFB $3D,$00,$3D,$06,$3C,$0D,$3B,$12
- $B505 DEFB $39,$19,$36,$20,$33,$25,$2F,$2A
- $B50D DEFB $2B,$2F,$27,$33,$22,$38,$1E,$3B
- $B515 DEFB $18,$3E,$12,$40,$0D,$42,$06,$43
- $B51D DEFB $3B,$00,$3B,$06,$3A,$0C,$39,$12
- $B525 DEFB $37,$18,$34,$1E,$31,$23,$2E,$29
- $B52D DEFB $2A,$2E,$26,$32,$21,$36,$1D,$39
- $B535 DEFB $17,$3C,$11,$3E,$0C,$3F,$06,$41
- $B53D DEFB $39,$00,$39,$05,$38,$0C,$37,$11
- $B545 DEFB $35,$17,$32,$1D,$30,$22,$2C,$27
- $B54D DEFB $28,$2C,$25,$30,$20,$34,$1C,$37
- $B555 DEFB $16,$3A,$11,$3C,$0C,$3D,$06,$3E
- $B55D DEFB $37,$00,$37,$05,$36,$0C,$35,$11
- $B565 DEFB $33,$17,$31,$1C,$2E,$21,$2B,$26
- $B56D DEFB $27,$2B,$23,$2E,$1F,$32,$1B,$35
- $B575 DEFB $15,$38,$10,$3A,$0B,$3B,$06,$3C
- $B57D DEFB $35,$00,$35,$05,$34,$0B,$33,$10
- $B585 DEFB $31,$16,$2F,$1B,$2C,$20,$29,$25
- $B58D DEFB $25,$29,$22,$2D,$1E,$30,$1A,$33
- $B595 DEFB $15,$36,$0F,$38,$0B,$39,$06,$3A
- $B59D DEFB $33,$00,$33,$05,$32,$0B,$31,$0F
- $B5A5 DEFB $2F,$15,$2D,$1A,$2B,$1F,$28,$23
- $B5AD DEFB $24,$28,$21,$2B,$1D,$2F,$19,$31
- $B5B5 DEFB $14,$34,$0F,$36,$0B,$37,$05,$38
- $B5BD DEFB $31,$00,$31,$05,$30,$0A,$2F,$0F
- $B5C5 DEFB $2D,$14,$2B,$19,$29,$1D,$26,$22
- $B5CD DEFB $23,$26,$1F,$29,$1B,$2D,$18,$2F
- $B5D5 DEFB $13,$32,$0E,$34,$0A,$35,$05,$36
- $B5DD DEFB $2F,$00,$2F,$05,$2E,$0A,$2D,$0E
- $B5E5 DEFB $2C,$13,$29,$18,$27,$1C,$25,$21
- $B5ED DEFB $21,$25,$1E,$28,$1A,$2B,$17,$2D
- $B5F5 DEFB $12,$30,$0E,$31,$0A,$33,$05,$33
- $B5FD DEFB $2D,$00,$2D,$04,$2C,$09,$2B,$0E
- $B605 DEFB $2A,$13,$28,$17,$26,$1B,$23,$1F
- $B60D DEFB $20,$23,$1D,$26,$19,$29,$16,$2B
- $B615 DEFB $12,$2E,$0D,$2F,$09,$30,$05,$31
- $B61D DEFB $2B,$00,$2B,$04,$2A,$09,$29,$0D
- $B625 DEFB $28,$12,$26,$16,$24,$1A,$21,$1E
- $B62D DEFB $1E,$21,$1C,$24,$18,$27,$15,$29
- $B635 DEFB $11,$2C,$0D,$2D,$09,$2E,$04,$2F
- $B63D DEFB $29,$00,$29,$04,$28,$09,$27,$0C
- $B645 DEFB $26,$11,$24,$15,$22,$19,$20,$1C
- $B64D DEFB $1D,$20,$1A,$23,$17,$25,$14,$27
- $B655 DEFB $10,$2A,$0C,$2B,$09,$2C,$04,$2D
- $B65D DEFB $27,$00,$27,$04,$26,$08,$25,$0C
- $B665 DEFB $24,$10,$22,$14,$21,$17,$1E,$1B
- $B66D DEFB $1C,$1E,$19,$21,$16,$24,$13,$26
- $B675 DEFB $0F,$27,$0B,$29,$08,$2A,$04,$2B
- $B67D DEFB $25,$00,$25,$04,$24,$08,$24,$0B
- $B685 DEFB $22,$0F,$21,$13,$1F,$16,$1D,$1A
- $B68D DEFB $1A,$1D,$18,$1F,$15,$22,$12,$24
- $B695 DEFB $0E,$25,$0B,$27,$08,$28,$04,$28
- $B69D DEFB $23,$00,$23,$03,$22,$07,$22,$0B
- $B6A5 DEFB $20,$0E,$1F,$12,$1D,$15,$1B,$18
- $B6AD DEFB $19,$1B,$16,$1D,$14,$20,$11,$22
- $B6B5 DEFB $0E,$23,$0A,$25,$07,$26,$04,$26
- $B6BD DEFB $21,$00,$21,$03,$20,$07,$20,$0A
- $B6C5 DEFB $1F,$0E,$1D,$11,$1C,$14,$1A,$17
- $B6CD DEFB $17,$1A,$15,$1C,$12,$1E,$10,$20
- $B6D5 DEFB $0D,$21,$0A,$23,$07,$24,$03,$24
- $B6DD DEFB $1F,$00,$1F,$03,$1E,$07,$1E,$09
- $B6E5 DEFB $1D,$0D,$1B,$10,$1A,$13,$18,$15
- $B6ED DEFB $16,$18,$14,$1A,$11,$1C,$0F,$1E
- $B6F5 DEFB $0C,$1F,$09,$21,$06,$21,$03,$22
- $B6FD DEFB $1D,$00,$1D,$03,$1C,$06,$1C,$09
- $B705 DEFB $1B,$0C,$1A,$0F,$18,$11,$17,$14
- $B70D DEFB $15,$17,$13,$18,$10,$1A,$0E,$1C
- $B715 DEFB $0B,$1D,$08,$1F,$06,$1F,$03,$20
- $B71D DEFB $1B,$00,$1B,$03,$1B,$06,$1A,$08
- $B725 DEFB $19,$0B,$18,$0E,$17,$10,$15,$13
- $B72D DEFB $13,$15,$11,$17,$0F,$19,$0D,$1A
- $B735 DEFB $0B,$1B,$08,$1C,$06,$1D,$03,$1E
- $B73D DEFB $19,$00,$19,$02,$19,$05,$18,$08
- $B745 DEFB $17,$0A,$16,$0D,$15,$0F,$13,$11
- $B74D DEFB $12,$13,$10,$15,$0E,$17,$0C,$18
- $B755 DEFB $0A,$19,$07,$1A,$05,$1B,$03,$1B
- $B75D DEFB $17,$00,$17,$02,$17,$05,$16,$07
- $B765 DEFB $15,$09,$14,$0C,$13,$0E,$12,$10
- $B76D DEFB $10,$12,$0F,$13,$0D,$15,$0B,$16
- $B775 DEFB $09,$17,$07,$18,$05,$19,$02,$19
- $B77D DEFB $15,$00,$15,$02,$15,$04,$14,$06
- $B785 DEFB $13,$09,$13,$0B,$12,$0D,$10,$0F
- $B78D DEFB $0F,$10,$0D,$12,$0C,$13,$0A,$14
- $B795 DEFB $08,$15,$06,$16,$04,$17,$02,$17
- $B79D DEFB $13,$00,$13,$02,$13,$04,$12,$06
- $B7A5 DEFB $12,$08,$11,$0A,$10,$0B,$0F,$0D
- $B7AD DEFB $0D,$0F,$0C,$10,$0B,$11,$09,$12
- $B7B5 DEFB $07,$13,$06,$14,$04,$14,$02,$15
- $B7BD DEFB $11,$00,$11,$02,$11,$04,$10,$05
- $B7C5 DEFB $10,$07,$0F,$09,$0E,$0A,$0D,$0C
- $B7CD DEFB $0C,$0D,$0B,$0E,$0A,$10,$08,$10
- $B7D5 DEFB $07,$11,$05,$12,$04,$12,$02,$13
- $B7DD DEFB $0F,$00,$0F,$01,$0F,$03,$0E,$05
- $B7E5 DEFB $0E,$06,$0D,$08,$0D,$09,$0C,$0A
- $B7ED DEFB $0B,$0C,$0A,$0D,$08,$0E,$07,$0E
- $B7F5 DEFB $06,$0F,$04,$10,$03,$10,$02,$10
- $B7FD DEFB $0D,$00,$0D,$01,$0D,$03,$0C,$04
- $B805 DEFB $0C,$05,$0B,$07,$0B,$08,$0A,$09
- $B80D DEFB $09,$0A,$08,$0B,$07,$0C,$06,$0D
- $B815 DEFB $05,$0D,$04,$0E,$03,$0E,$01,$0E
- $B81D DEFB $0B,$00,$0B,$01,$0B,$02,$0B,$03
- $B825 DEFB $0A,$05,$0A,$06,$09,$07,$09,$08
- $B82D DEFB $08,$09,$07,$09,$06,$0A,$05,$0B
- $B835 DEFB $04,$0B,$03,$0C,$02,$0C,$01,$0C
- $B83D DEFB $0A,$00,$0A,$01,$0A,$02,$0A,$03
- $B845 DEFB $09,$04,$09,$05,$08,$06,$08,$07
- $B84D DEFB $07,$08,$06,$08,$06,$09,$05,$0A
- $B855 DEFB $04,$0A,$03,$0B,$02,$0B,$01,$0B
- $B85D DEFB $09,$00,$09,$01,$09,$02,$09,$03
- $B865 DEFB $08,$04,$08,$05,$08,$05,$07,$06
- $B86D DEFB $06,$07,$06,$08,$05,$08,$04,$09
- $B875 DEFB $04,$09,$03,$09,$02,$0A,$01,$0A
- $B87D DEFB $07,$00,$07,$01,$07,$01,$07,$02
- $B885 DEFB $06,$03,$06,$04,$06,$04,$05,$05
- $B88D DEFB $05,$05,$04,$06,$04,$06,$03,$07
- $B895 DEFB $03,$07,$02,$07,$01,$08,$01,$08
- $B89D DEFB $06,$00,$06,$01,$06,$01,$06,$02
- $B8A5 DEFB $06,$02,$05,$03,$05,$04,$05,$04
- $B8AD DEFB $04,$05,$04,$05,$03,$05,$03,$06
- $B8B5 DEFB $02,$06,$02,$06,$01,$06,$01,$07
- $B8BD DEFB $05,$00,$05,$00,$05,$01,$05,$02
- $B8C5 DEFB $05,$02,$04,$03,$04,$03,$04,$03
- $B8CD DEFB $04,$04,$03,$04,$03,$05,$02,$05
- $B8D5 DEFB $02,$05,$01,$05,$01,$05,$01,$05
+; Polar to screen coordinates lookup table
+; 16 (y, x) pairs (32 bytes) for each depth value (polar y)
+; (y, x) are offsets from center of screen
+@label=polar_to_screen_table
+b$B21D DEFB $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$5C,$78,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+ $B23D DEFB $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$5F,$69,$57,$72,$4B,$7B,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+ $B25D DEFB $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$5A,$63,$52,$6B,$47,$74,$3E,$7A,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+ $B27D DEFB $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$5C,$52,$54,$5D,$4C,$64,$43,$6D,$3A,$72,$2E,$78,$23,$7D,$FF,$FF,$FF,$FF
+ $B29D DEFB $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$5D,$43,$56,$4D,$4E,$56,$47,$5E,$3E,$65,$36,$6B,$2B,$70,$20,$75,$17,$77,$0C,$79
+ $B2BD DEFB $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$5F,$2A,$5B,$35,$56,$3E,$50,$47,$49,$50,$42,$57,$3A,$5E,$32,$63,$28,$68,$1E,$6C,$15,$6F,$0B,$71
+ $B2DD DEFB $5F,$00,$5F,$09,$5D,$14,$5B,$1D,$58,$27,$54,$31,$50,$39,$4A,$42,$43,$4A,$3D,$50,$35,$57,$2E,$5B,$25,$60,$1C,$64,$14,$66,$0A,$68
+ $B2FD DEFB $5D,$00,$5D,$09,$5B,$14,$59,$1C,$56,$26,$52,$30,$4E,$38,$48,$40,$42,$48,$3C,$4E,$34,$55,$2D,$59,$24,$5E,$1B,$62,$13,$64,$0A,$66
+ $B31D DEFB $5B,$00,$5B,$09,$59,$13,$57,$1C,$54,$25,$50,$2F,$4C,$37,$47,$3F,$40,$47,$3A,$4D,$33,$53,$2C,$58,$24,$5C,$1B,$60,$13,$62,$0A,$64
+ $B33D DEFB $59,$00,$59,$09,$57,$13,$56,$1B,$53,$25,$4F,$2E,$4B,$35,$45,$3E,$3F,$45,$39,$4B,$32,$51,$2B,$56,$23,$5A,$1A,$5E,$13,$60,$09,$61
+ $B35D DEFB $57,$00,$57,$08,$55,$12,$54,$1A,$51,$24,$4D,$2D,$49,$34,$44,$3C,$3E,$44,$38,$49,$31,$4F,$2A,$54,$22,$58,$19,$5C,$12,$5E,$09,$5F
+ $B37D DEFB $55,$00,$55,$08,$53,$12,$52,$1A,$4F,$23,$4B,$2C,$47,$33,$42,$3B,$3C,$42,$37,$48,$30,$4E,$29,$52,$21,$56,$19,$59,$12,$5B,$09,$5D
+ $B39D DEFB $53,$00,$53,$08,$51,$11,$50,$19,$4D,$22,$49,$2B,$46,$32,$41,$39,$3B,$41,$35,$46,$2E,$4C,$28,$50,$20,$54,$18,$57,$11,$59,$09,$5B
+ $B3BD DEFB $51,$00,$51,$08,$50,$11,$4E,$19,$4B,$21,$48,$2A,$44,$31,$3F,$38,$39,$3F,$34,$44,$2D,$4A,$27,$4E,$20,$52,$18,$55,$11,$57,$08,$59
+ $B3DD DEFB $4F,$00,$4F,$08,$4E,$11,$4C,$18,$49,$21,$46,$29,$42,$2F,$3D,$37,$38,$3D,$33,$43,$2C,$48,$26,$4C,$1F,$50,$17,$53,$10,$55,$08,$56
+ $B3FD DEFB $4D,$00,$4D,$07,$4C,$10,$4A,$17,$47,$20,$44,$28,$41,$2E,$3C,$35,$36,$3C,$31,$41,$2B,$46,$25,$4A,$1E,$4E,$17,$51,$10,$53,$08,$54
+ $B41D DEFB $4B,$00,$4B,$07,$4A,$10,$48,$17,$46,$1F,$42,$27,$3F,$2D,$3A,$34,$35,$3A,$30,$3F,$2A,$44,$24,$48,$1D,$4C,$16,$4F,$10,$51,$08,$52
+ $B43D DEFB $49,$00,$49,$07,$48,$0F,$46,$16,$44,$1E,$40,$26,$3D,$2C,$39,$33,$34,$39,$2F,$3E,$29,$43,$23,$46,$1D,$4A,$15,$4D,$0F,$4F,$08,$50
+ $B45D DEFB $47,$00,$47,$07,$46,$0F,$44,$16,$42,$1D,$3F,$25,$3C,$2B,$37,$31,$32,$37,$2E,$3C,$28,$41,$22,$44,$1C,$48,$15,$4B,$0F,$4C,$07,$4E
+ $B47D DEFB $45,$00,$45,$07,$44,$0E,$42,$15,$40,$1C,$3D,$24,$3A,$29,$36,$30,$31,$36,$2C,$3A,$27,$3F,$21,$42,$1B,$46,$14,$49,$0E,$4A,$07,$4B
+ $B49D DEFB $43,$00,$43,$06,$42,$0E,$40,$14,$3E,$1C,$3B,$23,$38,$28,$34,$2E,$2F,$34,$2B,$38,$25,$3D,$20,$40,$1A,$44,$14,$46,$0E,$48,$07,$49
+ $B4BD DEFB $41,$00,$41,$06,$40,$0E,$3E,$14,$3C,$1B,$39,$22,$37,$27,$33,$2D,$2E,$33,$2A,$37,$24,$3B,$20,$3F,$19,$42,$13,$44,$0E,$46,$07,$47
+ $B4DD DEFB $3F,$00,$3F,$06,$3E,$0D,$3D,$13,$3A,$1A,$38,$21,$35,$26,$31,$2C,$2D,$31,$28,$35,$23,$39,$1F,$3D,$19,$40,$12,$42,$0D,$44,$07,$45
+ $B4FD DEFB $3D,$00,$3D,$06,$3C,$0D,$3B,$12,$39,$19,$36,$20,$33,$25,$2F,$2A,$2B,$2F,$27,$33,$22,$38,$1E,$3B,$18,$3E,$12,$40,$0D,$42,$06,$43
+ $B51D DEFB $3B,$00,$3B,$06,$3A,$0C,$39,$12,$37,$18,$34,$1E,$31,$23,$2E,$29,$2A,$2E,$26,$32,$21,$36,$1D,$39,$17,$3C,$11,$3E,$0C,$3F,$06,$41
+ $B53D DEFB $39,$00,$39,$05,$38,$0C,$37,$11,$35,$17,$32,$1D,$30,$22,$2C,$27,$28,$2C,$25,$30,$20,$34,$1C,$37,$16,$3A,$11,$3C,$0C,$3D,$06,$3E
+ $B55D DEFB $37,$00,$37,$05,$36,$0C,$35,$11,$33,$17,$31,$1C,$2E,$21,$2B,$26,$27,$2B,$23,$2E,$1F,$32,$1B,$35,$15,$38,$10,$3A,$0B,$3B,$06,$3C
+ $B57D DEFB $35,$00,$35,$05,$34,$0B,$33,$10,$31,$16,$2F,$1B,$2C,$20,$29,$25,$25,$29,$22,$2D,$1E,$30,$1A,$33,$15,$36,$0F,$38,$0B,$39,$06,$3A
+ $B59D DEFB $33,$00,$33,$05,$32,$0B,$31,$0F,$2F,$15,$2D,$1A,$2B,$1F,$28,$23,$24,$28,$21,$2B,$1D,$2F,$19,$31,$14,$34,$0F,$36,$0B,$37,$05,$38
+ $B5BD DEFB $31,$00,$31,$05,$30,$0A,$2F,$0F,$2D,$14,$2B,$19,$29,$1D,$26,$22,$23,$26,$1F,$29,$1B,$2D,$18,$2F,$13,$32,$0E,$34,$0A,$35,$05,$36
+ $B5DD DEFB $2F,$00,$2F,$05,$2E,$0A,$2D,$0E,$2C,$13,$29,$18,$27,$1C,$25,$21,$21,$25,$1E,$28,$1A,$2B,$17,$2D,$12,$30,$0E,$31,$0A,$33,$05,$33
+ $B5FD DEFB $2D,$00,$2D,$04,$2C,$09,$2B,$0E,$2A,$13,$28,$17,$26,$1B,$23,$1F,$20,$23,$1D,$26,$19,$29,$16,$2B,$12,$2E,$0D,$2F,$09,$30,$05,$31
+ $B61D DEFB $2B,$00,$2B,$04,$2A,$09,$29,$0D,$28,$12,$26,$16,$24,$1A,$21,$1E,$1E,$21,$1C,$24,$18,$27,$15,$29,$11,$2C,$0D,$2D,$09,$2E,$04,$2F
+ $B63D DEFB $29,$00,$29,$04,$28,$09,$27,$0C,$26,$11,$24,$15,$22,$19,$20,$1C,$1D,$20,$1A,$23,$17,$25,$14,$27,$10,$2A,$0C,$2B,$09,$2C,$04,$2D
+ $B65D DEFB $27,$00,$27,$04,$26,$08,$25,$0C,$24,$10,$22,$14,$21,$17,$1E,$1B,$1C,$1E,$19,$21,$16,$24,$13,$26,$0F,$27,$0B,$29,$08,$2A,$04,$2B
+ $B67D DEFB $25,$00,$25,$04,$24,$08,$24,$0B,$22,$0F,$21,$13,$1F,$16,$1D,$1A,$1A,$1D,$18,$1F,$15,$22,$12,$24,$0E,$25,$0B,$27,$08,$28,$04,$28
+ $B69D DEFB $23,$00,$23,$03,$22,$07,$22,$0B,$20,$0E,$1F,$12,$1D,$15,$1B,$18,$19,$1B,$16,$1D,$14,$20,$11,$22,$0E,$23,$0A,$25,$07,$26,$04,$26
+ $B6BD DEFB $21,$00,$21,$03,$20,$07,$20,$0A,$1F,$0E,$1D,$11,$1C,$14,$1A,$17,$17,$1A,$15,$1C,$12,$1E,$10,$20,$0D,$21,$0A,$23,$07,$24,$03,$24
+ $B6DD DEFB $1F,$00,$1F,$03,$1E,$07,$1E,$09,$1D,$0D,$1B,$10,$1A,$13,$18,$15,$16,$18,$14,$1A,$11,$1C,$0F,$1E,$0C,$1F,$09,$21,$06,$21,$03,$22
+ $B6FD DEFB $1D,$00,$1D,$03,$1C,$06,$1C,$09,$1B,$0C,$1A,$0F,$18,$11,$17,$14,$15,$17,$13,$18,$10,$1A,$0E,$1C,$0B,$1D,$08,$1F,$06,$1F,$03,$20
+ $B71D DEFB $1B,$00,$1B,$03,$1B,$06,$1A,$08,$19,$0B,$18,$0E,$17,$10,$15,$13,$13,$15,$11,$17,$0F,$19,$0D,$1A,$0B,$1B,$08,$1C,$06,$1D,$03,$1E
+ $B73D DEFB $19,$00,$19,$02,$19,$05,$18,$08,$17,$0A,$16,$0D,$15,$0F,$13,$11,$12,$13,$10,$15,$0E,$17,$0C,$18,$0A,$19,$07,$1A,$05,$1B,$03,$1B
+ $B75D DEFB $17,$00,$17,$02,$17,$05,$16,$07,$15,$09,$14,$0C,$13,$0E,$12,$10,$10,$12,$0F,$13,$0D,$15,$0B,$16,$09,$17,$07,$18,$05,$19,$02,$19
+ $B77D DEFB $15,$00,$15,$02,$15,$04,$14,$06,$13,$09,$13,$0B,$12,$0D,$10,$0F,$0F,$10,$0D,$12,$0C,$13,$0A,$14,$08,$15,$06,$16,$04,$17,$02,$17
+ $B79D DEFB $13,$00,$13,$02,$13,$04,$12,$06,$12,$08,$11,$0A,$10,$0B,$0F,$0D,$0D,$0F,$0C,$10,$0B,$11,$09,$12,$07,$13,$06,$14,$04,$14,$02,$15
+ $B7BD DEFB $11,$00,$11,$02,$11,$04,$10,$05,$10,$07,$0F,$09,$0E,$0A,$0D,$0C,$0C,$0D,$0B,$0E,$0A,$10,$08,$10,$07,$11,$05,$12,$04,$12,$02,$13
+ $B7DD DEFB $0F,$00,$0F,$01,$0F,$03,$0E,$05,$0E,$06,$0D,$08,$0D,$09,$0C,$0A,$0B,$0C,$0A,$0D,$08,$0E,$07,$0E,$06,$0F,$04,$10,$03,$10,$02,$10
+ $B7FD DEFB $0D,$00,$0D,$01,$0D,$03,$0C,$04,$0C,$05,$0B,$07,$0B,$08,$0A,$09,$09,$0A,$08,$0B,$07,$0C,$06,$0D,$05,$0D,$04,$0E,$03,$0E,$01,$0E
+ $B81D DEFB $0B,$00,$0B,$01,$0B,$02,$0B,$03,$0A,$05,$0A,$06,$09,$07,$09,$08,$08,$09,$07,$09,$06,$0A,$05,$0B,$04,$0B,$03,$0C,$02,$0C,$01,$0C
+ $B83D DEFB $0A,$00,$0A,$01,$0A,$02,$0A,$03,$09,$04,$09,$05,$08,$06,$08,$07,$07,$08,$06,$08,$06,$09,$05,$0A,$04,$0A,$03,$0B,$02,$0B,$01,$0B
+ $B85D DEFB $09,$00,$09,$01,$09,$02,$09,$03,$08,$04,$08,$05,$08,$05,$07,$06,$06,$07,$06,$08,$05,$08,$04,$09,$04,$09,$03,$09,$02,$0A,$01,$0A
+ $B87D DEFB $07,$00,$07,$01,$07,$01,$07,$02,$06,$03,$06,$04,$06,$04,$05,$05,$05,$05,$04,$06,$04,$06,$03,$07,$03,$07,$02,$07,$01,$08,$01,$08
+ $B89D DEFB $06,$00,$06,$01,$06,$01,$06,$02,$06,$02,$05,$03,$05,$04,$05,$04,$04,$05,$04,$05,$03,$05,$03,$06,$02,$06,$02,$06,$01,$06,$01,$07
+ $B8BD DEFB $05,$00,$05,$00,$05,$01,$05,$02,$05,$02,$04,$03,$04,$03,$04,$03,$04,$04,$03,$04,$03,$05,$02,$05,$02,$05,$01,$05,$01,$05,$01,$05
 
 ; Graphics pointer offsets
 ;

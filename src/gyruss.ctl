@@ -3,10 +3,10 @@
 s $4000 Unused
 S $4000,12288,$3000
 w $7000 RAM
-D $7000 Word at 7000
-@ $7000 label=word_at_7000
+D $7000 Screen center
+@ $7000 label=screen_center
 W $7000,2,2
-b $7002 Sprite data (32 sprites) #TABLE(default, default) { =h Byte offset | =h Purpose } { $00 | Sprite type, or $FF if not allocated } { $01 | Transformation } { $02 | Unknown } { $03 | Unknown } { $04 | Unknown } { $05 | Unknown } { $06 | Unknown } { $07 | Unknown } { $08 | Y } { $09 | X } { $0A | Pattern } { $0B | Color } TABLE#
+b $7002 Sprite data (32 sprites) #TABLE(default, default) { =h Byte offset | =h Purpose } { $00 | Sprite type, or $FF if not allocated } { $01 | Polar y (depth, 0 is closest (normal ship position), 116 is furthest away) } { $02 | Polar x (angle, 0 at bottom center, moving clockwise to 16 at the left side, 32 at the top, and 48 at the right side) } { $03 | Unknown } { $04 | Unknown } { $05 | Unknown } { $06 | Unknown } { $07 | Unknown } { $08 | Screen y } { $09 | Screen x } { $0A | Pattern } { $0B | Color } TABLE#
 @ $7002 label=sprite_data
 B $7002,384,12
 b $7182 Number of allocated sprites
@@ -164,10 +164,9 @@ b $729B Sound channel 4
 B $729B,10,10
 b $72A5 Data block at 72A5
 B $72A5,32,8
-w $72C5 Data block at 72C5
-B $72C5,1,1
-b $72C6 Data block at 72C6
-B $72C6,1,1
+w $72C5 Word at 72C5, which will be copied to #R$7000
+@ $72C5 label=word_at_72C5
+W $72C5,2,2
 b $72C7 Temp sprite data
 B $72C7,1,1
 b $72C8 Data block at 72C8
@@ -812,6 +811,8 @@ C $8F44,3 FILL_VRAM
 c $8F55 Routine at 8F55
 D $8F55 Used by the routine at #R$8E2C.
 N $8FAE This entry point is used by the routine at #R$8FED.
+C $8FAE,3 Polar y
+C $8FB1,3 Polar x
 c $8FED Routine at 8FED
 D $8FED Used by the routine at #R$8F55.
 c $900E Routine at 900E
@@ -929,7 +930,7 @@ C $91C8,1 Row counter
 C $91C9,2 Loop for 4 rows
 c $91CC Display planet name and sprites
 D $91CC Used by the routine at #R$9175.
-R $91CC I:HL address of planet name prefixed by length
+R $91CC I:HL Address of planet name prefixed by length
 @ $91CC label=display_planet_name_and_sprites
 C $91CC,1 Save address
 C $91CD,3 clear_row_7
@@ -1202,8 +1203,8 @@ C $9ACA,2 Set MSB of VDP address
 C $9ACD,2 Write byte
 c $9AD0 VDP read byte
 D $9AD0 Used by the routine at #R$AFE5.
-R $9AD0 I:DE read address
-R $9AD0 O:A byte read
+R $9AD0 I:DE Read address
+R $9AD0 O:A Byte read
 @ $9AD0 label=vdp_read_byte
 C $9AD0,1 Set LSB of VDP address
 C $9AD4,2 Set MSB of VDP address
@@ -1220,7 +1221,7 @@ C $9AF3,3 $729B
 C $9B04,4 Set y
 c $9B0D Play tune?
 D $9B0D Used by the routines at #R$9BD9, #R$9C1C and #R$9E91.
-R $9B0D I:A 0 - 6
+R $9B0D I:A Tune index 0 - 6
 @ $9B0D label=play_tune
 c $9B54 Routine at 9B54
 D $9B54 Used by the routine at #R$9B0D.
@@ -1318,6 +1319,8 @@ c $A31D Routine at A31D
 D $A31D Used by the routine at #R$A314.
 c $A33B Routine at A33B
 D $A33B Used by the routine at #R$82BF.
+C $A33B,3 Set #R$72C5, which will be copied to #R$7000
+C $A33E,3 ...
 C $A341,3 Status flags
 C $A344,2 Set bit 4
 C $A346,4 Sprite init data
@@ -1340,7 +1343,7 @@ C $A3A4,4 Set color
 C $A3A8,1 Load sprite pattern
 C $A3AC,3 Upload sprite data
 C $A3B4,2 60
-C $A3B8,3 Main loop actions
+C $A3B8,3 Game loop actions
 C $A3BB,3 ...
 C $A3BE,3 ...
 C $A3C1,3 ...
@@ -1367,7 +1370,7 @@ N $A413 Something else
 C $A413,3 Y and X of 1st sprite
 C $A416,3 Add 4 to each
 C $A419,1 ...
-C $A41A,3 Save it in ...
+C $A41A,3 Save it in #R$72C5, which will be copied to #R$7000
 C $A41D,3 Byte 2 of 1st sprite
 C $A420,3 Save it temporary
 N $A423 Allocate 6 sprites
@@ -1395,13 +1398,31 @@ C $A46B,2 Loop 9 times
 C $A46E,2 Loop 20 times
 c $A471 Routine at A471
 D $A471 Used by the routines at #R$A33B and #R$A3E1.
+C $A471,3 Copy #R$72C5 to #R$7000
+C $A474,3 ...
+C $A477,2 32 sprites
+C $A479,4 Sprite data
 N $A47D This entry point is used by the routine at #R$A4A0.
+C $A47D,3 Get type
+C $A480,2 Is it $0D?
+C $A482,2 If not then move to next sprite
+C $A484,1 Save counter
+C $A485,3 Polar y
+C $A488,3 Polar x
 C $A48E,3 Set y
 C $A491,3 Set x
-c $A4A0 Routine at A4A0
-D $A4A0 Used by the routine at #R$A471.
-N $A4A3 This entry point is used by the routine at #R$A471.
-N $A4A4 This entry point is used by the routine at #R$A471.
+C $A494,3 Status
+C $A497,2 Test bit, INC or DEC IX+$01
+C $A499,2 ...
+C $A49B,3 ...
+C $A49E,2 ...
+C $A4A0,3 ...
+C $A4A3,1 Restore counter
+C $A4A4,3 Sprite data size
+C $A4A7,2 Add to sprite data addrss
+C $A4A9,2 Loop 32 times
+C $A4AB,3 Set #R$7000 back to original value
+C $A4AE,3 ..
 b $A4B2 Sprite init data (byte 2)
 B $A4B2,6,6
 b $A4B8 Sprite init data (byte 2)
@@ -1572,7 +1593,7 @@ C $AD83,4 Set y
 N $AD87 This entry point is used by the routine at #R$AD49.
 c $AD8B Load sprite pattern (RST $30)
 D $AD8B Used by the routine at #R$801B.
-R $AD8B I:IX points to sprite data
+R $AD8B I:IX Pointer to sprite data
 @ $AD8B label=load_sprite_pattern
 C $AD90,3 Get sprite type
 C $AD95,3 Table of 29 bytes (offsets into table at $B8FA)
@@ -1621,8 +1642,14 @@ C $AE0E,3 WRITE_VRAM
 C $AE11,3 Get sprite type
 C $AE14,2 If 1,
 C $AE16,2 then skip ahead
+C $AE18,3 Polar y
+C $AE1B,3 Polar x
+C $AE1E,3 Polar to screen
 C $AE21,3 Set y
 C $AE24,3 Set x
+C $AE27,2 If carry, sprite is outside visible screen
+C $AE29,2 Return anyway
+C $AE2B,3 If sprite type is 1, set HL to table address
 C $AE3E,1 Add A to HL
 C $AE43,3 Set y
 C $AE4B,3 Set x
@@ -1732,7 +1759,8 @@ D $AFAE Used by the routine at #R$AE94.
 c $AFC2 Take 8 bytes pointed to by $72DE and place them after, left shifted one bit. Returns address of shifted bytes in $72DE.
 D $AFC2 Used by the routine at #R$AE94.
 @ $AFC2 label=shift_left
-b $AFDD Data block at AFDD
+b $AFDD Table at AFDD
+@ $AFDD label=table_at_AFDD
 B $AFDD,34,8*4,2
 c $AFFF Display stars
 D $AFFF Used by the routines at #R$8024, #R$8139, #R$8170, #R$832A, #R$8368, #R$846B, #R$90D6, #R$A33B and #R$A3E1.
@@ -1753,7 +1781,7 @@ C $B01E,3 Set star frame to zero
 C $B021,2 Set mask to draw
 c $B023 Display star frame
 D $B023 Used by the routine at #R$AFFF.
-R $B023 I:C mask $00 or $FF
+R $B023 I:C Mask $00 or $FF
 @ $B023 label=display_star_frame
 C $B023,3 0, 2, 4, 6, 8, 10
 C $B026,3 Table of pointers
@@ -1806,17 +1834,69 @@ b $B134 Stars
 B $B134,2,2
 b $B136 Star patterns #UDGTABLE { #UDGARRAY18,,4($B136-$B1C5-8)(graphics-B136.png) } TABLE#
 B $B136,144,8
-c $B1C6 Routine at B1C6
+c $B1C6 Convert polar to screen coordinates
 D $B1C6 Used by the routines at #R$8F0F, #R$8F55, #R$A471, #R$AB72 and #R$ADD1.
-C $B1D3,1 Multiply by 32
+R $B1C6 I:IX Pointer to sprite data
+R $B1C6 I:D Polar y
+R $B1C6 I:E Polar x
+R $B1C6 O:D Screen y
+R $B1C6 O:E Screen x
+R $B1C6 O:Carry flag set if out of screen
+@ $B1C6 label=polar_to_screen
+C $B1CA,2 11
+C $B1CC,1 Polar y + 11
+C $B1CD,3 If this is 128 or more (polar y > 116), then set position outside screen and return
+C $B1D0,1 Calculate table address, starting with y + 11 (11 first table rows are never used?)
+C $B1D3,1 (y + 11) * 32
 C $B1D4,1 ...
 C $B1D5,1 ...
 C $B1D6,1 ...
 C $B1D7,1 ...
-C $B1FD,3 $60
-C $B20B,3 $80
-b $B21D Data block at B21D
-B $B21D,1728,8
+C $B1D8,1 x
+C $B1D9,2 Is bit 4 set (top left or lower right quadrants)?
+C $B1DB,2 Jump if not
+C $B1DD,1 Else invert (0 -> 15, 1 -> 14, etc.)
+C $B1DE,2 Use the first 4 inverted bits
+C $B1E0,1 x2 (2 bytes per x)
+C $B1E1,1 Add to address
+C $B1E2,1 ...
+C $B1E3,2 ...
+C $B1E5,1 ...
+C $B1E6,3 Lookup table base address
+C $B1E9,1 Add to address
+C $B1EA,1 Get table value
+C $B1EB,2 If $FF
+C $B1ED,2 Then set position outside screen and return
+C $B1EF,4 Center of screen?
+C $B1F3,1 x
+C $B1F4,1 Shift right
+C $B1F5,1 Bit 4 is now set if bit 5 (left/right) and bit 4 (top left/lower right) were different, i.e. top of screen
+C $B1F6,2 Test bit 4 (top of screen)
+C $B1F8,1 Get table value
+C $B1F9,2 Skip negating if not top of screen
+C $B1FB,2 -table value
+C $B1FD,3 +center y ($60)
+C $B200,2 -4 (adjust for sprite size)
+C $B202,1 Store as sprite y
+C $B203,1 Next table address
+C $B204,1 Get table value
+C $B205,2 Test bit 5 of x (left/right)
+C $B207,2 Skip negating if right
+C $B209,2 -table value
+C $B20B,3 +center x ($80 or $B5 or ?)
+C $B20E,2 -4 (adjust for sprite size)
+C $B210,1 Store as sprite x
+C $B211,1 Clear carry flag?
+C $B212,1 Return
+C $B213,1 ...
+C $B214,2 ...
+C $B216,1 ...
+C $B217,3 Set return position outside screen
+C $B21A,1 Set carry flag
+C $B21B,2 To return
+b $B21D Polar to screen coordinates lookup table 16 (y, x) pairs (32 bytes) for each depth value (polar y) (y, x) are offsets from center of screen
+@ $B21D label=polar_to_screen_table
+B $B21D,1728,32
 b $B8DD Graphics pointer offsets
 D $B8DD Offsets into data block at B8FA
 @ $B8DD label=graphics_pointer_offsets_table
