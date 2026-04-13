@@ -516,7 +516,7 @@ Used by the routine at <a href="32795.html">L801B</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44564"></span>AE14</td>
 <td class="instruction">CP $01</td>
-<td class="comment-1" rowspan="1">If 1,</td>
+<td class="comment-1" rowspan="1">If 1, i.e. ship 2</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -558,19 +558,19 @@ Used by the routine at <a href="32795.html">L801B</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44583"></span>AE27</td>
 <td class="instruction">JR C,<a href="44628.html">LAE54</a></td>
-<td class="comment-1" rowspan="1">If carry, sprite is outside visible screen</td>
+<td class="comment-1" rowspan="1">If carry, sprite is outside visible screen, skip ahead</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44585"></span>AE29</td>
 <td class="instruction">JR <a href="44427.html#44622">load_sprite_pattern_7</a></td>
-<td class="comment-1" rowspan="1">Return anyway</td>
+<td class="comment-1" rowspan="1">Return</td>
 </tr>
 <tr>
 <td class="asm-label">load_sprite_pattern_5</td>
 <td class="address-2"><span id="44587"></span>AE2B</td>
 <td class="instruction">LD HL,<a href="45021.html">table_at_AFDD</a></td>
-<td class="comment-1" rowspan="1">If sprite type is 1, set HL to table address</td>
+<td class="comment-1" rowspan="1">If sprite type is ship 2, set HL to table address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -612,7 +612,7 @@ Used by the routine at <a href="32795.html">L801B</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44603"></span>AE3B</td>
 <td class="instruction">LD HL,$AFDF</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Start at <a href="45021.html">table_at_AFDD</a>+2</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -624,13 +624,13 @@ Used by the routine at <a href="32795.html">L801B</a>.
 <td class="asm-label">load_sprite_pattern_6</td>
 <td class="address-2"><span id="44607"></span>AE3F</td>
 <td class="instruction">LD A,($700A)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Ship screen y</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44610"></span>AE42</td>
 <td class="instruction">ADD A,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add table value</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -642,19 +642,19 @@ Used by the routine at <a href="32795.html">L801B</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44614"></span>AE46</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Next table address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44615"></span>AE47</td>
 <td class="instruction">LD A,($700B)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Ship screen x</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44618"></span>AE4A</td>
 <td class="instruction">ADD A,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add table value</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

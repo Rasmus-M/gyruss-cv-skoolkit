@@ -3,10 +3,10 @@
 s $4000 Unused
 S $4000,12288,$3000
 w $7000 RAM
-D $7000 Screen center
-@ $7000 label=screen_center
+D $7000 Center of projection
+@ $7000 label=center_of_projection
 W $7000,2,2
-b $7002 Sprite data (32 sprites) #TABLE(default, default) { =h Byte offset | =h Purpose } { $00 | Sprite type, or $FF if not allocated } { $01 | Polar y (depth, 0 is closest (normal ship position), 116 is furthest away) } { $02 | Polar x (angle, 0 at bottom center, moving clockwise to 16 at the left side, 32 at the top, and 48 at the right side) } { $03 | Unknown } { $04 | Unknown } { $05 | Unknown } { $06 | Unknown } { $07 | Unknown } { $08 | Screen y } { $09 | Screen x } { $0A | Pattern } { $0B | Color } TABLE#
+b $7002 Sprite data (32 sprites) #TABLE(default, default) { =h Byte offset | =h Purpose } { $00 | Sprite type, or $FF if not allocated } { $01 | Polar y (depth, 0 is closest (normal ship position), 116 is furthest away) } { $02 | Polar x (angle, 0 at bottom center, moving clockwise to 16 at the left side, 32 at the top, and 48 at the right side) } { $03 | Close to polar y ($01) } { $04 | Close to polar x ($02) } { $05 | Close to polar x ($02) } { $06 | Unknown } { $07 | Unknown } { $08 | Screen y } { $09 | Screen x } { $0A | Pattern } { $0B | Color } TABLE#
 @ $7002 label=sprite_data
 B $7002,384,12
 b $7182 Number of allocated sprites
@@ -17,7 +17,9 @@ b $7183 Sprite allocation table
 B $7183,32,8
 b $71A3 Temporary storage (72 bytes)
 @ $71A3 label=buffer
-B $71A3,72,8
+B $71A3,31,8*3,7
+b $71C2 Data block at 71C2
+B $71C2,41,8*5,1
 b $71EB Status flags #TABLE(default, default) { =h Bit | =h Purpose } { $00 | Unknown } { $01 | Unknown } { $02 | Exits main loop } { $03 | Unknown } { $04 | Set at stage init } { $05 | Unknown } { $06 | Unknown } { $07 | Two players } TABLE#
 @ $71EB player_status
 B $71EB,1,1
@@ -35,7 +37,8 @@ B $71F0,1,1
 b $71F1 Current player (0 or 1)
 @ $71F1 label=current_player
 B $71F1,1,1
-b $71F2 Byte at 71F2
+b $71F2 Frame counter
+@ $71F2 label=frame_counter
 B $71F2,1,1
 b $71F3 Byte at 71F3
 B $71F3,1,1
@@ -82,13 +85,15 @@ b $722E Data block at 722E
 B $722E,36,8*4,4
 b $7252 Byte at 7252
 B $7252,1,1
-b $7253 Byte at 7253
+b $7253 Number of active shots
+@ $7253 label=active_shots
 B $7253,1,1
 b $7254 Byte at 7254
 B $7254,1,1
 b $7255 Byte at 7255
 B $7255,1,1
-b $7256 Byte at 7256
+b $7256 Flags relating to fire (perhaps others) #TABLE(default, default) { =h Bit | =h Purpose } { $00 | Fire pressed last time } { $01 | Double shot } { $02 | Unknown } { $03 | Unknown } { $04 | Unknown } { $05 | Unknown } { $06 | Unknown } { $07 | Unknown } TABLE#
+@ $7256 label=fire_flags
 B $7256,1,1
 w $7257 Countdown to screen off
 @ $7257 label=screensaver_countdown
@@ -163,9 +168,17 @@ B $7291,10,10
 b $729B Sound channel 4
 B $729B,10,10
 b $72A5 Data block at 72A5
-B $72A5,32,8
+B $72A5,25,8*3,1
+w $72BE Word at 72BE
+W $72BE,2,2
+w $72C0 Word at 72C0
+W $72C0,2,2
+b $72C2 Byte at 72C2
+B $72C2,1,1
+w $72C3 Word at 72C3
+W $72C3,2,2
 w $72C5 Word at 72C5, which will be copied to #R$7000
-@ $72C5 label=word_at_72C5
+@ $72C5 label=tmp_center_of_projection
 W $72C5,2,2
 b $72C7 Temp sprite data
 B $72C7,1,1
@@ -648,6 +661,7 @@ c $8673 Routine at 8673
 D $8673 Used by the routine at #R$865A.
 c $867D Routine at 867D
 D $867D Used by the routine at #R$865A.
+C $869A,3 Set type
 C $86A5,4 Set color
 C $86AD,1 Load sprite pattern
 C $86B0,1 Allocate sprite
@@ -1269,28 +1283,28 @@ C $9CA0,3 Set x
 N $9CA3 This entry point is used by the routine at #R$9C92.
 c $9CA8 Routine at 9CA8
 D $9CA8 Used by the routine at #R$9EA3.
+R $9CA8 I:C 2-
 N $9CB5 This entry point is used by the routines at #R$9B54 and #R$9E01.
 C $9CC5,3 Table address
 b $9CE7 Data block at 9CE7
 @ $9CE7 label=table_at_9CE7
 B $9CE7,86,8*10,6
 c $9D3D Routine at 9D3D
-D $9D3D Used by the routines at #R$9DE8 and #R$9E75.
+D $9D3D Used by the routines at #R$9E75.
 c $9D67 Routine at 9D67
 D $9D67 Used by the routine at #R$9B99.
 N $9D6D This entry point is used by the routine at #R$9D89.
 c $9D89 Routine at 9D89
 D $9D89 Used by the routine at #R$9D67.
-c $9D91 Routine at 9D91
+w $9D91 Data block at 9D91
+W $9D91,22,2
+c $9DA7 Routine at 9DA7
 c $9DB9 Routine at 9DB9
 c $9DC4 Routine at 9DC4
-c $9DD7 Routine at 9DD7
 c $9DE8 Routine at 9DE8
 N $9DF2 This entry point is used by the routine at #R$9DC4.
-N $9DFC This entry point is used by the routines at #R$9D91, #R$9DB9, #R$9DD7, #R$9E01, #R$9E5C and #R$9E75.
+N $9DFC This entry point is used by the routines at #R$9DA7 and #R$9DC4.
 c $9E01 Routine at 9E01
-c $9E4A Routine at 9E4A
-D $9E4A Used by the routine at #R$9E01.
 c $9E5C Routine at 9E5C
 c $9E75 Routine at 9E75
 c $9E91 Play tune (preserve registers)?
@@ -1299,6 +1313,8 @@ D $9E91 Used by the routines at #R$82BF, #R$832A and #R$846B.
 C $9E98,3 Play tune
 c $9EA3 Routine at 9EA3
 D $9EA3 Used by the routines at #R$8139, #R$8368, #R$8C52, #R$8E9D, #R$9934, #R$99A0, #R$99B1, #R$99D3, #R$A33B and #R$A6EC.
+R $9EA3 I:A
+@ $9EA3 label=call_9CA8
 b $9EB6 Data block at 9EB6
 B $9EB6,1029,8*128,5
 c $A2BB Routine at A2BB
@@ -1321,43 +1337,45 @@ c $A31D Routine at A31D
 D $A31D Used by the routine at #R$A314.
 c $A33B Routine at A33B
 D $A33B Used by the routine at #R$82BF.
-C $A33B,3 Set #R$72C5, which will be copied to #R$7000
-C $A33E,3 ...
+C $A33B,3 New center of projection at bottom center for implosion
+C $A33E,3 Set #R$72C5, which will be copied to #R$7000
 C $A341,3 Status flags
 C $A344,2 Set bit 4
-N $A346 Allocate 6 sprites
+N $A346 Allocate 6 dot sprites for the implosion that becomes the ship
 C $A346,4 Sprite init data
 C $A34A,2 Allocate 6 sprites
 C $A34C,1 Allocate sprite
-C $A34D,4 Sprite type is $0D
+C $A34D,4 Sprite type is $0D (a dot)
 C $A351,4 Polar y
 C $A355,4 Polar x
 C $A359,1 Load sprite pattern
 C $A35A,4 Polar y
 C $A35E,3 Get init data
 C $A361,3 Polar x
-C $A364,4 Set color
+C $A364,4 Set color (pink)
 C $A368,2 Next init data
 C $A36A,2 Loop for 6 sprites
-N $A36C Game loop 20 times
+N $A36C Display implosion
 C $A36C,2 20
 C $A36E,1 Save counter
+C $A36F,3 Move dots
+C $A372,3 Ship movement?
 C $A375,3 Upload sprite data
 C $A378,1 Wait interrupt
 C $A37F,1 Restore counter
 C $A380,2 Loop 20 times
 N $A382 Allocate ship etc.
 C $A385,1 Allocate sprite
-C $A386,4 Sprite type (ship)
+C $A386,4 Sprite type $01 (ship 1)
 C $A38A,4 Polar y
 C $A38E,4 Polar x
-C $A392,4 Set color
+C $A392,4 Set color (red)
 C $A396,1 Load sprite pattern
 C $A397,1 Allocate sprite
-C $A398,4 Sprite type is $01
+C $A398,4 Sprite type $01 (ship 2)
 C $A39C,4 Polar y
 C $A3A0,4 Polar x
-C $A3A4,4 Set color
+C $A3A4,4 Set color (blue)
 C $A3A8,1 Load sprite pattern
 C $A3AC,3 Upload sprite data
 N $A3B4 Game loop 60 times
@@ -1418,6 +1436,7 @@ C $A44A,2 Next init data
 C $A44C,2 Loop for 6 sprites
 N $A44E Game loop for 3 seconds
 C $A450,1 Outer loop
+C $A451,3 Move dots
 C $A454,3 Upload sprite data
 C $A459,1 Inner loop
 C $A45B,3 Main loop actions
@@ -1428,14 +1447,15 @@ C $A467,3 ...
 C $A46B,2 Loop 9 times
 C $A46E,2 Loop 20 times
 c $A471 Routine at A471
-D $A471 Change polar y of sprite types $0D, according to bit 2 of #R$71EB Used by the routines at #R$A33B and #R$A3E1.
+D $A471 Change polar y of sprite types $0D, according to bit 2 of #R$71EB. Used by the routines at #R$A33B and #R$A3E1.
+@ $A471 label=move_dots
 C $A471,3 Copy #R$72C5 to #R$7000
 C $A474,3 ...
 C $A477,2 32 sprites
 C $A479,4 Sprite data
 N $A47D This entry point is used by the routine at #R$A4A0.
 C $A47D,3 Get type
-C $A480,2 Is it $0D?
+C $A480,2 Is it $0D (a dot)?
 C $A482,2 If not then move to next sprite
 C $A484,1 Save counter
 C $A485,3 Polar y
@@ -1455,7 +1475,8 @@ C $A4A7,2 Next sprite
 C $A4A9,2 Loop 32 times
 C $A4AB,3 Set #R$7000 back to original value
 C $A4AE,3 ...
-b $A4B2 Sprite init data (byte 2)
+b $A4B2 Init data for implosion
+@ $A4B2 implosion_polar_x
 B $A4B2,6,6
 b $A4B8 Sprite init data (byte 2)
 B $A4B8,6,6
@@ -1484,33 +1505,163 @@ C $A6E8,1 Next VDP address
 C $A6E9,2 Loop
 c $A6EC Routine at A6EC
 D $A6EC Used by the routines at #R$846B and #R$9978.
-c $A73C Routine at A73C
-D $A73C Used by the routines at #R$8024, #R$832A, #R$8368, #R$846B and #R$A33B.
-C $A742,3 Controller
+c $A73C Control ship
+D $A73C Control ship movement and fire using controllers Used by the routines at #R$8024, #R$832A, #R$8368, #R$846B and #R$A33B.
+@ $A73C label=control_ship
+C $A73C,3 Get frame
+C $A73F,2 Test bit 0
+C $A741,1 Return every 2nd frame
+C $A742,3 Controller #R$71F1
 C $A745,2 Segment 0
-C $A747,3 DECODER
-C $A778,1 Load sprite pattern
-C $A77D,1 Load sprite pattern
+C $A747,3 DECODER (H = fire, L = joystick (bit 0: up, bit 1: right, bit 2: down, bit 3: left))
+C $A74A,2 Reset fire
+C $A74C,3 Movement table
+C $A74F,1 Add joystick result (0 - 12, some values not possible)
+C $A750,4 Sprite 0 data (ship)
+C $A754,2 Direction = 1 (clockwise)
+C $A756,1 Get table value, which is the value of polar x to move towards
+C $A757,2 Is it an impossible joystick value, e.g. up + down?
+C $A759,2 Then skip ahead
+C $A75B,3 Table value - polar x
+C $A75E,2 If zero the skip ahead (alredy there)
+C $A760,2 If positive skip ahead
+C $A762,2 Direction = -1 (anti-clockwise)
+C $A764,2 abs(value - polar x)
+C $A766,2 Is the difference < 33?
+C $A768,1 Direction
+C $A769,2 The skip ahead
+C $A76B,2 Otherwise reverse direction
+C $A76D,3 Polar x + direction
+C $A770,2 Mod 64
+C $A772,3 Update polar x
+C $A775,3 Also update sprite 1
+C $A778,1 Load sprite pattern sprite 0
+C $A779,4 Sprite 1
+C $A77D,1 Load sprite pattern sprite 1
+N $A781 Handle fire
+C $A787,3 Controller #R$71F1
+C $A78A,1 Save current player
 C $A78B,2 Segment 0
-C $A78D,3 DECODER
+C $A78D,3 DECODER (H = fire, L = joystick)
+C $A790,1 Fire
+C $A791,1 Restore current player
+C $A792,1 Save fire segment 0
 C $A793,2 Segment 1
 C $A795,3 DECODER
+C $A798,1 Restore fire segment 0
+C $A799,1 Combine with fire segment 1
+C $A79A,3 Flags
+C $A79D,2 Test fire pressed
+C $A79F,2 If not, clear bit for fire pressed, and return
+C $A7A1,2 Check if fire was pressed last time
+C $A7A3,1 Then return (must release after each shot)
+C $A7A4,3 Get number of active shots
+C $A7A7,2 Test for double shot
+C $A7A9,2 Skip ahead if single shot
+C $A7AB,2 Divide by 2 (allow twice as many shots)
+C $A7AD,2 Return if >= 2
+C $A7AF,1 ...
+C $A7B0,2 No effect
+C $A7B2,1 Some instructions removed here?
+C $A7B3,1 ...
+C $A7B4,1 ...
+C $A7B5,3 Increment number of active shots
+C $A7B8,1 ...
+C $A7B9,3 ...
+C $A7BC,2 Set bit for fire pressed
+C $A7BE,2 Test for double shot
+C $A7C0,2 Jump for double shot
 C $A7C2,1 Allocate sprite
+C $A7C3,3 Ship's polar coordinates
+C $A7C6,3 Shot y = ship y
+C $A7C9,3 Shot x = ship x
+C $A7CC,4 Shot type
 C $A7D0,4 Set color
+C $A7D4,1 Return
 c $A7D5 Routine at A7D5
 D $A7D5 Used by the routine at #R$A73C.
 C $A7D5,1 Allocate sprite
-C $A7E8,4 Set color
+C $A7D6,3 Ship's polar coordinates
+C $A7D9,1 Save them
+C $A7DA,3 Set polar y same as ship's
+C $A7DD,1 Ship's polar x
+C $A7DE,1 One step clockwise
+C $A7DF,2 Mod 64
+C $A7E1,3 Set polar x
+C $A7E4,4 Shot type
+C $A7E8,4 Set color (yellow)
 C $A7EC,1 Allocate sprite
-C $A7FC,4 Set color
+C $A7ED,1 Restore ship's polar coordinates
+C $A7EE,3 Set polar y same as ship's
+C $A7F1,1 Ship's polar x
+C $A7F2,1 One step anti-clockwise
+C $A7F3,2 Mod 64
+C $A7F5,3 Set polar x
+C $A7F8,4 Shot type
+C $A7FC,4 Set color (yellow)
+C $A800,3 Increment number of active shots
+C $A803,1 ...
+C $A804,1 Return
 c $A805 Routine at A805
 D $A805 Used by the routine at #R$A73C.
+C $A805,2 Clear bit for fire pressed
+C $A807,1 Return
 c $A808 Routine at A808
 D $A808 Used by the routines at #R$8368, #R$A33B, #R$A3E1 and #R$A73C.
+C $A80F,4 Buffer for generated structure
+C $A817,4 Pattern address LSB
+C $A81B,4 Pattern address MSB
+C $A81F,3 Ship's polar y
+C $A824,2 Jump if >= 21
+C $A826,3 Ship's polar x
+C $A829,2 Polar x + 2
+C $A82B,1 Rotate right 3 times
+C $A82C,1 00XXXXXX -> XXX00XXX
+C $A82E,2 XXX00XXX -> 00000XX0 (quadrant)
+C $A830,3 Adjustment table
 C $A833,1 Add A to HL
+C $A834,3 Ship's screen x
+C $A837,1 Add table value
+C $A838,3 Store x
+C $A83B,1 Next table address
+C $A83C,3 Ship's screen y
+C $A83F,1 Add table value
+C $A840,3 Store y
+C $A843,3 Ship's polar x
+C $A846,2 Polar x + 2
+C $A848,2 Keep 4 most significant bits, i.e. 16 offsets 4 bytes apart
+C $A84A,1 HL = A
+C $A84B,2 ...
+C $A84D,1 x2
+C $A84E,1 x4
+C $A84F,1 x8, now 32 bytes apart
+C $A850,3 Table of ship background patterns (32 bytes per frame)
+C $A853,1 Add to offset
+C $A854,3 Save LSB
+C $A857,3 Save MSB
 b $A865 Data block at A865
-B $A865,24,8
-b $A87D Ship sprites #UDGTABLE(no-border, no-border) { #UDGARRAY32,,4($A87D-$AA75-16)(graphics-A87D.png) } { #UDGARRAY32,,4($A885-$AA7D-16)(graphics-A885.png) } TABLE#
+@ $A865 label=movement_table
+B $A865,1,1 0000
+B $A866,1,1 0001 Up
+B $A867,1,1 0010 Right
+B $A868,1,1 0011 Up + right
+B $A869,1,1 0100 Down
+B $A86A,1,1 0101
+B $A86B,1,1 0110 Down + right
+B $A86C,1,1 0111
+B $A86D,1,1 1000 Left
+B $A86E,1,1 1001 Left + up
+B $A86F,1,1 1010
+B $A870,1,1 1011
+B $A871,1,1 1100 Left + down
+B $A872,1,1 1101
+B $A873,1,1 1110
+B $A874,1,1 1111
+b $A875 Data block at A875
+@ $A875 label=adjust_ship_x_y_table
+B $A875,8,8
+b $A87D Ship background patterns (16 frames of 4 patterns, organised as 16x16 sprite patterns) #UDGTABLE(no-border, no-border) { #UDGARRAY32,,4($A87D-$AA75-16)(graphics-A87D.png) } { #UDGARRAY32,,4($A885-$AA7D-16)(graphics-A885.png) } TABLE#
+@ $A87D label=ship_patterns
 B $A87D,513,8*64,1
 c $AA7E Routine at AA7E
 c $AAA6 Routine at AAA6
@@ -1672,23 +1823,42 @@ C $AE08,3 Source
 C $AE0B,3 Write 8 bytes
 C $AE0E,3 WRITE_VRAM
 C $AE11,3 Get sprite type
-C $AE14,2 If 1,
+C $AE14,2 If 1, i.e. ship 2
 C $AE16,2 then skip ahead
 C $AE18,3 Polar y
 C $AE1B,3 Polar x
 C $AE1E,3 Polar to screen
 C $AE21,3 Set y
 C $AE24,3 Set x
-C $AE27,2 If carry, sprite is outside visible screen
-C $AE29,2 Return anyway
-C $AE2B,3 If sprite type is 1, set HL to table address
+C $AE27,2 If carry, sprite is outside visible screen, skip ahead
+C $AE29,2 Return
+C $AE2B,3 If sprite type is ship 2, set HL to table address
+C $AE3B,3 Start at #R$AFDD+2
 C $AE3E,1 Add A to HL
+C $AE3F,3 Ship screen y
+C $AE42,1 Add table value
 C $AE43,3 Set y
+C $AE46,1 Next table address
+C $AE47,3 Ship screen x
+C $AE4A,1 Add table value
 C $AE4B,3 Set x
 N $AE4E This entry point is used by the routines at #R$AE54 and #R$AE75.
 c $AE54 Routine at AE54
 D $AE54 Used by the routine at #R$ADD1.
 C $AE54,3 Get sprite type
+C $AE57,2 Jump if < 12
+C $AE59,2 ...
+C $AE5B,2 Jump if < 14
+C $AE5D,2 ...
+C $AE5F,2 Jump if < 18
+C $AE61,2 ...
+C $AE63,2 Jump if >= 24
+C $AE65,2 ...
+C $AE67,2 Jump if < 18
+C $AE69,2 ...
+C $AE6B,2 Jump if >= 20
+C $AE6D,2 ...
+C $AE73,2 Set off-screen values and return
 c $AE75 Routine at AE75
 D $AE75 Used by the routine at #R$AE54.
 N $AE86 This entry point is used by the routine at #R$AE54.
@@ -1750,7 +1920,7 @@ C $AF09,4 Is bit 3 set?
 C $AF0D,2 If not, skip ahead
 C $AF0F,3 flip_vert
 C $AF12,3 shift_left
-C $AF15,3 Source for writing to DP RAM
+C $AF15,3 Source for writing to VDP RAM
 C $AF18,4 Destination
 C $AF1C,3 8 bytes
 C $AF1F,3 WRITE_VRAM
@@ -1781,7 +1951,9 @@ C $AF56,3 Set counter at $72D6 to zero
 C $AF59,3 Increment counter at $72D5
 C $AF5D,3 Get counter
 C $AF63,1 When it reaches $1D (29)
-C $AF67,3 Then set it to $FF (done)
+C $AF64,1 ...
+C $AF65,2 Then set it to $FF (done)
+C $AF67,3 ...
 c $AF6B Take 8 bytes pointed to by $72DE and place them after, bit reversed. Returns address of reversed bytes in $72DE.
 D $AF6B Used by the routine at #R$AE94.
 @ $AF6B label=flip_horz

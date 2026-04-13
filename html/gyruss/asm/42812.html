@@ -24,40 +24,40 @@ Next: <a href="42965.html">A7D5</a>
 </td>
 </tr>
 </table>
-<div class="description">A73C: Routine at A73C</div>
+<div class="description">A73C: Control ship</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="32804.html">main</a>, <a href="33578.html">L832A</a>, <a href="33640.html">L8368</a>, <a href="33899.html">L846B</a> and <a href="41787.html">LA33B</a>.
+Control ship movement and fire using controllers Used by the routines at <a href="32804.html">main</a>, <a href="33578.html">L832A</a>, <a href="33640.html">L8368</a>, <a href="33899.html">L846B</a> and <a href="41787.html">LA33B</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">LA73C</td>
+<td class="asm-label">control_ship</td>
 <td class="address-2"><span id="42812"></span>A73C</td>
-<td class="instruction">LD A,(<a href="29170.html">L71F2</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD A,(<a href="29170.html">frame_counter</a>)</td>
+<td class="comment-1" rowspan="1">Get frame</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42815"></span>A73F</td>
 <td class="instruction">AND $01</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Test bit 0</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42817"></span>A741</td>
 <td class="instruction">RET NZ</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return every 2nd frame</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42818"></span>A742</td>
 <td class="instruction">LD HL,(<a href="29168.html">L71F0</a>)</td>
-<td class="comment-1" rowspan="1">Controller</td>
+<td class="comment-1" rowspan="1">Controller <a href="29169.html">current_player</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -69,151 +69,151 @@ Used by the routines at <a href="32804.html">main</a>, <a href="33578.html">L832
 <td class="asm-label"></td>
 <td class="address-1"><span id="42823"></span>A747</td>
 <td class="instruction">CALL $1F79</td>
-<td class="comment-1" rowspan="1">DECODER</td>
+<td class="comment-1" rowspan="1">DECODER (H = fire, L = joystick (bit 0: up, bit 1: right, bit 2: down, bit 3: left))</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42826"></span>A74A</td>
 <td class="instruction">LD H,$00</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Reset fire</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42828"></span>A74C</td>
-<td class="instruction">LD DE,<a href="43109.html">LA865</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD DE,<a href="43109.html">movement_table</a></td>
+<td class="comment-1" rowspan="1">Movement table</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42831"></span>A74F</td>
 <td class="instruction">ADD HL,DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add joystick result (0 - 12, some values not possible)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42832"></span>A750</td>
 <td class="instruction">LD IX,<a href="28674.html">sprite_data</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Sprite 0 data (ship)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42836"></span>A754</td>
 <td class="instruction">LD B,$01</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Direction = 1 (clockwise)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42838"></span>A756</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get table value, which is the value of polar x to move towards</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42839"></span>A757</td>
 <td class="instruction">CP $FF</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Is it an impossible joystick value, e.g. up + down?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42841"></span>A759</td>
-<td class="instruction">JR Z,<a href="42812.html#42881">LA73C_2</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="42812.html#42881">control_ship_2</a></td>
+<td class="comment-1" rowspan="1">Then skip ahead</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42843"></span>A75B</td>
 <td class="instruction">SUB (IX+$02)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Table value - polar x</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42846"></span>A75E</td>
-<td class="instruction">JR Z,<a href="42812.html#42881">LA73C_2</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="42812.html#42881">control_ship_2</a></td>
+<td class="comment-1" rowspan="1">If zero the skip ahead (alredy there)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42848"></span>A760</td>
-<td class="instruction">JR NC,<a href="42812.html#42854">LA73C_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NC,<a href="42812.html#42854">control_ship_0</a></td>
+<td class="comment-1" rowspan="1">If positive skip ahead</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42850"></span>A762</td>
 <td class="instruction">LD B,$FF</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Direction = -1 (anti-clockwise)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42852"></span>A764</td>
 <td class="instruction">NEG</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">abs(value - polar x)</td>
 </tr>
 <tr>
-<td class="asm-label">LA73C_0</td>
+<td class="asm-label">control_ship_0</td>
 <td class="address-2"><span id="42854"></span>A766</td>
 <td class="instruction">CP $21</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Is the difference &lt; 33?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42856"></span>A768</td>
 <td class="instruction">LD A,B</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Direction</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42857"></span>A769</td>
-<td class="instruction">JR C,<a href="42812.html#42861">LA73C_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR C,<a href="42812.html#42861">control_ship_1</a></td>
+<td class="comment-1" rowspan="1">The skip ahead</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42859"></span>A76B</td>
 <td class="instruction">NEG</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Otherwise reverse direction</td>
 </tr>
 <tr>
-<td class="asm-label">LA73C_1</td>
+<td class="asm-label">control_ship_1</td>
 <td class="address-2"><span id="42861"></span>A76D</td>
 <td class="instruction">ADD A,(IX+$02)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Polar x + direction</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42864"></span>A770</td>
 <td class="instruction">AND $3F</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Mod 64</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42866"></span>A772</td>
 <td class="instruction">LD (IX+$02),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Update polar x</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42869"></span>A775</td>
 <td class="instruction">LD (IX+$0E),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Also update sprite 1</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42872"></span>A778</td>
 <td class="instruction">RST $30</td>
-<td class="comment-1" rowspan="1">Load sprite pattern</td>
+<td class="comment-1" rowspan="1">Load sprite pattern sprite 0</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42873"></span>A779</td>
 <td class="instruction">LD IX,<a href="28674.html#28686">$700E</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Sprite 1</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42877"></span>A77D</td>
 <td class="instruction">RST $30</td>
-<td class="comment-1" rowspan="1">Load sprite pattern</td>
+<td class="comment-1" rowspan="1">Load sprite pattern sprite 1</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -222,7 +222,17 @@ Used by the routines at <a href="32804.html">main</a>, <a href="33578.html">L832
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">LA73C_2</td>
+<td class="routine-comment" colspan="5">
+<span id="42881"></span>
+<div class="comments">
+<div class="paragraph">
+Handle fire
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">control_ship_2</td>
 <td class="address-2"><span id="42881"></span>A781</td>
 <td class="instruction">LD A,(<a href="29163.html">L71EB</a>)</td>
 <td class="comment-1" rowspan="1"></td>
@@ -243,13 +253,13 @@ Used by the routines at <a href="32804.html">main</a>, <a href="33578.html">L832
 <td class="asm-label"></td>
 <td class="address-1"><span id="42887"></span>A787</td>
 <td class="instruction">LD HL,(<a href="29168.html">L71F0</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Controller <a href="29169.html">current_player</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42890"></span>A78A</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save current player</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -261,25 +271,25 @@ Used by the routines at <a href="32804.html">main</a>, <a href="33578.html">L832
 <td class="asm-label"></td>
 <td class="address-1"><span id="42893"></span>A78D</td>
 <td class="instruction">CALL $1F79</td>
-<td class="comment-1" rowspan="1">DECODER</td>
+<td class="comment-1" rowspan="1">DECODER (H = fire, L = joystick)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42896"></span>A790</td>
 <td class="instruction">LD A,H</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fire</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42897"></span>A791</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore current player</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42898"></span>A792</td>
 <td class="instruction">PUSH AF</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save fire segment 0</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -297,139 +307,139 @@ Used by the routines at <a href="32804.html">main</a>, <a href="33578.html">L832
 <td class="asm-label"></td>
 <td class="address-1"><span id="42904"></span>A798</td>
 <td class="instruction">POP AF</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore fire segment 0</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42905"></span>A799</td>
 <td class="instruction">OR H</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Combine with fire segment 1</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42906"></span>A79A</td>
-<td class="instruction">LD HL,<a href="29270.html">L7256</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD HL,<a href="29270.html">fire_flags</a></td>
+<td class="comment-1" rowspan="1">Flags</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42909"></span>A79D</td>
 <td class="instruction">BIT 6,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Test fire pressed</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42911"></span>A79F</td>
 <td class="instruction">JR Z,<a href="43013.html">LA805</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If not, clear bit for fire pressed, and return</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42913"></span>A7A1</td>
 <td class="instruction">BIT 0,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Check if fire was pressed last time</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42915"></span>A7A3</td>
 <td class="instruction">RET NZ</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Then return (must release after each shot)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42916"></span>A7A4</td>
-<td class="instruction">LD A,(<a href="29267.html">L7253</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD A,(<a href="29267.html">active_shots</a>)</td>
+<td class="comment-1" rowspan="1">Get number of active shots</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42919"></span>A7A7</td>
 <td class="instruction">BIT 1,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Test for double shot</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42921"></span>A7A9</td>
-<td class="instruction">JR Z,<a href="42812.html#42925">LA73C_3</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="42812.html#42925">control_ship_3</a></td>
+<td class="comment-1" rowspan="1">Skip ahead if single shot</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42923"></span>A7AB</td>
 <td class="instruction">SRL A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Divide by 2 (allow twice as many shots)</td>
 </tr>
 <tr>
-<td class="asm-label">LA73C_3</td>
+<td class="asm-label">control_ship_3</td>
 <td class="address-2"><span id="42925"></span>A7AD</td>
 <td class="instruction">CP $02</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return if &gt;= 2</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42927"></span>A7AF</td>
 <td class="instruction">RET NC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42928"></span>A7B0</td>
 <td class="instruction">LD A,$00</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">No effect</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42930"></span>A7B2</td>
 <td class="instruction">NOP</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Some instructions removed here?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42931"></span>A7B3</td>
 <td class="instruction">NOP</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42932"></span>A7B4</td>
 <td class="instruction">NOP</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42933"></span>A7B5</td>
-<td class="instruction">LD A,(<a href="29267.html">L7253</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD A,(<a href="29267.html">active_shots</a>)</td>
+<td class="comment-1" rowspan="1">Increment number of active shots</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42936"></span>A7B8</td>
 <td class="instruction">INC A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42937"></span>A7B9</td>
-<td class="instruction">LD (<a href="29267.html">L7253</a>),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD (<a href="29267.html">active_shots</a>),A</td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42940"></span>A7BC</td>
 <td class="instruction">SET 0,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set bit for fire pressed</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42942"></span>A7BE</td>
 <td class="instruction">BIT 1,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Test for double shot</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42944"></span>A7C0</td>
 <td class="instruction">JR NZ,<a href="42965.html">LA7D5</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Jump for double shot</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -441,25 +451,25 @@ Used by the routines at <a href="32804.html">main</a>, <a href="33578.html">L832
 <td class="asm-label"></td>
 <td class="address-1"><span id="42947"></span>A7C3</td>
 <td class="instruction">LD HL,($7003)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Ship's polar coordinates</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42950"></span>A7C6</td>
 <td class="instruction">LD (IX+$01),L</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Shot y = ship y</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42953"></span>A7C9</td>
 <td class="instruction">LD (IX+$02),H</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Shot x = ship x</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42956"></span>A7CC</td>
 <td class="instruction">LD (IX+$00),$02</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Shot type</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -471,7 +481,7 @@ Used by the routines at <a href="32804.html">main</a>, <a href="33578.html">L832
 <td class="asm-label"></td>
 <td class="address-1"><span id="42964"></span>A7D4</td>
 <td class="instruction">RET</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return</td>
 </tr>
 </table>
 <table class="asm-navigation">

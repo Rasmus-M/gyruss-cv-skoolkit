@@ -53,15 +53,15 @@
 </tr>
 <tr>
 <td class="default" colspan="1" rowspan="1">$03</td>
-<td class="" colspan="1" rowspan="1">Unknown</td>
+<td class="" colspan="1" rowspan="1">Close to polar y ($01)</td>
 </tr>
 <tr>
 <td class="default" colspan="1" rowspan="1">$04</td>
-<td class="" colspan="1" rowspan="1">Unknown</td>
+<td class="" colspan="1" rowspan="1">Close to polar x ($02)</td>
 </tr>
 <tr>
 <td class="default" colspan="1" rowspan="1">$05</td>
-<td class="" colspan="1" rowspan="1">Unknown</td>
+<td class="" colspan="1" rowspan="1">Close to polar x ($02)</td>
 </tr>
 <tr>
 <td class="default" colspan="1" rowspan="1">$06</td>
@@ -112,6 +112,14 @@
 <td class="map-b"><span id="29091"></span><a href="../asm/29091.html">71A3</a></td>
 <td class="map-b-desc">
 <div class="map-entry-title-10"><a class="map-entry-title" href="../asm/29091.html">Temporary storage (72 bytes)</a></div>
+</td>
+</tr>
+<tr>
+<td class="map-page">113</td>
+<td class="map-byte">194</td>
+<td class="map-b"><span id="29122"></span><a href="../asm/29122.html">71C2</a></td>
+<td class="map-b-desc">
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/29122.html">Data block at 71C2</a></div>
 </td>
 </tr>
 <tr>
@@ -212,7 +220,7 @@
 <td class="map-byte">242</td>
 <td class="map-b"><span id="29170"></span><a href="../asm/29170.html">71F2</a></td>
 <td class="map-b-desc">
-<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/29170.html">Byte at 71F2</a></div>
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/29170.html">Frame counter</a></div>
 </td>
 </tr>
 <tr>
@@ -380,7 +388,7 @@
 <td class="map-byte">83</td>
 <td class="map-b"><span id="29267"></span><a href="../asm/29267.html">7253</a></td>
 <td class="map-b-desc">
-<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/29267.html">Byte at 7253</a></div>
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/29267.html">Number of active shots</a></div>
 </td>
 </tr>
 <tr>
@@ -404,7 +412,44 @@
 <td class="map-byte">86</td>
 <td class="map-b"><span id="29270"></span><a href="../asm/29270.html">7256</a></td>
 <td class="map-b-desc">
-<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/29270.html">Byte at 7256</a></div>
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/29270.html">Flags relating to fire (perhaps others) <table class="default">
+<tr>
+<th colspan="1" rowspan="1">Bit</th>
+<th colspan="1" rowspan="1">Purpose</th>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$00</td>
+<td class="" colspan="1" rowspan="1">Fire pressed last time</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$01</td>
+<td class="" colspan="1" rowspan="1">Double shot</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$02</td>
+<td class="" colspan="1" rowspan="1">Unknown</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$03</td>
+<td class="" colspan="1" rowspan="1">Unknown</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$04</td>
+<td class="" colspan="1" rowspan="1">Unknown</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$05</td>
+<td class="" colspan="1" rowspan="1">Unknown</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$06</td>
+<td class="" colspan="1" rowspan="1">Unknown</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$07</td>
+<td class="" colspan="1" rowspan="1">Unknown</td>
+</tr>
+</table></a></div>
 </td>
 </tr>
 <tr>
@@ -689,10 +734,42 @@
 </tr>
 <tr>
 <td class="map-page">114</td>
+<td class="map-byte">190</td>
+<td class="map-w"><span id="29374"></span><a href="../asm/29374.html">72BE</a></td>
+<td class="map-w-desc">
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/29374.html">Word at 72BE</a></div>
+</td>
+</tr>
+<tr>
+<td class="map-page">114</td>
+<td class="map-byte">192</td>
+<td class="map-w"><span id="29376"></span><a href="../asm/29376.html">72C0</a></td>
+<td class="map-w-desc">
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/29376.html">Word at 72C0</a></div>
+</td>
+</tr>
+<tr>
+<td class="map-page">114</td>
+<td class="map-byte">194</td>
+<td class="map-b"><span id="29378"></span><a href="../asm/29378.html">72C2</a></td>
+<td class="map-b-desc">
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/29378.html">Byte at 72C2</a></div>
+</td>
+</tr>
+<tr>
+<td class="map-page">114</td>
+<td class="map-byte">195</td>
+<td class="map-w"><span id="29379"></span><a href="../asm/29379.html">72C3</a></td>
+<td class="map-w-desc">
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/29379.html">Word at 72C3</a></div>
+</td>
+</tr>
+<tr>
+<td class="map-page">114</td>
 <td class="map-byte">197</td>
 <td class="map-w"><span id="29381"></span><a href="../asm/29381.html">72C5</a></td>
 <td class="map-w-desc">
-<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/29381.html">Word at 72C5, which will be copied to <a href="../asm/28672.html">screen_center</a></a></div>
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/29381.html">Word at 72C5, which will be copied to <a href="../asm/28672.html">center_of_projection</a></a></div>
 </td>
 </tr>
 <tr>
@@ -1178,6 +1255,14 @@
 </td>
 </tr>
 <tr>
+<td class="map-page">157</td>
+<td class="map-byte">145</td>
+<td class="map-w"><span id="40337"></span><a href="../asm/40337.html">9D91</a></td>
+<td class="map-w-desc">
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/40337.html">Data block at 9D91</a></div>
+</td>
+</tr>
+<tr>
 <td class="map-page">158</td>
 <td class="map-byte">182</td>
 <td class="map-b"><span id="40630"></span><a href="../asm/40630.html">9EB6</a></td>
@@ -1190,7 +1275,7 @@
 <td class="map-byte">178</td>
 <td class="map-b"><span id="42162"></span><a href="../asm/42162.html">A4B2</a></td>
 <td class="map-b-desc">
-<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/42162.html">Sprite init data (byte 2)</a></div>
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/42162.html">Init data for implosion</a></div>
 </td>
 </tr>
 <tr>
@@ -1219,10 +1304,18 @@
 </tr>
 <tr>
 <td class="map-page">168</td>
+<td class="map-byte">117</td>
+<td class="map-b"><span id="43125"></span><a href="../asm/43125.html">A875</a></td>
+<td class="map-b-desc">
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/43125.html">Data block at A875</a></div>
+</td>
+</tr>
+<tr>
+<td class="map-page">168</td>
 <td class="map-byte">125</td>
 <td class="map-b"><span id="43133"></span><a href="../asm/43133.html">A87D</a></td>
 <td class="map-b-desc">
-<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/43133.html">Ship sprites <table class="no-border">
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/43133.html">Ship background patterns (16 frames of 4 patterns, organised as 16x16 sprite patterns) <table class="no-border">
 <tr>
 <td class="no-border" colspan="1" rowspan="1"><img alt="graphics-A87D" src="../images/udgs/graphics-A87D.png" /></td>
 </tr>

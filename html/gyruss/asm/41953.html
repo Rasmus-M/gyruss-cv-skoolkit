@@ -74,7 +74,7 @@ Used by the routine at <a href="33081.html">L8139</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41969"></span>A3F1</td>
-<td class="instruction">LD A,(<a href="29267.html">L7253</a>)</td>
+<td class="instruction">LD A,(<a href="29267.html">active_shots</a>)</td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -190,8 +190,8 @@ Something else
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42010"></span>A41A</td>
-<td class="instruction">LD (<a href="29381.html">word_at_72C5</a>),HL</td>
-<td class="comment-1" rowspan="1">Save it in <a href="29381.html">word_at_72C5</a>, which will be copied to <a href="28672.html">screen_center</a></td>
+<td class="instruction">LD (<a href="29381.html">tmp_center_of_projection</a>),HL</td>
+<td class="comment-1" rowspan="1">Save it in <a href="29381.html">tmp_center_of_projection</a>, which will be copied to <a href="28672.html">center_of_projection</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -330,8 +330,8 @@ Game loop for 3 seconds
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42065"></span>A451</td>
-<td class="instruction">CALL <a href="42097.html">LA471</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL <a href="42097.html">move_dots</a></td>
+<td class="comment-1" rowspan="1">Move dots</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

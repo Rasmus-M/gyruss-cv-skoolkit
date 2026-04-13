@@ -20,7 +20,7 @@ Prev: <a href="40424.html">9DE8</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#40449">Map</a></td>
 <td class="next">
-Next: <a href="40522.html">9E4A</a>
+Next: <a href="40540.html">9E5C</a>
 </td>
 </tr>
 </table>
@@ -35,7 +35,7 @@ Next: <a href="40522.html">9E4A</a>
 <tr>
 <td class="asm-label">L9E01</td>
 <td class="address-2"><span id="40449"></span>9E01</td>
-<td class="instruction">LD HL,($72C0)</td>
+<td class="instruction">LD HL,(<a href="29376.html">L72C0</a>)</td>
 <td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
@@ -47,7 +47,7 @@ Next: <a href="40522.html">9E4A</a>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40454"></span>9E06</td>
-<td class="instruction">LD DE,($72BE)</td>
+<td class="instruction">LD DE,(<a href="29374.html">L72BE</a>)</td>
 <td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
@@ -65,7 +65,7 @@ Next: <a href="40522.html">9E4A</a>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40460"></span>9E0C</td>
-<td class="instruction">LD ($72C0),HL</td>
+<td class="instruction">LD (<a href="29376.html">L72C0</a>),HL</td>
 <td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
@@ -89,7 +89,7 @@ Next: <a href="40522.html">9E4A</a>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40471"></span>9E17</td>
-<td class="instruction">LD DE,($72C3)</td>
+<td class="instruction">LD DE,(<a href="29379.html">L72C3</a>)</td>
 <td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
@@ -149,7 +149,7 @@ Next: <a href="40522.html">9E4A</a>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40494"></span>9E2E</td>
-<td class="instruction">LD ($72C3),HL</td>
+<td class="instruction">LD (<a href="29379.html">L72C3</a>),HL</td>
 <td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
@@ -167,7 +167,7 @@ Next: <a href="40522.html">9E4A</a>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40499"></span>9E33</td>
-<td class="instruction">JR NZ,<a href="40522.html">L9E4A</a></td>
+<td class="instruction">JR NZ,<a href="40449.html#40522">L9E01_1</a></td>
 <td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
@@ -185,7 +185,7 @@ Next: <a href="40522.html">9E4A</a>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40504"></span>9E38</td>
-<td class="instruction">JR NC,<a href="40522.html">L9E4A</a></td>
+<td class="instruction">JR NC,<a href="40449.html#40522">L9E01_1</a></td>
 <td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
@@ -236,6 +236,60 @@ Next: <a href="40522.html">9E4A</a>
 <td class="instruction">RET</td>
 <td class="comment-0" rowspan="1"></td>
 </tr>
+<tr>
+<td class="asm-label">L9E01_1</td>
+<td class="address-2"><span id="40522"></span>9E4A</td>
+<td class="instruction">LD DE,$0080</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40525"></span>9E4D</td>
+<td class="instruction">AND A</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40526"></span>9E4E</td>
+<td class="instruction">SBC HL,DE</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40528"></span>9E50</td>
+<td class="instruction">SRL H</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40530"></span>9E52</td>
+<td class="instruction">RR L</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40532"></span>9E54</td>
+<td class="instruction">SRL H</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40534"></span>9E56</td>
+<td class="instruction">RR L</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40536"></span>9E58</td>
+<td class="instruction">LD (<a href="29374.html">L72BE</a>),HL</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40539"></span>9E5B</td>
+<td class="instruction">RET</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
 </table>
 <table class="asm-navigation">
 <tr>
@@ -244,7 +298,7 @@ Prev: <a href="40424.html">9DE8</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#40449">Map</a></td>
 <td class="next">
-Next: <a href="40522.html">9E4A</a>
+Next: <a href="40540.html">9E5C</a>
 </td>
 </tr>
 </table>

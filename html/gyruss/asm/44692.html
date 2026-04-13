@@ -405,7 +405,7 @@ Fill VDP RAM from $2100 to $3868 with sprite patterns that may be flipped and sh
 <td class="asm-label">upload_sprite_patterns_3</td>
 <td class="address-2"><span id="44821"></span>AF15</td>
 <td class="instruction">LD HL,(<a href="29406.html">L72DE</a>)</td>
-<td class="comment-1" rowspan="1">Source for writing to DP RAM</td>
+<td class="comment-1" rowspan="1">Source for writing to VDP RAM</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -615,19 +615,19 @@ Fill VDP RAM from $2100 to $3868 with sprite patterns that may be flipped and sh
 <td class="asm-label"></td>
 <td class="address-1"><span id="44900"></span>AF64</td>
 <td class="instruction">RET C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44901"></span>AF65</td>
 <td class="instruction">LD A,$FF</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Then set it to $FF (done)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44903"></span>AF67</td>
 <td class="instruction">LD (<a href="29397.html">L72D5</a>),A</td>
-<td class="comment-1" rowspan="1">Then set it to $FF (done)</td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

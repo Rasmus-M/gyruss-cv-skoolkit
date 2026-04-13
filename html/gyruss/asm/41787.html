@@ -39,13 +39,13 @@ Used by the routine at <a href="33298.html#33471">init_stage_8</a>.
 <td class="asm-label">LA33B</td>
 <td class="address-2"><span id="41787"></span>A33B</td>
 <td class="instruction">LD HL,<a href="32804.html#32949">$80B5</a></td>
-<td class="comment-1" rowspan="1">Set <a href="29381.html">word_at_72C5</a>, which will be copied to <a href="28672.html">screen_center</a></td>
+<td class="comment-1" rowspan="1">New center of projection at bottom center for implosion</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41790"></span>A33E</td>
-<td class="instruction">LD (<a href="29381.html">word_at_72C5</a>),HL</td>
-<td class="comment-1" rowspan="1">...</td>
+<td class="instruction">LD (<a href="29381.html">tmp_center_of_projection</a>),HL</td>
+<td class="comment-1" rowspan="1">Set <a href="29381.html">tmp_center_of_projection</a>, which will be copied to <a href="28672.html">center_of_projection</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -64,7 +64,7 @@ Used by the routine at <a href="33298.html#33471">init_stage_8</a>.
 <span id="41798"></span>
 <div class="comments">
 <div class="paragraph">
-Allocate 6 sprites
+Allocate 6 dot sprites for the implosion that becomes the ship
 </div>
 </div>
 </td>
@@ -91,7 +91,7 @@ Allocate 6 sprites
 <td class="asm-label"></td>
 <td class="address-1"><span id="41805"></span>A34D</td>
 <td class="instruction">LD (IX+$00),$0D</td>
-<td class="comment-1" rowspan="1">Sprite type is $0D</td>
+<td class="comment-1" rowspan="1">Sprite type is $0D (a dot)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -133,7 +133,7 @@ Allocate 6 sprites
 <td class="asm-label"></td>
 <td class="address-1"><span id="41828"></span>A364</td>
 <td class="instruction">LD (IX+$0B),$09</td>
-<td class="comment-1" rowspan="1">Set color</td>
+<td class="comment-1" rowspan="1">Set color (pink)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -152,7 +152,7 @@ Allocate 6 sprites
 <span id="41836"></span>
 <div class="comments">
 <div class="paragraph">
-Game loop 20 times
+Display implosion
 </div>
 </div>
 </td>
@@ -172,14 +172,14 @@ Game loop 20 times
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41839"></span>A36F</td>
-<td class="instruction">CALL <a href="42097.html">LA471</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL <a href="42097.html">move_dots</a></td>
+<td class="comment-1" rowspan="1">Move dots</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41842"></span>A372</td>
-<td class="instruction">CALL <a href="42812.html">LA73C</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL <a href="42812.html">control_ship</a></td>
+<td class="comment-1" rowspan="1">Ship movement?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -243,7 +243,7 @@ Allocate ship etc.
 <td class="asm-label"></td>
 <td class="address-1"><span id="41862"></span>A386</td>
 <td class="instruction">LD (IX+$00),$00</td>
-<td class="comment-1" rowspan="1">Sprite type (ship)</td>
+<td class="comment-1" rowspan="1">Sprite type $01 (ship 1)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -261,7 +261,7 @@ Allocate ship etc.
 <td class="asm-label"></td>
 <td class="address-1"><span id="41874"></span>A392</td>
 <td class="instruction">LD (IX+$0B),$06</td>
-<td class="comment-1" rowspan="1">Set color</td>
+<td class="comment-1" rowspan="1">Set color (red)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -279,7 +279,7 @@ Allocate ship etc.
 <td class="asm-label"></td>
 <td class="address-1"><span id="41880"></span>A398</td>
 <td class="instruction">LD (IX+$00),$01</td>
-<td class="comment-1" rowspan="1">Sprite type is $01</td>
+<td class="comment-1" rowspan="1">Sprite type $01 (ship 2)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -297,7 +297,7 @@ Allocate ship etc.
 <td class="asm-label"></td>
 <td class="address-1"><span id="41892"></span>A3A4</td>
 <td class="instruction">LD (IX+$0B),$04</td>
-<td class="comment-1" rowspan="1">Set color</td>
+<td class="comment-1" rowspan="1">Set color (blue)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -326,7 +326,7 @@ Allocate ship etc.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41905"></span>A3B1</td>
-<td class="instruction">CALL <a href="40611.html">L9EA3</a></td>
+<td class="instruction">CALL <a href="40611.html">call_9CA8</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -366,7 +366,7 @@ Game loop 60 times
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41915"></span>A3BB</td>
-<td class="instruction">CALL <a href="42812.html">LA73C</a></td>
+<td class="instruction">CALL <a href="42812.html">control_ship</a></td>
 <td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>

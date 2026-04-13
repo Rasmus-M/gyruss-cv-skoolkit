@@ -5,19 +5,21 @@ s$4000 DEFS $3000
 
 ; RAM
 ;
-; Screen center
-@label=screen_center
+; Center of projection
+@label=center_of_projection
 w$7000 DEFW $0000
 
 ; Sprite data (32 sprites)
 ; #TABLE(default, default)
 ; { =h Byte offset | =h Purpose }
 ; { $00 | Sprite type, or $FF if not allocated }
-; { $01 | Polar y (depth, 0 is closest (normal ship position), 116 is furthest away) }
-; { $02 | Polar x (angle, 0 at bottom center, moving clockwise to 16 at the left side, 32 at the top, and 48 at the right side) }
-; { $03 | Unknown }
-; { $04 | Unknown }
-; { $05 | Unknown }
+; { $01 | Polar y (depth, 0 is closest (normal ship position), 116 is furthest
+; away) }
+; { $02 | Polar x (angle, 0 at bottom center, moving clockwise to 16 at the
+; left side, 32 at the top, and 48 at the right side) }
+; { $03 | Close to polar y ($01) }
+; { $04 | Close to polar x ($02) }
+; { $05 | Close to polar x ($02) }
 ; { $06 | Unknown }
 ; { $07 | Unknown }
 ; { $08 | Screen y }
@@ -75,12 +77,15 @@ b$7183 DEFB $00,$00,$00,$00,$00,$00,$00,$00
 b$71A3 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $71AB DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $71B3 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $71BB DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $71C3 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $71CB DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $71D3 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $71DB DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $71E3 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $71BB DEFB $00,$00,$00,$00,$00,$00,$00
+
+; Data block at 71C2
+b$71C2 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $71CA DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $71D2 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $71DA DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $71E2 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $71EA DEFB $00
 
 ; Status flags
 ; #TABLE(default, default)
@@ -117,7 +122,8 @@ b$71F0 DEFB $00
 @label=current_player
 b$71F1 DEFB $00
 
-; Byte at 71F2
+; Frame counter
+@label=frame_counter
 b$71F2 DEFB $00
 
 ; Byte at 71F3
@@ -193,7 +199,8 @@ b$722E DEFB $00,$00,$00,$00,$00,$00,$00,$00
 ; Byte at 7252
 b$7252 DEFB $00
 
-; Byte at 7253
+; Number of active shots
+@label=active_shots
 b$7253 DEFB $00
 
 ; Byte at 7254
@@ -202,7 +209,19 @@ b$7254 DEFB $00
 ; Byte at 7255
 b$7255 DEFB $00
 
-; Byte at 7256
+; Flags relating to fire (perhaps others)
+; #TABLE(default, default)
+; { =h Bit | =h Purpose }
+; { $00 | Fire pressed last time }
+; { $01 | Double shot }
+; { $02 | Unknown }
+; { $03 | Unknown }
+; { $04 | Unknown }
+; { $05 | Unknown }
+; { $06 | Unknown }
+; { $07 | Unknown }
+; TABLE#
+@label=fire_flags
 b$7256 DEFB $00
 
 ; Countdown to screen off
@@ -315,10 +334,22 @@ b$729B DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 b$72A5 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $72AD DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $72B5 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $72BD DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $72BD DEFB $00
+
+; Word at 72BE
+w$72BE DEFW $0000
+
+; Word at 72C0
+w$72C0 DEFW $0000
+
+; Byte at 72C2
+b$72C2 DEFB $00
+
+; Word at 72C3
+w$72C3 DEFW $0000
 
 ; Word at 72C5, which will be copied to #R$7000
-@label=word_at_72C5
+@label=tmp_center_of_projection
 w$72C5 DEFW $0000
 
 ; Temp sprite data
@@ -1361,7 +1392,7 @@ c$867D CP $04          ;
  $8693 LD A,(IX+$06)   ;
  $8696 OR A            ;
  $8697 JP Z,$862F      ;
- $869A LD (IX+$00),A   ;
+ $869A LD (IX+$00),A   ; Set type
  $869D LD (IX+$03),$3C ;
  $86A1 LD (IX+$06),$00 ;
  $86A5 LD (IX+$0B),$0F ; Set color
@@ -4076,6 +4107,8 @@ c$9CA0 LD (IX+$09),E ; Set x
 ; Routine at 9CA8
 ;
 ; Used by the routine at #R$9EA3.
+;
+; I:C 2-
 c$9CA8 LD A,($727C)  ;
  $9CAB AND A         ;
  $9CAC RET Z         ;
@@ -4139,7 +4172,7 @@ b$9CE7 DEFB $00,$00,$00,$00,$26,$80,$00,$00
 
 ; Routine at 9D3D
 ;
-; Used by the routines at #R$9DE8 and #R$9E75.
+; Used by the routines at #R$9E75.
 c$9D3D RLCA          ;
  $9D3E LD C,A        ;
  $9D3F RLCA          ;
@@ -4192,24 +4225,21 @@ c$9D89 LD DE,$FFF8   ;
  $9D8E DJNZ $9D6D    ;
  $9D90 RET           ;
 
-; Routine at 9D91
-c$9D91 RET PE        ;
- $9D92 SBC A,L       ;
- $9D93 CALL NZ,$D79D ;
- $9D96 SBC A,L       ;
- $9D97 AND A         ;
- $9D98 SBC A,L       ;
- $9D99 CALL NZ,$019D ;
- $9D9C SBC A,(HL)    ;
- $9D9D CP C          ;
- $9D9E SBC A,L       ;
- $9D9F LD E,H        ;
- $9DA0 SBC A,(HL)    ;
- $9DA1 LD BC,$759E   ;
- $9DA4 SBC A,(HL)    ;
- $9DA5 SUB B         ;
- $9DA6 SBC A,L       ;
- $9DA7 LD A,(IX+$04) ;
+; Data block at 9D91
+w$9D91 DEFW $9DE8
+ $9D93 DEFW $9DC4
+ $9D95 DEFW $9DD7
+ $9D97 DEFW $9DA7
+ $9D99 DEFW $9DC4
+ $9D9B DEFW $9E01
+ $9D9D DEFW $9DB9
+ $9D9F DEFW $9E5C
+ $9DA1 DEFW $9E01
+ $9DA3 DEFW $9E75
+ $9DA5 DEFW $9D90
+
+; Routine at 9DA7
+c$9DA7 LD A,(IX+$04) ;
  $9DAA INC A         ;
  $9DAB LD C,A        ;
  $9DAC AND $0F       ;
@@ -4236,9 +4266,7 @@ c$9DC4 LD A,(IX+$03) ;
  $9DD0 LD (IX+$03),A ;
  $9DD3 LD C,$20      ;
  $9DD5 JR $9DF2      ;
-
-; Routine at 9DD7
-c$9DD7 LD A,(IX+$03) ;
+ $9DD7 LD A,(IX+$03) ;
  $9DDA ADD A,$04     ;
  $9DDC LD (IX+$03),A ;
  $9DDF JR Z,$9DFC    ;
@@ -4259,8 +4287,7 @@ c$9DE8 DEC (IX+$03)  ;
  $9DF6 LD (IX+$04),A ;
  $9DF9 AND $F0       ;
  $9DFB RET NZ        ;
-; This entry point is used by the routines at #R$9D91, #R$9DB9, #R$9DD7,
-; #R$9E01, #R$9E5C and #R$9E75.
+; This entry point is used by the routines at #R$9DA7 and #R$9DC4.
 *$9DFC LD A,B        ;
  $9DFD DEC A         ;
  $9DFE JP $9D3D      ;
@@ -4300,19 +4327,15 @@ c$9E01 LD HL,($72C0)   ;
  $9E45 CALL $9CB5      ;
  $9E48 POP BC          ;
  $9E49 RET             ;
-
-; Routine at 9E4A
-;
-; Used by the routine at #R$9E01.
-c$9E4A LD DE,$0080   ;
- $9E4D AND A         ;
- $9E4E SBC HL,DE     ;
- $9E50 SRL H         ;
- $9E52 RR L          ;
- $9E54 SRL H         ;
- $9E56 RR L          ;
- $9E58 LD ($72BE),HL ;
- $9E5B RET           ;
+*$9E4A LD DE,$0080     ;
+ $9E4D AND A           ;
+ $9E4E SBC HL,DE       ;
+ $9E50 SRL H           ;
+ $9E52 RR L            ;
+ $9E54 SRL H           ;
+ $9E56 RR L            ;
+ $9E58 LD ($72BE),HL   ;
+ $9E5B RET             ;
 
 ; Routine at 9E5C
 c$9E5C LD A,(IX+$02)   ;
@@ -4361,6 +4384,9 @@ c$9E91 PUSH BC       ;
 ;
 ; Used by the routines at #R$8139, #R$8368, #R$8C52, #R$8E9D, #R$9934, #R$99A0,
 ; #R$99B1, #R$99D3, #R$A33B and #R$A6EC.
+;
+; I:A
+@label=call_9CA8
 c$9EA3 PUSH BC       ;
  $9EA4 PUSH DE       ;
  $9EA5 PUSH HL       ;
@@ -4596,29 +4622,30 @@ c$A31D CALL $A303    ;
 ; Routine at A33B
 ;
 ; Used by the routine at #R$82BF.
-c$A33B LD HL,$80B5     ; Set #R$72C5, which will be copied to #R$7000
- $A33E LD ($72C5),HL   ; ...
+c$A33B LD HL,$80B5     ; New center of projection at bottom center for
+                       ; implosion
+ $A33E LD ($72C5),HL   ; Set #R$72C5, which will be copied to #R$7000
  $A341 LD HL,$71EB     ; Status flags
  $A344 SET 4,(HL)      ; Set bit 4
-; Allocate 6 sprites
+; Allocate 6 dot sprites for the implosion that becomes the ship
  $A346 LD IY,$A4B2     ; Sprite init data
  $A34A LD B,$06        ; Allocate 6 sprites
 *$A34C RST $28         ; Allocate sprite
- $A34D LD (IX+$00),$0D ; Sprite type is $0D
+ $A34D LD (IX+$00),$0D ; Sprite type is $0D (a dot)
  $A351 LD (IX+$01),$00 ; Polar y
  $A355 LD (IX+$02),$00 ; Polar x
  $A359 RST $30         ; Load sprite pattern
  $A35A LD (IX+$01),$16 ; Polar y
  $A35E LD A,(IY+$00)   ; Get init data
  $A361 LD (IX+$02),A   ; Polar x
- $A364 LD (IX+$0B),$09 ; Set color
+ $A364 LD (IX+$0B),$09 ; Set color (pink)
  $A368 INC IY          ; Next init data
  $A36A DJNZ $A34C      ; Loop for 6 sprites
-; Game loop 20 times
+; Display implosion
  $A36C LD B,$14        ; 20
 *$A36E PUSH BC         ; Save counter
- $A36F CALL $A471      ;
- $A372 CALL $A73C      ;
+ $A36F CALL $A471      ; Move dots
+ $A372 CALL $A73C      ; Ship movement?
  $A375 CALL $ACF9      ; Upload sprite data
  $A378 HALT            ; Wait interrupt
  $A379 CALL $AFFF      ;
@@ -4628,16 +4655,16 @@ c$A33B LD HL,$80B5     ; Set #R$72C5, which will be copied to #R$7000
 ; Allocate ship etc.
  $A382 CALL $ACDF      ;
  $A385 RST $28         ; Allocate sprite
- $A386 LD (IX+$00),$00 ; Sprite type (ship)
+ $A386 LD (IX+$00),$00 ; Sprite type $01 (ship 1)
  $A38A LD (IX+$01),$00 ; Polar y
  $A38E LD (IX+$02),$00 ; Polar x
- $A392 LD (IX+$0B),$06 ; Set color
+ $A392 LD (IX+$0B),$06 ; Set color (red)
  $A396 RST $30         ; Load sprite pattern
  $A397 RST $28         ; Allocate sprite
- $A398 LD (IX+$00),$01 ; Sprite type is $01
+ $A398 LD (IX+$00),$01 ; Sprite type $01 (ship 2)
  $A39C LD (IX+$01),$00 ; Polar y
  $A3A0 LD (IX+$02),$00 ; Polar x
- $A3A4 LD (IX+$0B),$04 ; Set color
+ $A3A4 LD (IX+$0B),$04 ; Set color (blue)
  $A3A8 RST $30         ; Load sprite pattern
  $A3A9 CALL $A808      ;
  $A3AC CALL $ACF9      ; Upload sprite data
@@ -4653,7 +4680,6 @@ c$A33B LD HL,$80B5     ; Set #R$72C5, which will be copied to #R$7000
  $A3C1 CALL $84B1      ; ...
  $A3C4 POP BC          ; Restore counter
  $A3C5 DJNZ $A3B6      ; Loop 60 times
-;
  $A3C7 LD HL,$1A00     ; Clear warps line
  $A3CA LD DE,$0020     ; ...
  $A3CD XOR A           ; ...
@@ -4715,7 +4741,7 @@ c$A3E1 LD A,$2A        ;
 ; Game loop for 3 seconds
  $A44E LD B,$14        ;
 *$A450 PUSH BC         ; Outer loop
- $A451 CALL $A471      ;
+ $A451 CALL $A471      ; Move dots
  $A454 CALL $ACF9      ; Upload sprite data
  $A457 LD B,$09        ;
 *$A459 HALT            ; Inner loop
@@ -4733,15 +4759,16 @@ c$A3E1 LD A,$2A        ;
 
 ; Routine at A471
 ;
-; Change polar y of sprite types $0D, according to bit 2 of #R$71EB
-; Used by the routines at #R$A33B and #R$A3E1.
+; Change polar y of sprite types $0D, according to bit 2 of #R$71EB. Used by
+; the routines at #R$A33B and #R$A3E1.
+@label=move_dots
 c$A471 LD HL,($72C5) ; Copy #R$72C5 to #R$7000
  $A474 LD ($7000),HL ; ...
  $A477 LD B,$20      ; 32 sprites
  $A479 LD IX,$7002   ; Sprite data
 ; This entry point is used by the routine at #R$A4A0.
 *$A47D LD A,(IX+$00) ; Get type
- $A480 CP $0D        ; Is it $0D?
+ $A480 CP $0D        ; Is it $0D (a dot)?
  $A482 JR NZ,$A4A4   ; If not then move to next sprite
  $A484 PUSH BC       ; Save counter
  $A485 LD D,(IX+$01) ; Polar y
@@ -4763,7 +4790,8 @@ c$A471 LD HL,($72C5) ; Copy #R$72C5 to #R$7000
  $A4AE LD ($7000),HL ; ...
  $A4B1 RET           ;
 
-; Sprite init data (byte 2)
+; Init data for implosion
+@implosion_polar_x
 b$A4B2 DEFB $10,$16,$1C,$24,$2A,$30
 
 ; Sprite init data (byte 2)
@@ -4941,114 +4969,118 @@ c$A6EC PUSH DE       ;
  $A73A POP DE        ;
  $A73B RET           ;
 
-; Routine at A73C
+; Control ship
 ;
+; Control ship movement and fire using controllers
 ; Used by the routines at #R$8024, #R$832A, #R$8368, #R$846B and #R$A33B.
-c$A73C LD A,($71F2)    ;
- $A73F AND $01         ;
- $A741 RET NZ          ;
- $A742 LD HL,($71F0)   ; Controller
+@label=control_ship
+c$A73C LD A,($71F2)    ; Get frame
+ $A73F AND $01         ; Test bit 0
+ $A741 RET NZ          ; Return every 2nd frame
+ $A742 LD HL,($71F0)   ; Controller #R$71F1
  $A745 LD L,$00        ; Segment 0
- $A747 CALL $1F79      ; DECODER
- $A74A LD H,$00        ;
- $A74C LD DE,$A865     ;
- $A74F ADD HL,DE       ;
- $A750 LD IX,$7002     ;
- $A754 LD B,$01        ;
- $A756 LD A,(HL)       ;
- $A757 CP $FF          ;
- $A759 JR Z,$A781      ;
- $A75B SUB (IX+$02)    ;
- $A75E JR Z,$A781      ;
- $A760 JR NC,$A766     ;
- $A762 LD B,$FF        ;
- $A764 NEG             ;
-*$A766 CP $21          ;
- $A768 LD A,B          ;
- $A769 JR C,$A76D      ;
- $A76B NEG             ;
-*$A76D ADD A,(IX+$02)  ;
- $A770 AND $3F         ;
- $A772 LD (IX+$02),A   ;
- $A775 LD (IX+$0E),A   ;
- $A778 RST $30         ; Load sprite pattern
- $A779 LD IX,$700E     ;
- $A77D RST $30         ; Load sprite pattern
+ $A747 CALL $1F79      ; DECODER (H = fire, L = joystick (bit 0: up, bit 1:
+                       ; right, bit 2: down, bit 3: left))
+ $A74A LD H,$00        ; Reset fire
+ $A74C LD DE,$A865     ; Movement table
+ $A74F ADD HL,DE       ; Add joystick result (0 - 12, some values not possible)
+ $A750 LD IX,$7002     ; Sprite 0 data (ship)
+ $A754 LD B,$01        ; Direction = 1 (clockwise)
+ $A756 LD A,(HL)       ; Get table value, which is the value of polar x to move towards
+ $A757 CP $FF          ; Is it an impossible joystick value, e.g. up + down?
+ $A759 JR Z,$A781      ; Then skip ahead
+ $A75B SUB (IX+$02)    ; Table value - polar x
+ $A75E JR Z,$A781      ; If zero the skip ahead (alredy there)
+ $A760 JR NC,$A766     ; If positive skip ahead
+ $A762 LD B,$FF        ; Direction = -1 (anti-clockwise)
+ $A764 NEG             ; abs(value - polar x)
+*$A766 CP $21          ; Is the difference < 33?
+ $A768 LD A,B          ; Direction
+ $A769 JR C,$A76D      ; The skip ahead
+ $A76B NEG             ; Otherwise reverse direction
+*$A76D ADD A,(IX+$02)  ; Polar x + direction
+ $A770 AND $3F         ; Mod 64
+ $A772 LD (IX+$02),A   ; Update polar x
+ $A775 LD (IX+$0E),A   ; Also update sprite 1
+ $A778 RST $30         ; Load sprite pattern sprite 0
+ $A779 LD IX,$700E     ; Sprite 1
+ $A77D RST $30         ; Load sprite pattern sprite 1
  $A77E CALL $A808      ;
+; Handle fire
 *$A781 LD A,($71EB)    ;
  $A784 BIT 4,A         ;
  $A786 RET NZ          ;
- $A787 LD HL,($71F0)   ;
- $A78A PUSH HL         ;
+ $A787 LD HL,($71F0)   ; Controller #R$71F1
+ $A78A PUSH HL         ; Save current player
  $A78B LD L,$00        ; Segment 0
- $A78D CALL $1F79      ; DECODER
- $A790 LD A,H          ;
- $A791 POP HL          ;
- $A792 PUSH AF         ;
+ $A78D CALL $1F79      ; DECODER (H = fire, L = joystick)
+ $A790 LD A,H          ; Fire
+ $A791 POP HL          ; Restore current player
+ $A792 PUSH AF         ; Save fire segment 0
  $A793 LD L,$01        ; Segment 1
  $A795 CALL $1F79      ; DECODER
- $A798 POP AF          ;
- $A799 OR H            ;
- $A79A LD HL,$7256     ;
- $A79D BIT 6,A         ;
- $A79F JR Z,$A805      ;
- $A7A1 BIT 0,(HL)      ;
- $A7A3 RET NZ          ;
- $A7A4 LD A,($7253)    ;
- $A7A7 BIT 1,(HL)      ;
- $A7A9 JR Z,$A7AD      ;
- $A7AB SRL A           ;
-*$A7AD CP $02          ;
- $A7AF RET NC          ;
- $A7B0 LD A,$00        ;
- $A7B2 NOP             ;
- $A7B3 NOP             ;
- $A7B4 NOP             ;
- $A7B5 LD A,($7253)    ;
- $A7B8 INC A           ;
- $A7B9 LD ($7253),A    ;
- $A7BC SET 0,(HL)      ;
- $A7BE BIT 1,(HL)      ;
- $A7C0 JR NZ,$A7D5     ;
+ $A798 POP AF          ; Restore fire segment 0
+ $A799 OR H            ; Combine with fire segment 1
+ $A79A LD HL,$7256     ; Flags
+ $A79D BIT 6,A         ; Test fire pressed
+ $A79F JR Z,$A805      ; If not, clear bit for fire pressed, and return
+ $A7A1 BIT 0,(HL)      ; Check if fire was pressed last time
+ $A7A3 RET NZ          ; Then return (must release after each shot)
+ $A7A4 LD A,($7253)    ; Get number of active shots
+ $A7A7 BIT 1,(HL)      ; Test for double shot
+ $A7A9 JR Z,$A7AD      ; Skip ahead if single shot
+ $A7AB SRL A           ; Divide by 2 (allow twice as many shots)
+*$A7AD CP $02          ; Return if >= 2
+ $A7AF RET NC          ; ...
+ $A7B0 LD A,$00        ; No effect
+ $A7B2 NOP             ; Some instructions removed here?
+ $A7B3 NOP             ; ...
+ $A7B4 NOP             ; ...
+ $A7B5 LD A,($7253)    ; Increment number of active shots
+ $A7B8 INC A           ; ...
+ $A7B9 LD ($7253),A    ; ...
+ $A7BC SET 0,(HL)      ; Set bit for fire pressed
+ $A7BE BIT 1,(HL)      ; Test for double shot
+ $A7C0 JR NZ,$A7D5     ; Jump for double shot
  $A7C2 RST $28         ; Allocate sprite
- $A7C3 LD HL,($7003)   ;
- $A7C6 LD (IX+$01),L   ;
- $A7C9 LD (IX+$02),H   ;
- $A7CC LD (IX+$00),$02 ;
+ $A7C3 LD HL,($7003)   ; Ship's polar coordinates
+ $A7C6 LD (IX+$01),L   ; Shot y = ship y
+ $A7C9 LD (IX+$02),H   ; Shot x = ship x
+ $A7CC LD (IX+$00),$02 ; Shot type
  $A7D0 LD (IX+$0B),$0A ; Set color
- $A7D4 RET             ;
+ $A7D4 RET             ; Return
 
 ; Routine at A7D5
 ;
 ; Used by the routine at #R$A73C.
 c$A7D5 RST $28         ; Allocate sprite
- $A7D6 LD HL,($7003)   ;
- $A7D9 PUSH HL         ;
- $A7DA LD (IX+$01),L   ;
- $A7DD LD A,H          ;
- $A7DE INC A           ;
- $A7DF AND $3F         ;
- $A7E1 LD (IX+$02),A   ;
- $A7E4 LD (IX+$00),$02 ;
- $A7E8 LD (IX+$0B),$0A ; Set color
+ $A7D6 LD HL,($7003)   ; Ship's polar coordinates
+ $A7D9 PUSH HL         ; Save them
+ $A7DA LD (IX+$01),L   ; Set polar y same as ship's
+ $A7DD LD A,H          ; Ship's polar x
+ $A7DE INC A           ; One step clockwise
+ $A7DF AND $3F         ; Mod 64
+ $A7E1 LD (IX+$02),A   ; Set polar x
+ $A7E4 LD (IX+$00),$02 ; Shot type
+ $A7E8 LD (IX+$0B),$0A ; Set color (yellow)
  $A7EC RST $28         ; Allocate sprite
- $A7ED POP HL          ;
- $A7EE LD (IX+$01),L   ;
- $A7F1 LD A,H          ;
- $A7F2 DEC A           ;
- $A7F3 AND $3F         ;
- $A7F5 LD (IX+$02),A   ;
- $A7F8 LD (IX+$00),$02 ;
- $A7FC LD (IX+$0B),$0A ; Set color
- $A800 LD HL,$7253     ;
- $A803 INC (HL)        ;
- $A804 RET             ;
+ $A7ED POP HL          ; Restore ship's polar coordinates
+ $A7EE LD (IX+$01),L   ; Set polar y same as ship's
+ $A7F1 LD A,H          ; Ship's polar x
+ $A7F2 DEC A           ; One step anti-clockwise
+ $A7F3 AND $3F         ; Mod 64
+ $A7F5 LD (IX+$02),A   ; Set polar x
+ $A7F8 LD (IX+$00),$02 ; Shot type
+ $A7FC LD (IX+$0B),$0A ; Set color (yellow)
+ $A800 LD HL,$7253     ; Increment number of active shots
+ $A803 INC (HL)        ; ...
+ $A804 RET             ; Return
 
 ; Routine at A805
 ;
 ; Used by the routine at #R$A73C.
-c$A805 RES 0,(HL)    ;
- $A807 RET           ;
+c$A805 RES 0,(HL)    ; Clear bit for fire pressed
+ $A807 RET           ; Return
 
 ; Routine at A808
 ;
@@ -5058,40 +5090,40 @@ c$A808 PUSH HL         ;
  $A80A PUSH BC         ;
  $A80B PUSH IX         ;
  $A80D PUSH IY         ;
- $A80F LD IY,$722E     ;
+ $A80F LD IY,$722E     ; Buffer for generated structure
  $A813 LD (IY+$06),$18 ;
- $A817 LD (IY+$04),$00 ;
- $A81B LD (IY+$05),$00 ;
- $A81F LD A,($7003)    ;
+ $A817 LD (IY+$04),$00 ; Pattern address LSB
+ $A81B LD (IY+$05),$00 ; Pattern address MSB
+ $A81F LD A,($7003)    ; Ship's polar y
  $A822 CP $15          ;
- $A824 JR NC,$A85A     ;
- $A826 LD A,($7004)    ;
- $A829 ADD A,$02       ;
- $A82B RRCA            ;
- $A82C RRCA            ;
+ $A824 JR NC,$A85A     ; Jump if >= 21
+ $A826 LD A,($7004)    ; Ship's polar x
+ $A829 ADD A,$02       ; Polar x + 2
+ $A82B RRCA            ; Rotate right 3 times
+ $A82C RRCA            ; 00XXXXXX -> XXX00XXX
  $A82D RRCA            ;
- $A82E AND $06         ;
- $A830 LD HL,$A875     ;
+ $A82E AND $06         ; XXX00XXX -> 00000XX0 (quadrant)
+ $A830 LD HL,$A875     ; Adjustment table
  $A833 RST $08         ; Add A to HL
- $A834 LD A,($700B)    ;
- $A837 ADD A,(HL)      ;
- $A838 LD (IY+$00),A   ;
- $A83B INC HL          ;
- $A83C LD A,($700A)    ;
- $A83F ADD A,(HL)      ;
- $A840 LD (IY+$01),A   ;
- $A843 LD A,($7004)    ;
- $A846 ADD A,$02       ;
- $A848 AND $3C         ;
- $A84A LD L,A          ;
- $A84B LD H,$00        ;
- $A84D ADD HL,HL       ;
- $A84E ADD HL,HL       ;
- $A84F ADD HL,HL       ;
- $A850 LD DE,$A87D     ;
- $A853 ADD HL,DE       ;
- $A854 LD (IY+$04),L   ;
- $A857 LD (IY+$05),H   ;
+ $A834 LD A,($700B)    ; Ship's screen x
+ $A837 ADD A,(HL)      ; Add table value
+ $A838 LD (IY+$00),A   ; Store x
+ $A83B INC HL          ; Next table address
+ $A83C LD A,($700A)    ; Ship's screen y
+ $A83F ADD A,(HL)      ; Add table value
+ $A840 LD (IY+$01),A   ; Store y
+ $A843 LD A,($7004)    ; Ship's polar x
+ $A846 ADD A,$02       ; Polar x + 2
+ $A848 AND $3C         ; Keep 4 most significant bits, i.e. 16 offsets 4 bytes apart
+ $A84A LD L,A          ; HL = A
+ $A84B LD H,$00        ; ...
+ $A84D ADD HL,HL       ; x2
+ $A84E ADD HL,HL       ; x4
+ $A84F ADD HL,HL       ; x8, now 32 bytes apart
+ $A850 LD DE,$A87D     ; Table of ship background patterns (32 bytes per frame)
+ $A853 ADD HL,DE       ; Add to offset
+ $A854 LD (IY+$04),L   ; Save LSB
+ $A857 LD (IY+$05),H   ; Save MSB
 *$A85A CALL $8B12      ;
  $A85D POP IY          ;
  $A85F POP IX          ;
@@ -5101,15 +5133,34 @@ c$A808 PUSH HL         ;
  $A864 RET             ;
 
 ; Data block at A865
-b$A865 DEFB $FF,$20,$30,$28,$00,$FF,$38,$FF
- $A86D DEFB $10,$18,$FF,$FF,$08,$FF,$FF,$FF
- $A875 DEFB $03,$01,$00,$FC,$05,$F9,$08,$FE
+@label=movement_table
+b$A865 DEFB $FF        ; 0000
+ $A866 DEFB $20        ; 0001 Up
+ $A867 DEFB $30        ; 0010 Right
+ $A868 DEFB $28        ; 0011 Up + right
+ $A869 DEFB $00        ; 0100 Down
+ $A86A DEFB $FF        ; 0101
+ $A86B DEFB $38        ; 0110 Down + right
+ $A86C DEFB $FF        ; 0111
+ $A86D DEFB $10        ; 1000 Left
+ $A86E DEFB $18        ; 1001 Left + up
+ $A86F DEFB $FF        ; 1010
+ $A870 DEFB $FF        ; 1011
+ $A871 DEFB $08        ; 1100 Left + down
+ $A872 DEFB $FF        ; 1101
+ $A873 DEFB $FF        ; 1110
+ $A874 DEFB $FF        ; 1111
 
-; Ship sprites
+; Data block at A875
+@label=adjust_ship_x_y_table
+b$A875 DEFB $03,$01,$00,$FC,$05,$F9,$08,$FE
+
+; Ship background patterns (16 frames of 4 patterns, organised as 16x16 sprite patterns)
 ; #UDGTABLE(no-border, no-border)
 ; { #UDGARRAY32,,4($A87D-$AA75-16)(graphics-A87D.png) }
 ; { #UDGARRAY32,,4($A885-$AA7D-16)(graphics-A885.png) }
 ; TABLE#
+@label=ship_patterns
 b$A87D DEFB $00,$01,$07,$07,$0F,$1F,$3F,$78
  $A885 DEFB $60,$01,$01,$00,$00,$00,$00,$00
  $A88D DEFB $80,$C0,$F0,$F0,$F8,$FC,$FE,$8F
@@ -5704,30 +5755,30 @@ c$AD8B PUSH HL       ;
  $AE0B LD BC,$0008   ; Write 8 bytes
  $AE0E CALL $1FDF    ; WRITE_VRAM
 *$AE11 LD A,(IX+$00) ; Get sprite type
- $AE14 CP $01        ; If 1,
+ $AE14 CP $01        ; If 1, i.e. ship 2
  $AE16 JR Z,$AE2B    ; then skip ahead
  $AE18 LD D,(IX+$01) ; Polar y
  $AE1B LD E,(IX+$02) ; Polar x
  $AE1E CALL $B1C6    ; Polar to screen
  $AE21 LD (IX+$08),D ; Set y
  $AE24 LD (IX+$09),E ; Set x
- $AE27 JR C,$AE54    ; If carry, sprite is outside visible screen
- $AE29 JR $AE4E      ; Return anyway
-*$AE2B LD HL,$AFDD   ; If sprite type is 1, set HL to table address
+ $AE27 JR C,$AE54    ; If carry, sprite is outside visible screen, skip ahead
+ $AE29 JR $AE4E      ; Return
+*$AE2B LD HL,$AFDD   ; If sprite type is ship 2, set HL to table address
  $AE2E LD A,(IX+$04) ;
  $AE31 AND $03       ;
  $AE33 JR NZ,$AE3F   ;
  $AE35 LD A,(IX+$05) ;
  $AE38 RRA           ;
  $AE39 AND $1E       ;
- $AE3B LD HL,$AFDF   ;
+ $AE3B LD HL,$AFDF   ; Start at #R$AFDD+2
  $AE3E RST $08       ; Add A to HL
-*$AE3F LD A,($700A)  ;
- $AE42 ADD A,(HL)    ;
+*$AE3F LD A,($700A)  ; Ship screen y
+ $AE42 ADD A,(HL)    ; Add table value
  $AE43 LD (IX+$08),A ; Set y
- $AE46 INC HL        ;
- $AE47 LD A,($700B)  ;
- $AE4A ADD A,(HL)    ;
+ $AE46 INC HL        ; Next table address
+ $AE47 LD A,($700B)  ; Ship screen x
+ $AE4A ADD A,(HL)    ; Add table value
  $AE4B LD (IX+$09),A ; Set x
 ; This entry point is used by the routines at #R$AE54 and #R$AE75.
 *$AE4E POP IY        ;
@@ -5740,21 +5791,21 @@ c$AD8B PUSH HL       ;
 ;
 ; Used by the routine at #R$ADD1.
 c$AE54 LD A,(IX+$00) ; Get sprite type
- $AE57 CP $0C        ;
- $AE59 JR C,$AE86    ;
- $AE5B CP $0E        ;
- $AE5D JR C,$AE67    ;
- $AE5F CP $12        ;
- $AE61 JR C,$AE4E    ;
- $AE63 CP $18        ;
- $AE65 JR NC,$AE4E   ;
-*$AE67 CP $12        ;
- $AE69 JR C,$AE75    ;
- $AE6B CP $14        ;
- $AE6D JR NC,$AE75   ;
+ $AE57 CP $0C        ; Jump if < 12
+ $AE59 JR C,$AE86    ; ...
+ $AE5B CP $0E        ; Jump if < 14
+ $AE5D JR C,$AE67    ; ...
+ $AE5F CP $12        ; Jump if < 18
+ $AE61 JR C,$AE4E    ; ...
+ $AE63 CP $18        ; Jump if >= 24
+ $AE65 JR NC,$AE4E   ; ...
+*$AE67 CP $12        ; Jump if < 18
+ $AE69 JR C,$AE75    ; ...
+ $AE6B CP $14        ; Jump if >= 20
+ $AE6D JR NC,$AE75   ; ...
  $AE6F LD HL,$7252   ;
  $AE72 DEC (HL)      ;
- $AE73 JR $AE86      ;
+ $AE73 JR $AE86      ; Set off-screen values and return
 
 ; Routine at AE75
 ;
@@ -5840,7 +5891,7 @@ c$AE94 LD A,($72D5)   ; Get counter
  $AF0D JR NZ,$AF15    ; If not, skip ahead
  $AF0F CALL $AFAE     ; flip_vert
  $AF12 CALL $AFC2     ; shift_left
-*$AF15 LD HL,($72DE)  ; Source for writing to DP RAM
+*$AF15 LD HL,($72DE)  ; Source for writing to VDP RAM
  $AF18 LD DE,($72D8)  ; Destination
  $AF1C LD BC,$0008    ; 8 bytes
  $AF1F CALL $1FDF     ; WRITE_VRAM
@@ -5878,9 +5929,9 @@ c$AE94 LD A,($72D5)   ; Get counter
  $AF5D LD ($72D5),A   ; Get counter
  $AF60 LD HL,$001D    ;
  $AF63 CP L           ; When it reaches $1D (29)
- $AF64 RET C          ;
- $AF65 LD A,$FF       ;
- $AF67 LD ($72D5),A   ; Then set it to $FF (done)
+ $AF64 RET C          ; ...
+ $AF65 LD A,$FF       ; Then set it to $FF (done)
+ $AF67 LD ($72D5),A   ; ...
  $AF6A RET            ;
 
 ; Take 8 bytes pointed to by $72DE and place them after, bit reversed. Returns
@@ -6117,8 +6168,10 @@ c$B1C6 PUSH IX        ;
  $B1C9 PUSH BC        ;
  $B1CA LD A,$0B       ; 11
  $B1CC ADD A,D        ; Polar y + 11
- $B1CD JP M,$B217     ; If this is 128 or more (polar y > 116), then set position outside screen and return
- $B1D0 LD L,A         ; Calculate table address, starting with y + 11 (11 first table rows are never used?)
+ $B1CD JP M,$B217     ; If this is 128 or more (polar y > 116), then set
+                      ; position outside screen and return
+ $B1D0 LD L,A         ; Calculate table address, starting with y + 11 (11 first
+                      ; table rows are never used?)
  $B1D1 LD H,$00       ;
  $B1D3 ADD HL,HL      ; (y + 11) * 32
  $B1D4 ADD HL,HL      ; ...
@@ -6143,7 +6196,8 @@ c$B1C6 PUSH IX        ;
  $B1EF LD IX,$7000    ; Center of screen?
  $B1F3 LD A,E         ; x
  $B1F4 RRCA           ; Shift right
- $B1F5 XOR E          ; Bit 4 is now set if bit 5 (left/right) and bit 4 (top left/lower right) were different, i.e. top of screen
+ $B1F5 XOR E          ; Bit 4 is now set if bit 5 (left/right) and bit 4 (top
+                      ; left/lower right) were different, i.e. top of screen
  $B1F6 BIT 4,A        ; Test bit 4 (top of screen)
  $B1F8 LD A,(HL)      ; Get table value
  $B1F9 JR Z,$B1FD     ; Skip negating if not top of screen
@@ -6168,9 +6222,8 @@ c$B1C6 PUSH IX        ;
  $B21A SCF            ; Set carry flag
  $B21B JR $B212       ; To return
 
-; Polar to screen coordinates lookup table
-; 16 (y, x) pairs (32 bytes) for each depth value (polar y)
-; (y, x) are offsets from center of screen
+; Polar to screen coordinates lookup table 16 (y, x) pairs (32 bytes) for each
+; depth value (polar y) (y, x) are offsets from center of screen
 @label=polar_to_screen_table
 b$B21D DEFB $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$5C,$78,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
  $B23D DEFB $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$5F,$69,$57,$72,$4B,$7B,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
