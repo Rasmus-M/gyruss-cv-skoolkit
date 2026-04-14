@@ -24,73 +24,92 @@ Next: <a href="35801.html">8BD9</a>
 </td>
 </tr>
 </table>
-<div class="description">8B12: Routine at 8B12</div>
+<div class="description">8B12: Draw background patterns for sprite</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="36623.html">L8F0F</a>, <a href="36693.html">L8F55</a>, <a href="39379.html">L99D3</a>, <a href="39541.html">L9A75</a> and <a href="43016.html">LA808</a>.
+Used by the routines at <a href="36623.html">L8F0F</a>, <a href="36693.html">L8F55</a>, <a href="39379.html">L99D3</a>, <a href="39541.html">L9A75</a> and <a href="43016.html">display_ship_background_patterns</a>.
 </div>
 </div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IY</td>
+<td class="register-desc">Data structure</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L8B12</td>
+<td class="asm-label">display_background_patterns</td>
 <td class="address-2"><span id="35602"></span>8B12</td>
 <td class="instruction">LD L,(IY+$02)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get name table address of 3 x 3 area to clear</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35605"></span>8B15</td>
 <td class="instruction">LD H,(IY+$03)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35608"></span>8B18</td>
 <td class="instruction">LD A,H</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If zero</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35609"></span>8B19</td>
 <td class="instruction">OR L</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35610"></span>8B1A</td>
-<td class="instruction">JR Z,<a href="35602.html#35629">L8B12_2</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="35602.html#35629">display_background_patterns_2</a></td>
+<td class="comment-1" rowspan="1">Then skip ahead</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="35612"></span>
+<div class="comments">
+<div class="paragraph">
+Clear name table area
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35612"></span>8B1C</td>
 <td class="instruction">LD C,$03</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">3 rows</td>
 </tr>
 <tr>
-<td class="asm-label">L8B12_0</td>
+<td class="asm-label">display_background_patterns_0</td>
 <td class="address-2"><span id="35614"></span>8B1E</td>
 <td class="instruction">EX DE,HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">DE now VDP address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35615"></span>8B1F</td>
 <td class="instruction">LD B,$03</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">3 columns</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35617"></span>8B21</td>
 <td class="instruction">XOR A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Zero to clear</td>
 </tr>
 <tr>
-<td class="asm-label">L8B12_1</td>
+<td class="asm-label">display_background_patterns_1</td>
 <td class="address-2"><span id="35618"></span>8B22</td>
 <td class="instruction">RST $10</td>
 <td class="comment-1" rowspan="1">Write VDP byte</td>
@@ -99,307 +118,327 @@ Used by the routines at <a href="36623.html">L8F0F</a>, <a href="36693.html">L8F
 <td class="asm-label"></td>
 <td class="address-1"><span id="35619"></span>8B23</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Next VDP address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35620"></span>8B24</td>
-<td class="instruction">DJNZ <a href="35602.html#35618">L8B12_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">DJNZ <a href="35602.html#35618">display_background_patterns_1</a></td>
+<td class="comment-1" rowspan="1">Inner loop</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35622"></span>8B26</td>
 <td class="instruction">LD HL,$001D</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">One row down and 3 columns back</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35625"></span>8B29</td>
 <td class="instruction">ADD HL,DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35626"></span>8B2A</td>
 <td class="instruction">DEC C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Row counter</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35627"></span>8B2B</td>
-<td class="instruction">JR NZ,<a href="35602.html#35614">L8B12_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="35602.html#35614">display_background_patterns_0</a></td>
+<td class="comment-1" rowspan="1">Outer loop</td>
 </tr>
 <tr>
-<td class="asm-label">L8B12_2</td>
+<td class="asm-label">display_background_patterns_2</td>
 <td class="address-2"><span id="35629"></span>8B2D</td>
 <td class="instruction">LD (IY+$02),$00</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Reset name table address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35633"></span>8B31</td>
 <td class="instruction">LD (IY+$03),$00</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35637"></span>8B35</td>
 <td class="instruction">LD L,(IY+$04)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Background patterns LSB</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35640"></span>8B38</td>
 <td class="instruction">LD H,(IY+$05)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Background patterns MSB</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35643"></span>8B3B</td>
 <td class="instruction">LD A,H</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If both zero</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35644"></span>8B3C</td>
 <td class="instruction">OR L</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35645"></span>8B3D</td>
 <td class="instruction">RET Z</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Then return</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="35646"></span>
+<div class="comments">
+<div class="paragraph">
+Shift/scroll patterns to the right pixel offset
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35646"></span>8B3E</td>
 <td class="instruction">PUSH IY</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save structure pointer</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35648"></span>8B40</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save background patterns address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35649"></span>8B41</td>
 <td class="instruction">LD HL,<a href="29091.html">buffer</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Clear 72 bytes starting from <a href="29091.html">buffer</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35652"></span>8B44</td>
 <td class="instruction">LD DE,$71A4</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35655"></span>8B47</td>
 <td class="instruction">LD BC,$0047</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35658"></span>8B4A</td>
 <td class="instruction">LD (HL),$00</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35660"></span>8B4C</td>
 <td class="instruction">LDIR</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35662"></span>8B4E</td>
 <td class="instruction">LD A,(IY+$01)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get screen y</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35665"></span>8B51</td>
 <td class="instruction">AND $07</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Pixel offset y</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35667"></span>8B53</td>
 <td class="instruction">LD IX,<a href="29091.html">buffer</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Cleared buffer</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35671"></span>8B57</td>
 <td class="instruction">LD E,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">DE = pixel offset y</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35672"></span>8B58</td>
 <td class="instruction">LD D,$00</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35674"></span>8B5A</td>
 <td class="instruction">ADD IX,DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Buffer address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35676"></span>8B5C</td>
 <td class="instruction">LD A,(IY+$00)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get screen x</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35679"></span>8B5F</td>
 <td class="instruction">AND $07</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Pixel offset x</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35681"></span>8B61</td>
 <td class="instruction">LD B,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">B = pixel offset (counter for outer loop)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35682"></span>8B62</td>
 <td class="instruction">LD C,$10</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">C = 16 (counter for inner loop)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35684"></span>8B64</td>
 <td class="instruction">POP IY</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore background patterns address</td>
 </tr>
 <tr>
-<td class="asm-label">L8B12_3</td>
+<td class="asm-label">display_background_patterns_3</td>
 <td class="address-2"><span id="35686"></span>8B66</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save counters</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35687"></span>8B67</td>
 <td class="instruction">LD C,$00</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">C = 0</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35689"></span>8B69</td>
 <td class="instruction">LD D,(IY+$00)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">D = byte from left column of pattern</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35692"></span>8B6C</td>
 <td class="instruction">LD E,(IY+$10)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">E = byte from right column of pattern</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35695"></span>8B6F</td>
 <td class="instruction">INC B</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If pixel offset = 0</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35696"></span>8B70</td>
 <td class="instruction">DEC B</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35697"></span>8B71</td>
-<td class="instruction">JR Z,<a href="35602.html#35708">L8B12_5</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="35602.html#35708">display_background_patterns_5</a></td>
+<td class="comment-1" rowspan="1">Then skip shifting</td>
 </tr>
 <tr>
-<td class="asm-label">L8B12_4</td>
+<td class="asm-label">display_background_patterns_4</td>
 <td class="address-2"><span id="35699"></span>8B73</td>
 <td class="instruction">OR A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Clear carry?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35700"></span>8B74</td>
 <td class="instruction">RR D</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Shift first byte</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35702"></span>8B76</td>
 <td class="instruction">RR E</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Shift second byte</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35704"></span>8B78</td>
 <td class="instruction">RR C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Shift third byte</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35706"></span>8B7A</td>
-<td class="instruction">DJNZ <a href="35602.html#35699">L8B12_4</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">DJNZ <a href="35602.html#35699">display_background_patterns_4</a></td>
+<td class="comment-1" rowspan="1">Repeat 'pixel offset' times (inner loop)</td>
 </tr>
 <tr>
-<td class="asm-label">L8B12_5</td>
+<td class="asm-label">display_background_patterns_5</td>
 <td class="address-2"><span id="35708"></span>8B7C</td>
 <td class="instruction">LD (IX+$00),D</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save shifted bytes in buffer</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35711"></span>8B7F</td>
 <td class="instruction">LD (IX+$18),E</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">3 patterns offset</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35714"></span>8B82</td>
 <td class="instruction">LD (IX+$30),C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35717"></span>8B85</td>
 <td class="instruction">INC IX</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Next destination address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35719"></span>8B87</td>
 <td class="instruction">INC IY</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Next source address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35721"></span>8B89</td>
 <td class="instruction">POP BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore counters</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35722"></span>8B8A</td>
 <td class="instruction">DEC C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Repeat 16 times</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35723"></span>8B8B</td>
-<td class="instruction">JR NZ,<a href="35602.html#35686">L8B12_3</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="35602.html#35686">display_background_patterns_3</a></td>
+<td class="comment-1" rowspan="1">Outer loop</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="35725"></span>
+<div class="comments">
+<div class="paragraph">
+Update pattern table
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -411,7 +450,7 @@ Used by the routines at <a href="36623.html">L8F0F</a>, <a href="36693.html">L8F
 <td class="asm-label"></td>
 <td class="address-1"><span id="35727"></span>8B8F</td>
 <td class="instruction">LD L,(IY+$06)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">VDP pattern index</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -423,37 +462,37 @@ Used by the routines at <a href="36623.html">L8F0F</a>, <a href="36693.html">L8F
 <td class="asm-label"></td>
 <td class="address-1"><span id="35732"></span>8B94</td>
 <td class="instruction">ADD HL,HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">* 8</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35733"></span>8B95</td>
 <td class="instruction">ADD HL,HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35734"></span>8B96</td>
 <td class="instruction">ADD HL,HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35735"></span>8B97</td>
 <td class="instruction">EX DE,HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">DE now VDP address in pattern table</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35736"></span>8B98</td>
 <td class="instruction">LD HL,<a href="29091.html">buffer</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Source address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35739"></span>8B9B</td>
 <td class="instruction">LD BC,$0048</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">72 bytes (9 patterns)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -462,139 +501,149 @@ Used by the routines at <a href="36623.html">L8F0F</a>, <a href="36693.html">L8F
 <td class="comment-1" rowspan="1">WRITE_VRAM</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="35743"></span>
+<div class="comments">
+<div class="paragraph">
+Update name table (3 x 3)
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35743"></span>8B9F</td>
 <td class="instruction">LD A,(IY+$01)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get screen y</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35746"></span>8BA2</td>
 <td class="instruction">AND $F8</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Round to characters</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35748"></span>8BA4</td>
 <td class="instruction">LD L,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">HL = A</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35749"></span>8BA5</td>
 <td class="instruction">LD H,$00</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35751"></span>8BA7</td>
 <td class="instruction">ADD HL,HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">* 4 = row offset in name table</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35752"></span>8BA8</td>
 <td class="instruction">ADD HL,HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35753"></span>8BA9</td>
 <td class="instruction">LD A,(IY+$00)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get screen x</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35756"></span>8BAC</td>
 <td class="instruction">SRL A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">/ 8 = column offset in name table</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35758"></span>8BAE</td>
 <td class="instruction">SRL A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35760"></span>8BB0</td>
 <td class="instruction">SRL A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35762"></span>8BB2</td>
 <td class="instruction">DEC A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">-1 (start one column before)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35763"></span>8BB3</td>
 <td class="instruction">LD E,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">DE = A</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35764"></span>8BB4</td>
 <td class="instruction">LD D,$00</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35766"></span>8BB6</td>
 <td class="instruction">ADD HL,DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add to address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35767"></span>8BB7</td>
 <td class="instruction">LD DE,$1800</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Name table base address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35770"></span>8BBA</td>
 <td class="instruction">ADD HL,DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add to address in HL</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35771"></span>8BBB</td>
 <td class="instruction">LD (IY+$02),L</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Store address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35774"></span>8BBE</td>
 <td class="instruction">LD (IY+$03),H</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35777"></span>8BC1</td>
 <td class="instruction">LD C,$03</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">3 rows</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35779"></span>8BC3</td>
 <td class="instruction">LD A,(IY+$06)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get name</td>
 </tr>
 <tr>
-<td class="asm-label">L8B12_6</td>
+<td class="asm-label">display_background_patterns_6</td>
 <td class="address-2"><span id="35782"></span>8BC6</td>
 <td class="instruction">EX DE,HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">DE is now VDP address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35783"></span>8BC7</td>
 <td class="instruction">LD B,$03</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">3 columns</td>
 </tr>
 <tr>
-<td class="asm-label">L8B12_7</td>
+<td class="asm-label">display_background_patterns_7</td>
 <td class="address-2"><span id="35785"></span>8BC9</td>
 <td class="instruction">RST $10</td>
 <td class="comment-1" rowspan="1">Write VDP byte</td>
@@ -603,49 +652,49 @@ Used by the routines at <a href="36623.html">L8F0F</a>, <a href="36693.html">L8F
 <td class="asm-label"></td>
 <td class="address-1"><span id="35786"></span>8BCA</td>
 <td class="instruction">ADD A,$03</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Name += 3 (columns 3 apart)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35788"></span>8BCC</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Next VDP address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35789"></span>8BCD</td>
-<td class="instruction">DJNZ <a href="35602.html#35785">L8B12_7</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">DJNZ <a href="35602.html#35785">display_background_patterns_7</a></td>
+<td class="comment-1" rowspan="1">Inner loop for 3 bytes</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35791"></span>8BCF</td>
 <td class="instruction">SUB $08</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Name -= 8 (rows 1 apart)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35793"></span>8BD1</td>
 <td class="instruction">LD HL,$001D</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">One row down and 3 columns back</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35796"></span>8BD4</td>
 <td class="instruction">ADD HL,DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35797"></span>8BD5</td>
 <td class="instruction">DEC C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Row counter</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35798"></span>8BD6</td>
-<td class="instruction">JR NZ,<a href="35602.html#35782">L8B12_6</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="35602.html#35782">display_background_patterns_6</a></td>
+<td class="comment-1" rowspan="1">Outer loop for 3 bytes</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

@@ -994,7 +994,7 @@ c$8368 LD A,$05        ;
 *$83C2 RST $30         ; Load sprite pattern
  $83C3 LD IX,$700E     ;
  $83C7 RST $30         ; Load sprite pattern
- $83C8 CALL $A808      ;
+ $83C8 CALL $A808      ; Display ship background patterns
 *$83CB CALL $84B1      ;
  $83CE JR $838A        ;
 
@@ -2025,111 +2025,118 @@ c$8AE6 LD IX,$7002     ;
  $8B0F DJNZ $8AEF      ;
  $8B11 RET             ;
 
-; Routine at 8B12
+; Draw background patterns for sprite
 ;
 ; Used by the routines at #R$8F0F, #R$8F55, #R$99D3, #R$9A75 and #R$A808.
-c$8B12 LD L,(IY+$02)   ;
- $8B15 LD H,(IY+$03)   ;
- $8B18 LD A,H          ;
- $8B19 OR L            ;
- $8B1A JR Z,$8B2D      ;
- $8B1C LD C,$03        ;
-*$8B1E EX DE,HL        ;
- $8B1F LD B,$03        ;
- $8B21 XOR A           ;
+;
+; I:IY Data structure
+@label=display_background_patterns
+c$8B12 LD L,(IY+$02)   ; Get name table address of 3 x 3 area to clear
+ $8B15 LD H,(IY+$03)   ; ...
+ $8B18 LD A,H          ; If zero
+ $8B19 OR L            ; ...
+ $8B1A JR Z,$8B2D      ; Then skip ahead
+; Clear name table area
+ $8B1C LD C,$03        ; 3 rows
+*$8B1E EX DE,HL        ; DE now VDP address
+ $8B1F LD B,$03        ; 3 columns
+ $8B21 XOR A           ; Zero to clear
 *$8B22 RST $10         ; Write VDP byte
- $8B23 INC DE          ;
- $8B24 DJNZ $8B22      ;
- $8B26 LD HL,$001D     ;
- $8B29 ADD HL,DE       ;
- $8B2A DEC C           ;
- $8B2B JR NZ,$8B1E     ;
-*$8B2D LD (IY+$02),$00 ;
- $8B31 LD (IY+$03),$00 ;
- $8B35 LD L,(IY+$04)   ;
- $8B38 LD H,(IY+$05)   ;
- $8B3B LD A,H          ;
- $8B3C OR L            ;
- $8B3D RET Z           ;
- $8B3E PUSH IY         ;
- $8B40 PUSH HL         ;
- $8B41 LD HL,$71A3     ;
- $8B44 LD DE,$71A4     ;
- $8B47 LD BC,$0047     ;
- $8B4A LD (HL),$00     ;
- $8B4C LDIR            ;
- $8B4E LD A,(IY+$01)   ;
- $8B51 AND $07         ;
- $8B53 LD IX,$71A3     ;
- $8B57 LD E,A          ;
- $8B58 LD D,$00        ;
- $8B5A ADD IX,DE       ;
- $8B5C LD A,(IY+$00)   ;
- $8B5F AND $07         ;
- $8B61 LD B,A          ;
- $8B62 LD C,$10        ;
- $8B64 POP IY          ;
-*$8B66 PUSH BC         ;
- $8B67 LD C,$00        ;
- $8B69 LD D,(IY+$00)   ;
- $8B6C LD E,(IY+$10)   ;
- $8B6F INC B           ;
- $8B70 DEC B           ;
- $8B71 JR Z,$8B7C      ;
-*$8B73 OR A            ;
- $8B74 RR D            ;
- $8B76 RR E            ;
- $8B78 RR C            ;
- $8B7A DJNZ $8B73      ;
-*$8B7C LD (IX+$00),D   ;
- $8B7F LD (IX+$18),E   ;
- $8B82 LD (IX+$30),C   ;
- $8B85 INC IX          ;
- $8B87 INC IY          ;
- $8B89 POP BC          ;
- $8B8A DEC C           ;
- $8B8B JR NZ,$8B66     ;
+ $8B23 INC DE          ; Next VDP address
+ $8B24 DJNZ $8B22      ; Inner loop
+ $8B26 LD HL,$001D     ; One row down and 3 columns back
+ $8B29 ADD HL,DE       ; ...
+ $8B2A DEC C           ; Row counter
+ $8B2B JR NZ,$8B1E     ; Outer loop
+*$8B2D LD (IY+$02),$00 ; Reset name table address
+ $8B31 LD (IY+$03),$00 ; ...
+ $8B35 LD L,(IY+$04)   ; Background patterns LSB
+ $8B38 LD H,(IY+$05)   ; Background patterns MSB
+ $8B3B LD A,H          ; If both zero
+ $8B3C OR L            ; ...
+ $8B3D RET Z           ; Then return
+; Shift/scroll patterns to the right pixel offset
+ $8B3E PUSH IY         ; Save structure pointer
+ $8B40 PUSH HL         ; Save background patterns address
+ $8B41 LD HL,$71A3     ; Clear 72 bytes starting from #R$71A3
+ $8B44 LD DE,$71A4     ; ...
+ $8B47 LD BC,$0047     ; ...
+ $8B4A LD (HL),$00     ; ...
+ $8B4C LDIR            ; ...
+ $8B4E LD A,(IY+$01)   ; Get screen y
+ $8B51 AND $07         ; Pixel offset y
+ $8B53 LD IX,$71A3     ; Cleared buffer
+ $8B57 LD E,A          ; DE = pixel offset y
+ $8B58 LD D,$00        ; ...
+ $8B5A ADD IX,DE       ; Buffer address
+ $8B5C LD A,(IY+$00)   ; Get screen x
+ $8B5F AND $07         ; Pixel offset x
+ $8B61 LD B,A          ; B = pixel offset (counter for outer loop)
+ $8B62 LD C,$10        ; C = 16 (counter for inner loop)
+ $8B64 POP IY          ; Restore background patterns address
+*$8B66 PUSH BC         ; Save counters
+ $8B67 LD C,$00        ; C = 0
+ $8B69 LD D,(IY+$00)   ; D = byte from left column of pattern
+ $8B6C LD E,(IY+$10)   ; E = byte from right column of pattern
+ $8B6F INC B           ; If pixel offset = 0
+ $8B70 DEC B           ; ...
+ $8B71 JR Z,$8B7C      ; Then skip shifting
+*$8B73 OR A            ; Clear carry?
+ $8B74 RR D            ; Shift first byte
+ $8B76 RR E            ; Shift second byte
+ $8B78 RR C            ; Shift third byte
+ $8B7A DJNZ $8B73      ; Repeat 'pixel offset' times (inner loop)
+*$8B7C LD (IX+$00),D   ; Save shifted bytes in buffer
+ $8B7F LD (IX+$18),E   ; 3 patterns offset
+ $8B82 LD (IX+$30),C   ; ...
+ $8B85 INC IX          ; Next destination address
+ $8B87 INC IY          ; Next source address
+ $8B89 POP BC          ; Restore counters
+ $8B8A DEC C           ; Repeat 16 times
+ $8B8B JR NZ,$8B66     ; Outer loop
+; Update pattern table
  $8B8D POP IY          ;
- $8B8F LD L,(IY+$06)   ;
+ $8B8F LD L,(IY+$06)   ; VDP pattern index
  $8B92 LD H,$00        ;
- $8B94 ADD HL,HL       ;
- $8B95 ADD HL,HL       ;
- $8B96 ADD HL,HL       ;
- $8B97 EX DE,HL        ;
- $8B98 LD HL,$71A3     ;
- $8B9B LD BC,$0048     ;
+ $8B94 ADD HL,HL       ; * 8
+ $8B95 ADD HL,HL       ; ...
+ $8B96 ADD HL,HL       ; ...
+ $8B97 EX DE,HL        ; DE now VDP address in pattern table
+ $8B98 LD HL,$71A3     ; Source address
+ $8B9B LD BC,$0048     ; 72 bytes (9 patterns)
  $8B9E RST $38         ; WRITE_VRAM
- $8B9F LD A,(IY+$01)   ;
- $8BA2 AND $F8         ;
- $8BA4 LD L,A          ;
- $8BA5 LD H,$00        ;
- $8BA7 ADD HL,HL       ;
- $8BA8 ADD HL,HL       ;
- $8BA9 LD A,(IY+$00)   ;
- $8BAC SRL A           ;
- $8BAE SRL A           ;
- $8BB0 SRL A           ;
- $8BB2 DEC A           ;
- $8BB3 LD E,A          ;
- $8BB4 LD D,$00        ;
- $8BB6 ADD HL,DE       ;
- $8BB7 LD DE,$1800     ;
- $8BBA ADD HL,DE       ;
- $8BBB LD (IY+$02),L   ;
- $8BBE LD (IY+$03),H   ;
- $8BC1 LD C,$03        ;
- $8BC3 LD A,(IY+$06)   ;
-*$8BC6 EX DE,HL        ;
- $8BC7 LD B,$03        ;
+; Update name table (3 x 3)
+ $8B9F LD A,(IY+$01)   ; Get screen y
+ $8BA2 AND $F8         ; Round to characters
+ $8BA4 LD L,A          ; HL = A
+ $8BA5 LD H,$00        ; ...
+ $8BA7 ADD HL,HL       ; * 4 = row offset in name table
+ $8BA8 ADD HL,HL       ; ...
+ $8BA9 LD A,(IY+$00)   ; Get screen x
+ $8BAC SRL A           ; / 8 = column offset in name table
+ $8BAE SRL A           ; ...
+ $8BB0 SRL A           ; ...
+ $8BB2 DEC A           ; -1 (start one column before)
+ $8BB3 LD E,A          ; DE = A
+ $8BB4 LD D,$00        ; ...
+ $8BB6 ADD HL,DE       ; Add to address
+ $8BB7 LD DE,$1800     ; Name table base address
+ $8BBA ADD HL,DE       ; Add to address in HL
+ $8BBB LD (IY+$02),L   ; Store address
+ $8BBE LD (IY+$03),H   ; ...
+ $8BC1 LD C,$03        ; 3 rows
+ $8BC3 LD A,(IY+$06)   ; Get name
+*$8BC6 EX DE,HL        ; DE is now VDP address
+ $8BC7 LD B,$03        ; 3 columns
 *$8BC9 RST $10         ; Write VDP byte
- $8BCA ADD A,$03       ;
- $8BCC INC DE          ;
- $8BCD DJNZ $8BC9      ;
- $8BCF SUB $08         ;
- $8BD1 LD HL,$001D     ;
- $8BD4 ADD HL,DE       ;
- $8BD5 DEC C           ;
- $8BD6 JR NZ,$8BC6     ;
+ $8BCA ADD A,$03       ; Name += 3 (columns 3 apart)
+ $8BCC INC DE          ; Next VDP address
+ $8BCD DJNZ $8BC9      ; Inner loop for 3 bytes
+ $8BCF SUB $08         ; Name -= 8 (rows 1 apart)
+ $8BD1 LD HL,$001D     ; One row down and 3 columns back
+ $8BD4 ADD HL,DE       ; ...
+ $8BD5 DEC C           ; Row counter
+ $8BD6 JR NZ,$8BC6     ; Outer loop for 3 bytes
  $8BD8 RET             ;
 
 ; Routine at 8BD9
@@ -2608,7 +2615,7 @@ c$8F0F PUSH BC       ;
  $8F4A LD (IY+$06),A ;
  $8F4D ADD A,$10     ;
  $8F4F LD ($7268),A  ;
- $8F52 JP $8B12      ;
+ $8F52 JP $8B12      ; Display background patterns
 
 ; Routine at 8F55
 ;
@@ -2664,7 +2671,7 @@ c$8F55 CALL $900E     ;
  $8FBD LD A,E         ;
  $8FBE SUB $04        ;
  $8FC0 LD (IY+$00),A  ;
- $8FC3 CALL $8B12     ;
+ $8FC3 CALL $8B12     ; Display background patterns
 *$8FC6 LD BC,$0009    ;
  $8FC9 ADD IY,BC      ;
  $8FCB POP BC         ;
@@ -3633,7 +3640,7 @@ c$99D3 LD A,$04        ;
  $99EB LD (IY+$04),$00 ;
  $99EF LD (IY+$05),$00 ;
  $99F3 PUSH IX         ;
- $99F5 CALL $8B12      ;
+ $99F5 CALL $8B12      ; Display background patterns
  $99F8 LD HL,$722D     ;
  $99FB DEC (HL)        ;
  $99FC JR NZ,$9A03     ;
@@ -3708,7 +3715,7 @@ c$9A49 CP $0E          ;
 ; Used by the routine at #R$9796.
 c$9A75 LD (IY+$04),$00 ;
  $9A79 LD (IY+$05),$00 ;
- $9A7D CALL $8B12      ;
+ $9A7D CALL $8B12      ; Display background patterns
  $9A80 LD HL,$722D     ;
  $9A83 DEC (HL)        ;
  $9A84 JR $9A69        ;
@@ -4666,7 +4673,7 @@ c$A33B LD HL,$80B5     ; New center of projection at bottom center for
  $A3A0 LD (IX+$02),$00 ; Polar x
  $A3A4 LD (IX+$0B),$04 ; Set color (blue)
  $A3A8 RST $30         ; Load sprite pattern
- $A3A9 CALL $A808      ;
+ $A3A9 CALL $A808      ; Display ship background patterns
  $A3AC CALL $ACF9      ; Upload sprite data
  $A3AF LD A,$07        ;
  $A3B1 CALL $9EA3      ;
@@ -4697,7 +4704,7 @@ c$A33B LD HL,$80B5     ; New center of projection at bottom center for
 ; Used by the routine at #R$8139.
 c$A3E1 LD A,$2A        ;
  $A3E3 LD ($7003),A    ;
- $A3E6 CALL $A808      ;
+ $A3E6 CALL $A808      ; Display ship background patterns
  $A3E9 LD A,$7F        ; Not allocated
  $A3EB LD ($7002),A    ; 1st sprite
  $A3EE LD ($700E),A    ; 2nd sprite
@@ -5005,7 +5012,7 @@ c$A73C LD A,($71F2)    ; Get frame
  $A778 RST $30         ; Load sprite pattern sprite 0
  $A779 LD IX,$700E     ; Sprite 1
  $A77D RST $30         ; Load sprite pattern sprite 1
- $A77E CALL $A808      ;
+ $A77E CALL $A808      ; Display ship background patterns
 ; Handle fire
 *$A781 LD A,($71EB)    ;
  $A784 BIT 4,A         ;
@@ -5085,6 +5092,7 @@ c$A805 RES 0,(HL)    ; Clear bit for fire pressed
 ; Routine at A808
 ;
 ; Used by the routines at #R$8368, #R$A33B, #R$A3E1 and #R$A73C.
+@label=display_ship_background_patterns
 c$A808 PUSH HL         ;
  $A809 PUSH DE         ;
  $A80A PUSH BC         ;
@@ -5124,7 +5132,7 @@ c$A808 PUSH HL         ;
  $A853 ADD HL,DE       ; Add to offset
  $A854 LD (IY+$04),L   ; Save LSB
  $A857 LD (IY+$05),H   ; Save MSB
-*$A85A CALL $8B12      ;
+*$A85A CALL $8B12      ; Display background patterns
  $A85D POP IY          ;
  $A85F POP IX          ;
  $A861 POP BC          ;

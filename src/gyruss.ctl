@@ -538,6 +538,7 @@ C $8387,3 Upload sprite data
 C $83BA,4 Set color
 C $83C2,1 Load sprite pattern
 C $83C7,1 Load sprite pattern
+C $83C8,3 Display ship background patterns
 c $83D0 Routine at 83D0
 D $83D0 Used by the routine at #R$8368.
 C $83DE,3 Stage
@@ -751,11 +752,114 @@ D $8AC0 Used by the routines at #R$8790, #R$87F5, #R$8878 and #R$88D4.
 c $8AE6 Routine at 8AE6
 D $8AE6 Used by the routine at #R$8139.
 C $8B0C,1 Load sprite pattern
-c $8B12 Routine at 8B12
+c $8B12 Draw background patterns for sprite
 D $8B12 Used by the routines at #R$8F0F, #R$8F55, #R$99D3, #R$9A75 and #R$A808.
+R $8B12 I:IY Data structure
+@ $8B12 label=display_background_patterns
+C $8B12,3 Get name table address of 3 x 3 area to clear
+C $8B15,3 ...
+C $8B18,1 If zero
+C $8B19,1 ...
+C $8B1A,2 Then skip ahead
+N $8B1C Clear name table area
+C $8B1C,2 3 rows
+C $8B1E,1 DE now VDP address
+C $8B1F,2 3 columns
+C $8B21,1 Zero to clear
 C $8B22,1 Write VDP byte
+C $8B23,1 Next VDP address
+C $8B24,2 Inner loop
+C $8B26,3 One row down and 3 columns back
+C $8B29,1 ...
+C $8B2A,1 Row counter
+C $8B2B,2 Outer loop
+C $8B2D,4 Reset name table address
+C $8B31,4 ...
+C $8B35,3 Background patterns LSB
+C $8B38,3 Background patterns MSB
+C $8B3B,1 If both zero
+C $8B3C,1 ...
+C $8B3D,1 Then return
+N $8B3E Shift/scroll patterns to the right pixel offset
+C $8B3E,2 Save structure pointer
+C $8B40,1 Save background patterns address
+C $8B41,3 Clear 72 bytes starting from #R$71A3
+C $8B44,3 ...
+C $8B47,3 ...
+C $8B4A,2 ...
+C $8B4C,2 ...
+C $8B4E,3 Get screen y
+C $8B51,2 Pixel offset y
+C $8B53,4 Cleared buffer
+C $8B57,1 DE = pixel offset y
+C $8B58,2 ...
+C $8B5A,2 Buffer address
+C $8B5C,3 Get screen x
+C $8B5F,2 Pixel offset x
+C $8B61,1 B = pixel offset (counter for outer loop)
+C $8B62,2 C = 16 (counter for inner loop)
+C $8B64,2 Restore background patterns address
+C $8B66,1 Save counters
+C $8B67,2 C = 0
+C $8B69,3 D = byte from left column of pattern
+C $8B6C,3 E = byte from right column of pattern
+C $8B6F,1 If pixel offset = 0
+C $8B70,1 ...
+C $8B71,2 Then skip shifting
+C $8B73,1 Clear carry?
+C $8B74,2 Shift first byte
+C $8B76,2 Shift second byte
+C $8B78,2 Shift third byte
+C $8B7A,2 Repeat 'pixel offset' times (inner loop)
+C $8B7C,3 Save shifted bytes in buffer
+C $8B7F,3 3 patterns offset
+C $8B82,3 ...
+C $8B85,2 Next destination address
+C $8B87,2 Next source address
+C $8B89,1 Restore counters
+C $8B8A,1 Repeat 16 times
+C $8B8B,2 Outer loop
+N $8B8D Update pattern table
+C $8B8F,3 VDP pattern index
+C $8B94,1 * 8
+C $8B95,1 ...
+C $8B96,1 ...
+C $8B97,1 DE now VDP address in pattern table
+C $8B98,3 Source address
+C $8B9B,3 72 bytes (9 patterns)
 C $8B9E,1 WRITE_VRAM
+N $8B9F Update name table (3 x 3)
+C $8B9F,3 Get screen y
+C $8BA2,2 Round to characters
+C $8BA4,1 HL = A
+C $8BA5,2 ...
+C $8BA7,1 * 4 = row offset in name table
+C $8BA8,1 ...
+C $8BA9,3 Get screen x
+C $8BAC,2 / 8 = column offset in name table
+C $8BAE,2 ...
+C $8BB0,2 ...
+C $8BB2,1 -1 (start one column before)
+C $8BB3,1 DE = A
+C $8BB4,2 ...
+C $8BB6,1 Add to address
+C $8BB7,3 Name table base address
+C $8BBA,1 Add to address in HL
+C $8BBB,3 Store address
+C $8BBE,3 ...
+C $8BC1,2 3 rows
+C $8BC3,3 Get name
+C $8BC6,1 DE is now VDP address
+C $8BC7,2 3 columns
 C $8BC9,1 Write VDP byte
+C $8BCA,2 Name += 3 (columns 3 apart)
+C $8BCC,1 Next VDP address
+C $8BCD,2 Inner loop for 3 bytes
+C $8BCF,2 Name -= 8 (rows 1 apart)
+C $8BD1,3 One row down and 3 columns back
+C $8BD4,1 ...
+C $8BD5,1 Row counter
+C $8BD6,2 Outer loop for 3 bytes
 c $8BD9 Routine at 8BD9
 D $8BD9 Used by the routine at #R$8024.
 c $8C07 Routine at 8C07
@@ -822,11 +926,13 @@ D $8E9D Used by the routine at #R$8E2C.
 c $8F0F Routine at 8F0F
 D $8F0F Used by the routine at #R$8E9D.
 C $8F44,3 FILL_VRAM
+C $8F52,3 Display background patterns
 c $8F55 Routine at 8F55
 D $8F55 Used by the routine at #R$8E2C.
 N $8FAE This entry point is used by the routine at #R$8FED.
 C $8FAE,3 Polar y
 C $8FB1,3 Polar x
+C $8FC3,3 Display background patterns
 c $8FED Routine at 8FED
 D $8FED Used by the routine at #R$8F55.
 c $900E Routine at 900E
@@ -1175,6 +1281,7 @@ c $99D3 Routine at 99D3
 D $99D3 Used by the routine at #R$99B1.
 C $99E1,1 Add A to HL
 N $99EA This entry point is used by the routine at #R$99B1.
+C $99F5,3 Display background patterns
 c $9A08 Routine at 9A08
 D $9A08 Used by the routine at #R$9924.
 c $9A1C Routine at 9A1C
@@ -1189,6 +1296,7 @@ N $9A69 This entry point is used by the routine at #R$9A75.
 N $9A6D This entry point is used by the routine at #R$9A38.
 c $9A75 Routine at 9A75
 D $9A75 Used by the routine at #R$9796.
+C $9A7D,3 Display background patterns
 c $9A86 Routine at 9A86
 D $9A86 Used by the routines at #R$870C, #R$9796, #R$9861 and #R$98B5.
 c $9AA7 Routine at 9AA7
@@ -1377,6 +1485,7 @@ C $A39C,4 Polar y
 C $A3A0,4 Polar x
 C $A3A4,4 Set color (blue)
 C $A3A8,1 Load sprite pattern
+C $A3A9,3 Display ship background patterns
 C $A3AC,3 Upload sprite data
 N $A3B4 Game loop 60 times
 C $A3B4,2 60
@@ -1401,6 +1510,7 @@ C $A3DD,1 ...
 C $A3DE,3 FILL_VRAM and return
 c $A3E1 Routine at A3E1
 D $A3E1 Used by the routine at #R$8139.
+C $A3E6,3 Display ship background patterns
 C $A3E9,2 Not allocated
 C $A3EB,3 1st sprite
 C $A3EE,3 2nd sprite
@@ -1538,6 +1648,7 @@ C $A775,3 Also update sprite 1
 C $A778,1 Load sprite pattern sprite 0
 C $A779,4 Sprite 1
 C $A77D,1 Load sprite pattern sprite 1
+C $A77E,3 Display ship background patterns
 N $A781 Handle fire
 C $A787,3 Controller #R$71F1
 C $A78A,1 Save current player
@@ -1608,6 +1719,7 @@ C $A805,2 Clear bit for fire pressed
 C $A807,1 Return
 c $A808 Routine at A808
 D $A808 Used by the routines at #R$8368, #R$A33B, #R$A3E1 and #R$A73C.
+@ $A808 label=display_ship_background_patterns
 C $A80F,4 Buffer for generated structure
 C $A817,4 Pattern address LSB
 C $A81B,4 Pattern address MSB
@@ -1639,6 +1751,7 @@ C $A850,3 Table of ship background patterns (32 bytes per frame)
 C $A853,1 Add to offset
 C $A854,3 Save LSB
 C $A857,3 Save MSB
+C $A85A,3 Display background patterns
 b $A865 Data block at A865
 @ $A865 label=movement_table
 B $A865,1,1 0000
