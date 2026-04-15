@@ -30,7 +30,7 @@ Next: <a href="33550.html">830E</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Initializa stage and display X WARPS TO Y message Used by the routines at <a href="32804.html">main</a>, <a href="33198.html">L81AE</a> and <a href="33744.html">L83D0</a>.
+Initializa stage and display X WARPS TO Y message Used by the routines at <a href="32804.html">main</a>, <a href="33198.html">L81AE</a> and <a href="33744.html">next_stage</a>.
 </div>
 </div>
 </td>
@@ -80,14 +80,14 @@ Initializa stage and display X WARPS TO Y message Used by the routines at <a hre
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33316"></span>8224</td>
-<td class="instruction">LD HL,<a href="29163.html">L71EB</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD HL,<a href="29163.html">status_flags</a></td>
+<td class="comment-1" rowspan="1">Clear flag that exists main loop</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33319"></span>8227</td>
 <td class="instruction">RES 2,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -702,7 +702,7 @@ Display ship and stars with music for a short while
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33490"></span>82D2</td>
-<td class="instruction">CALL <a href="33550.html">L830E</a></td>
+<td class="instruction">CALL <a href="33550.html">display_player</a></td>
 <td class="comment-1" rowspan="1">Display player if 2 player</td>
 </tr>
 <tr>
@@ -810,7 +810,7 @@ Display ship and stars with music for a short while
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33527"></span>82F7</td>
-<td class="instruction">CALL <a href="40593.html">play_tune_save_regs</a></td>
+<td class="instruction">CALL <a href="40593.html">call_play_tune</a></td>
 <td class="comment-1" rowspan="1">Play selected tune</td>
 </tr>
 <tr>
@@ -828,20 +828,20 @@ Display ship and stars with music for a short while
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33536"></span>8300</td>
-<td class="instruction">CALL <a href="41787.html">LA33B</a></td>
-<td class="comment-1" rowspan="1">Display ship and stars</td>
+<td class="instruction">CALL <a href="41787.html">initial_game_loop</a></td>
+<td class="comment-1" rowspan="1">Initial game loop</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33539"></span>8303</td>
-<td class="instruction">CALL <a href="36489.html#36493">L8E89_0</a></td>
+<td class="instruction">CALL <a href="36489.html#36493">init_stage_variables_0</a></td>
 <td class="comment-1" rowspan="1">Init some variables</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33542"></span>8306</td>
-<td class="instruction">LD HL,<a href="29163.html">L71EB</a></td>
-<td class="comment-1" rowspan="1">Reset some status flags</td>
+<td class="instruction">LD HL,<a href="29163.html">status_flags</a></td>
+<td class="comment-1" rowspan="1">Update status flags</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -853,7 +853,7 @@ Display ship and stars with music for a short while
 <td class="asm-label"></td>
 <td class="address-1"><span id="33547"></span>830B</td>
 <td class="instruction">SET 6,(HL)</td>
-<td class="comment-1" rowspan="1">...</td>
+<td class="comment-1" rowspan="1">Set main loop flag</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

@@ -30,85 +30,85 @@ Next: <a href="33995.html">84CB</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="32804.html">main</a>, <a href="33081.html">L8139</a>, <a href="33578.html">L832A</a>, <a href="33640.html">L8368</a>, <a href="33899.html">L846B</a>, <a href="41787.html">LA33B</a> and <a href="41953.html">LA3E1</a>.
+Used by the routines at <a href="32804.html">main</a>, <a href="33081.html">died</a>, <a href="33578.html">L832A</a>, <a href="33640.html">L8368</a>, <a href="33899.html">L846B</a>, <a href="41787.html">initial_game_loop</a> and <a href="41953.html">explode</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L84B1</td>
+<td class="asm-label">update_frame_upload_sprites</td>
 <td class="address-2"><span id="33969"></span>84B1</td>
 <td class="instruction">LD HL,<a href="29170.html">frame_counter</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Update frame counter</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33972"></span>84B4</td>
 <td class="instruction">INC (HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33973"></span>84B5</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get new value</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33974"></span>84B6</td>
 <td class="instruction">AND $01</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Every second frame ...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33976"></span>84B8</td>
-<td class="instruction">JR NZ,<a href="33969.html#33992">L84B1_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="33969.html#33992">update_frame_upload_sprites_0</a></td>
+<td class="comment-1" rowspan="1">go directly to upload sprite data</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33978"></span>84BA</td>
 <td class="instruction">LD A,(<a href="28674.html#28686">$700E</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Else get type of sprite 1</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33981"></span>84BD</td>
 <td class="instruction">CP $01</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Is it 1 (ship 2)?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33983"></span>84BF</td>
-<td class="instruction">JR NZ,<a href="33969.html#33992">L84B1_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="33969.html#33992">update_frame_upload_sprites_0</a></td>
+<td class="comment-1" rowspan="1">If not upload sprite data</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33985"></span>84C1</td>
 <td class="instruction">LD HL,$7019</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get color of sprite 1</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33988"></span>84C4</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33989"></span>84C5</td>
 <td class="instruction">XOR $04</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Flip bit 4</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33991"></span>84C7</td>
 <td class="instruction">LD (HL),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">And set color back</td>
 </tr>
 <tr>
-<td class="asm-label">L84B1_0</td>
+<td class="asm-label">update_frame_upload_sprites_0</td>
 <td class="address-2"><span id="33992"></span>84C8</td>
 <td class="instruction">JP <a href="44281.html">upload_sprite_data</a></td>
 <td class="comment-1" rowspan="1">Upload sprite data</td>

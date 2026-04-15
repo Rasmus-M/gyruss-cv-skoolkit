@@ -20,17 +20,17 @@ Prev: <a href="34029.html">84ED</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#34049">Map</a></td>
 <td class="next">
-Next: <a href="34082.html">8522</a>
+Next: <a href="34108.html">853C</a>
 </td>
 </tr>
 </table>
-<div class="description">8501: Routine at 8501</div>
+<div class="description">8501: Interrupt routine</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="32801.html">L8021</a>.
+Calls sound player and handles screen saver Used by the routine at <a href="32801.html">L8021</a>.
 </div>
 </div>
 </td>
@@ -92,7 +92,7 @@ Used by the routine at <a href="32801.html">L8021</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34062"></span>850E</td>
-<td class="instruction">JR Z,<a href="34082.html">L8522</a></td>
+<td class="instruction">JR Z,<a href="34049.html#34082">interrupt_routine_1</a></td>
 <td class="comment-1" rowspan="1">If counter is 0 then skip ahead</td>
 </tr>
 <tr>
@@ -122,7 +122,7 @@ Used by the routine at <a href="32801.html">L8021</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34070"></span>8516</td>
-<td class="instruction">JR NZ,<a href="34082.html">L8522</a></td>
+<td class="instruction">JR NZ,<a href="34049.html#34082">interrupt_routine_1</a></td>
 <td class="comment-1" rowspan="1">If not then skip ahead, otherwise blank screen</td>
 </tr>
 <tr>
@@ -155,6 +155,84 @@ Used by the routine at <a href="32801.html">L8021</a>.
 <td class="instruction">JR <a href="34049.html#34080">interrupt_routine_0</a></td>
 <td class="comment-1" rowspan="1">Loop</td>
 </tr>
+<tr>
+<td class="asm-label">interrupt_routine_1</td>
+<td class="address-2"><span id="34082"></span>8522</td>
+<td class="instruction">CALL <a href="39833.html">sound_player</a></td>
+<td class="comment-1" rowspan="1">Sound player</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34085"></span>8525</td>
+<td class="instruction">LD A,(<a href="29163.html">status_flags</a>)</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34088"></span>8528</td>
+<td class="instruction">BIT 6,A</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34090"></span>852A</td>
+<td class="instruction">CALL Z,$1FDC</td>
+<td class="comment-1" rowspan="1">READ_REGISTER</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34093"></span>852D</td>
+<td class="instruction">LD HL,<a href="29274.html">interrupt_flag</a></td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34096"></span>8530</td>
+<td class="instruction">SET 0,(HL)</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34098"></span>8532</td>
+<td class="instruction">POP AF</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34099"></span>8533</td>
+<td class="instruction">POP BC</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34100"></span>8534</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34101"></span>8535</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34102"></span>8536</td>
+<td class="instruction">POP IY</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34104"></span>8538</td>
+<td class="instruction">POP IX</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34106"></span>853A</td>
+<td class="instruction">RETN</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
 </table>
 <table class="asm-navigation">
 <tr>
@@ -163,7 +241,7 @@ Prev: <a href="34029.html">84ED</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#34049">Map</a></td>
 <td class="next">
-Next: <a href="34082.html">8522</a>
+Next: <a href="34108.html">853C</a>
 </td>
 </tr>
 </table>

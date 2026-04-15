@@ -24,7 +24,7 @@ Next: <a href="33136.html">8170</a>
 </td>
 </tr>
 </table>
-<div class="description">8139: Routine at 8139</div>
+<div class="description">8139: Exit from main loop after dying</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -36,34 +36,34 @@ Used by the routine at <a href="32804.html">main</a>.
 </td>
 </tr>
 <tr>
-<td class="asm-label">L8139</td>
+<td class="asm-label">died</td>
 <td class="address-2"><span id="33081"></span>8139</td>
-<td class="instruction">CALL <a href="39815.html">L9B87</a></td>
+<td class="instruction">CALL <a href="39815.html">died_set_variables</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33084"></span>813C</td>
 <td class="instruction">LD A,$03</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Play explosion sound</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33086"></span>813E</td>
-<td class="instruction">CALL <a href="40611.html">call_9CA8</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL <a href="40611.html">call_play_sound</a></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33089"></span>8141</td>
-<td class="instruction">LD HL,<a href="29163.html">L71EB</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD HL,<a href="29163.html">status_flags</a></td>
+<td class="comment-1" rowspan="1">Reset main loop flag</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33092"></span>8144</td>
 <td class="instruction">RES 6,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -75,13 +75,13 @@ Used by the routine at <a href="32804.html">main</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="33097"></span>8149</td>
 <td class="instruction">CALL <a href="35558.html">L8AE6</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Update sprite types $0F - $11</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33100"></span>814C</td>
-<td class="instruction">CALL <a href="41953.html">LA3E1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL <a href="41953.html">explode</a></td>
+<td class="comment-1" rowspan="1">Explosion</td>
 </tr>
 <tr>
 <td class="asm-label">label_at_814F</td>
@@ -98,7 +98,7 @@ Used by the routine at <a href="32804.html">main</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33107"></span>8153</td>
-<td class="instruction">JR NZ,<a href="33081.html#33118">L8139_0</a></td>
+<td class="instruction">JR NZ,<a href="33081.html#33118">died_0</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -126,7 +126,7 @@ Used by the routine at <a href="32804.html">main</a>.
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">L8139_0</td>
+<td class="asm-label">died_0</td>
 <td class="address-2"><span id="33118"></span>815E</td>
 <td class="instruction">HALT</td>
 <td class="comment-1" rowspan="1"></td>
@@ -152,13 +152,13 @@ Used by the routine at <a href="32804.html">main</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33128"></span>8168</td>
-<td class="instruction">CALL <a href="43890.html">LAB72</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL <a href="43890.html">display_center_enemies</a></td>
+<td class="comment-1" rowspan="1">Display center enemies</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33131"></span>816B</td>
-<td class="instruction">CALL <a href="33969.html">L84B1</a></td>
+<td class="instruction">CALL <a href="33969.html">update_frame_upload_sprites</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>

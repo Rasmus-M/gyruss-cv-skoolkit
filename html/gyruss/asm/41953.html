@@ -30,13 +30,13 @@ Next: <a href="42097.html">A471</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="33081.html">L8139</a>.
+Used by the routine at <a href="33081.html">died</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">LA3E1</td>
+<td class="asm-label">explode</td>
 <td class="address-2"><span id="41953"></span>A3E1</td>
 <td class="instruction">LD A,$2A</td>
 <td class="comment-1" rowspan="1"></td>
@@ -75,26 +75,26 @@ Used by the routine at <a href="33081.html">L8139</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="41969"></span>A3F1</td>
 <td class="instruction">LD A,(<a href="29267.html">active_shots</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Active shots</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41972"></span>A3F4</td>
 <td class="instruction">OR A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If zero</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41973"></span>A3F5</td>
-<td class="instruction">JR Z,<a href="41953.html#42003">LA3E1_2</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="41953.html#42003">explode_2</a></td>
+<td class="comment-1" rowspan="1">Then skip ahead</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="41975"></span>
 <div class="comments">
 <div class="paragraph">
-Deallocate all sprites that a not type 2
+Deallocate all shots
 </div>
 </div>
 </td>
@@ -109,7 +109,7 @@ Deallocate all sprites that a not type 2
 <td class="asm-label"></td>
 <td class="address-1"><span id="41979"></span>A3FB</td>
 <td class="instruction">LD DE,$000C</td>
-<td class="comment-1" rowspan="1">Offset between sprites</td>
+<td class="comment-1" rowspan="1">Size of each sprite</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -121,10 +121,10 @@ Deallocate all sprites that a not type 2
 <td class="asm-label"></td>
 <td class="address-1"><span id="41984"></span>A400</td>
 <td class="instruction">LD A,$02</td>
-<td class="comment-1" rowspan="1">If it type 2?</td>
+<td class="comment-1" rowspan="1">Is it type $02 (shot)?</td>
 </tr>
 <tr>
-<td class="asm-label">LA3E1_0</td>
+<td class="asm-label">explode_0</td>
 <td class="address-2"><span id="41986"></span>A402</td>
 <td class="instruction">CP (IX+$00)</td>
 <td class="comment-1" rowspan="1">...</td>
@@ -132,14 +132,14 @@ Deallocate all sprites that a not type 2
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41989"></span>A405</td>
-<td class="instruction">JR NZ,<a href="41953.html#41999">LA3E1_1</a></td>
+<td class="instruction">JR NZ,<a href="41953.html#41999">explode_1</a></td>
 <td class="comment-1" rowspan="1">No, then skip</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41991"></span>A407</td>
 <td class="instruction">LD (IX+$00),$7F</td>
-<td class="comment-1" rowspan="1">set as not allocated</td>
+<td class="comment-1" rowspan="1">Set as not allocated</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -148,7 +148,7 @@ Deallocate all sprites that a not type 2
 <td class="comment-1" rowspan="1">Set y</td>
 </tr>
 <tr>
-<td class="asm-label">LA3E1_1</td>
+<td class="asm-label">explode_1</td>
 <td class="address-2"><span id="41999"></span>A40F</td>
 <td class="instruction">ADD IX,DE</td>
 <td class="comment-1" rowspan="1">Next sprite</td>
@@ -156,7 +156,7 @@ Deallocate all sprites that a not type 2
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42001"></span>A411</td>
-<td class="instruction">DJNZ <a href="41953.html#41986">LA3E1_0</a></td>
+<td class="instruction">DJNZ <a href="41953.html#41986">explode_0</a></td>
 <td class="comment-1" rowspan="1">Loop 32 times</td>
 </tr>
 <tr>
@@ -164,13 +164,13 @@ Deallocate all sprites that a not type 2
 <span id="42003"></span>
 <div class="comments">
 <div class="paragraph">
-Something else
+Set center of projection for explosion
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">LA3E1_2</td>
+<td class="asm-label">explode_2</td>
 <td class="address-2"><span id="42003"></span>A413</td>
 <td class="instruction">LD HL,($700A)</td>
 <td class="comment-1" rowspan="1">Y and X of 1st sprite</td>
@@ -210,7 +210,7 @@ Something else
 <span id="42019"></span>
 <div class="comments">
 <div class="paragraph">
-Allocate 6 sprites
+Allocate 6 sprites for explosion
 </div>
 </div>
 </td>
@@ -228,7 +228,7 @@ Allocate 6 sprites
 <td class="comment-1" rowspan="1">Allocate 6 sprites</td>
 </tr>
 <tr>
-<td class="asm-label">LA3E1_3</td>
+<td class="asm-label">explode_3</td>
 <td class="address-2"><span id="42025"></span>A429</td>
 <td class="instruction">RST $28</td>
 <td class="comment-1" rowspan="1">Allocate sprite</td>
@@ -237,19 +237,19 @@ Allocate 6 sprites
 <td class="asm-label"></td>
 <td class="address-1"><span id="42026"></span>A42A</td>
 <td class="instruction">LD (IX+$00),$0D</td>
-<td class="comment-1" rowspan="1">Sprite type is $0D</td>
+<td class="comment-1" rowspan="1">Sprite type is $0D (a dot)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42030"></span>A42E</td>
 <td class="instruction">LD (IX+$01),$00</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Polar y</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42034"></span>A432</td>
 <td class="instruction">LD (IX+$02),$00</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Polar x</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -285,13 +285,13 @@ Allocate 6 sprites
 <td class="asm-label"></td>
 <td class="address-1"><span id="42051"></span>A443</td>
 <td class="instruction">LD (IX+$02),A</td>
-<td class="comment-1" rowspan="1">Set it on new sprite</td>
+<td class="comment-1" rowspan="1">Set polar x on new sprite</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42054"></span>A446</td>
 <td class="instruction">LD (IX+$01),$2A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set polar y</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -302,7 +302,7 @@ Allocate 6 sprites
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42060"></span>A44C</td>
-<td class="instruction">DJNZ <a href="41953.html#42025">LA3E1_3</a></td>
+<td class="instruction">DJNZ <a href="41953.html#42025">explode_3</a></td>
 <td class="comment-1" rowspan="1">Loop for 6 sprites</td>
 </tr>
 <tr>
@@ -319,10 +319,10 @@ Game loop for 3 seconds
 <td class="asm-label"></td>
 <td class="address-1"><span id="42062"></span>A44E</td>
 <td class="instruction">LD B,$14</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">20</td>
 </tr>
 <tr>
-<td class="asm-label">LA3E1_4</td>
+<td class="asm-label">explode_4</td>
 <td class="address-2"><span id="42064"></span>A450</td>
 <td class="instruction">PUSH BC</td>
 <td class="comment-1" rowspan="1">Outer loop</td>
@@ -343,10 +343,10 @@ Game loop for 3 seconds
 <td class="asm-label"></td>
 <td class="address-1"><span id="42071"></span>A457</td>
 <td class="instruction">LD B,$09</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">9</td>
 </tr>
 <tr>
-<td class="asm-label">LA3E1_5</td>
+<td class="asm-label">explode_5</td>
 <td class="address-2"><span id="42073"></span>A459</td>
 <td class="instruction">HALT</td>
 <td class="comment-1" rowspan="1">Inner loop</td>
@@ -361,31 +361,31 @@ Game loop for 3 seconds
 <td class="asm-label"></td>
 <td class="address-1"><span id="42075"></span>A45B</td>
 <td class="instruction">CALL <a href="45055.html">display_stars</a></td>
-<td class="comment-1" rowspan="1">Main loop actions</td>
+<td class="comment-1" rowspan="1">Display stars</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42078"></span>A45E</td>
 <td class="instruction">CALL <a href="34278.html">L85E6</a></td>
-<td class="comment-1" rowspan="1">...</td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42081"></span>A461</td>
-<td class="instruction">CALL <a href="43890.html">LAB72</a></td>
-<td class="comment-1" rowspan="1">...</td>
+<td class="instruction">CALL <a href="43890.html">display_center_enemies</a></td>
+<td class="comment-1" rowspan="1">Display center enemies</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42084"></span>A464</td>
 <td class="instruction">CALL <a href="36396.html#36397">L8E2C_0</a></td>
-<td class="comment-1" rowspan="1">...</td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42087"></span>A467</td>
-<td class="instruction">CALL <a href="33969.html">L84B1</a></td>
-<td class="comment-1" rowspan="1">...</td>
+<td class="instruction">CALL <a href="33969.html">update_frame_upload_sprites</a></td>
+<td class="comment-1" rowspan="1">Upload sprites</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -396,7 +396,7 @@ Game loop for 3 seconds
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42091"></span>A46B</td>
-<td class="instruction">DJNZ <a href="41953.html#42073">LA3E1_5</a></td>
+<td class="instruction">DJNZ <a href="41953.html#42073">explode_5</a></td>
 <td class="comment-1" rowspan="1">Loop 9 times</td>
 </tr>
 <tr>
@@ -408,7 +408,7 @@ Game loop for 3 seconds
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42094"></span>A46E</td>
-<td class="instruction">DJNZ <a href="41953.html#42064">LA3E1_4</a></td>
+<td class="instruction">DJNZ <a href="41953.html#42064">explode_4</a></td>
 <td class="comment-1" rowspan="1">Loop 20 times</td>
 </tr>
 <tr>

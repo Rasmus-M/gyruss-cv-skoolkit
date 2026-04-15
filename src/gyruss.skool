@@ -92,14 +92,14 @@ b$71C2 DEFB $00,$00,$00,$00,$00,$00,$00,$00
 ; { =h Bit | =h Purpose }
 ; { $00 | Unknown }
 ; { $01 | Unknown }
-; { $02 | Exits main loop }
+; { $02 | Exits main loop. Reset at stage init }
 ; { $03 | Unknown }
-; { $04 | Set at stage init }
+; { $04 | Set during stage init }
 ; { $05 | Unknown }
-; { $06 | Unknown }
+; { $06 | Set during main loop }
 ; { $07 | Two players }
 ; TABLE#
-@player_status
+@label=status_flags
 b$71EB DEFB $00
 
 ; Stars move countdown
@@ -170,15 +170,13 @@ b$7205 DEFB $00
 ; Byte at 7206
 b$7206 DEFB $00
 
-; Byte at 7207
-b$7207 DEFB $00
-
-; Data block at 7208
-b$7208 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7210 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7218 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7220 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7228 DEFB $00,$00,$00
+; Data block at 7207
+@label=buffer_at_7207
+b$7207 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $720F DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7217 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $721F DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $7227 DEFB $00,$00,$00,$00
 
 ; Byte at 722B
 b$722B DEFB $00
@@ -531,15 +529,15 @@ c$8021 JP $8501      ; Interrupt routine
 
 ; Entry point
 @label=main
-c$8024 LD SP,$73BA   ;
+c$8024 LD SP,$73BA   ; Init stack pointer
  $8027 OUT ($C0),A   ; Controller enable
  $8029 LD HL,$7000   ; Clear RAM
- $802C LD DE,$7001   ;
- $802F LD BC,$03B9   ;
- $8032 LD (HL),L     ;
- $8033 LDIR          ;
- $8035 LD HL,$8060   ; Set word
- $8038 LD ($7000),HL ;
+ $802C LD DE,$7001   ; #R$7000+1
+ $802F LD BC,$03B9   ; ...
+ $8032 LD (HL),L     ; ...
+ $8033 LDIR          ; ...
+ $8035 LD HL,$8060   ; Set center of projection
+ $8038 LD ($7000),HL ; ...
  $803B CALL $9ADE    ; Init sound
  $803E CALL $90D6    ; Start screen
  $8041 LD HL,$2A30   ; 180 * 60 frames
@@ -555,8 +553,8 @@ c$8024 LD SP,$73BA   ;
  $8058 CALL $1F79    ; DECODER
  $805B BIT 6,H       ; Test fire
  $805D JR Z,$8047    ; Loop until fire pressed
- $805F LD HL,$71EB   ;
- $8062 SET 7,(HL)    ;
+ $805F LD HL,$71EB   ; Set two player flag
+ $8062 SET 7,(HL)    ; ...
 ; This entry point is used by the routine at #R$81ED. Fire pressed
 @label=new_game
 *$8064 LD HL,$0000   ;
@@ -575,9 +573,9 @@ c$8024 LD SP,$73BA   ;
  $8086 LD (HL),A     ; ...
  $8087 LD BC,$0065   ; ...
  $808A LDIR          ; ...
- $808C LD A,($71EB)  ;
- $808F AND $80       ;
- $8091 LD ($71EB),A  ;
+ $808C LD A,($71EB)  ; Clear all but two player flag
+ $808F AND $80       ; ...
+ $8091 LD ($71EB),A  ; ...
  $8094 LD A,$05      ; 5 Lives
  $8096 LD ($71FF),A  ; Set lives
  $8099 INC A         ; Increment to 6
@@ -598,7 +596,7 @@ c$8024 LD SP,$73BA   ;
  $80BB RST $10       ; Write VDP byte
  $80BC XOR A         ; Parameter to display score
  $80BD CALL $A699    ; Display score
- $80C0 LD A,($71EB)  ;
+ $80C0 LD A,($71EB)  ; Flags
  $80C3 BIT 7,A       ; Test bit for two players
  $80C5 JR Z,$80E0    ; If bit is reset then skip ahead
  $80C7 LD DE,$181E   ; Display '-' at the top right corner
@@ -609,7 +607,7 @@ c$8024 LD SP,$73BA   ;
  $80D0 RST $10       ; Write VDP byte
  $80D1 LD A,$01      ;
  $80D3 CALL $A699    ;
- $80D6 LD HL,$71FF   ; Save player data, starting with lives?
+ $80D6 LD HL,$71FF   ; Save player data in VDP RAM, starting with lives?
  $80D9 LD DE,$1300   ; VDP address
  $80DC LD BC,$002D   ; 45 bytes
  $80DF RST $38       ; WRITE_VRAM
@@ -624,7 +622,7 @@ c$8024 LD SP,$73BA   ;
  $80EF RES 0,(HL)    ; Clear flag
  $80F1 CALL $1FDC    ; READ_REGISTER (read VDP status)
  $80F4 CALL $AFFF    ;
- $80F7 CALL $A73C    ;
+ $80F7 CALL $A73C    ; Control ship
  $80FA CALL $85E6    ;
  $80FD CALL $1FDC    ; READ_REGISTER
  $8100 CALL $9796    ;
@@ -635,12 +633,12 @@ c$8024 LD SP,$73BA   ;
  $810F CALL $1FDC    ; READ_REGISTER
  $8112 CALL $8D50    ;
  $8115 CALL $84B1    ;
- $8118 CALL $AB72    ;
+ $8118 CALL $AB72    ; Display center enemies
  $811B LD A,($71F1)  ;
  $811E CALL $A699    ;
- $8121 LD A,($71EB)  ; Status
- $8124 BIT 2,A       ;
- $8126 JP NZ,$8139   ; Exit main loop
+ $8121 LD A,($71EB)  ; Status flags
+ $8124 BIT 2,A       ; Test bit 2
+ $8126 JP NZ,$8139   ; Exit main loop if set
  $8129 BIT 1,A       ;
  $812B JR Z,$80E8    ;
  $812D LD A,($7206)  ;
@@ -649,17 +647,18 @@ c$8024 LD SP,$73BA   ;
  $8134 JP Z,$832A    ;
  $8137 JR $80E8      ;
 
-; Routine at 8139
+; Exit from main loop after dying
 ;
 ; Used by the routine at #R$8024.
+@label=died
 c$8139 CALL $9B87    ;
- $813C LD A,$03      ;
- $813E CALL $9EA3    ;
- $8141 LD HL,$71EB   ;
- $8144 RES 6,(HL)    ;
+ $813C LD A,$03      ; Play explosion sound
+ $813E CALL $9EA3    ; ...
+ $8141 LD HL,$71EB   ; Reset main loop flag
+ $8144 RES 6,(HL)    ; ...
  $8146 CALL $1FDC    ; READ_REGISTER
- $8149 CALL $8AE6    ;
- $814C CALL $A3E1    ;
+ $8149 CALL $8AE6    ; Update sprite types $0F - $11
+ $814C CALL $A3E1    ; Explosion
 @label=label_at_814F
 *$814F LD A,($722C)  ;
  $8152 OR A          ;
@@ -672,7 +671,7 @@ c$8139 CALL $9B87    ;
  $815F CALL $AFFF    ;
  $8162 CALL $85E6    ;
  $8165 CALL $8E2D    ;
- $8168 CALL $AB72    ;
+ $8168 CALL $AB72    ; Display center enemies
  $816B CALL $84B1    ;
  $816E JR $814F      ;
 
@@ -701,7 +700,7 @@ c$8170 CALL $8D21    ;
  $8198 DJNZ $8192    ;
  $819A CALL $84ED    ;
  $819D LD HL,$71EB   ;
- $81A0 BIT 7,(HL)    ;
+ $81A0 BIT 7,(HL)    ; Test for two players
  $81A2 JP Z,$81ED    ;
  $81A5 BIT 5,(HL)    ;
  $81A7 JP NZ,$81ED   ;
@@ -712,7 +711,7 @@ c$8170 CALL $8D21    ;
 ;
 ; Used by the routine at #R$8170.
 c$81AE LD A,($71EB)  ;
- $81B1 BIT 7,A       ;
+ $81B1 BIT 7,A       ; Test for two players
  $81B3 JR Z,$81E2    ;
  $81B5 BIT 5,(HL)    ;
  $81B7 JR NZ,$81E2   ;
@@ -768,8 +767,8 @@ c$8212 LD HL,$722E   ; Clear $28 bytes from $722E
  $821D LDIR          ; ...
  $821F LD A,$01      ;
  $8221 LD ($71EE),A  ;
- $8224 LD HL,$71EB   ;
- $8227 RES 2,(HL)    ;
+ $8224 LD HL,$71EB   ; Clear flag that exists main loop
+ $8227 RES 2,(HL)    ; ...
 ; Calculate stage data index
  $8229 LD A,($7205)  ; Get completed stages
  $822C OR A          ; Test if zero
@@ -891,17 +890,17 @@ c$8212 LD HL,$722E   ; Clear $28 bytes from $722E
  $82F7 CALL $9E91    ; Play selected tune
  $82FA CALL $A6D2    ; Display lives
  $82FD CALL $ACDF    ; Init sprite data
- $8300 CALL $A33B    ; Display ship and stars
+ $8300 CALL $A33B    ; Initial game loop
  $8303 CALL $8E8D    ; Init some variables
- $8306 LD HL,$71EB   ; Reset some status flags
+ $8306 LD HL,$71EB   ; Update status flags
  $8309 RES 4,(HL)    ; ...
- $830B SET 6,(HL)    ; ...
+ $830B SET 6,(HL)    ; Set main loop flag
  $830D RET           ;
 
 ; Display player message
 ;
 ; Used by the routines at #R$8170 and #R$82BF.
-@display_player
+@label=display_player
 c$830E LD A,($71EB)  ; Status
  $8311 BIT 7,A       ; Check bit for 2 players
  $8313 RET Z         ; Return if not set
@@ -932,9 +931,9 @@ c$832A LD A,$08      ;
 *$833E PUSH BC       ;
  $833F HALT          ;
  $8340 CALL $AFFF    ;
- $8343 CALL $A73C    ;
+ $8343 CALL $A73C    ; Control ship
  $8346 CALL $85E6    ;
- $8349 CALL $AB72    ;
+ $8349 CALL $AB72    ; Display center enemies
  $834C CALL $84B1    ;
  $834F POP BC        ;
  $8350 DJNZ $833E    ;
@@ -970,7 +969,7 @@ c$8368 LD A,$05        ;
  $8387 CALL $ACF9      ; Upload sprite data
 *$838A HALT            ;
  $838B CALL $AFFF      ;
- $838E CALL $A73C      ;
+ $838E CALL $A73C      ; Control ship
  $8391 CALL $85E6      ;
  $8394 LD HL,$7259     ;
  $8397 DEC (HL)        ;
@@ -1001,6 +1000,7 @@ c$8368 LD A,$05        ;
 ; Routine at 83D0
 ;
 ; Used by the routine at #R$8368.
+@label=next_stage
 c$83D0 LD HL,$71EB   ;
  $83D3 RES 0,(HL)    ;
  $83D5 RES 1,(HL)    ;
@@ -1108,9 +1108,9 @@ c$846B LD A,$02      ;
 *$8496 HALT          ;
  $8497 PUSH BC       ;
  $8498 CALL $AFFF    ;
- $849B CALL $A73C    ;
+ $849B CALL $A73C    ; Control ship
  $849E CALL $85E6    ;
- $84A1 CALL $AB72    ;
+ $84A1 CALL $AB72    ; Display center enemies
  $84A4 CALL $84B1    ;
  $84A7 POP BC        ;
  $84A8 DJNZ $8496    ;
@@ -1123,18 +1123,19 @@ c$846B LD A,$02      ;
 ;
 ; Used by the routines at #R$8024, #R$8139, #R$832A, #R$8368, #R$846B, #R$A33B
 ; and #R$A3E1.
-c$84B1 LD HL,$71F2   ;
- $84B4 INC (HL)      ;
- $84B5 LD A,(HL)     ;
- $84B6 AND $01       ;
- $84B8 JR NZ,$84C8   ;
- $84BA LD A,($700E)  ;
- $84BD CP $01        ;
- $84BF JR NZ,$84C8   ;
- $84C1 LD HL,$7019   ;
- $84C4 LD A,(HL)     ;
- $84C5 XOR $04       ;
- $84C7 LD (HL),A     ;
+@label=update_frame_upload_sprites
+c$84B1 LD HL,$71F2   ; Update frame counter
+ $84B4 INC (HL)      ; ...
+ $84B5 LD A,(HL)     ; Get new value
+ $84B6 AND $01       ; Every second frame ...
+ $84B8 JR NZ,$84C8   ; go directly to upload sprite data
+ $84BA LD A,($700E)  ; Else get type of sprite 1
+ $84BD CP $01        ; Is it 1 (ship 2)?
+ $84BF JR NZ,$84C8   ; If not upload sprite data
+ $84C1 LD HL,$7019   ; Get color of sprite 1
+ $84C4 LD A,(HL)     ; ...
+ $84C5 XOR $04       ; Flip bit 4
+ $84C7 LD (HL),A     ; And set color back
 *$84C8 JP $ACF9      ; Upload sprite data
 
 ; Routine at 84CB
@@ -1153,10 +1154,13 @@ c$84CB LD D,$00      ;
  $84D6 LD A,$03      ; Table code (3 = pattern generator table)
  $84D8 JP $1FBE      ; PUT_VRAM
 
-; Routine at 84DB
+; Get stage data address
 ;
 ; Used by the routines at #R$8878, #R$8A53, #R$8A76, #R$8C68, #R$8D50, #R$8E9D,
 ; #R$900E and #R$AAF1.
+;
+; O:IY Stage data address
+@label=stage_data_addr
 c$84DB PUSH DE       ;
  $84DC LD A,($7203)  ; Get value (0 - 6)
  $84DF ADD A,A       ; Multiply by 8
@@ -1181,8 +1185,9 @@ c$84ED LD HL,$1920   ;
  $84FD XOR A         ;
  $84FE JP $1F82      ;
 
-; Routine at 8501
+; Interrupt routine
 ;
+; Calls sound player and handles screen saver
 ; Used by the routine at #R$8021.
 @label=interrupt_routine
 c$8501 PUSH IX       ;
@@ -1205,14 +1210,10 @@ c$8501 PUSH IX       ;
  $851C LD BC,$0701   ; Black border
  $851F RST $18       ; WRITE_REGISTER
 *$8520 JR $8520      ; Loop
-
-; Routine at 8522
-;
-; Used by the routine at #R$8501.
-c$8522 CALL $9B99    ; Sound player?
+*$8522 CALL $9B99    ; Sound player
  $8525 LD A,($71EB)  ;
  $8528 BIT 6,A       ;
- $852A CALL Z,$1FDC  ;
+ $852A CALL Z,$1FDC  ; READ_REGISTER
  $852D LD HL,$725A   ;
  $8530 SET 0,(HL)    ;
  $8532 POP AF        ;
@@ -1227,7 +1228,7 @@ c$8522 CALL $9B99    ; Sound player?
 @label=stage_msg
 t$853C DEFM "STAGE"
 
-; Data block at 8541
+; Stage data
 @label=stage_data
 b$8541 DEFB $02,$00,$28,$3F,$01,$50,$1E,$00
  $8549 DEFB $02,$01,$28,$3F,$02,$50,$19,$02
@@ -1649,7 +1650,7 @@ c$8878 LD A,($71EE)  ;
  $887D LD A,(IX+$03) ;
  $8880 CP $40        ;
  $8882 JR NC,$88D4   ;
- $8884 CALL $84DB    ;
+ $8884 CALL $84DB    ; Get stage data address in IY
  $8887 RST $20       ; Random number
  $8888 AND (IY+$03)  ;
  $888B JR NZ,$88A7   ;
@@ -1928,7 +1929,7 @@ c$8A41 LD A,(IX+$00)   ;
 ; Routine at 8A53
 ;
 ; Used by the routine at #R$85E6.
-c$8A53 CALL $84DB    ;
+c$8A53 CALL $84DB    ; Get stage data address in IY
  $8A56 LD A,($71EE)  ;
  $8A59 OR A          ;
  $8A5A JR NZ,$8A62   ;
@@ -1957,7 +1958,7 @@ c$8A76 LD A,($71EF)    ;
  $8A81 LD A,($71EB)    ;
  $8A84 AND $0C         ;
  $8A86 RET NZ          ;
- $8A87 CALL $84DB      ;
+ $8A87 CALL $84DB      ; Get stage data address in IY
  $8A8A LD A,($7252)    ;
  $8A8D CP (IY+$01)     ;
  $8A90 RET NC          ;
@@ -2004,25 +2005,25 @@ c$8AC0 LD B,$01       ;
  $8AE2 INC (IX+$05)   ;
  $8AE5 RET            ;
 
-; Routine at 8AE6
+; Update sprite types $0F - $11
 ;
 ; Used by the routine at #R$8139.
-c$8AE6 LD IX,$7002     ;
- $8AEA LD DE,$000C     ;
- $8AED LD B,$20        ;
-*$8AEF LD A,(IX+$00)   ;
- $8AF2 CP $0E          ;
- $8AF4 JR C,$8B0D      ;
- $8AF6 CP $12          ;
- $8AF8 JR NC,$8B0D     ;
- $8AFA BIT 6,(IX+$07)  ;
- $8AFE JR NZ,$8B0D     ;
- $8B00 LD (IX+$00),$10 ;
- $8B04 LD (IX+$07),$0C ;
- $8B08 LD (IX+$04),$FF ;
+c$8AE6 LD IX,$7002     ; Sprite data
+ $8AEA LD DE,$000C     ; Size of each sprite
+ $8AED LD B,$20        ; 32 sprites
+*$8AEF LD A,(IX+$00)   ; Get type
+ $8AF2 CP $0E          ; If < 14 then move on
+ $8AF4 JR C,$8B0D      ; ...
+ $8AF6 CP $12          ; If >= 18 then move on
+ $8AF8 JR NC,$8B0D     ; ...
+ $8AFA BIT 6,(IX+$07)  ; For types $0F - $11, test bit 6 of ?
+ $8AFE JR NZ,$8B0D     ; If not set, move on
+ $8B00 LD (IX+$00),$10 ; Set type to $10
+ $8B04 LD (IX+$07),$0C ; Set ? to $0C
+ $8B08 LD (IX+$04),$FF ; Set ? to $FF
  $8B0C RST $30         ; Load sprite pattern
-*$8B0D ADD IX,DE       ;
- $8B0F DJNZ $8AEF      ;
+*$8B0D ADD IX,DE       ; Next sprite
+ $8B0F DJNZ $8AEF      ; Loop for 32 sprites
  $8B11 RET             ;
 
 ; Draw background patterns for sprite
@@ -2243,7 +2244,7 @@ c$8C68 LD HL,$725B    ;
  $8C78 RLCA           ;
  $8C79 AND $07        ;
  $8C7B PUSH AF        ;
- $8C7C CALL $84DB     ;
+ $8C7C CALL $84DB     ; Get stage data address in IY
  $8C7F POP AF         ;
  $8C80 ADD A,(IY+$00) ;
  $8C83 ADD A,(IY+$00) ;
@@ -2321,7 +2322,7 @@ c$8C68 LD HL,$725B    ;
  $8D10 LD (HL),$00    ;
  $8D12 LD HL,$7256    ;
  $8D15 RES 6,(HL)     ;
- $8D17 CALL $84DB     ;
+ $8D17 CALL $84DB     ; Get stage data address in IY
  $8D1A LD A,(IY+$06)  ;
  $8D1D LD ($71F0),A   ;
  $8D20 RET            ;
@@ -2371,7 +2372,7 @@ c$8D50 LD A,($71F2)    ;
  $8D63 DEC A           ;
  $8D64 LD ($725F),A    ;
  $8D67 RET NZ          ;
- $8D68 CALL $84DB      ;
+ $8D68 CALL $84DB      ; Get stage data address in IY
  $8D6B RST $20         ; Random number
  $8D6C AND $E0         ;
  $8D6E JR NZ,$8DD7     ;
@@ -2512,6 +2513,7 @@ c$8E2C LD B,D        ;
 ; Routine at 8E89
 ;
 ; Used by the routine at #R$8E2C.
+@label=init_stage_variables
 c$8E89 XOR A         ;
  $8E8A LD ($7266),A  ;
 ; This entry point is used by the routines at #R$82BF and #R$8FED.
@@ -2574,7 +2576,7 @@ c$8E9D LD IY,$722E   ;
  $8EF9 INC A         ;
  $8EFA LD ($7269),A  ;
  $8EFD CALL $900E    ;
- $8F00 CALL $84DB    ;
+ $8F00 CALL $84DB    ; Get stage data address in IY
  $8F03 LD A,(IY+$05) ;
  $8F06 LD ($7263),A  ;
  $8F09 LD A,$07      ;
@@ -2729,7 +2731,7 @@ c$900E LD HL,$7269     ;
  $9032 LD A,(IY+$08)   ;
  $9035 LD (IX+$02),A   ;
  $9038 RST $30         ; Load sprite pattern
-*$9039 CALL $84DB      ;
+*$9039 CALL $84DB      ; Get stage data address in IY
  $903C RST $20         ; Random number
  $903D AND $3F         ;
  $903F ADD A,(IY+$06)  ;
@@ -3433,7 +3435,7 @@ c$9861 LD A,($7256)   ;
  $9864 LD C,A         ;
  $9865 LD IY,$701A    ;
  $9869 LD B,$1E       ;
- $986B LD DE,$000C    ;
+ $986B LD DE,$000C    ; Size of each sprite
 ; This entry point is used by the routine at #R$98B5.
 *$986E BIT 7,(IY+$00) ;
  $9872 JR NZ,$98BB    ;
@@ -3844,7 +3846,7 @@ c$9ADE CALL $1FD6      ; TURN_OFF_SOUND
 ;
 ; Used by the routines at #R$9BD9, #R$9C1C and #R$9E91.
 ;
-; I:A Tune index 0 - 6
+; I:A Index of tune (0 - 6)
 @label=play_tune
 c$9B0D CP $07          ;
  $9B0F JR Z,$9B19      ;
@@ -3919,6 +3921,7 @@ c$9B70 LD A,(IX+$07) ;
 ; Routine at 9B87
 ;
 ; Used by the routines at #R$8139, #R$832A and #R$9C1C.
+@label=died_set_variables
 c$9B87 XOR A         ;
  $9B88 LD ($727A),A  ;
  $9B8B DEC A         ;
@@ -4115,7 +4118,8 @@ c$9CA0 LD (IX+$09),E ; Set x
 ;
 ; Used by the routine at #R$9EA3.
 ;
-; I:C 2-
+; I:C Index of sound (1-8)
+@label=play_sound
 c$9CA8 LD A,($727C)  ;
  $9CAB AND A         ;
  $9CAC RET Z         ;
@@ -4370,10 +4374,10 @@ c$9E75 INC (IX+$03)  ;
  $9E8D XOR A         ;
  $9E8E JP $9D3D      ;
 
-; Play tune (preserve registers)?
+; Play tune, preserve registers
 ;
-; Used by the routines at #R$82BF, #R$832A and #R$846B.
-@label=play_tune_save_regs
+; Used by the routines at #R$82BF, #R$832A and #R$846B. I:A Index of tune
+@label=call_play_tune
 c$9E91 PUSH BC       ;
  $9E92 PUSH DE       ;
  $9E93 PUSH HL       ;
@@ -4392,15 +4396,15 @@ c$9E91 PUSH BC       ;
 ; Used by the routines at #R$8139, #R$8368, #R$8C52, #R$8E9D, #R$9934, #R$99A0,
 ; #R$99B1, #R$99D3, #R$A33B and #R$A6EC.
 ;
-; I:A
-@label=call_9CA8
+; I:A Index of sound
+@label=call_play_sound
 c$9EA3 PUSH BC       ;
  $9EA4 PUSH DE       ;
  $9EA5 PUSH HL       ;
  $9EA6 PUSH IX       ;
  $9EA8 PUSH IY       ;
  $9EAA LD C,A        ;
- $9EAB CALL $9CA8    ;
+ $9EAB CALL $9CA8    ; Play sound
  $9EAE POP IY        ;
  $9EB0 POP IX        ;
  $9EB2 POP HL        ;
@@ -4629,6 +4633,7 @@ c$A31D CALL $A303    ;
 ; Routine at A33B
 ;
 ; Used by the routine at #R$82BF.
+@label=initial_game_loop
 c$A33B LD HL,$80B5     ; New center of projection at bottom center for
                        ; implosion
  $A33E LD ($72C5),HL   ; Set #R$72C5, which will be copied to #R$7000
@@ -4652,11 +4657,11 @@ c$A33B LD HL,$80B5     ; New center of projection at bottom center for
  $A36C LD B,$14        ; 20
 *$A36E PUSH BC         ; Save counter
  $A36F CALL $A471      ; Move dots
- $A372 CALL $A73C      ; Ship movement?
+ $A372 CALL $A73C      ; Control ship
  $A375 CALL $ACF9      ; Upload sprite data
  $A378 HALT            ; Wait interrupt
  $A379 CALL $AFFF      ;
- $A37C CALL $AB72      ;
+ $A37C CALL $AB72      ; Display center enemies
  $A37F POP BC          ; Restore counter
  $A380 DJNZ $A36E      ; Loop 20 times
 ; Allocate ship etc.
@@ -4681,10 +4686,10 @@ c$A33B LD HL,$80B5     ; New center of projection at bottom center for
  $A3B4 LD B,$3C        ; 60
 *$A3B6 HALT            ; Wait interrupt
  $A3B7 PUSH BC         ; Save counter
- $A3B8 CALL $AFFF      ; Game loop actions
- $A3BB CALL $A73C      ; ...
- $A3BE CALL $AB72      ; ...
- $A3C1 CALL $84B1      ; ...
+ $A3B8 CALL $AFFF      ; Display stars
+ $A3BB CALL $A73C      ; Control ship
+ $A3BE CALL $AB72      ; Display center enemies
+ $A3C1 CALL $84B1      ; Upload sprites
  $A3C4 POP BC          ; Restore counter
  $A3C5 DJNZ $A3B6      ; Loop 60 times
  $A3C7 LD HL,$1A00     ; Clear warps line
@@ -4702,62 +4707,63 @@ c$A33B LD HL,$80B5     ; New center of projection at bottom center for
 ; Routine at A3E1
 ;
 ; Used by the routine at #R$8139.
+@label=explode
 c$A3E1 LD A,$2A        ;
  $A3E3 LD ($7003),A    ;
  $A3E6 CALL $A808      ; Display ship background patterns
  $A3E9 LD A,$7F        ; Not allocated
  $A3EB LD ($7002),A    ; 1st sprite
  $A3EE LD ($700E),A    ; 2nd sprite
- $A3F1 LD A,($7253)    ;
- $A3F4 OR A            ;
- $A3F5 JR Z,$A413      ;
-; Deallocate all sprites that a not type 2
+ $A3F1 LD A,($7253)    ; Active shots
+ $A3F4 OR A            ; If zero
+ $A3F5 JR Z,$A413      ; Then skip ahead
+; Deallocate all shots
  $A3F7 LD IX,$7002     ; Sprite data table
- $A3FB LD DE,$000C     ; Offset between sprites
+ $A3FB LD DE,$000C     ; Size of each sprite
  $A3FE LD B,$20        ; 32 sprites
- $A400 LD A,$02        ; If it type 2?
+ $A400 LD A,$02        ; Is it type $02 (shot)?
 *$A402 CP (IX+$00)     ; ...
  $A405 JR NZ,$A40F     ; No, then skip
- $A407 LD (IX+$00),$7F ; set as not allocated
+ $A407 LD (IX+$00),$7F ; Set as not allocated
  $A40B LD (IX+$08),$F8 ; Set y
 *$A40F ADD IX,DE       ; Next sprite
  $A411 DJNZ $A402      ; Loop 32 times
-; Something else
+; Set center of projection for explosion
 *$A413 LD HL,($700A)   ; Y and X of 1st sprite
  $A416 LD BC,$0404     ; Add 4 to each
  $A419 ADD HL,BC       ; ...
  $A41A LD ($72C5),HL   ; Save it in #R$72C5, which will be copied to #R$7000
  $A41D LD A,($7004)    ; Byte 2 of 1st sprite
  $A420 LD ($72C7),A    ; Save it temporary
-; Allocate 6 sprites
+; Allocate 6 sprites for explosion
  $A423 LD IY,$A4B8     ;
  $A427 LD B,$06        ; Allocate 6 sprites
 *$A429 RST $28         ; Allocate sprite
- $A42A LD (IX+$00),$0D ; Sprite type is $0D
- $A42E LD (IX+$01),$00 ;
- $A432 LD (IX+$02),$00 ;
+ $A42A LD (IX+$00),$0D ; Sprite type is $0D (a dot)
+ $A42E LD (IX+$01),$00 ; Polar y
+ $A432 LD (IX+$02),$00 ; Polar x
  $A436 LD (IX+$0B),$09 ; Set color (pink)
  $A43A RST $30         ; Load sprite pattern
  $A43B LD A,($72C7)    ; Restore byte 2 of 1st sprite
  $A43E ADD A,(IY+$00)  ; Add data from table
  $A441 AND $3F         ; Mod $40
- $A443 LD (IX+$02),A   ; Set it on new sprite
- $A446 LD (IX+$01),$2A ;
+ $A443 LD (IX+$02),A   ; Set polar x on new sprite
+ $A446 LD (IX+$01),$2A ; Set polar y
  $A44A INC IY          ; Next init data
  $A44C DJNZ $A429      ; Loop for 6 sprites
 ; Game loop for 3 seconds
- $A44E LD B,$14        ;
+ $A44E LD B,$14        ; 20
 *$A450 PUSH BC         ; Outer loop
  $A451 CALL $A471      ; Move dots
  $A454 CALL $ACF9      ; Upload sprite data
- $A457 LD B,$09        ;
+ $A457 LD B,$09        ; 9
 *$A459 HALT            ; Inner loop
  $A45A PUSH BC         ;
- $A45B CALL $AFFF      ; Main loop actions
- $A45E CALL $85E6      ; ...
- $A461 CALL $AB72      ; ...
- $A464 CALL $8E2D      ; ...
- $A467 CALL $84B1      ; ...
+ $A45B CALL $AFFF      ; Display stars
+ $A45E CALL $85E6      ;
+ $A461 CALL $AB72      ; Display center enemies
+ $A464 CALL $8E2D      ;
+ $A467 CALL $84B1      ; Upload sprites
  $A46A POP BC          ;
  $A46B DJNZ $A459      ; Loop 9 times
  $A46D POP BC          ;
@@ -4790,7 +4796,7 @@ c$A471 LD HL,($72C5) ; Copy #R$72C5 to #R$7000
  $A49E JR $A4A3      ; Skip next
 *$A4A0 DEC (IX+$01)  ; Decrement polar y
 *$A4A3 POP BC        ; Restore counter
-*$A4A4 LD DE,$000C   ; Sprite data size
+*$A4A4 LD DE,$000C   ; Size of each sprite
  $A4A7 ADD IX,DE     ; Next sprite
  $A4A9 DJNZ $A47D    ; Loop 32 times
  $A4AB LD HL,$8060   ; Set #R$7000 back to original value
@@ -4978,8 +4984,8 @@ c$A6EC PUSH DE       ;
 
 ; Control ship
 ;
-; Control ship movement and fire using controllers
-; Used by the routines at #R$8024, #R$832A, #R$8368, #R$846B and #R$A33B.
+; Control ship movement and fire using controllers Used by the routines at
+; #R$8024, #R$832A, #R$8368, #R$846B and #R$A33B.
 @label=control_ship
 c$A73C LD A,($71F2)    ; Get frame
  $A73F AND $01         ; Test bit 0
@@ -4993,7 +4999,8 @@ c$A73C LD A,($71F2)    ; Get frame
  $A74F ADD HL,DE       ; Add joystick result (0 - 12, some values not possible)
  $A750 LD IX,$7002     ; Sprite 0 data (ship)
  $A754 LD B,$01        ; Direction = 1 (clockwise)
- $A756 LD A,(HL)       ; Get table value, which is the value of polar x to move towards
+ $A756 LD A,(HL)       ; Get table value, which is the value of polar x to move
+                       ; towards
  $A757 CP $FF          ; Is it an impossible joystick value, e.g. up + down?
  $A759 JR Z,$A781      ; Then skip ahead
  $A75B SUB (IX+$02)    ; Table value - polar x
@@ -5122,7 +5129,8 @@ c$A808 PUSH HL         ;
  $A840 LD (IY+$01),A   ; Store y
  $A843 LD A,($7004)    ; Ship's polar x
  $A846 ADD A,$02       ; Polar x + 2
- $A848 AND $3C         ; Keep 4 most significant bits, i.e. 16 offsets 4 bytes apart
+ $A848 AND $3C         ; Keep 4 most significant bits, i.e. 16 offsets 4 bytes
+                       ; apart
  $A84A LD L,A          ; HL = A
  $A84B LD H,$00        ; ...
  $A84D ADD HL,HL       ; x2
@@ -5142,28 +5150,29 @@ c$A808 PUSH HL         ;
 
 ; Data block at A865
 @label=movement_table
-b$A865 DEFB $FF        ; 0000
- $A866 DEFB $20        ; 0001 Up
- $A867 DEFB $30        ; 0010 Right
- $A868 DEFB $28        ; 0011 Up + right
- $A869 DEFB $00        ; 0100 Down
- $A86A DEFB $FF        ; 0101
- $A86B DEFB $38        ; 0110 Down + right
- $A86C DEFB $FF        ; 0111
- $A86D DEFB $10        ; 1000 Left
- $A86E DEFB $18        ; 1001 Left + up
- $A86F DEFB $FF        ; 1010
- $A870 DEFB $FF        ; 1011
- $A871 DEFB $08        ; 1100 Left + down
- $A872 DEFB $FF        ; 1101
- $A873 DEFB $FF        ; 1110
- $A874 DEFB $FF        ; 1111
+b$A865 DEFB $FF      ; 0000
+ $A866 DEFB $20      ; 0001 Up
+ $A867 DEFB $30      ; 0010 Right
+ $A868 DEFB $28      ; 0011 Up + right
+ $A869 DEFB $00      ; 0100 Down
+ $A86A DEFB $FF      ; 0101
+ $A86B DEFB $38      ; 0110 Down + right
+ $A86C DEFB $FF      ; 0111
+ $A86D DEFB $10      ; 1000 Left
+ $A86E DEFB $18      ; 1001 Left + up
+ $A86F DEFB $FF      ; 1010
+ $A870 DEFB $FF      ; 1011
+ $A871 DEFB $08      ; 1100 Left + down
+ $A872 DEFB $FF      ; 1101
+ $A873 DEFB $FF      ; 1110
+ $A874 DEFB $FF      ; 1111
 
 ; Data block at A875
 @label=adjust_ship_x_y_table
 b$A875 DEFB $03,$01,$00,$FC,$05,$F9,$08,$FE
 
-; Ship background patterns (16 frames of 4 patterns, organised as 16x16 sprite patterns)
+; Ship background patterns (16 frames of 4 patterns, organised as 16x16 sprite
+; patterns)
 ; #UDGTABLE(no-border, no-border)
 ; { #UDGARRAY32,,4($A87D-$AA75-16)(graphics-A87D.png) }
 ; { #UDGARRAY32,,4($A885-$AA7D-16)(graphics-A885.png) }
@@ -5233,15 +5242,16 @@ b$A87D DEFB $00,$01,$07,$07,$0F,$1F,$3F,$78
  $AA65 DEFB $3F,$3F,$3B,$79,$70,$70,$60,$60
  $AA6D DEFB $00,$00,$00,$00,$C0,$F8,$FE,$BE
  $AA75 DEFB $00,$00,$00,$80,$80,$00,$00,$00
-*$AA7D DEFB $21
 
-; Routine at AA7E
-c$AA7E RLCA          ;
- $AA7F LD (HL),D     ;
- $AA80 LD DE,$7208   ;
- $AA83 LD BC,$0023   ;
- $AA86 LD (HL),$FF   ;
- $AA88 LDIR          ;
+; Routine at AA7D
+;
+; Used by the routine at #R$8024.
+@label=init_game_variables
+c$AA7D LD HL,$7207   ; Set 36 bytes at #R$7207 to $FF
+ $AA80 LD DE,$7208   ; ...
+ $AA83 LD BC,$0023   ; ...
+ $AA86 LD (HL),$FF   ; ...
+ $AA88 LDIR          ; ...
  $AA8A XOR A         ;
  $AA8B LD ($722B),A  ;
  $AA8E LD ($72CD),A  ;
@@ -5332,7 +5342,7 @@ c$AAF1 LD A,($71EB)  ;
  $AAF6 RET Z         ;
  $AAF7 BIT 2,A       ;
  $AAF9 RET NZ        ;
- $AAFA CALL $84DB    ;
+ $AAFA CALL $84DB    ; Get stage data address in IY
  $AAFD LD A,($722C)  ;
  $AB00 CP (IY+$04)   ;
  $AB03 RET NC        ;
@@ -5414,10 +5424,11 @@ c$AB6C CALL $AAE3    ;
  $AB70 POP HL        ;
  $AB71 RET           ;
 
-; Routine at AB72
+; Display tiny enemies at the center of the screen
 ;
 ; Used by the routines at #R$8024, #R$8139, #R$832A, #R$846B, #R$A33B and
 ; #R$A3E1.
+@label=display_center_enemies
 c$AB72 LD HL,$72CB   ;
  $AB75 DEC (HL)      ;
  $AB76 JP P,$ABA0    ;
@@ -5541,18 +5552,54 @@ c$AC32 LD DE,$194E   ;
  $AC44 JR NZ,$AC38   ;
  $AC46 RET           ;
 
-; Data block at AC47
+; Routine at AC47
 ;
 ; Used by the routine at #R$AB72.
-b$AC47 DEFB $E5,$7A,$D6,$50,$CB,$3F,$E6,$FC
- $AC4F DEFB $4F,$7B,$D6,$70,$30,$01,$AF,$FE
- $AC57 DEFB $20,$38,$02,$3E,$0F,$CB,$3F,$CB
- $AC5F DEFB $3F,$CB,$3F,$81,$87,$87,$87,$4F
- $AC67 DEFB $7A,$E6,$07,$81,$4F,$06,$00,$2A
- $AC6F DEFB $D0,$72,$09,$7B,$E6,$07,$06,$80
- $AC77 DEFB $28,$05,$CB,$38,$3D,$20,$FB,$EB
- $AC7F DEFB $CD,$D0,$9A,$B0,$D7,$EB,$E1,$C9
- $AC87 DEFB $05,$28,$10,$28,$1A,$28,$25,$28
+c$AC47 PUSH HL       ;
+ $AC48 LD A,D        ;
+ $AC49 SUB $50       ;
+ $AC4B SRL A         ;
+ $AC4D AND $FC       ;
+ $AC4F LD C,A        ;
+ $AC50 LD A,E        ;
+ $AC51 SUB $70       ;
+ $AC53 JR NC,$AC56   ;
+ $AC55 XOR A         ;
+*$AC56 CP $20        ;
+ $AC58 JR C,$AC5C    ;
+ $AC5A LD A,$0F      ;
+*$AC5C SRL A         ;
+ $AC5E SRL A         ;
+ $AC60 SRL A         ;
+ $AC62 ADD A,C       ;
+ $AC63 ADD A,A       ;
+ $AC64 ADD A,A       ;
+ $AC65 ADD A,A       ;
+ $AC66 LD C,A        ;
+ $AC67 LD A,D        ;
+ $AC68 AND $07       ;
+ $AC6A ADD A,C       ;
+ $AC6B LD C,A        ;
+ $AC6C LD B,$00      ;
+ $AC6E LD HL,($72D0) ;
+ $AC71 ADD HL,BC     ;
+ $AC72 LD A,E        ;
+ $AC73 AND $07       ;
+ $AC75 LD B,$80      ;
+ $AC77 JR Z,$AC7E    ;
+*$AC79 SRL B         ;
+ $AC7B DEC A         ;
+ $AC7C JR NZ,$AC79   ;
+*$AC7E EX DE,HL      ;
+ $AC7F CALL $9AD0    ;
+ $AC82 OR B          ;
+ $AC83 RST $10       ;
+ $AC84 EX DE,HL      ;
+ $AC85 POP HL        ;
+ $AC86 RET           ;
+
+; Data block at AC87
+b$AC87 DEFB $05,$28,$10,$28,$1A,$28,$25,$28
  $AC8F DEFB $30,$28,$3A,$28,$00,$28,$0A,$28
  $AC97 DEFB $15,$28,$20,$28,$2A,$28,$35,$28
  $AC9F DEFB $05,$26,$10,$26,$1A,$26,$25,$26
@@ -5574,6 +5621,7 @@ c$ACDF LD IX,$7002     ; Address of sprite data
  $ACE8 XOR A           ;
  $ACE9 LD ($7182),A    ; Number of allocated sprites
 *$ACEC LD (IX+$0A),A   ; Set pattern
+; This entry point is used by the routine at #R$AC47.
  $ACEF LD (IX+$00),$FF ; Set as unallocated
  $ACF3 INC A           ;
  $ACF4 ADD IX,DE       ; Advance to next sprite
@@ -6201,7 +6249,7 @@ c$B1C6 PUSH IX        ;
  $B1EA LD A,(HL)      ; Get table value
  $B1EB CP $FF         ; If $FF
  $B1ED JR Z,$B217     ; Then set position outside screen and return
- $B1EF LD IX,$7000    ; Center of screen?
+ $B1EF LD IX,$7000    ; Center of projection
  $B1F3 LD A,E         ; x
  $B1F4 RRCA           ; Shift right
  $B1F5 XOR E          ; Bit 4 is now set if bit 5 (left/right) and bit 4 (top
@@ -6221,7 +6269,7 @@ c$B1C6 PUSH IX        ;
 *$B20B ADD A,(IX+$01) ; +center x ($80 or $B5 or ?)
  $B20E SUB $04        ; -4 (adjust for sprite size)
  $B210 LD E,A         ; Store as sprite x
- $B211 OR A           ; Clear carry flag?
+ $B211 OR A           ; Clear carry flag
 *$B212 POP BC         ; Return
  $B213 POP HL         ; ...
  $B214 POP IX         ; ...

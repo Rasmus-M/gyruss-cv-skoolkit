@@ -24,19 +24,19 @@ Next: <a href="44031.html">ABFF</a>
 </td>
 </tr>
 </table>
-<div class="description">AB72: Routine at AB72</div>
+<div class="description">AB72: Display tiny enemies at the center of the screen</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="32804.html">main</a>, <a href="33081.html">L8139</a>, <a href="33578.html">L832A</a>, <a href="33899.html">L846B</a>, <a href="41787.html">LA33B</a> and <a href="41953.html">LA3E1</a>.
+Used by the routines at <a href="32804.html">main</a>, <a href="33081.html">died</a>, <a href="33578.html">L832A</a>, <a href="33899.html">L846B</a>, <a href="41787.html">initial_game_loop</a> and <a href="41953.html">explode</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">LAB72</td>
+<td class="asm-label">display_center_enemies</td>
 <td class="address-2"><span id="43890"></span>AB72</td>
 <td class="instruction">LD HL,<a href="29387.html">L72CB</a></td>
 <td class="comment-1" rowspan="1"></td>
@@ -50,7 +50,7 @@ Used by the routines at <a href="32804.html">main</a>, <a href="33081.html">L813
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43894"></span>AB76</td>
-<td class="instruction">JP P,<a href="43890.html#43936">LAB72_2</a></td>
+<td class="instruction">JP P,<a href="43890.html#43936">display_center_enemies_2</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -86,7 +86,7 @@ Used by the routines at <a href="32804.html">main</a>, <a href="33081.html">L813
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43909"></span>AB85</td>
-<td class="instruction">JP P,<a href="43890.html#43914">LAB72_0</a></td>
+<td class="instruction">JP P,<a href="43890.html#43914">display_center_enemies_0</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -96,7 +96,7 @@ Used by the routines at <a href="32804.html">main</a>, <a href="33081.html">L813
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">LAB72_0</td>
+<td class="asm-label">display_center_enemies_0</td>
 <td class="address-2"><span id="43914"></span>AB8A</td>
 <td class="instruction">CP $01</td>
 <td class="comment-1" rowspan="1"></td>
@@ -104,7 +104,7 @@ Used by the routines at <a href="32804.html">main</a>, <a href="33081.html">L813
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43916"></span>AB8C</td>
-<td class="instruction">JR NZ,<a href="43890.html#43931">LAB72_1</a></td>
+<td class="instruction">JR NZ,<a href="43890.html#43931">display_center_enemies_1</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -150,7 +150,7 @@ Used by the routines at <a href="32804.html">main</a>, <a href="33081.html">L813
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">LAB72_1</td>
+<td class="asm-label">display_center_enemies_1</td>
 <td class="address-2"><span id="43931"></span>AB9B</td>
 <td class="instruction">LD HL,<a href="29388.html">L72CC</a></td>
 <td class="comment-1" rowspan="1"></td>
@@ -162,7 +162,7 @@ Used by the routines at <a href="32804.html">main</a>, <a href="33081.html">L813
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">LAB72_2</td>
+<td class="asm-label">display_center_enemies_2</td>
 <td class="address-2"><span id="43936"></span>ABA0</td>
 <td class="instruction">LD A,(<a href="29389.html">L72CD</a>)</td>
 <td class="comment-1" rowspan="1"></td>
@@ -188,7 +188,7 @@ Used by the routines at <a href="32804.html">main</a>, <a href="33081.html">L813
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43945"></span>ABA9</td>
-<td class="instruction">JR NZ,<a href="43890.html#43972">LAB72_3</a></td>
+<td class="instruction">JR NZ,<a href="43890.html#43972">display_center_enemies_3</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -264,7 +264,7 @@ Used by the routines at <a href="32804.html">main</a>, <a href="33081.html">L813
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">LAB72_3</td>
+<td class="asm-label">display_center_enemies_3</td>
 <td class="address-2"><span id="43972"></span>ABC4</td>
 <td class="instruction">LD C,A</td>
 <td class="comment-1" rowspan="1"></td>
@@ -278,7 +278,7 @@ Used by the routines at <a href="32804.html">main</a>, <a href="33081.html">L813
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43975"></span>ABC7</td>
-<td class="instruction">LD HL,<a href="29191.html">L7207</a></td>
+<td class="instruction">LD HL,<a href="29191.html">buffer_at_7207</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -296,7 +296,7 @@ Used by the routines at <a href="32804.html">main</a>, <a href="33081.html">L813
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43981"></span>ABCD</td>
-<td class="instruction">JP NZ,<a href="43890.html#44026">LAB72_5</a></td>
+<td class="instruction">JP NZ,<a href="43890.html#44026">display_center_enemies_5</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -356,7 +356,7 @@ Used by the routines at <a href="32804.html">main</a>, <a href="33081.html">L813
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43999"></span>ABDF</td>
-<td class="instruction">LD HL,<a href="44103.html#44239">$ACCF</a></td>
+<td class="instruction">LD HL,<a href="44167.html#44239">$ACCF</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -368,7 +368,7 @@ Used by the routines at <a href="32804.html">main</a>, <a href="33081.html">L813
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44003"></span>ABE3</td>
-<td class="instruction">CALL $AC47</td>
+<td class="instruction">CALL <a href="44103.html">LAC47</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -386,7 +386,7 @@ Used by the routines at <a href="32804.html">main</a>, <a href="33081.html">L813
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44008"></span>ABE8</td>
-<td class="instruction">JR Z,<a href="43890.html#44015">LAB72_4</a></td>
+<td class="instruction">JR Z,<a href="43890.html#44015">display_center_enemies_4</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -404,11 +404,11 @@ Used by the routines at <a href="32804.html">main</a>, <a href="33081.html">L813
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44012"></span>ABEC</td>
-<td class="instruction">CALL $AC47</td>
+<td class="instruction">CALL <a href="44103.html">LAC47</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">LAB72_4</td>
+<td class="asm-label">display_center_enemies_4</td>
 <td class="address-2"><span id="44015"></span>ABEF</td>
 <td class="instruction">INC HL</td>
 <td class="comment-1" rowspan="1"></td>
@@ -434,7 +434,7 @@ Used by the routines at <a href="32804.html">main</a>, <a href="33081.html">L813
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44019"></span>ABF3</td>
-<td class="instruction">JR Z,<a href="43890.html#44026">LAB72_5</a></td>
+<td class="instruction">JR Z,<a href="43890.html#44026">display_center_enemies_5</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -452,11 +452,11 @@ Used by the routines at <a href="32804.html">main</a>, <a href="33081.html">L813
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44023"></span>ABF7</td>
-<td class="instruction">CALL $AC47</td>
+<td class="instruction">CALL <a href="44103.html">LAC47</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">LAB72_5</td>
+<td class="asm-label">display_center_enemies_5</td>
 <td class="address-2"><span id="44026"></span>ABFA</td>
 <td class="instruction">LD HL,<a href="29389.html">L72CD</a></td>
 <td class="comment-1" rowspan="1"></td>

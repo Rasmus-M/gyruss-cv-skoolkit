@@ -30,7 +30,7 @@ Next: <a href="40167.html">9CE7</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="40611.html">call_9CA8</a>.
+Used by the routine at <a href="40611.html">call_play_sound</a>.
 </div>
 </div>
 <table class="input">
@@ -39,13 +39,13 @@ Used by the routine at <a href="40611.html">call_9CA8</a>.
 </tr>
 <tr>
 <td class="register">C</td>
-<td class="register-desc">2-</td>
+<td class="register-desc">Index of sound (1-8)</td>
 </tr>
 </table>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L9CA8</td>
+<td class="asm-label">play_sound</td>
 <td class="address-2"><span id="40104"></span>9CA8</td>
 <td class="instruction">LD A,(<a href="29308.html">L727C</a>)</td>
 <td class="comment-1" rowspan="1"></td>
@@ -71,7 +71,7 @@ Used by the routine at <a href="40611.html">call_9CA8</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40111"></span>9CAF</td>
-<td class="instruction">JR Z,<a href="40104.html#40117">L9CA8_0</a></td>
+<td class="instruction">JR Z,<a href="40104.html#40117">play_sound_0</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -103,7 +103,7 @@ This entry point is used by the routines at <a href="39764.html">L9B54</a> and <
 </td>
 </tr>
 <tr>
-<td class="asm-label">L9CA8_0</td>
+<td class="asm-label">play_sound_0</td>
 <td class="address-2"><span id="40117"></span>9CB5</td>
 <td class="instruction">LD A,C</td>
 <td class="comment-1" rowspan="1"></td>
@@ -117,7 +117,7 @@ This entry point is used by the routines at <a href="39764.html">L9B54</a> and <
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40119"></span>9CB7</td>
-<td class="instruction">CALL <a href="40104.html#40127">L9CA8_1</a></td>
+<td class="instruction">CALL <a href="40104.html#40127">play_sound_1</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -145,7 +145,7 @@ This entry point is used by the routines at <a href="39764.html">L9B54</a> and <
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">L9CA8_1</td>
+<td class="asm-label">play_sound_1</td>
 <td class="address-2"><span id="40127"></span>9CBF</td>
 <td class="instruction">RLCA</td>
 <td class="comment-1" rowspan="1"></td>

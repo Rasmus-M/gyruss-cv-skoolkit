@@ -36,9 +36,9 @@ Used by the routine at <a href="33640.html">L8368</a>.
 </td>
 </tr>
 <tr>
-<td class="asm-label">L83D0</td>
+<td class="asm-label">next_stage</td>
 <td class="address-2"><span id="33744"></span>83D0</td>
-<td class="instruction">LD HL,<a href="29163.html">L71EB</a></td>
+<td class="instruction">LD HL,<a href="29163.html">status_flags</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -92,7 +92,7 @@ Used by the routine at <a href="33640.html">L8368</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33764"></span>83E4</td>
-<td class="instruction">JR C,<a href="33744.html#33772">L83D0_0</a></td>
+<td class="instruction">JR C,<a href="33744.html#33772">next_stage_0</a></td>
 <td class="comment-1" rowspan="1">No, skip ahead</td>
 </tr>
 <tr>
@@ -120,7 +120,7 @@ Used by the routine at <a href="33640.html">L8368</a>.
 <td class="comment-1" rowspan="1">And set stage to zero</td>
 </tr>
 <tr>
-<td class="asm-label">L83D0_0</td>
+<td class="asm-label">next_stage_0</td>
 <td class="address-2"><span id="33772"></span>83EC</td>
 <td class="instruction">LD (<a href="29184.html">stage</a>),A</td>
 <td class="comment-1" rowspan="1">Save stage</td>
@@ -128,7 +128,7 @@ Used by the routine at <a href="33640.html">L8368</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33775"></span>83EF</td>
-<td class="instruction">LD HL,<a href="29163.html">L71EB</a></td>
+<td class="instruction">LD HL,<a href="29163.html">status_flags</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -158,7 +158,7 @@ Used by the routine at <a href="33640.html">L8368</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33787"></span>83FB</td>
-<td class="instruction">JR NZ,<a href="33744.html#33791">L83D0_1</a></td>
+<td class="instruction">JR NZ,<a href="33744.html#33791">next_stage_1</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -168,7 +168,7 @@ Used by the routine at <a href="33640.html">L8368</a>.
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">L83D0_1</td>
+<td class="asm-label">next_stage_1</td>
 <td class="address-2"><span id="33791"></span>83FF</td>
 <td class="instruction">XOR A</td>
 <td class="comment-1" rowspan="1"></td>

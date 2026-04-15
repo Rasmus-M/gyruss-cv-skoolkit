@@ -24,13 +24,13 @@ Next: <a href="35602.html">8B12</a>
 </td>
 </tr>
 </table>
-<div class="description">8AE6: Routine at 8AE6</div>
+<div class="description">8AE6: Update sprite types $0F - $11</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="33081.html">L8139</a>.
+Used by the routine at <a href="33081.html">died</a>.
 </div>
 </div>
 </td>
@@ -39,79 +39,79 @@ Used by the routine at <a href="33081.html">L8139</a>.
 <td class="asm-label">L8AE6</td>
 <td class="address-2"><span id="35558"></span>8AE6</td>
 <td class="instruction">LD IX,<a href="28674.html">sprite_data</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Sprite data</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35562"></span>8AEA</td>
 <td class="instruction">LD DE,$000C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Size of each sprite</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35565"></span>8AED</td>
 <td class="instruction">LD B,$20</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">32 sprites</td>
 </tr>
 <tr>
 <td class="asm-label">L8AE6_0</td>
 <td class="address-2"><span id="35567"></span>8AEF</td>
 <td class="instruction">LD A,(IX+$00)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get type</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35570"></span>8AF2</td>
 <td class="instruction">CP $0E</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If &lt; 14 then move on</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35572"></span>8AF4</td>
 <td class="instruction">JR C,<a href="35558.html#35597">L8AE6_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35574"></span>8AF6</td>
 <td class="instruction">CP $12</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If &gt;= 18 then move on</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35576"></span>8AF8</td>
 <td class="instruction">JR NC,<a href="35558.html#35597">L8AE6_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35578"></span>8AFA</td>
 <td class="instruction">BIT 6,(IX+$07)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">For types $0F - $11, test bit 6 of ?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35582"></span>8AFE</td>
 <td class="instruction">JR NZ,<a href="35558.html#35597">L8AE6_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If not set, move on</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35584"></span>8B00</td>
 <td class="instruction">LD (IX+$00),$10</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set type to $10</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35588"></span>8B04</td>
 <td class="instruction">LD (IX+$07),$0C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set ? to $0C</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35592"></span>8B08</td>
 <td class="instruction">LD (IX+$04),$FF</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set ? to $FF</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -123,13 +123,13 @@ Used by the routine at <a href="33081.html">L8139</a>.
 <td class="asm-label">L8AE6_1</td>
 <td class="address-2"><span id="35597"></span>8B0D</td>
 <td class="instruction">ADD IX,DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Next sprite</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35599"></span>8B0F</td>
 <td class="instruction">DJNZ <a href="35558.html#35567">L8AE6_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Loop for 32 sprites</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

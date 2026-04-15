@@ -20,8 +20,8 @@ b $71A3 Temporary storage (72 bytes)
 B $71A3,31,8*3,7
 b $71C2 Data block at 71C2
 B $71C2,41,8*5,1
-b $71EB Status flags #TABLE(default, default) { =h Bit | =h Purpose } { $00 | Unknown } { $01 | Unknown } { $02 | Exits main loop } { $03 | Unknown } { $04 | Set at stage init } { $05 | Unknown } { $06 | Unknown } { $07 | Two players } TABLE#
-@ $71EB player_status
+b $71EB Status flags #TABLE(default, default) { =h Bit | =h Purpose } { $00 | Unknown } { $01 | Unknown } { $02 | Exits main loop. Reset at stage init } { $03 | Unknown } { $04 | Set during stage init } { $05 | Unknown } { $06 | Set during main loop } { $07 | Two players } TABLE#
+@ $71EB label=status_flags
 B $71EB,1,1
 b $71EC Stars move countdown
 @ $71EC label=stars_countdown
@@ -71,10 +71,9 @@ b $7205 When stage reaches 24, this number is added here, and stage is reset to 
 B $7205,1,1
 b $7206 Byte at 7206
 B $7206,1,1
-b $7207 Byte at 7207
-B $7207,1,1
-b $7208 Data block at 7208
-B $7208,35,8*4,3
+b $7207 Data block at 7207
+@ $7207 label=buffer_at_7207
+B $7207,36,8*4,4
 b $722B Byte at 722B
 B $722B,1,1
 b $722C Byte at 722C
@@ -269,9 +268,15 @@ c $8021 NMI
 C $8021,3 Interrupt routine
 c $8024 Entry point
 @ $8024 label=main
+C $8024,3 Init stack pointer
 C $8027,2 Controller enable
 C $8029,3 Clear RAM
-C $8035,3 Set word
+C $802C,3 #R$7000+1
+C $802F,3 ...
+C $8032,1 ...
+C $8033,2 ...
+C $8035,3 Set center of projection
+C $8038,3 ...
 C $803B,3 Init sound
 C $803E,3 Start screen
 C $8041,3 180 * 60 frames
@@ -286,6 +291,8 @@ C $8055,3 Controller 1, segment 0
 C $8058,3 DECODER
 C $805B,2 Test fire
 C $805D,2 Loop until fire pressed
+C $805F,3 Set two player flag
+C $8062,2 ...
 N $8064 This entry point is used by the routine at #R$81ED. Fire pressed
 @ $8064 label=new_game
 C $8067,3 Clear screensaver countdown
@@ -303,6 +310,9 @@ C $8085,1 ...
 C $8086,1 ...
 C $8087,3 ...
 C $808A,2 ...
+C $808C,3 Clear all but two player flag
+C $808F,2 ...
+C $8091,3 ...
 C $8094,2 5 Lives
 C $8096,3 Set lives
 C $8099,1 Increment to 6
@@ -322,6 +332,7 @@ C $80B9,2 ...
 C $80BB,1 Write VDP byte
 C $80BC,1 Parameter to display score
 C $80BD,3 Display score
+C $80C0,3 Flags
 C $80C3,2 Test bit for two players
 C $80C5,2 If bit is reset then skip ahead
 C $80C7,3 Display '-' at the top right corner
@@ -330,7 +341,7 @@ C $80CC,1 Write VDP byte
 C $80CD,1 Display '2' next to '-'
 C $80CE,2 ...
 C $80D0,1 Write VDP byte
-C $80D6,3 Save player data, starting with lives?
+C $80D6,3 Save player data in VDP RAM, starting with lives?
 C $80D9,3 VDP address
 C $80DC,3 45 bytes
 C $80DF,1 WRITE_VRAM
@@ -344,22 +355,35 @@ C $80EB,2 Test flag
 C $80ED,2 Wait until set
 C $80EF,2 Clear flag
 C $80F1,3 READ_REGISTER (read VDP status)
+C $80F7,3 Control ship
 C $80FD,3 READ_REGISTER
 C $8106,3 READ_REGISTER
 C $810F,3 READ_REGISTER
-C $8121,3 Status
-C $8126,3 Exit main loop
-c $8139 Routine at 8139
+C $8118,3 Display center enemies
+C $8121,3 Status flags
+C $8124,2 Test bit 2
+C $8126,3 Exit main loop if set
+c $8139 Exit from main loop after dying
 D $8139 Used by the routine at #R$8024.
+@ $8139 label=died
+C $813C,2 Play explosion sound
+C $813E,3 ...
+C $8141,3 Reset main loop flag
+C $8144,2 ...
 C $8146,3 READ_REGISTER
+C $8149,3 Update sprite types $0F - $11
+C $814C,3 Explosion
 @ $814F label=label_at_814F
+C $8168,3 Display center enemies
 c $8170 Routine at 8170
 D $8170 Used by the routine at #R$8139.
 C $8182,1 Write VDP byte
 C $8183,3 Display player
 C $818F,1 WRITE_VRAM
+C $81A0,2 Test for two players
 c $81AE Routine at 81AE
 D $81AE Used by the routine at #R$8170.
+C $81B1,2 Test for two players
 N $81B9 This entry point is used by the routine at #R$8170.
 C $81C2,3 READ_VRAM
 C $81CE,1 WRITE_VRAM
@@ -386,6 +410,8 @@ C $8215,3 ...
 C $8218,3 ...
 C $821B,2 ...
 C $821D,2 ...
+C $8224,3 Clear flag that exists main loop
+C $8227,2 ...
 N $8229 Calculate stage data index
 C $8229,3 Get completed stages
 C $822C,1 Test if zero
@@ -504,14 +530,14 @@ C $82F6,1 Set A = B
 C $82F7,3 Play selected tune
 C $82FA,3 Display lives
 C $82FD,3 Init sprite data
-C $8300,3 Display ship and stars
+C $8300,3 Initial game loop
 C $8303,3 Init some variables
-C $8306,3 Reset some status flags
+C $8306,3 Update status flags
 C $8309,2 ...
-C $830B,2 ...
+C $830B,2 Set main loop flag
 c $830E Display player message
 D $830E Used by the routines at #R$8170 and #R$82BF.
-@ $830E display_player
+@ $830E label=display_player
 C $830E,3 Status
 C $8311,2 Check bit for 2 players
 C $8313,1 Return if not set
@@ -529,18 +555,22 @@ c $832A Routine at 832A
 D $832A Used by the routine at #R$8024.
 C $8334,3 READ_REGISTER
 N $833C This entry point is used by the routines at #R$8450 and #R$846B.
+C $8343,3 Control ship
+C $8349,3 Display center enemies
 C $8358,3 Stage
 c $8368 Routine at 8368
 D $8368 Used by the routine at #R$832A.
 N $836D This entry point is used by the routine at #R$832A.
 C $8374,3 Stage
 C $8387,3 Upload sprite data
+C $838E,3 Control ship
 C $83BA,4 Set color
 C $83C2,1 Load sprite pattern
 C $83C7,1 Load sprite pattern
 C $83C8,3 Display ship background patterns
 c $83D0 Routine at 83D0
 D $83D0 Used by the routine at #R$8368.
+@ $83D0 label=next_stage
 C $83DE,3 Stage
 C $83E1,1 Next stage
 C $83E2,2 Did we reach 24?
@@ -568,8 +598,23 @@ D $846B Used by the routine at #R$8429.
 C $8479,1 WRITE_VRAM
 C $8483,1 WRITE_VRAM
 N $8486 This entry point is used by the routine at #R$8450.
+C $849B,3 Control ship
+C $84A1,3 Display center enemies
 c $84B1 Routine at 84B1
 D $84B1 Used by the routines at #R$8024, #R$8139, #R$832A, #R$8368, #R$846B, #R$A33B and #R$A3E1.
+@ $84B1 label=update_frame_upload_sprites
+C $84B1,3 Update frame counter
+C $84B4,1 ...
+C $84B5,1 Get new value
+C $84B6,2 Every second frame ...
+C $84B8,2 go directly to upload sprite data
+C $84BA,3 Else get type of sprite 1
+C $84BD,2 Is it 1 (ship 2)?
+C $84BF,2 If not upload sprite data
+C $84C1,3 Get color of sprite 1
+C $84C4,1 ...
+C $84C5,2 Flip bit 4
+C $84C7,1 And set color back
 C $84C8,3 Upload sprite data
 c $84CB Routine at 84CB
 D $84CB Used by the routine at #R$90D6.
@@ -580,8 +625,10 @@ C $84D3,2 IY = count
 C $84D5,1 HL now points to graphics data
 C $84D6,2 Table code (3 = pattern generator table)
 C $84D8,3 PUT_VRAM
-c $84DB Routine at 84DB
+c $84DB Get stage data address
 D $84DB Used by the routines at #R$8878, #R$8A53, #R$8A76, #R$8C68, #R$8D50, #R$8E9D, #R$900E and #R$AAF1.
+R $84DB O:IY Stage data address
+@ $84DB label=stage_data_addr
 C $84DC,3 Get value (0 - 6)
 C $84DF,1 Multiply by 8
 C $84E0,1 ...
@@ -593,8 +640,8 @@ C $84E9,2 ...
 c $84ED Routine at 84ED
 D $84ED Used by the routines at #R$8170 and #R$832A.
 C $84F4,3 FILL_VRAM
-c $8501 Routine at 8501
-D $8501 Used by the routine at #R$8021.
+c $8501 Interrupt routine
+D $8501 Calls sound player and handles screen saver Used by the routine at #R$8021.
 @ $8501 label=interrupt_routine
 C $8509,3 Counter
 C $850C,1 Check if zero
@@ -610,13 +657,12 @@ C $851B,1 WRITE_REGISTER
 C $851C,3 Black border
 C $851F,1 WRITE_REGISTER
 C $8520,2 Loop
-c $8522 Routine at 8522
-D $8522 Used by the routine at #R$8501.
-C $8522,3 Sound player?
+C $8522,3 Sound player
+C $852A,3 READ_REGISTER
 t $853C Message at 853C
 @ $853C label=stage_msg
 T $853C,5,5
-b $8541 Data block at 8541
+b $8541 Stage data
 @ $8541 label=stage_data
 B $8541,64,8
 t $8581 Message at 8581
@@ -704,6 +750,7 @@ c $885F Routine at 885F
 D $885F Used by the routine at #R$8790.
 c $8878 Routine at 8878
 D $8878 Used by the routine at #R$885F.
+C $8884,3 Get stage data address in IY
 C $8887,1 Random number
 C $8897,1 Random number
 N $889C This entry point is used by the routine at #R$88BE.
@@ -743,15 +790,32 @@ C $8A4D,1 Load sprite pattern
 N $8A4E This entry point is used by the routine at #R$867D.
 c $8A53 Routine at 8A53
 D $8A53 Used by the routine at #R$85E6.
+C $8A53,3 Get stage data address in IY
 c $8A76 Routine at 8A76
 D $8A76 Used by the routines at #R$8790, #R$885F and #R$88FE.
+C $8A87,3 Get stage data address in IY
 C $8AA4,1 Allocate sprite
 C $8AB9,4 Set color
 c $8AC0 Routine at 8AC0
 D $8AC0 Used by the routines at #R$8790, #R$87F5, #R$8878 and #R$88D4.
-c $8AE6 Routine at 8AE6
+c $8AE6 Update sprite types $0F - $11
 D $8AE6 Used by the routine at #R$8139.
+C $8AE6,4 Sprite data
+C $8AEA,3 Size of each sprite
+C $8AED,2 32 sprites
+C $8AEF,3 Get type
+C $8AF2,2 If < 14 then move on
+C $8AF4,2 ...
+C $8AF6,2 If >= 18 then move on
+C $8AF8,2 ...
+C $8AFA,4 For types $0F - $11, test bit 6 of ?
+C $8AFE,2 If not set, move on
+C $8B00,4 Set type to $10
+C $8B04,4 Set ? to $0C
+C $8B08,4 Set ? to $FF
 C $8B0C,1 Load sprite pattern
+C $8B0D,2 Next sprite
+C $8B0F,2 Loop for 32 sprites
 c $8B12 Draw background patterns for sprite
 D $8B12 Used by the routines at #R$8F0F, #R$8F55, #R$99D3, #R$9A75 and #R$A808.
 R $8B12 I:IY Data structure
@@ -877,15 +941,18 @@ N $8C57 This entry point is used by the routine at #R$8C30.
 c $8C68 Routine at 8C68
 D $8C68 Used by the routine at #R$8BD9.
 N $8C6D This entry point is used by the routine at #R$8C52.
+C $8C7C,3 Get stage data address in IY
 C $8C94,3 Stage
 C $8CA0,1 Add A to HL
 C $8CA2,1 Allocate sprite
 C $8CAF,3 Set color
 C $8CF5,1 Load sprite pattern
+C $8D17,3 Get stage data address in IY
 c $8D21 Routine at 8D21
 D $8D21 Used by the routine at #R$8170.
 c $8D50 Routine at 8D50
 D $8D50 Used by the routine at #R$8024.
+C $8D68,3 Get stage data address in IY
 C $8D6B,1 Random number
 C $8D81,1 Allocate sprite
 C $8D8A,4 Set color
@@ -913,6 +980,7 @@ N $8E2D This entry point is used by the routines at #R$8024, #R$8139 and #R$A3E1
 C $8E5C,3 Stage
 c $8E89 Routine at 8E89
 D $8E89 Used by the routine at #R$8E2C.
+@ $8E89 label=init_stage_variables
 N $8E8D This entry point is used by the routines at #R$82BF and #R$8FED.
 C $8E8D,1 Random number
 C $8E8E,2 0 - 15
@@ -923,6 +991,7 @@ C $8E96,3 Set to 0
 C $8E99,3 Set to 0
 c $8E9D Routine at 8E9D
 D $8E9D Used by the routine at #R$8E2C.
+C $8F00,3 Get stage data address in IY
 c $8F0F Routine at 8F0F
 D $8F0F Used by the routine at #R$8E9D.
 C $8F44,3 FILL_VRAM
@@ -940,6 +1009,7 @@ D $900E Used by the routines at #R$8E9D and #R$8F55.
 C $9023,1 Allocate sprite
 C $9028,4 Set color
 C $9038,1 Load sprite pattern
+C $9039,3 Get stage data address in IY
 C $903C,1 Random number
 b $9046 Data block at 9046
 B $9046,16,8
@@ -1260,6 +1330,7 @@ C $9845,1 Allocate sprite
 C $9858,4 Set color
 c $9861 Routine at 9861
 D $9861 Used by the routine at #R$9796.
+C $986B,3 Size of each sprite
 N $986E This entry point is used by the routine at #R$98B5.
 c $98B5 Routine at 98B5
 D $98B5 Used by the routine at #R$9861.
@@ -1343,7 +1414,7 @@ C $9AF3,3 $729B
 C $9B04,4 Set y
 c $9B0D Play tune?
 D $9B0D Used by the routines at #R$9BD9, #R$9C1C and #R$9E91.
-R $9B0D I:A Tune index 0 - 6
+R $9B0D I:A Index of tune (0 - 6)
 @ $9B0D label=play_tune
 c $9B54 Routine at 9B54
 D $9B54 Used by the routine at #R$9B0D.
@@ -1355,6 +1426,7 @@ D $9B70 Used by the routine at #R$9B59.
 N $9B82 This entry point is used by the routine at #R$9B59.
 c $9B87 Routine at 9B87
 D $9B87 Used by the routines at #R$8139, #R$832A and #R$9C1C.
+@ $9B87 label=died_set_variables
 c $9B99 Sound player?
 D $9B99 Used by the routine at #R$8522.
 @ $9B99 label=sound_player
@@ -1391,7 +1463,8 @@ C $9CA0,3 Set x
 N $9CA3 This entry point is used by the routine at #R$9C92.
 c $9CA8 Routine at 9CA8
 D $9CA8 Used by the routine at #R$9EA3.
-R $9CA8 I:C 2-
+R $9CA8 I:C Index of sound (1-8)
+@ $9CA8 label=play_sound
 N $9CB5 This entry point is used by the routines at #R$9B54 and #R$9E01.
 C $9CC5,3 Table address
 b $9CE7 Data block at 9CE7
@@ -1415,14 +1488,15 @@ N $9DFC This entry point is used by the routines at #R$9DA7 and #R$9DC4.
 c $9E01 Routine at 9E01
 c $9E5C Routine at 9E5C
 c $9E75 Routine at 9E75
-c $9E91 Play tune (preserve registers)?
-D $9E91 Used by the routines at #R$82BF, #R$832A and #R$846B.
-@ $9E91 label=play_tune_save_regs
+c $9E91 Play tune, preserve registers
+D $9E91 Used by the routines at #R$82BF, #R$832A and #R$846B. I:A Index of tune
+@ $9E91 label=call_play_tune
 C $9E98,3 Play tune
 c $9EA3 Routine at 9EA3
 D $9EA3 Used by the routines at #R$8139, #R$8368, #R$8C52, #R$8E9D, #R$9934, #R$99A0, #R$99B1, #R$99D3, #R$A33B and #R$A6EC.
-R $9EA3 I:A
-@ $9EA3 label=call_9CA8
+R $9EA3 I:A Index of sound
+@ $9EA3 label=call_play_sound
+C $9EAB,3 Play sound
 b $9EB6 Data block at 9EB6
 B $9EB6,1029,8*128,5
 c $A2BB Routine at A2BB
@@ -1445,6 +1519,7 @@ c $A31D Routine at A31D
 D $A31D Used by the routine at #R$A314.
 c $A33B Routine at A33B
 D $A33B Used by the routine at #R$82BF.
+@ $A33B label=initial_game_loop
 C $A33B,3 New center of projection at bottom center for implosion
 C $A33E,3 Set #R$72C5, which will be copied to #R$7000
 C $A341,3 Status flags
@@ -1467,9 +1542,10 @@ N $A36C Display implosion
 C $A36C,2 20
 C $A36E,1 Save counter
 C $A36F,3 Move dots
-C $A372,3 Ship movement?
+C $A372,3 Control ship
 C $A375,3 Upload sprite data
 C $A378,1 Wait interrupt
+C $A37C,3 Display center enemies
 C $A37F,1 Restore counter
 C $A380,2 Loop 20 times
 N $A382 Allocate ship etc.
@@ -1491,10 +1567,10 @@ N $A3B4 Game loop 60 times
 C $A3B4,2 60
 C $A3B6,1 Wait interrupt
 C $A3B7,1 Save counter
-C $A3B8,3 Game loop actions
-C $A3BB,3 ...
-C $A3BE,3 ...
-C $A3C1,3 ...
+C $A3B8,3 Display stars
+C $A3BB,3 Control ship
+C $A3BE,3 Display center enemies
+C $A3C1,3 Upload sprites
 C $A3C4,1 Restore counter
 C $A3C5,2 Loop 60 times
 C $A3C7,3 Clear warps line
@@ -1510,50 +1586,57 @@ C $A3DD,1 ...
 C $A3DE,3 FILL_VRAM and return
 c $A3E1 Routine at A3E1
 D $A3E1 Used by the routine at #R$8139.
+@ $A3E1 label=explode
 C $A3E6,3 Display ship background patterns
 C $A3E9,2 Not allocated
 C $A3EB,3 1st sprite
 C $A3EE,3 2nd sprite
-N $A3F7 Deallocate all sprites that a not type 2
+C $A3F1,3 Active shots
+C $A3F4,1 If zero
+C $A3F5,2 Then skip ahead
+N $A3F7 Deallocate all shots
 C $A3F7,4 Sprite data table
-C $A3FB,3 Offset between sprites
+C $A3FB,3 Size of each sprite
 C $A3FE,2 32 sprites
-C $A400,2 If it type 2?
+C $A400,2 Is it type $02 (shot)?
 C $A402,3 ...
 C $A405,2 No, then skip
-C $A407,4 set as not allocated
+C $A407,4 Set as not allocated
 C $A40B,4 Set y
 C $A40F,2 Next sprite
 C $A411,2 Loop 32 times
-N $A413 Something else
+N $A413 Set center of projection for explosion
 C $A413,3 Y and X of 1st sprite
 C $A416,3 Add 4 to each
 C $A419,1 ...
 C $A41A,3 Save it in #R$72C5, which will be copied to #R$7000
 C $A41D,3 Byte 2 of 1st sprite
 C $A420,3 Save it temporary
-N $A423 Allocate 6 sprites
+N $A423 Allocate 6 sprites for explosion
 C $A427,2 Allocate 6 sprites
 C $A429,1 Allocate sprite
-C $A42A,4 Sprite type is $0D
+C $A42A,4 Sprite type is $0D (a dot)
+C $A42E,4 Polar y
+C $A432,4 Polar x
 C $A436,4 Set color (pink)
 C $A43A,1 Load sprite pattern
 C $A43B,3 Restore byte 2 of 1st sprite
 C $A43E,3 Add data from table
 C $A441,2 Mod $40
-C $A443,3 Set it on new sprite
+C $A443,3 Set polar x on new sprite
+C $A446,4 Set polar y
 C $A44A,2 Next init data
 C $A44C,2 Loop for 6 sprites
 N $A44E Game loop for 3 seconds
+C $A44E,2 20
 C $A450,1 Outer loop
 C $A451,3 Move dots
 C $A454,3 Upload sprite data
+C $A457,2 9
 C $A459,1 Inner loop
-C $A45B,3 Main loop actions
-C $A45E,3 ...
-C $A461,3 ...
-C $A464,3 ...
-C $A467,3 ...
+C $A45B,3 Display stars
+C $A461,3 Display center enemies
+C $A467,3 Upload sprites
 C $A46B,2 Loop 9 times
 C $A46E,2 Loop 20 times
 c $A471 Routine at A471
@@ -1580,7 +1663,7 @@ C $A49B,3 Else increment polar y
 C $A49E,2 Skip next
 C $A4A0,3 Decrement polar y
 C $A4A3,1 Restore counter
-C $A4A4,3 Sprite data size
+C $A4A4,3 Size of each sprite
 C $A4A7,2 Next sprite
 C $A4A9,2 Loop 32 times
 C $A4AB,3 Set #R$7000 back to original value
@@ -1775,8 +1858,15 @@ b $A875 Data block at A875
 B $A875,8,8
 b $A87D Ship background patterns (16 frames of 4 patterns, organised as 16x16 sprite patterns) #UDGTABLE(no-border, no-border) { #UDGARRAY32,,4($A87D-$AA75-16)(graphics-A87D.png) } { #UDGARRAY32,,4($A885-$AA7D-16)(graphics-A885.png) } TABLE#
 @ $A87D label=ship_patterns
-B $A87D,513,8*64,1
-c $AA7E Routine at AA7E
+B $A87D,512,8
+c $AA7D Routine at AA7D
+D $AA7D Used by the routine at #R$8024.
+@ $AA7D label=init_game_variables
+C $AA7D,3 Set 36 bytes at #R$7207 to $FF
+C $AA80,3 ...
+C $AA83,3 ...
+C $AA86,2 ...
+C $AA88,2 ...
 c $AAA6 Routine at AAA6
 D $AAA6 Used by the routines at #R$87D5 and #R$8D21.
 c $AAC3 Routine at AAC3
@@ -1792,6 +1882,7 @@ c $AAE3 Routine at AAE3
 D $AAE3 Used by the routines at #R$99A0, #R$AB17 and #R$AB6C.
 c $AAF1 Routine at AAF1
 D $AAF1 Used by the routine at #R$8024.
+C $AAFA,3 Get stage data address in IY
 c $AB17 Routine at AB17
 D $AB17 Used by the routine at #R$AAF1.
 C $AB1F,1 Allocate sprite
@@ -1805,8 +1896,9 @@ C $AB5F,3 Get pattern
 c $AB6C Routine at AB6C
 D $AB6C Used by the routine at #R$AB53.
 N $AB6F This entry point is used by the routine at #R$AB53.
-c $AB72 Routine at AB72
+c $AB72 Display tiny enemies at the center of the screen
 D $AB72 Used by the routines at #R$8024, #R$8139, #R$832A, #R$846B, #R$A33B and #R$A3E1.
+@ $AB72 label=display_center_enemies
 C $ABBE,3 FILL_VRAM
 c $ABFF Routine at ABFF
 D $ABFF Used by the routine at #R$AB72.
@@ -1814,9 +1906,10 @@ C $AC17,1 Write VDP byte
 c $AC32 Routine at AC32
 D $AC32 Used by the routine at #R$ABFF.
 C $AC3A,1 Write VDP byte
-b $AC47 Data block at AC47
+c $AC47 Routine at AC47
 D $AC47 Used by the routine at #R$AB72.
-B $AC47,152,8
+b $AC87 Data block at AC87
+B $AC87,88,8
 c $ACDF Init sprite data
 D $ACDF Used by the routines at #R$82BF, #R$90D6 and #R$A33B.
 @ $ACDF label=init_sprite_data
@@ -1825,6 +1918,7 @@ C $ACE3,3 Size of each sprite
 C $ACE6,2 Number of sprites
 C $ACE9,3 Number of allocated sprites
 C $ACEC,3 Set pattern
+N $ACEF This entry point is used by the routine at #R$AC47.
 C $ACEF,4 Set as unallocated
 C $ACF4,2 Advance to next sprite
 C $ACF6,2 Loop for 32 sprites
@@ -2184,7 +2278,7 @@ C $B1E9,1 Add to address
 C $B1EA,1 Get table value
 C $B1EB,2 If $FF
 C $B1ED,2 Then set position outside screen and return
-C $B1EF,4 Center of screen?
+C $B1EF,4 Center of projection
 C $B1F3,1 x
 C $B1F4,1 Shift right
 C $B1F5,1 Bit 4 is now set if bit 5 (left/right) and bit 4 (top left/lower right) were different, i.e. top of screen
@@ -2203,7 +2297,7 @@ C $B209,2 -table value
 C $B20B,3 +center x ($80 or $B5 or ?)
 C $B20E,2 -4 (adjust for sprite size)
 C $B210,1 Store as sprite x
-C $B211,1 Clear carry flag?
+C $B211,1 Clear carry flag
 C $B212,1 Return
 C $B213,1 ...
 C $B214,2 ...

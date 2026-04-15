@@ -38,98 +38,98 @@ Used by the routine at <a href="34278.html">L85E6</a>.
 <tr>
 <td class="asm-label">L8A53</td>
 <td class="address-2"><span id="35411"></span>8A53</td>
-<td class="instruction">CALL <a href="34011.html">L84DB</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">CALL <a href="34011.html">stage_data_addr</a></td>
+<td class="comment-1" rowspan="1">Get stage data address in IY</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35414"></span>8A56</td>
 <td class="instruction">LD A,(<a href="29166.html">L71EE</a>)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35417"></span>8A59</td>
 <td class="instruction">OR A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35418"></span>8A5A</td>
 <td class="instruction">JR NZ,<a href="35411.html#35426">L8A53_0</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35420"></span>8A5C</td>
 <td class="instruction">LD A,(IY+$00)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35423"></span>8A5F</td>
 <td class="instruction">LD (<a href="29166.html">L71EE</a>),A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label">L8A53_0</td>
 <td class="address-2"><span id="35426"></span>8A62</td>
 <td class="instruction">LD A,(<a href="29280.html">L7260</a>)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35429"></span>8A65</td>
 <td class="instruction">OR A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35430"></span>8A66</td>
 <td class="instruction">RET NZ</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35431"></span>8A67</td>
 <td class="instruction">LD A,(<a href="29187.html">stage_data_index</a>)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35434"></span>8A6A</td>
 <td class="instruction">CP $02</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35436"></span>8A6C</td>
 <td class="instruction">LD A,(IY+$00)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35439"></span>8A6F</td>
 <td class="instruction">JR NC,<a href="35411.html#35442">L8A53_1</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35441"></span>8A71</td>
 <td class="instruction">ADD A,A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label">L8A53_1</td>
 <td class="address-2"><span id="35442"></span>8A72</td>
 <td class="instruction">LD (<a href="29280.html">L7260</a>),A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35445"></span>8A75</td>
 <td class="instruction">RET</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 </table>
 <table class="asm-navigation">
