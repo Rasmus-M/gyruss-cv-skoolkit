@@ -2,8 +2,7 @@
 @ $4000 org
 s $4000 Unused
 S $4000,12288,$3000
-w $7000 RAM
-D $7000 Center of projection
+w $7000 Center of projection
 @ $7000 label=center_of_projection
 W $7000,2,2
 b $7002 Sprite data (32 sprites)
@@ -68,7 +67,8 @@ b $7203 Index (0-7) into #R$8541 (blocks of 8 bytes)
 B $7203,1,1
 b $7204 Byte at 7204
 B $7204,1,1
-b $7205 When stage reaches 24, this number is added here, and stage is reset to 0
+b $7205 Completed stages
+D $7205 When stage reaches 24, this number is added here, and stage is reset to 0
 @ $7205 label=completed_stages
 B $7205,1,1
 b $7206 Byte at 7206
@@ -179,7 +179,8 @@ b $72C2 Byte at 72C2
 B $72C2,1,1
 w $72C3 Word at 72C3
 W $72C3,2,2
-w $72C5 Word at 72C5, which will be copied to #R$7000
+w $72C5 Temporary center of projection
+D $72C5 Will be copied to #R$7000
 @ $72C5 label=tmp_center_of_projection
 W $72C5,2,2
 b $72C7 Temp sprite data
@@ -1929,8 +1930,8 @@ B $A874,1,1 1111
 b $A875 Data block at A875
 @ $A875 label=adjust_ship_x_y_table
 B $A875,8,8
-b $A87D Ship background patterns (16 frames of 4 patterns, organised as 16x16 sprite patterns)
-D $A87D #UDGTABLE(no-border, no-border) { #UDGARRAY32,,4($A87D-$AA75-16)(graphics-A87D.png) } { #UDGARRAY32,,4($A885-$AA7D-16)(graphics-A885.png) } TABLE#
+b $A87D Ship background patterns
+D $A87D 16 frames of 4 patterns, organised as 16x16 sprite patterns #UDGTABLE(no-border, no-border) { #UDGARRAY32,,4($A87D-$AA75-16)(graphics-A87D.png) } { #UDGARRAY32,,4($A885-$AA7D-16)(graphics-A885.png) } TABLE#
 @ $A87D label=ship_patterns
 B $A87D,512,8
 c $AA7D Routine at AA7D
@@ -2387,7 +2388,8 @@ C $B216,1 ...
 C $B217,3 Set return position outside screen
 C $B21A,1 Set carry flag
 C $B21B,2 To return
-b $B21D Polar to screen coordinates lookup table 16 (y, x) pairs (32 bytes) for each depth value (polar y) (y, x) are offsets from center of screen
+b $B21D Polar to screen coordinates lookup table
+D $B21D 16 (y, x) pairs (32 bytes) for each depth value (polar y) (y, x) are offsets from center of screen
 @ $B21D label=polar_to_screen_table
 B $B21D,1728,32
 b $B8DD Graphics pointer offsets
