@@ -24,7 +24,7 @@ Next: <a href="33261.html">81ED</a>
 </td>
 </tr>
 </table>
-<div class="description">81AE: Routine at 81AE</div>
+<div class="description">81AE: Switch player</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -36,34 +36,34 @@ Used by the routine at <a href="33136.html">L8170</a>.
 </td>
 </tr>
 <tr>
-<td class="asm-label">L81AE</td>
+<td class="asm-label">switch_player</td>
 <td class="address-2"><span id="33198"></span>81AE</td>
 <td class="instruction">LD A,(<a href="29163.html">status_flags</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Test for two players</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33201"></span>81B1</td>
 <td class="instruction">BIT 7,A</td>
-<td class="comment-1" rowspan="1">Test for two players</td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33203"></span>81B3</td>
-<td class="instruction">JR Z,<a href="33198.html#33250">L81AE_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="33198.html#33250">switch_player_1</a></td>
+<td class="comment-1" rowspan="1">Skip ahead if one player</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33205"></span>81B5</td>
 <td class="instruction">BIT 5,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Test for ?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33207"></span>81B7</td>
-<td class="instruction">JR NZ,<a href="33198.html#33250">L81AE_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="33198.html#33250">switch_player_1</a></td>
+<td class="comment-1" rowspan="1">Skip ahead if not set</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -76,22 +76,22 @@ This entry point is used by the routine at <a href="33136.html">L8170</a>.
 </td>
 </tr>
 <tr>
-<td class="asm-label">L81AE_0</td>
+<td class="asm-label">switch_player_0</td>
 <td class="address-2"><span id="33209"></span>81B9</td>
 <td class="instruction">LD HL,<a href="29091.html">buffer</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore player data from VDP RAM into buffer</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33212"></span>81BC</td>
 <td class="instruction">LD DE,$1300</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33215"></span>81BF</td>
 <td class="instruction">LD BC,$002D</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -103,19 +103,19 @@ This entry point is used by the routine at <a href="33136.html">L8170</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="33221"></span>81C5</td>
 <td class="instruction">LD HL,<a href="29183.html">lives</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save player data to VDP RAM</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33224"></span>81C8</td>
 <td class="instruction">LD DE,$1300</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33227"></span>81CB</td>
 <td class="instruction">LD BC,$002D</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -127,46 +127,46 @@ This entry point is used by the routine at <a href="33136.html">L8170</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="33231"></span>81CF</td>
 <td class="instruction">LD HL,<a href="29091.html">buffer</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Copy data from buffer to right place</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33234"></span>81D2</td>
 <td class="instruction">LD DE,<a href="29183.html">lives</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33237"></span>81D5</td>
 <td class="instruction">LD BC,$002D</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33240"></span>81D8</td>
 <td class="instruction">LDIR</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33242"></span>81DA</td>
 <td class="instruction">LD A,(<a href="29169.html">current_player</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Current player</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33245"></span>81DD</td>
 <td class="instruction">XOR $01</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Switch player</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33247"></span>81DF</td>
 <td class="instruction">LD (<a href="29169.html">current_player</a>),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save again</td>
 </tr>
 <tr>
-<td class="asm-label">L81AE_1</td>
+<td class="asm-label">switch_player_1</td>
 <td class="address-2"><span id="33250"></span>81E2</td>
 <td class="instruction">CALL <a href="33298.html">init_stage</a></td>
 <td class="comment-1" rowspan="1">Initialize stage</td>
@@ -186,7 +186,7 @@ This entry point is used by the routine at <a href="33136.html">L8170</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33258"></span>81EA</td>
-<td class="instruction">JP <a href="32804.html#33000">main_loop</a></td>
+<td class="instruction">JP <a href="33000.html">main_loop</a></td>
 <td class="comment-1" rowspan="1">To main loop</td>
 </tr>
 </table>

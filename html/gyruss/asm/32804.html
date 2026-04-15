@@ -20,7 +20,7 @@ Prev: <a href="32801.html">8021</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#32804">Map</a></td>
 <td class="next">
-Next: <a href="33081.html">8139</a>
+Next: <a href="33000.html">80E8</a>
 </td>
 </tr>
 </table>
@@ -33,7 +33,7 @@ Next: <a href="33081.html">8139</a>
 </td>
 </tr>
 <tr>
-<td class="asm-label">main</td>
+<td class="asm-label">entry</td>
 <td class="address-2"><span id="32804"></span>8024</td>
 <td class="instruction">LD SP,$73BA</td>
 <td class="comment-1" rowspan="1">Init stack pointer</td>
@@ -111,7 +111,7 @@ Next: <a href="33081.html">8139</a>
 <td class="comment-1" rowspan="1">Set screensaver countdown</td>
 </tr>
 <tr>
-<td class="asm-label">main_wait_fire</td>
+<td class="asm-label">entry_wait_fire</td>
 <td class="address-2"><span id="32839"></span>8047</td>
 <td class="instruction">HALT</td>
 <td class="comment-1" rowspan="1">Wait for interrupt</td>
@@ -167,7 +167,7 @@ Next: <a href="33081.html">8139</a>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32861"></span>805D</td>
-<td class="instruction">JR Z,<a href="32804.html#32839">main_wait_fire</a></td>
+<td class="instruction">JR Z,<a href="32804.html#32839">entry_wait_fire</a></td>
 <td class="comment-1" rowspan="1">Loop until fire pressed</td>
 </tr>
 <tr>
@@ -423,8 +423,8 @@ This entry point is used by the routine at <a href="33261.html">L81ED</a>. Fire 
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32957"></span>80BD</td>
-<td class="instruction">CALL <a href="42649.html">LA699</a></td>
-<td class="comment-1" rowspan="1">Display score</td>
+<td class="instruction">CALL <a href="42649.html">display_score</a></td>
+<td class="comment-1" rowspan="1">Display score player 1</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -441,7 +441,7 @@ This entry point is used by the routine at <a href="33261.html">L81ED</a>. Fire 
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32965"></span>80C5</td>
-<td class="instruction">JR Z,<a href="32804.html#32992">main_0</a></td>
+<td class="instruction">JR Z,<a href="32804.html#32992">entry_0</a></td>
 <td class="comment-1" rowspan="1">If bit is reset then skip ahead</td>
 </tr>
 <tr>
@@ -489,8 +489,8 @@ This entry point is used by the routine at <a href="33261.html">L81ED</a>. Fire 
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32979"></span>80D3</td>
-<td class="instruction">CALL <a href="42649.html">LA699</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL <a href="42649.html">display_score</a></td>
+<td class="comment-1" rowspan="1">Display score player 2</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -517,7 +517,7 @@ This entry point is used by the routine at <a href="33261.html">L81ED</a>. Fire 
 <td class="comment-1" rowspan="1">WRITE_VRAM</td>
 </tr>
 <tr>
-<td class="asm-label">main_0</td>
+<td class="asm-label">entry_0</td>
 <td class="address-2"><span id="32992"></span>80E0</td>
 <td class="instruction">LD A,R</td>
 <td class="comment-1" rowspan="1">Random number seed</td>
@@ -534,196 +534,6 @@ This entry point is used by the routine at <a href="33261.html">L81ED</a>. Fire 
 <td class="instruction">CALL <a href="33298.html">init_stage</a></td>
 <td class="comment-1" rowspan="1">Initialize stage</td>
 </tr>
-<tr>
-<td class="routine-comment" colspan="5">
-<span id="33000"></span>
-<div class="comments">
-<div class="paragraph">
-This entry point is used by the routines at <a href="33198.html">L81AE</a> and <a href="33744.html">next_stage</a>.
-</div>
-</div>
-</td>
-</tr>
-<tr>
-<td class="asm-label">main_loop</td>
-<td class="address-2"><span id="33000"></span>80E8</td>
-<td class="instruction">LD HL,<a href="29274.html">interrupt_flag</a></td>
-<td class="comment-1" rowspan="1">Flag set by interrupt routine</td>
-</tr>
-<tr>
-<td class="asm-label">main_1</td>
-<td class="address-2"><span id="33003"></span>80EB</td>
-<td class="instruction">BIT 0,(HL)</td>
-<td class="comment-1" rowspan="1">Test flag</td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="33005"></span>80ED</td>
-<td class="instruction">JR Z,<a href="32804.html#33003">main_1</a></td>
-<td class="comment-1" rowspan="1">Wait until set</td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="33007"></span>80EF</td>
-<td class="instruction">RES 0,(HL)</td>
-<td class="comment-1" rowspan="1">Clear flag</td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="33009"></span>80F1</td>
-<td class="instruction">CALL $1FDC</td>
-<td class="comment-1" rowspan="1">READ_REGISTER (read VDP status)</td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="33012"></span>80F4</td>
-<td class="instruction">CALL <a href="45055.html">display_stars</a></td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="33015"></span>80F7</td>
-<td class="instruction">CALL <a href="42812.html">control_ship</a></td>
-<td class="comment-1" rowspan="1">Control ship</td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="33018"></span>80FA</td>
-<td class="instruction">CALL <a href="34278.html">L85E6</a></td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="33021"></span>80FD</td>
-<td class="instruction">CALL $1FDC</td>
-<td class="comment-1" rowspan="1">READ_REGISTER</td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="33024"></span>8100</td>
-<td class="instruction">CALL <a href="38806.html">L9796</a></td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="33027"></span>8103</td>
-<td class="instruction">CALL <a href="36396.html#36397">L8E2C_0</a></td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="33030"></span>8106</td>
-<td class="instruction">CALL $1FDC</td>
-<td class="comment-1" rowspan="1">READ_REGISTER</td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="33033"></span>8109</td>
-<td class="instruction">CALL <a href="35801.html">L8BD9</a></td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="33036"></span>810C</td>
-<td class="instruction">CALL <a href="43761.html">LAAF1</a></td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="33039"></span>810F</td>
-<td class="instruction">CALL $1FDC</td>
-<td class="comment-1" rowspan="1">READ_REGISTER</td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="33042"></span>8112</td>
-<td class="instruction">CALL <a href="36176.html">L8D50</a></td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="33045"></span>8115</td>
-<td class="instruction">CALL <a href="33969.html">update_frame_upload_sprites</a></td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="33048"></span>8118</td>
-<td class="instruction">CALL <a href="43890.html">display_center_enemies</a></td>
-<td class="comment-1" rowspan="1">Display center enemies</td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="33051"></span>811B</td>
-<td class="instruction">LD A,(<a href="29169.html">current_player</a>)</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="33054"></span>811E</td>
-<td class="instruction">CALL <a href="42649.html">LA699</a></td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="33057"></span>8121</td>
-<td class="instruction">LD A,(<a href="29163.html">status_flags</a>)</td>
-<td class="comment-1" rowspan="1">Status flags</td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="33060"></span>8124</td>
-<td class="instruction">BIT 2,A</td>
-<td class="comment-1" rowspan="1">Test bit 2</td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="33062"></span>8126</td>
-<td class="instruction">JP NZ,<a href="33081.html">died</a></td>
-<td class="comment-1" rowspan="1">Exit main loop if set</td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="33065"></span>8129</td>
-<td class="instruction">BIT 1,A</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="33067"></span>812B</td>
-<td class="instruction">JR Z,<a href="32804.html#33000">main_loop</a></td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="33069"></span>812D</td>
-<td class="instruction">LD A,(<a href="29190.html">L7206</a>)</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="33072"></span>8130</td>
-<td class="instruction">LD HL,<a href="29266.html">L7252</a></td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="33075"></span>8133</td>
-<td class="instruction">ADD A,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="33076"></span>8134</td>
-<td class="instruction">JP Z,<a href="33578.html">L832A</a></td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="33079"></span>8137</td>
-<td class="instruction">JR <a href="32804.html#33000">main_loop</a></td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
 </table>
 <table class="asm-navigation">
 <tr>
@@ -732,7 +542,7 @@ Prev: <a href="32801.html">8021</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#32804">Map</a></td>
 <td class="next">
-Next: <a href="33081.html">8139</a>
+Next: <a href="33000.html">80E8</a>
 </td>
 </tr>
 </table>

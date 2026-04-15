@@ -57,19 +57,19 @@ Used by the routine at <a href="33081.html">died</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="33143"></span>8177</td>
 <td class="instruction">LD HL,<a href="29183.html">lives</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Lives</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33146"></span>817A</td>
 <td class="instruction">DEC (HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Lose life</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33147"></span>817B</td>
-<td class="instruction">JR NZ,<a href="33198.html">L81AE</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="33198.html">switch_player</a></td>
+<td class="comment-1" rowspan="1">Jump if lives left</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -200,7 +200,7 @@ Used by the routine at <a href="33081.html">died</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33196"></span>81AC</td>
-<td class="instruction">JR <a href="33198.html#33209">L81AE_0</a></td>
+<td class="instruction">JR <a href="33198.html#33209">switch_player_0</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 </table>

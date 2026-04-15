@@ -10,6 +10,7 @@ s$4000 DEFS $3000
 w$7000 DEFW $0000
 
 ; Sprite data (32 sprites)
+;
 ; #TABLE(default, default)
 ; { =h Byte offset | =h Purpose }
 ; { $00 | Sprite type, or $FF if not allocated }
@@ -88,6 +89,7 @@ b$71C2 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $71EA DEFB $00
 
 ; Status flags
+;
 ; #TABLE(default, default)
 ; { =h Bit | =h Purpose }
 ; { $00 | Unknown }
@@ -126,16 +128,15 @@ b$71F1 DEFB $00
 @label=frame_counter
 b$71F2 DEFB $00
 
-; Byte at 71F3
-b$71F3 DEFB $00
-
-; Data block at 71F4
-b$71F4 DEFB $00,$00,$00,$00
+; Score player 1
+@label=score_player_1
+b$71F3 DEFB $00,$00,$00,$00,$00
 
 ; Byte at 71F8 (initially set to 6)
 b$71F8 DEFB $00
 
-; Data block at 71F9
+; Score player 2
+@label=score_player_2
 b$71F9 DEFB $00,$00,$00,$00,$00
 
 ; Byte at 71FE (initially set to 6)
@@ -208,6 +209,7 @@ b$7254 DEFB $00
 b$7255 DEFB $00
 
 ; Flags relating to fire (perhaps others)
+;
 ; #TABLE(default, default)
 ; { =h Bit | =h Purpose }
 ; { $00 | Fire pressed last time }
@@ -528,7 +530,7 @@ c$801E JP $1FDF      ; WRITE_VRAM (HL = source, DE = dest, BC = count)
 c$8021 JP $8501      ; Interrupt routine
 
 ; Entry point
-@label=main
+@label=entry
 c$8024 LD SP,$73BA   ; Init stack pointer
  $8027 OUT ($C0),A   ; Controller enable
  $8029 LD HL,$7000   ; Clear RAM
@@ -542,7 +544,7 @@ c$8024 LD SP,$73BA   ; Init stack pointer
  $803E CALL $90D6    ; Start screen
  $8041 LD HL,$2A30   ; 180 * 60 frames
  $8044 LD ($7257),HL ; Set screensaver countdown
-@label=main_wait_fire
+@label=entry_wait_fire
 *$8047 HALT          ; Wait for interrupt
  $8048 CALL $AFFF    ;
  $804B LD HL,$0000   ; Controller 0, segment 0
@@ -595,7 +597,7 @@ c$8024 LD SP,$73BA   ; Init stack pointer
  $80B9 LD A,$2D      ; ...
  $80BB RST $10       ; Write VDP byte
  $80BC XOR A         ; Parameter to display score
- $80BD CALL $A699    ; Display score
+ $80BD CALL $A699    ; Display score player 1
  $80C0 LD A,($71EB)  ; Flags
  $80C3 BIT 7,A       ; Test bit for two players
  $80C5 JR Z,$80E0    ; If bit is reset then skip ahead
@@ -606,7 +608,7 @@ c$8024 LD SP,$73BA   ; Init stack pointer
  $80CE LD A,$32      ; ...
  $80D0 RST $10       ; Write VDP byte
  $80D1 LD A,$01      ;
- $80D3 CALL $A699    ;
+ $80D3 CALL $A699    ; Display score player 2
  $80D6 LD HL,$71FF   ; Save player data in VDP RAM, starting with lives?
  $80D9 LD DE,$1300   ; VDP address
  $80DC LD BC,$002D   ; 45 bytes
@@ -614,14 +616,17 @@ c$8024 LD SP,$73BA   ; Init stack pointer
 *$80E0 LD A,R        ; Random number seed
  $80E2 LD ($731C),A  ; Init random number
  $80E5 CALL $8212    ; Initialize stage
-; This entry point is used by the routines at #R$81AE and #R$83D0.
+
+; Main loop
+;
+; Used by the routines at #R$81AE and #R$83D0.
 @label=main_loop
-*$80E8 LD HL,$725A   ; Flag set by interrupt routine
+c$80E8 LD HL,$725A   ; Flag set by interrupt routine
 *$80EB BIT 0,(HL)    ; Test flag
  $80ED JR Z,$80EB    ; Wait until set
  $80EF RES 0,(HL)    ; Clear flag
  $80F1 CALL $1FDC    ; READ_REGISTER (read VDP status)
- $80F4 CALL $AFFF    ;
+ $80F4 CALL $AFFF    ; Display stars
  $80F7 CALL $A73C    ; Control ship
  $80FA CALL $85E6    ;
  $80FD CALL $1FDC    ; READ_REGISTER
@@ -632,24 +637,24 @@ c$8024 LD SP,$73BA   ; Init stack pointer
  $810C CALL $AAF1    ;
  $810F CALL $1FDC    ; READ_REGISTER
  $8112 CALL $8D50    ;
- $8115 CALL $84B1    ;
+ $8115 CALL $84B1    ; Upload sprites
  $8118 CALL $AB72    ; Display center enemies
- $811B LD A,($71F1)  ;
- $811E CALL $A699    ;
+ $811B LD A,($71F1)  ; Current player
+ $811E CALL $A699    ; Display score
  $8121 LD A,($71EB)  ; Status flags
  $8124 BIT 2,A       ; Test bit 2
  $8126 JP NZ,$8139   ; Exit main loop if set
- $8129 BIT 1,A       ;
- $812B JR Z,$80E8    ;
+ $8129 BIT 1,A       ; Test bit 1
+ $812B JR Z,$80E8    ; Loop if not set
  $812D LD A,($7206)  ;
  $8130 LD HL,$7252   ;
  $8133 ADD A,(HL)    ;
- $8134 JP Z,$832A    ;
- $8137 JR $80E8      ;
+ $8134 JP Z,$832A    ; Stage completed
+ $8137 JR $80E8      ; Loop
 
 ; Exit from main loop after dying
 ;
-; Used by the routine at #R$8024.
+; Used by the routine at #R$80E8.
 @label=died
 c$8139 CALL $9B87    ;
  $813C LD A,$03      ; Play explosion sound
@@ -681,9 +686,9 @@ c$8139 CALL $9B87    ;
 c$8170 CALL $8D21    ;
  $8173 LD HL,$7204   ;
  $8176 INC (HL)      ;
- $8177 LD HL,$71FF   ;
- $817A DEC (HL)      ;
- $817B JR NZ,$81AE   ;
+ $8177 LD HL,$71FF   ; Lives
+ $817A DEC (HL)      ; Lose life
+ $817B JR NZ,$81AE   ; Jump if lives left
  $817D LD DE,$1C00   ;
  $8180 LD A,$D0      ;
  $8182 RST $10       ; Write VDP byte
@@ -707,30 +712,31 @@ c$8170 CALL $8D21    ;
  $81AA SET 5,(HL)    ;
  $81AC JR $81B9      ;
 
-; Routine at 81AE
+; Switch player
 ;
 ; Used by the routine at #R$8170.
-c$81AE LD A,($71EB)  ;
- $81B1 BIT 7,A       ; Test for two players
- $81B3 JR Z,$81E2    ;
- $81B5 BIT 5,(HL)    ;
- $81B7 JR NZ,$81E2   ;
+@label=switch_player
+c$81AE LD A,($71EB)  ; Test for two players
+ $81B1 BIT 7,A       ; ...
+ $81B3 JR Z,$81E2    ; Skip ahead if one player
+ $81B5 BIT 5,(HL)    ; Test for ?
+ $81B7 JR NZ,$81E2   ; Skip ahead if not set
 ; This entry point is used by the routine at #R$8170.
-*$81B9 LD HL,$71A3   ;
- $81BC LD DE,$1300   ;
- $81BF LD BC,$002D   ;
+*$81B9 LD HL,$71A3   ; Restore player data from VDP RAM into buffer
+ $81BC LD DE,$1300   ; ...
+ $81BF LD BC,$002D   ; ...
  $81C2 CALL $1FE2    ; READ_VRAM
- $81C5 LD HL,$71FF   ;
- $81C8 LD DE,$1300   ;
- $81CB LD BC,$002D   ;
+ $81C5 LD HL,$71FF   ; Save player data to VDP RAM
+ $81C8 LD DE,$1300   ; ...
+ $81CB LD BC,$002D   ; ...
  $81CE RST $38       ; WRITE_VRAM
- $81CF LD HL,$71A3   ;
- $81D2 LD DE,$71FF   ;
- $81D5 LD BC,$002D   ;
- $81D8 LDIR          ;
- $81DA LD A,($71F1)  ;
- $81DD XOR $01       ;
- $81DF LD ($71F1),A  ;
+ $81CF LD HL,$71A3   ; Copy data from buffer to right place
+ $81D2 LD DE,$71FF   ; ...
+ $81D5 LD BC,$002D   ; ...
+ $81D8 LDIR          ; ...
+ $81DA LD A,($71F1)  ; Current player
+ $81DD XOR $01       ; Switch player
+ $81DF LD ($71F1),A  ; Save again
 *$81E2 CALL $8212    ; Initialize stage
  $81E5 LD HL,$7256   ;
  $81E8 SET 5,(HL)    ;
@@ -916,9 +922,10 @@ c$830E LD A,($71EB)  ; Status
  $8328 RST $10       ; Write VDP byte
  $8329 RET           ;
 
-; Routine at 832A
+; Stage completed
 ;
-; Used by the routine at #R$8024.
+; Used by the routine at #R$80E8.
+@label=stage_completed
 c$832A LD A,$08      ;
  $832C LD ($7259),A  ;
  $832F LD HL,$71EB   ;
@@ -1102,8 +1109,8 @@ c$846B LD A,$02      ;
 *$8489 PUSH HL       ;
  $848A PUSH BC       ;
  $848B CALL $A6EC    ;
- $848E LD A,($71F1)  ;
- $8491 CALL $A699    ;
+ $848E LD A,($71F1)  ; Current player
+ $8491 CALL $A699    ; Display score
  $8494 LD B,$07      ;
 *$8496 HALT          ;
  $8497 PUSH BC       ;
@@ -1187,8 +1194,7 @@ c$84ED LD HL,$1920   ;
 
 ; Interrupt routine
 ;
-; Calls sound player and handles screen saver
-; Used by the routine at #R$8021.
+; Calls sound player and handles screen saver Used by the routine at #R$8021.
 @label=interrupt_routine
 c$8501 PUSH IX       ;
  $8503 PUSH IY       ;
@@ -1228,7 +1234,19 @@ c$8501 PUSH IX       ;
 @label=stage_msg
 t$853C DEFM "STAGE"
 
-; Stage data
+; Stage data (8 bytes per stage)
+;
+; #TABLE(default, default)
+; { =h Byte offset | =h Purpose }
+; { $00 | Unknown }
+; { $01 | Unknown }
+; { $02 | Unknown }
+; { $03 | Unknown }
+; { $04 | Unknown }
+; { $05 | Unknown }
+; { $06 | Unknown }
+; { $07 | Unknown }
+; TABLE#
 @label=stage_data
 b$8541 DEFB $02,$00,$28,$3F,$01,$50,$1E,$00
  $8549 DEFB $02,$01,$28,$3F,$02,$50,$19,$02
@@ -2743,6 +2761,7 @@ b$9046 DEFB $01,$FF,$01,$FF,$01,$01,$01,$01
  $904E DEFB $FF,$01,$FF,$01,$FF,$FF,$FF,$FF
 
 ; Graphics
+;
 ; #UDGTABLE(no-border, no-border)
 ; { #UDGARRAY8,,4($9056-$90C7-16)(graphics-9056.png) }
 ; { #UDGARRAY8,,4($905E-$90D5-16)(graphics-905E.png) }
@@ -3082,6 +3101,7 @@ b$92D6 DEFB $18,$18,$3C,$7E,$DB,$81,$00,$00
 b$92DE DEFB $80,$14
 
 ; Logo patterns
+;
 ; #UDGTABLE(no-border, no-border)
 ; { #UDGARRAY10,,4($92E0-$9377-16)(graphics-92E0.png) }
 ; { #UDGARRAY10,,4($92E8-$937F-16)(graphics-92E8.png) }
@@ -3306,6 +3326,7 @@ b$96EE DEFB $40,$54,$50,$A0,$AE,$E0,$40,$40
  $96F6 DEFB $60,$60,$A0,$A0,$A0,$65,$50,$50
 
 ; Planet sprite patterns
+;
 ; #UDGTABLE
 ; { #UDGARRAY19,,4($96FE-$9795-8)(graphics-96FE.png) }
 ; TABLE#
@@ -4872,42 +4893,48 @@ b$A4BE DEFB $A8,$18,$80,$50,$A0,$10,$80,$E0
  $A68E DEFB $82,$3C,$64,$E8,$2C,$24,$26,$F2
  $A696 DEFB $C2,$E6,$01
 
-; Routine at A699
+; Display score
 ;
-; Used by the routines at #R$8024 and #R$846B.
-c$A699 LD IX,$71F3   ;
- $A69D LD E,$04      ;
- $A69F OR A          ;
- $A6A0 JR Z,$A6A8    ;
- $A6A2 LD IX,$71F9   ;
- $A6A6 LD E,$18      ;
-*$A6A8 LD D,$18      ;
- $A6AA LD BC,$0300   ;
-*$A6AD LD A,(IX+$02) ;
- $A6B0 RRA           ;
- $A6B1 RRA           ;
- $A6B2 RRA           ;
- $A6B3 RRA           ;
- $A6B4 CALL $A6C8    ;
- $A6B7 DEC B         ;
- $A6B8 JR NZ,$A6BC   ;
- $A6BA LD C,$30      ;
-*$A6BC INC B         ;
- $A6BD LD A,(IX+$02) ;
- $A6C0 CALL $A6C8    ;
- $A6C3 DEC IX        ;
- $A6C5 DJNZ $A6AD    ;
+; Used by the routines at #R$8024, #R$80E8 and #R$846B.
+;
+; I:A Player 0 or 1
+@label=display_score
+c$A699 LD IX,$71F3   ; Score player 1
+ $A69D LD E,$04      ; Offset into name table player 1
+ $A69F OR A          ; If it player 1
+ $A6A0 JR Z,$A6A8    ; The skip ahead
+ $A6A2 LD IX,$71F9   ; Score player 2
+ $A6A6 LD E,$18      ; Offset into name table player 2
+*$A6A8 LD D,$18      ; MSB of name table in VDP
+ $A6AA LD BC,$0300   ; B = 3 (digits), C = 0 (zero character offset)
+*$A6AD LD A,(IX+$02) ; Get 3rd score byte (most significant)
+ $A6B0 RRA           ; Shift BCD digit into place
+ $A6B1 RRA           ; ...
+ $A6B2 RRA           ; ...
+ $A6B3 RRA           ; ...
+ $A6B4 CALL $A6C8    ; Display most significant digit
+ $A6B7 DEC B         ; If B > 1
+ $A6B8 JR NZ,$A6BC   ; Then don't choose new zero character offset
+ $A6BA LD C,$30      ; Else choose ASCII 0 as zero character offset
+*$A6BC INC B         ; Increment again
+ $A6BD LD A,(IX+$02) ; Get 3rd score byte (most significant)
+ $A6C0 CALL $A6C8    ; Display least significant digit
+ $A6C3 DEC IX        ; Proceed to less significant score bytes
+ $A6C5 DJNZ $A6AD    ; Loop 3 times
  $A6C7 RET           ;
 
-; Routine at A6C8
+; Display digit
 ;
 ; Used by the routine at #R$A699.
-c$A6C8 AND $0F       ;
- $A6CA JR Z,$A6CE    ;
- $A6CC LD C,$30      ;
-*$A6CE OR C          ;
+;
+; I:A Digit 0 - 9
+@label=display_digit
+c$A6C8 AND $0F       ; Isolate BCD digit
+ $A6CA JR Z,$A6CE    ; If zero, skip displaying leading zeros by not setting C
+ $A6CC LD C,$30      ; Use ASCII 0 as zero character offset by default
+*$A6CE OR C          ; Add zero character offset
  $A6CF RST $10       ; Write VDP byte
- $A6D0 INC DE        ;
+ $A6D0 INC DE        ; Next VDP address
  $A6D1 RET           ;
 
 ; Display lives
@@ -4935,7 +4962,7 @@ c$A6D2 LD HL,$1AE2   ; VDP address of 'lives'
 c$A6EC PUSH DE       ;
  $A6ED PUSH BC       ;
  $A6EE LD ($72C8),HL ;
- $A6F1 LD A,($71F1)  ;
+ $A6F1 LD A,($71F1)  ; Current player
  $A6F4 LD DE,$71F3   ;
  $A6F7 OR A          ;
  $A6F8 JR Z,$A6FD    ;
@@ -4990,7 +5017,7 @@ c$A6EC PUSH DE       ;
 c$A73C LD A,($71F2)    ; Get frame
  $A73F AND $01         ; Test bit 0
  $A741 RET NZ          ; Return every 2nd frame
- $A742 LD HL,($71F0)   ; Controller #R$71F1
+ $A742 LD HL,($71F0)   ; Controller: #R$71F1
  $A745 LD L,$00        ; Segment 0
  $A747 CALL $1F79      ; DECODER (H = fire, L = joystick (bit 0: up, bit 1:
                        ; right, bit 2: down, bit 3: left))
@@ -5024,7 +5051,7 @@ c$A73C LD A,($71F2)    ; Get frame
 *$A781 LD A,($71EB)    ;
  $A784 BIT 4,A         ;
  $A786 RET NZ          ;
- $A787 LD HL,($71F0)   ; Controller #R$71F1
+ $A787 LD HL,($71F0)   ; Controller: #R$71F1
  $A78A PUSH HL         ; Save current player
  $A78B LD L,$00        ; Segment 0
  $A78D CALL $1F79      ; DECODER (H = fire, L = joystick)
@@ -5173,6 +5200,7 @@ b$A875 DEFB $03,$01,$00,$FC,$05,$F9,$08,$FE
 
 ; Ship background patterns (16 frames of 4 patterns, organised as 16x16 sprite
 ; patterns)
+;
 ; #UDGTABLE(no-border, no-border)
 ; { #UDGARRAY32,,4($A87D-$AA75-16)(graphics-A87D.png) }
 ; { #UDGARRAY32,,4($A885-$AA7D-16)(graphics-A885.png) }
@@ -5349,13 +5377,13 @@ c$AAF1 LD A,($71EB)  ;
  $AB04 LD A,($722B)  ;
  $AB07 OR A          ;
  $AB08 RET Z         ;
- $AB09 LD HL,$722A   ;
- $AB0C LD B,$24      ;
- $AB0E LD A,$80      ;
-*$AB10 CP (HL)       ;
- $AB11 JR NC,$AB17   ;
- $AB13 DEC HL        ;
- $AB14 DJNZ $AB10    ;
+ $AB09 LD HL,$722A   ; End of #R$7207
+ $AB0C LD B,$24      ; 36 bytes
+ $AB0E LD A,$80      ; Value to compare with
+*$AB10 CP (HL)       ; Test byte
+ $AB11 JR NC,$AB17   ; If > $80 then skip ahead
+ $AB13 DEC HL        ; Previous byte
+ $AB14 DJNZ $AB10    ; Loop 36 times
  $AB16 RET           ;
 
 ; Routine at AB17
@@ -6186,6 +6214,7 @@ b$B10E DEFB $AD,$0C,$FB,$12,$FF,$85,$0C,$81
 b$B134 DEFB $01,$12
 
 ; Star patterns
+;
 ; #UDGTABLE
 ; { #UDGARRAY18,,4($B136-$B1C5-8)(graphics-B136.png) }
 ; TABLE#
@@ -6469,6 +6498,7 @@ w$B8FC DEFW $B9E6    ; Offset $00
  $B9E4 DEFW $BFA6
 
 ; Graphics
+;
 ; #UDGTABLE
 ; { #UDGARRAY37,,4($B9E6-$BFAD-8)(graphics-B9E6.png) }
 ; TABLE#

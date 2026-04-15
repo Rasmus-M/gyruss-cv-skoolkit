@@ -24,19 +24,19 @@ Next: <a href="33640.html">8368</a>
 </td>
 </tr>
 </table>
-<div class="description">832A: Routine at 832A</div>
+<div class="description">832A: Stage completed</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="32804.html">main</a>.
+Used by the routine at <a href="33000.html">main_loop</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L832A</td>
+<td class="asm-label">stage_completed</td>
 <td class="address-2"><span id="33578"></span>832A</td>
 <td class="instruction">LD A,$08</td>
 <td class="comment-1" rowspan="1"></td>
@@ -88,13 +88,13 @@ This entry point is used by the routines at <a href="33872.html">L8450</a> and <
 </td>
 </tr>
 <tr>
-<td class="asm-label">L832A_0</td>
+<td class="asm-label">stage_completed_0</td>
 <td class="address-2"><span id="33596"></span>833C</td>
 <td class="instruction">LD B,$5A</td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">L832A_1</td>
+<td class="asm-label">stage_completed_1</td>
 <td class="address-2"><span id="33598"></span>833E</td>
 <td class="instruction">PUSH BC</td>
 <td class="comment-1" rowspan="1"></td>
@@ -144,7 +144,7 @@ This entry point is used by the routines at <a href="33872.html">L8450</a> and <
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33616"></span>8350</td>
-<td class="instruction">DJNZ <a href="33578.html#33598">L832A_1</a></td>
+<td class="instruction">DJNZ <a href="33578.html#33598">stage_completed_1</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>

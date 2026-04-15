@@ -30,7 +30,7 @@ Next: <a href="43799.html">AB17</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="32804.html">main</a>.
+Used by the routine at <a href="32804.html">entry</a>.
 </div>
 </div>
 </td>
@@ -111,43 +111,43 @@ Used by the routine at <a href="32804.html">main</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="43785"></span>AB09</td>
 <td class="instruction">LD HL,$722A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">End of <a href="29191.html">buffer_at_7207</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43788"></span>AB0C</td>
 <td class="instruction">LD B,$24</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">36 bytes</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43790"></span>AB0E</td>
 <td class="instruction">LD A,$80</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Value to compare with</td>
 </tr>
 <tr>
 <td class="asm-label">LAAF1_0</td>
 <td class="address-2"><span id="43792"></span>AB10</td>
 <td class="instruction">CP (HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Test byte</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43793"></span>AB11</td>
 <td class="instruction">JR NC,<a href="43799.html">LAB17</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If &gt; $80 then skip ahead</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43795"></span>AB13</td>
 <td class="instruction">DEC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Previous byte</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43796"></span>AB14</td>
 <td class="instruction">DJNZ <a href="43761.html#43792">LAAF1_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Loop 36 times</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

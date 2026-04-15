@@ -6,7 +6,8 @@ w $7000 RAM
 D $7000 Center of projection
 @ $7000 label=center_of_projection
 W $7000,2,2
-b $7002 Sprite data (32 sprites) #TABLE(default, default) { =h Byte offset | =h Purpose } { $00 | Sprite type, or $FF if not allocated } { $01 | Polar y (depth, 0 is closest (normal ship position), 116 is furthest away) } { $02 | Polar x (angle, 0 at bottom center, moving clockwise to 16 at the left side, 32 at the top, and 48 at the right side) } { $03 | Close to polar y ($01) } { $04 | Close to polar x ($02) } { $05 | Close to polar x ($02) } { $06 | Unknown } { $07 | Unknown } { $08 | Screen y } { $09 | Screen x } { $0A | Pattern } { $0B | Color } TABLE#
+b $7002 Sprite data (32 sprites)
+D $7002 #TABLE(default, default) { =h Byte offset | =h Purpose } { $00 | Sprite type, or $FF if not allocated } { $01 | Polar y (depth, 0 is closest (normal ship position), 116 is furthest away) } { $02 | Polar x (angle, 0 at bottom center, moving clockwise to 16 at the left side, 32 at the top, and 48 at the right side) } { $03 | Close to polar y ($01) } { $04 | Close to polar x ($02) } { $05 | Close to polar x ($02) } { $06 | Unknown } { $07 | Unknown } { $08 | Screen y } { $09 | Screen x } { $0A | Pattern } { $0B | Color } TABLE#
 @ $7002 label=sprite_data
 B $7002,384,12
 b $7182 Number of allocated sprites
@@ -20,7 +21,8 @@ b $71A3 Temporary storage (72 bytes)
 B $71A3,31,8*3,7
 b $71C2 Data block at 71C2
 B $71C2,41,8*5,1
-b $71EB Status flags #TABLE(default, default) { =h Bit | =h Purpose } { $00 | Unknown } { $01 | Unknown } { $02 | Exits main loop. Reset at stage init } { $03 | Unknown } { $04 | Set during stage init } { $05 | Unknown } { $06 | Set during main loop } { $07 | Two players } TABLE#
+b $71EB Status flags
+D $71EB #TABLE(default, default) { =h Bit | =h Purpose } { $00 | Unknown } { $01 | Unknown } { $02 | Exits main loop. Reset at stage init } { $03 | Unknown } { $04 | Set during stage init } { $05 | Unknown } { $06 | Set during main loop } { $07 | Two players } TABLE#
 @ $71EB label=status_flags
 B $71EB,1,1
 b $71EC Stars move countdown
@@ -40,13 +42,13 @@ B $71F1,1,1
 b $71F2 Frame counter
 @ $71F2 label=frame_counter
 B $71F2,1,1
-b $71F3 Byte at 71F3
-B $71F3,1,1
-b $71F4 Data block at 71F4
-B $71F4,4,4
+b $71F3 Score player 1
+@ $71F3 label=score_player_1
+B $71F3,5,5
 b $71F8 Byte at 71F8 (initially set to 6)
 B $71F8,1,1
-b $71F9 Data block at 71F9
+b $71F9 Score player 2
+@ $71F9 label=score_player_2
 B $71F9,5,5
 b $71FE Byte at 71FE (initially set to 6)
 B $71FE,1,1
@@ -91,7 +93,8 @@ b $7254 Byte at 7254
 B $7254,1,1
 b $7255 Byte at 7255
 B $7255,1,1
-b $7256 Flags relating to fire (perhaps others) #TABLE(default, default) { =h Bit | =h Purpose } { $00 | Fire pressed last time } { $01 | Double shot } { $02 | Unknown } { $03 | Unknown } { $04 | Unknown } { $05 | Unknown } { $06 | Unknown } { $07 | Unknown } TABLE#
+b $7256 Flags relating to fire (perhaps others)
+D $7256 #TABLE(default, default) { =h Bit | =h Purpose } { $00 | Fire pressed last time } { $01 | Double shot } { $02 | Unknown } { $03 | Unknown } { $04 | Unknown } { $05 | Unknown } { $06 | Unknown } { $07 | Unknown } TABLE#
 @ $7256 label=fire_flags
 B $7256,1,1
 w $7257 Countdown to screen off
@@ -267,7 +270,7 @@ C $801E,3 WRITE_VRAM (HL = source, DE = dest, BC = count)
 c $8021 NMI
 C $8021,3 Interrupt routine
 c $8024 Entry point
-@ $8024 label=main
+@ $8024 label=entry
 C $8024,3 Init stack pointer
 C $8027,2 Controller enable
 C $8029,3 Clear RAM
@@ -281,7 +284,7 @@ C $803B,3 Init sound
 C $803E,3 Start screen
 C $8041,3 180 * 60 frames
 C $8044,3 Set screensaver countdown
-@ $8047 label=main_wait_fire
+@ $8047 label=entry_wait_fire
 C $8047,1 Wait for interrupt
 C $804B,3 Controller 0, segment 0
 C $804E,3 DECODER
@@ -331,7 +334,7 @@ C $80B8,1 Display '-' next to '1'
 C $80B9,2 ...
 C $80BB,1 Write VDP byte
 C $80BC,1 Parameter to display score
-C $80BD,3 Display score
+C $80BD,3 Display score player 1
 C $80C0,3 Flags
 C $80C3,2 Test bit for two players
 C $80C5,2 If bit is reset then skip ahead
@@ -341,6 +344,7 @@ C $80CC,1 Write VDP byte
 C $80CD,1 Display '2' next to '-'
 C $80CE,2 ...
 C $80D0,1 Write VDP byte
+C $80D3,3 Display score player 2
 C $80D6,3 Save player data in VDP RAM, starting with lives?
 C $80D9,3 VDP address
 C $80DC,3 45 bytes
@@ -348,23 +352,32 @@ C $80DF,1 WRITE_VRAM
 C $80E0,2 Random number seed
 C $80E2,3 Init random number
 C $80E5,3 Initialize stage
-N $80E8 This entry point is used by the routines at #R$81AE and #R$83D0.
+c $80E8 Main loop
+D $80E8 Used by the routines at #R$81AE and #R$83D0.
 @ $80E8 label=main_loop
 C $80E8,3 Flag set by interrupt routine
 C $80EB,2 Test flag
 C $80ED,2 Wait until set
 C $80EF,2 Clear flag
 C $80F1,3 READ_REGISTER (read VDP status)
+C $80F4,3 Display stars
 C $80F7,3 Control ship
 C $80FD,3 READ_REGISTER
 C $8106,3 READ_REGISTER
 C $810F,3 READ_REGISTER
+C $8115,3 Upload sprites
 C $8118,3 Display center enemies
+C $811B,3 Current player
+C $811E,3 Display score
 C $8121,3 Status flags
 C $8124,2 Test bit 2
 C $8126,3 Exit main loop if set
+C $8129,2 Test bit 1
+C $812B,2 Loop if not set
+C $8134,3 Stage completed
+C $8137,2 Loop
 c $8139 Exit from main loop after dying
-D $8139 Used by the routine at #R$8024.
+D $8139 Used by the routine at #R$80E8.
 @ $8139 label=died
 C $813C,2 Play explosion sound
 C $813E,3 ...
@@ -377,16 +390,37 @@ C $814C,3 Explosion
 C $8168,3 Display center enemies
 c $8170 Routine at 8170
 D $8170 Used by the routine at #R$8139.
+C $8177,3 Lives
+C $817A,1 Lose life
+C $817B,2 Jump if lives left
 C $8182,1 Write VDP byte
 C $8183,3 Display player
 C $818F,1 WRITE_VRAM
 C $81A0,2 Test for two players
-c $81AE Routine at 81AE
+c $81AE Switch player
 D $81AE Used by the routine at #R$8170.
-C $81B1,2 Test for two players
+@ $81AE label=switch_player
+C $81AE,3 Test for two players
+C $81B1,2 ...
+C $81B3,2 Skip ahead if one player
+C $81B5,2 Test for ?
+C $81B7,2 Skip ahead if not set
 N $81B9 This entry point is used by the routine at #R$8170.
+C $81B9,3 Restore player data from VDP RAM into buffer
+C $81BC,3 ...
+C $81BF,3 ...
 C $81C2,3 READ_VRAM
+C $81C5,3 Save player data to VDP RAM
+C $81C8,3 ...
+C $81CB,3 ...
 C $81CE,1 WRITE_VRAM
+C $81CF,3 Copy data from buffer to right place
+C $81D2,3 ...
+C $81D5,3 ...
+C $81D8,2 ...
+C $81DA,3 Current player
+C $81DD,2 Switch player
+C $81DF,3 Save again
 C $81E2,3 Initialize stage
 C $81EA,3 To main loop
 c $81ED Routine at 81ED
@@ -551,8 +585,9 @@ C $8322,1 The return
 C $8323,2 ASCII 2
 C $8325,3 VDP address
 C $8328,1 Write VDP byte
-c $832A Routine at 832A
-D $832A Used by the routine at #R$8024.
+c $832A Stage completed
+D $832A Used by the routine at #R$80E8.
+@ $832A label=stage_completed
 C $8334,3 READ_REGISTER
 N $833C This entry point is used by the routines at #R$8450 and #R$846B.
 C $8343,3 Control ship
@@ -598,6 +633,8 @@ D $846B Used by the routine at #R$8429.
 C $8479,1 WRITE_VRAM
 C $8483,1 WRITE_VRAM
 N $8486 This entry point is used by the routine at #R$8450.
+C $848E,3 Current player
+C $8491,3 Display score
 C $849B,3 Control ship
 C $84A1,3 Display center enemies
 c $84B1 Routine at 84B1
@@ -662,7 +699,8 @@ C $852A,3 READ_REGISTER
 t $853C Message at 853C
 @ $853C label=stage_msg
 T $853C,5,5
-b $8541 Stage data
+b $8541 Stage data (8 bytes per stage)
+D $8541 #TABLE(default, default) { =h Byte offset | =h Purpose } { $00 | Unknown } { $01 | Unknown } { $02 | Unknown } { $03 | Unknown } { $04 | Unknown } { $05 | Unknown } { $06 | Unknown } { $07 | Unknown } TABLE#
 @ $8541 label=stage_data
 B $8541,64,8
 t $8581 Message at 8581
@@ -1013,7 +1051,8 @@ C $9039,3 Get stage data address in IY
 C $903C,1 Random number
 b $9046 Data block at 9046
 B $9046,16,8
-b $9056 Graphics #UDGTABLE(no-border, no-border) { #UDGARRAY8,,4($9056-$90C7-16)(graphics-9056.png) } { #UDGARRAY8,,4($905E-$90D5-16)(graphics-905E.png) } TABLE#
+b $9056 Graphics
+D $9056 #UDGTABLE(no-border, no-border) { #UDGARRAY8,,4($9056-$90C7-16)(graphics-9056.png) } { #UDGARRAY8,,4($905E-$90D5-16)(graphics-905E.png) } TABLE#
 B $9056,128,8
 c $90D6 Start screen
 D $90D6 Used by the routine at #R$8024.
@@ -1259,7 +1298,8 @@ B $92D6,8,8
 b $92DE Gyruss logo
 @ $92DE label=gyruss_logo
 B $92DE,2,2
-b $92E0 Logo patterns #UDGTABLE(no-border, no-border) { #UDGARRAY10,,4($92E0-$9377-16)(graphics-92E0.png) } { #UDGARRAY10,,4($92E8-$937F-16)(graphics-92E8.png) } TABLE#
+b $92E0 Logo patterns
+D $92E0 #UDGTABLE(no-border, no-border) { #UDGARRAY10,,4($92E0-$9377-16)(graphics-92E0.png) } { #UDGARRAY10,,4($92E8-$937F-16)(graphics-92E8.png) } TABLE#
 B $92E0,160,8
 b $9380 Gyruss logo names
 B $9380,24,8
@@ -1316,7 +1356,8 @@ B $9475,633,8*79,1
 b $96EE Planet colors
 @ $96EE label=planet_colors
 B $96EE,16,8
-b $96FE Planet sprite patterns #UDGTABLE { #UDGARRAY19,,4($96FE-$9795-8)(graphics-96FE.png) } TABLE#
+b $96FE Planet sprite patterns
+D $96FE #UDGTABLE { #UDGARRAY19,,4($96FE-$9795-8)(graphics-96FE.png) } TABLE#
 @ $96FE label=planet_sprite_patterns
 B $96FE,152,8
 c $9796 Routine at 9796
@@ -1675,11 +1716,42 @@ b $A4B8 Sprite init data (byte 2)
 B $A4B8,6,6
 b $A4BE Data block at A4BE
 B $A4BE,475,8*59,3
-c $A699 Routine at A699
-D $A699 Used by the routines at #R$8024 and #R$846B.
-c $A6C8 Routine at A6C8
+c $A699 Display score
+D $A699 Used by the routines at #R$8024, #R$80E8 and #R$846B.
+R $A699 I:A Player 0 or 1
+@ $A699 label=display_score
+C $A699,4 Score player 1
+C $A69D,2 Offset into name table player 1
+C $A69F,1 If it player 1
+C $A6A0,2 The skip ahead
+C $A6A2,4 Score player 2
+C $A6A6,2 Offset into name table player 2
+C $A6A8,2 MSB of name table in VDP
+C $A6AA,3 B = 3 (digits), C = 0 (zero character offset)
+C $A6AD,3 Get 3rd score byte (most significant)
+C $A6B0,1 Shift BCD digit into place
+C $A6B1,1 ...
+C $A6B2,1 ...
+C $A6B3,1 ...
+C $A6B4,3 Display most significant digit
+C $A6B7,1 If B > 1
+C $A6B8,2 Then don't choose new zero character offset
+C $A6BA,2 Else choose ASCII 0 as zero character offset
+C $A6BC,1 Increment again
+C $A6BD,3 Get 3rd score byte (most significant)
+C $A6C0,3 Display least significant digit
+C $A6C3,2 Proceed to less significant score bytes
+C $A6C5,2 Loop 3 times
+c $A6C8 Display digit
 D $A6C8 Used by the routine at #R$A699.
+R $A6C8 I:A Digit 0 - 9
+@ $A6C8 label=display_digit
+C $A6C8,2 Isolate BCD digit
+C $A6CA,2 If zero, skip displaying leading zeros by not setting C
+C $A6CC,2 Use ASCII 0 as zero character offset by default
+C $A6CE,1 Add zero character offset
 C $A6CF,1 Write VDP byte
+C $A6D0,1 Next VDP address
 c $A6D2 Display lives
 D $A6D2 Used by the routines at #R$82BF and #R$A6EC.
 @ $A6D2 label=display-lives
@@ -1698,13 +1770,14 @@ C $A6E8,1 Next VDP address
 C $A6E9,2 Loop
 c $A6EC Routine at A6EC
 D $A6EC Used by the routines at #R$846B and #R$9978.
+C $A6F1,3 Current player
 c $A73C Control ship
 D $A73C Control ship movement and fire using controllers Used by the routines at #R$8024, #R$832A, #R$8368, #R$846B and #R$A33B.
 @ $A73C label=control_ship
 C $A73C,3 Get frame
 C $A73F,2 Test bit 0
 C $A741,1 Return every 2nd frame
-C $A742,3 Controller #R$71F1
+C $A742,3 Controller: #R$71F1
 C $A745,2 Segment 0
 C $A747,3 DECODER (H = fire, L = joystick (bit 0: up, bit 1: right, bit 2: down, bit 3: left))
 C $A74A,2 Reset fire
@@ -1733,7 +1806,7 @@ C $A779,4 Sprite 1
 C $A77D,1 Load sprite pattern sprite 1
 C $A77E,3 Display ship background patterns
 N $A781 Handle fire
-C $A787,3 Controller #R$71F1
+C $A787,3 Controller: #R$71F1
 C $A78A,1 Save current player
 C $A78B,2 Segment 0
 C $A78D,3 DECODER (H = fire, L = joystick)
@@ -1856,7 +1929,8 @@ B $A874,1,1 1111
 b $A875 Data block at A875
 @ $A875 label=adjust_ship_x_y_table
 B $A875,8,8
-b $A87D Ship background patterns (16 frames of 4 patterns, organised as 16x16 sprite patterns) #UDGTABLE(no-border, no-border) { #UDGARRAY32,,4($A87D-$AA75-16)(graphics-A87D.png) } { #UDGARRAY32,,4($A885-$AA7D-16)(graphics-A885.png) } TABLE#
+b $A87D Ship background patterns (16 frames of 4 patterns, organised as 16x16 sprite patterns)
+D $A87D #UDGTABLE(no-border, no-border) { #UDGARRAY32,,4($A87D-$AA75-16)(graphics-A87D.png) } { #UDGARRAY32,,4($A885-$AA7D-16)(graphics-A885.png) } TABLE#
 @ $A87D label=ship_patterns
 B $A87D,512,8
 c $AA7D Routine at AA7D
@@ -1883,6 +1957,13 @@ D $AAE3 Used by the routines at #R$99A0, #R$AB17 and #R$AB6C.
 c $AAF1 Routine at AAF1
 D $AAF1 Used by the routine at #R$8024.
 C $AAFA,3 Get stage data address in IY
+C $AB09,3 End of #R$7207
+C $AB0C,2 36 bytes
+C $AB0E,2 Value to compare with
+C $AB10,1 Test byte
+C $AB11,2 If > $80 then skip ahead
+C $AB13,1 Previous byte
+C $AB14,2 Loop 36 times
 c $AB17 Routine at AB17
 D $AB17 Used by the routine at #R$AAF1.
 C $AB1F,1 Allocate sprite
@@ -2243,7 +2324,8 @@ B $B10E,38,8*4,6
 b $B134 Stars
 @ $B134 label=stars
 B $B134,2,2
-b $B136 Star patterns #UDGTABLE { #UDGARRAY18,,4($B136-$B1C5-8)(graphics-B136.png) } TABLE#
+b $B136 Star patterns
+D $B136 #UDGTABLE { #UDGARRAY18,,4($B136-$B1C5-8)(graphics-B136.png) } TABLE#
 B $B136,144,8
 c $B1C6 Convert polar to screen coordinates
 D $B1C6 Used by the routines at #R$8F0F, #R$8F55, #R$A471, #R$AB72 and #R$ADD1.
@@ -2332,7 +2414,8 @@ W $B932,2,2 Offset $36
 W $B934,2,2
 W $B936,2,2 Offset $3A
 W $B938,174,2
-b $B9E6 Graphics #UDGTABLE { #UDGARRAY37,,4($B9E6-$BFAD-8)(graphics-B9E6.png) } TABLE#
+b $B9E6 Graphics
+D $B9E6 #UDGTABLE { #UDGARRAY37,,4($B9E6-$BFAD-8)(graphics-B9E6.png) } TABLE#
 @ $B9E6 label=graphics_patterns
 B $B9E6,1480,8
 c $BFAE Random number generator (RST $20)
