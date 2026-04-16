@@ -26,6 +26,14 @@ w$7000 DEFW $0000
 ; { $0A | Pattern }
 ; { $0B | Color }
 ; TABLE#
+; .
+; #TABLE(default, default)
+; { =h Sprite type | =h Description }
+; { $00 | Ship 1 }
+; { $01 | Ship 2 }
+; { $02 | Shot }
+; { $0D | Explosion dot }
+; TABLE#
 @label=sprite_data
 b$7002 DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
  $700E DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
@@ -128,14 +136,22 @@ b$71F2 DEFB $00
 
 ; Score player 1
 @label=score_player_1
-b$71F3 DEFB $00,$00,$00,$00,$00
+b$71F3 DEFB $00,$00,$00
+
+; Score for getting extra life player 1
+@label=score_extra_life_1
+b$71F6 DEFB $00,$00
 
 ; Byte at 71F8 (initially set to 6)
 b$71F8 DEFB $00
 
 ; Score player 2
 @label=score_player_2
-b$71F9 DEFB $00,$00,$00,$00,$00
+b$71F9 DEFB $00,$00,$00
+
+; Score for getting extra life player 2
+@label=score_extra_life_2
+b$71FC DEFB $00,$00
 
 ; Byte at 71FE (initially set to 6)
 b$71FE DEFB $00
@@ -357,12 +373,9 @@ w$72C5 DEFW $0000
 ; Temp sprite data
 b$72C7 DEFB $00
 
-; Data block at 72C8
-b$72C8 DEFB $00
-
-; Data block at 72C9
-b$72C9 DEFB $00
- $72CA DEFB $00
+; Temp points to add
+@label=points_to_add
+b$72C8 DEFB $00,$00,$00
 
 ; Byte at 72CB
 b$72CB DEFB $00
@@ -583,8 +596,8 @@ c$8024 LD SP,$73BA   ; Init stack pointer
  $8094 LD A,$05      ; 5 Lives
  $8096 LD ($71FF),A  ; Set lives
  $8099 INC A         ; Increment to 6
- $809A LD ($71F8),A  ; Set to 6
- $809D LD ($71FE),A  ; Set to 6
+ $809A LD ($71F8),A  ; Set #R$71F6+2 to 6 (extra life at 60000)
+ $809D LD ($71FE),A  ; Set #R$71FC+2 to 6 (extra life at 60000)
  $80A0 LD A,$01      ; Stage
  $80A2 LD ($7200),A  ; Set to 1
  $80A5 CALL $AA7D    ;
@@ -3768,40 +3781,23 @@ c$9A86 LD ($726F),A  ;
  $9AA4 NEG           ;
  $9AA6 RET           ;
 
-; Routine at 9AA7
-c$9AA7 DEC B         ;
- $9AA8 LD B,$10      ;
- $9AAA RLCA          ;
- $9AAB DEC D         ;
- $9AAC EX AF,AF'     ;
- $9AAD JR NZ,$9AB8   ;
- $9AAF DEC H         ;
- $9AB0 LD A,(BC)     ;
- $9AB1 JR NC,$9ABE   ;
-; This entry point is used by the routine at #R$800C.
-*$9AB3 PUSH AF       ;
- $9AB4 ADD A,L       ;
- $9AB5 LD L,A        ;
- $9AB6 JR NC,$9AB9   ;
-*$9AB8 INC H         ;
-*$9AB9 POP AF        ;
- $9ABA RET           ;
+; Data block at 9AA7
+b$9AA7 DEFB $05,$06,$10,$07,$15,$08,$20,$09
+ $9AAF DEFB $25,$0A,$30,$0B
 
-; Routine at 9AB3
+; Add A to HL (RST $08)
 ;
 ; Used by the routine at #R$800C.
-;
-; HL = HL + A
 @label=add_a_to_hl
-*$9AB3 PUSH AF       ;
+c$9AB3 PUSH AF       ;
  $9AB4 ADD A,L       ;
  $9AB5 LD L,A        ;
  $9AB6 JR NC,$9AB9   ;
-*$9AB8 INC H         ;
+ $9AB8 INC H         ;
 *$9AB9 POP AF        ;
  $9ABA RET           ;
 
-; Routine at 9ABB
+; Unused routine at 9ABB
 c$9ABB LD L,A        ;
  $9ABC RLA           ;
  $9ABD LD A,$00      ;
@@ -4958,55 +4954,58 @@ c$A6D2 LD HL,$1AE2   ; VDP address of 'lives'
  $A6E9 DJNZ $A6E7    ; Loop
  $A6EB RET           ;
 
-; Routine at A6EC
+; Add points to score
 ;
 ; Used by the routines at #R$846B and #R$9978.
+;
+; I: HL Points to add (BCD)
+@label=add_score
 c$A6EC PUSH DE       ;
  $A6ED PUSH BC       ;
- $A6EE LD ($72C8),HL ;
+ $A6EE LD ($72C8),HL ; Save points to add (this buffer has one more byte)
  $A6F1 LD A,($71F1)  ; Current player
- $A6F4 LD DE,$71F3   ;
- $A6F7 OR A          ;
- $A6F8 JR Z,$A6FD    ;
- $A6FA LD DE,$71F9   ;
-*$A6FD PUSH DE       ;
- $A6FE LD HL,$72C8   ;
- $A701 LD B,$03      ;
-*$A703 LD A,(DE)     ;
- $A704 ADC A,(HL)    ;
- $A705 DAA           ;
- $A706 LD (DE),A     ;
- $A707 INC DE        ;
- $A708 INC HL        ;
- $A709 DJNZ $A703    ;
- $A70B POP DE        ;
- $A70C INC DE        ;
- $A70D INC DE        ;
- $A70E LD HL,$0003   ;
- $A711 ADD HL,DE     ;
- $A712 PUSH HL       ;
- $A713 LD B,$03      ;
-*$A715 LD A,(DE)     ;
- $A716 CP (HL)       ;
- $A717 JR NZ,$A71E   ;
- $A719 DEC DE        ;
- $A71A DEC HL        ;
- $A71B DJNZ $A715    ;
- $A71D XOR A         ;
-*$A71E POP HL        ;
- $A71F JR C,$A739    ;
- $A721 LD A,(HL)     ;
- $A722 ADD A,$08     ;
- $A724 DAA           ;
- $A725 LD (HL),A     ;
- $A726 LD A,($71FF)  ;
- $A729 CP $09        ;
- $A72B JR NC,$A739   ;
- $A72D INC A         ;
- $A72E LD ($71FF),A  ;
- $A731 CALL $A6D2    ;
- $A734 LD A,$06      ;
- $A736 CALL $9EA3    ;
+ $A6F4 LD DE,$71F3   ; Score player 1
+ $A6F7 OR A          ; Is it player 1?
+ $A6F8 JR Z,$A6FD    ; The skip ahead
+ $A6FA LD DE,$71F9   ; Score player 2
+*$A6FD PUSH DE       ; Save pointer to score
+ $A6FE LD HL,$72C8   ; Pointer to points to add
+ $A701 LD B,$03      ; 3 bytes in score
+*$A703 LD A,(DE)     ; Get score byte
+ $A704 ADC A,(HL)    ; Add points
+ $A705 DAA           ; Adjust for BCD
+ $A706 LD (DE),A     ; Store score byte
+ $A707 INC DE        ; Next score byte
+ $A708 INC HL        ; Next points byte
+ $A709 DJNZ $A703    ; Loop 3 times
+ $A70B POP DE        ; Restore pointer to score
+ $A70C INC DE        ; Advance to last byte of extra life score $71F5 or $71FB
+ $A70D INC DE        ; ...
+ $A70E LD HL,$0003   ; Point HL to byte at #R$71F8 or #R$71FE (initially set to 6)
+ $A711 ADD HL,DE     ; ...
+ $A712 PUSH HL       ; Save pointer
+ $A713 LD B,$03      ; 3 bytes to check
+*$A715 LD A,(DE)     ; Get score byte
+ $A716 CP (HL)       ; Compare with extra life byte
+ $A717 JR NZ,$A71E   ; Exit loop if not equal
+ $A719 DEC DE        ; Previous score byte
+ $A71A DEC HL        ; Previous extra life byte
+ $A71B DJNZ $A715    ; Loop 3 times
+ $A71D XOR A         ; All equal, set A = 0
+*$A71E POP HL        ; Restore pointer to #R$71F8 or #R$71FE
+ $A71F JR C,$A739    ; Return if extra life byte was bigger
+ $A721 LD A,(HL)     ; Next extra life at 80000 more points
+ $A722 ADD A,$08     ; ...
+ $A724 DAA           ; ...
+ $A725 LD (HL),A     ; ...
+ $A726 LD A,($71FF)  ; Get lives
+ $A729 CP $09        ; Return if already 9
+ $A72B JR NC,$A739   ; ...
+ $A72D INC A         ; Extra life
+ $A72E LD ($71FF),A  ; Save it
+ $A731 CALL $A6D2    ; Display lives
+ $A734 LD A,$06      ; Play a sound
+ $A736 CALL $9EA3    ; ...
 *$A739 POP BC        ;
  $A73A POP DE        ;
  $A73B RET           ;
@@ -6311,8 +6310,8 @@ c$B1C6 PUSH IX        ;
 
 ; Polar to screen coordinates lookup table
 ;
-; 16 (y, x) pairs (32 bytes) for each depth value (polar y)
-; (y, x) are offsets from center of screen
+; 16 (y, x) pairs (32 bytes) for each depth value (polar y) (y, x) are offsets
+; from center of screen
 @label=polar_to_screen_table
 b$B21D DEFB $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$5C,$78,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
  $B23D DEFB $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$5F,$69,$57,$72,$4B,$7B,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF

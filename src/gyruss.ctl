@@ -7,6 +7,7 @@ w $7000 Center of projection
 W $7000,2,2
 b $7002 Sprite data (32 sprites)
 D $7002 #TABLE(default, default) { =h Byte offset | =h Purpose } { $00 | Sprite type, or $FF if not allocated } { $01 | Polar y (depth, 0 is closest (normal ship position), 116 is furthest away) } { $02 | Polar x (angle, 0 at bottom center, moving clockwise to 16 at the left side, 32 at the top, and 48 at the right side) } { $03 | Close to polar y ($01) } { $04 | Close to polar x ($02) } { $05 | Close to polar x ($02) } { $06 | Unknown } { $07 | Unknown } { $08 | Screen y } { $09 | Screen x } { $0A | Pattern } { $0B | Color } TABLE#
+D $7002 #TABLE(default, default) { =h Sprite type | =h Description } { $00 | Ship 1 } { $01 | Ship 2 } { $02 | Shot } { $0D | Explosion dot } TABLE#
 @ $7002 label=sprite_data
 B $7002,384,12
 b $7182 Number of allocated sprites
@@ -43,12 +44,18 @@ b $71F2 Frame counter
 B $71F2,1,1
 b $71F3 Score player 1
 @ $71F3 label=score_player_1
-B $71F3,5,5
+B $71F3,3,3
+b $71F6 Score for getting extra life player 1
+@ $71F6 label=score_extra_life_1
+B $71F6,2,2
 b $71F8 Byte at 71F8 (initially set to 6)
 B $71F8,1,1
 b $71F9 Score player 2
 @ $71F9 label=score_player_2
-B $71F9,5,5
+B $71F9,3,3
+b $71FC Score for getting extra life player 2
+@ $71FC label=score_extra_life_2
+B $71FC,2,2
 b $71FE Byte at 71FE (initially set to 6)
 B $71FE,1,1
 b $71FF Lives
@@ -185,10 +192,9 @@ D $72C5 Will be copied to #R$7000
 W $72C5,2,2
 b $72C7 Temp sprite data
 B $72C7,1,1
-b $72C8 Data block at 72C8
-B $72C8,1,1
-b $72C9 Data block at 72C9
-B $72C9,2,1
+b $72C8 Temp points to add
+@ $72C8 label=points_to_add
+B $72C8,3,3
 b $72CB Byte at 72CB
 B $72CB,1,1
 b $72CC Data block at 72CC
@@ -320,8 +326,8 @@ C $8091,3 ...
 C $8094,2 5 Lives
 C $8096,3 Set lives
 C $8099,1 Increment to 6
-C $809A,3 Set to 6
-C $809D,3 Set to 6
+C $809A,3 Set #R$71F6+2 to 6 (extra life at 60000)
+C $809D,3 Set #R$71FC+2 to 6 (extra life at 60000)
 C $80A0,2 Stage
 C $80A2,3 Set to 1
 C $80A8,3 Display stage message
@@ -1412,22 +1418,12 @@ D $9A75 Used by the routine at #R$9796.
 C $9A7D,3 Display background patterns
 c $9A86 Routine at 9A86
 D $9A86 Used by the routines at #R$870C, #R$9796, #R$9861 and #R$98B5.
-c $9AA7 Routine at 9AA7
-N $9AB3 This entry point is used by the routine at #R$800C.
-> $9ABB ; Routine at 9AB3
-> $9ABB ;
-> $9ABB ; Used by the routine at #R$800C.
-> $9ABB ;
-> $9ABB ; HL = HL + A
-> $9ABB @label=add_a_to_hl
-> $9ABB *$9AB3 PUSH AF       ;
-> $9ABB  $9AB4 ADD A,L       ;
-> $9ABB  $9AB5 LD L,A        ;
-> $9ABB  $9AB6 JR NC,$9AB9   ;
-> $9ABB *$9AB8 INC H         ;
-> $9ABB *$9AB9 POP AF        ;
-> $9ABB  $9ABA RET           ;
-c $9ABB Routine at 9ABB
+b $9AA7 Data block at 9AA7
+B $9AA7,12,8,4
+c $9AB3 Add A to HL (RST $08)
+D $9AB3 Used by the routine at #R$800C.
+@ $9AB3 label=add_a_to_hl
+c $9ABB Unused routine at 9ABB
 c $9AC3 VDP write byte (RST $10)
 D $9AC3 Used by the routine at #R$800F.
 R $9AC3 I:DE Write address I:A byte to write
@@ -1769,9 +1765,54 @@ C $A6E5,2 Ship character
 C $A6E7,1 Write VDP byte
 C $A6E8,1 Next VDP address
 C $A6E9,2 Loop
-c $A6EC Routine at A6EC
+c $A6EC Add points to score
 D $A6EC Used by the routines at #R$846B and #R$9978.
+R $A6EC I: HL Points to add (BCD)
+@ $A6EC label=add_score
+C $A6EE,3 Save points to add (this buffer has one more byte)
 C $A6F1,3 Current player
+C $A6F4,3 Score player 1
+C $A6F7,1 Is it player 1?
+C $A6F8,2 The skip ahead
+C $A6FA,3 Score player 2
+C $A6FD,1 Save pointer to score
+C $A6FE,3 Pointer to points to add
+C $A701,2 3 bytes in score
+C $A703,1 Get score byte
+C $A704,1 Add points
+C $A705,1 Adjust for BCD
+C $A706,1 Store score byte
+C $A707,1 Next score byte
+C $A708,1 Next points byte
+C $A709,2 Loop 3 times
+C $A70B,1 Restore pointer to score
+C $A70C,1 Advance to last byte of extra life score $71F5 or $71FB
+C $A70D,1 ...
+C $A70E,3 Point HL to byte at #R$71F8 or #R$71FE (initially set to 6)
+C $A711,1 ...
+C $A712,1 Save pointer
+C $A713,2 3 bytes to check
+C $A715,1 Get score byte
+C $A716,1 Compare with extra life byte
+C $A717,2 Exit loop if not equal
+C $A719,1 Previous score byte
+C $A71A,1 Previous extra life byte
+C $A71B,2 Loop 3 times
+C $A71D,1 All equal, set A = 0
+C $A71E,1 Restore pointer to #R$71F8 or #R$71FE
+C $A71F,2 Return if extra life byte was bigger
+C $A721,1 Next extra life at 80000 more points
+C $A722,2 ...
+C $A724,1 ...
+C $A725,1 ...
+C $A726,3 Get lives
+C $A729,2 Return if already 9
+C $A72B,2 ...
+C $A72D,1 Extra life
+C $A72E,3 Save it
+C $A731,3 Display lives
+C $A734,2 Play a sound
+C $A736,3 ...
 c $A73C Control ship
 D $A73C Control ship movement and fire using controllers Used by the routines at #R$8024, #R$832A, #R$8368, #R$846B and #R$A33B.
 @ $A73C label=control_ship
