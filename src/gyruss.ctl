@@ -22,7 +22,7 @@ B $71A3,31,8*3,7
 b $71C2 Data block at 71C2
 B $71C2,41,8*5,1
 b $71EB Status flags
-D $71EB #TABLE(default, default) { =h Bit | =h Purpose } { $00 | Unknown } { $01 | Unknown } { $02 | Exits main loop. Reset at stage init } { $03 | Unknown } { $04 | Set during stage init } { $05 | Unknown } { $06 | Set during main loop } { $07 | Two players } TABLE#
+D $71EB #TABLE(default, default) { =h Bit | =h Purpose } { $00 | Unknown } { $01 | Unknown } { $02 | Exits main loop. Reset at stage init } { $03 | Set during bonus stage } { $04 | Set during stage init } { $05 | Unknown } { $06 | Set during main loop } { $07 | Two players } TABLE#
 @ $71EB label=status_flags
 B $71EB,1,1
 b $71EC Stars move countdown
@@ -67,12 +67,14 @@ B $7200,1,1
 b $7201 Wave
 @ $7201 label=wave
 B $7201,1,1
-b $7202 Byte at 7202
+b $7202 Enemies destroyed not bonus stage
+@ $7202 label=enemies_hit
 B $7202,1,1
 b $7203 Index (0-7) into #R$8541 (blocks of 8 bytes)
 @ $7203 label=stage_data_index
 B $7203,1,1
-b $7204 Byte at 7204
+b $7204 Number of times died within stage
+@ $7204 label=stage_death_count
 B $7204,1,1
 b $7205 Completed stages
 D $7205 When stage reaches 24, this number is added here, and stage is reset to 0
@@ -98,16 +100,18 @@ b $7253 Number of active shots
 B $7253,1,1
 b $7254 Byte at 7254
 B $7254,1,1
-b $7255 Byte at 7255
+b $7255 Enemies destroyed in bonus stage
+@ $7255 label=bonus_enemies_hit
 B $7255,1,1
-b $7256 Flags relating to fire (perhaps others)
+b $7256 Other flags
 D $7256 #TABLE(default, default) { =h Bit | =h Purpose } { $00 | Fire pressed last time } { $01 | Double shot } { $02 | Unknown } { $03 | Unknown } { $04 | Unknown } { $05 | Unknown } { $06 | Unknown } { $07 | Unknown } TABLE#
-@ $7256 label=fire_flags
+@ $7256 label=other_flags
 B $7256,1,1
 w $7257 Countdown to screen off
 @ $7257 label=screensaver_countdown
 W $7257,2,2
-b $7259 Data block at 7259
+b $7259 Counter used when approaching planet
+@ $7259 label=counter_stage_completed
 B $7259,1,1
 b $725A Interrupt flag
 @ $725A label=interrupt_flag
@@ -394,7 +398,9 @@ C $8146,3 READ_REGISTER
 C $8149,3 Update sprite types $0F - $11
 C $814C,3 Explosion
 @ $814F label=label_at_814F
+C $815F,3 Display stars
 C $8168,3 Display center enemies
+C $816B,3 Upload sprites
 c $8170 Routine at 8170
 D $8170 Used by the routine at #R$8139.
 C $8177,3 Lives
@@ -595,24 +601,74 @@ C $8328,1 Write VDP byte
 c $832A Stage completed
 D $832A Used by the routine at #R$80E8.
 @ $832A label=stage_completed
+C $832A,2 Set counter for later
+C $832C,3 ...
+C $8332,2 Clear main loop flag
 C $8334,3 READ_REGISTER
+C $8337,2 If bit 3 is set
+C $8339,3 Then it was a bonus stage
 N $833C This entry point is used by the routines at #R$8450 and #R$846B.
+C $833C,2 90
+C $833F,1 Wait interrupt
+C $8340,3 Display stars
 C $8343,3 Control ship
 C $8349,3 Display center enemies
+C $834C,3 Upload sprites
+C $8350,2 Loop for 90 frames
+C $8352,3 Set variables
+C $8355,3 Clear rows 9 and 14
 C $8358,3 Stage
-c $8368 Routine at 8368
-D $8368 Used by the routine at #R$832A.
-N $836D This entry point is used by the routine at #R$832A.
+C $835B,2 Stage mod 4
+C $835D,2 If not planet reached (2)
+C $835F,2 Then skip ahead
+C $8361,2 Play tune 1
+C $8363,3 ...
+C $8368,2 If not 2 then play sound
+C $836A,3 ...
 C $8374,3 Stage
+C $8377,1 B = stage
+C $8378,2 Stage mod 4
+C $837A,2 If not planet reached (2)
+C $837C,2 Then skip displaying planet
+C $837E,1 Stage
+C $837F,2 Divide by 4
+C $8381,2 ...
+C $8383,1 + 1
+C $8384,3 Display planet A
 C $8387,3 Upload sprite data
+N $838A Fly towards center
+C $838A,1 Wait interrupt
+C $838B,3 Display stars
 C $838E,3 Control ship
-C $83BA,4 Set color
-C $83C2,1 Load sprite pattern
-C $83C7,1 Load sprite pattern
+C $8394,3 Decrement counter that start at 8
+C $8397,1 ...
+C $8398,2 If not zero yet then skip loop body
+C $839A,2 Reset counter
+C $839C,4 Pointer sprite 0
+C $83A0,3 Increment polar y
+C $83A3,3 Increment polar y for sprite 1
+C $83A6,3 Get polar y
+C $83A9,2 Is polar y 18?
+C $83AB,2 No, skip ahead
+C $83AE,3 Clear row 7 (planet name)
+C $83B2,2 Is polar y 43?
+C $83B4,2 Yes, break out of loop
+C $83B6,2 Is polar y 21?
+C $83B8,2 No, skip ahead
+C $83BA,4 Set color of sprite 0
+C $83BE,4 Set color of sprite 1
+C $83C2,1 Load sprite pattern sprite 0
+C $83C3,4 Sprite 1
+C $83C7,1 Load sprite pattern sprite 1
 C $83C8,3 Display ship background patterns
+C $83CB,3 Upload sprites
+C $83CE,2 Loop
 c $83D0 Routine at 83D0
-D $83D0 Used by the routine at #R$8368.
+D $83D0 Used by the routine at #R$832A.
 @ $83D0 label=next_stage
+C $83D0,3 Flags
+C $83D8,3 Clear wave
+C $83DB,3 Clear enemies destroyed
 C $83DE,3 Stage
 C $83E1,1 Next stage
 C $83E2,2 Did we reach 24?
@@ -622,30 +678,100 @@ C $83E9,1 And add 24
 C $83EA,1 Save again
 C $83EB,1 And set stage to zero
 C $83EC,3 Save stage
+C $83EF,3 Flags
+C $83F2,2 Reset bit 3
 C $83F4,3 Stage
+C $83F7,2 Mod 4
+C $83F9,2 Is it a bonus stage?
+C $83FB,2 No, skip ahead
+C $83FD,2 Yes, set flag
+C $83FF,1 Reset death count
+C $8400,3 ...
+C $8403,3 Undraw planet
+C $8406,3 Set 4 colors to white/black
+C $8409,3 ...
+C $840C,2 ...
 C $840E,3 FILL_VRAM
+C $8411,3 Address in pattern table
+C $8414,3 256 bytes = 32 patterns
+C $8417,1 Clear
 C $8418,3 FILL_VRAM
+C $841B,3 Save flags
+C $841E,1 ...
+C $841F,3 Init stage
+C $8422,1 Restore flags
+C $8423,3 ...
+C $8426,3 Jump to main loop
 c $8429 Routine at 8429
 D $8429 Used by the routine at #R$832A.
+@ $8429 label=display_bonus
+C $8429,3 Number of ships destroyed in bonus stage
+C $842C,2 Is it 40?
+C $842E,2 Then it's perfect
+C $8430,1 Save ships
+C $8431,3 Display BONUS
+C $8434,3 ...
+C $8437,3 ...
 C $843A,1 WRITE_VRAM
+C $843B,3 Display 100 X ..  ..00
+C $843E,3 ...
+C $8441,3 ...
 C $8444,1 WRITE_VRAM
-c $8450 Routine at 8450
+C $8445,1 Restore ships
+C $8446,1 Save again
+C $8447,2 48
+C $8449,2 Ships - 10
+C $844B,2 Jump if ships < 10, A is now -10 to -1
+C $844D,1 +1 for every 10 ships
+C $844E,2 Loop
+c $8450 Display hits
 D $8450 Used by the routine at #R$8429.
+@ $8450 label=display_hits
+C $8450,2 Add ASCII for zero + 10
+C $8452,3 Ones in number of ships
 C $8455,1 Write VDP byte
+C $8456,3 Hundreds in bonus
 C $8459,1 Write VDP byte
+C $845A,1 Tens
+C $845B,3 Tens in number of ships
 C $845E,1 Write VDP byte
+C $845F,3 Thousands in bonus
 C $8462,1 Write VDP byte
-c $846B Routine at 846B
+C $8463,1 Restore ships destroyed
+C $8464,1 If it zero?
+C $8465,1 ...
+C $8466,3 Then jump back to complete stage
+C $8469,2 Else add B x 100 bonus points
+c $846B Perfect bonus
 D $846B Used by the routine at #R$8429.
+@ $846B label=perfect_bonus
+C $846B,2 Play a tune
+C $846D,3 ...
+C $8470,3 Display CONGRATULATIONS
+C $8473,3 ...
+C $8476,3 ...
 C $8479,1 WRITE_VRAM
+C $847A,3 Display PERFECT 10000 PTS
+C $847D,3 ...
+C $8480,3 ...
 C $8483,1 WRITE_VRAM
+C $8484,2 100 times
 N $8486 This entry point is used by the routine at #R$8450.
+C $8486,3 100 points
+C $848B,3 Add 100 points to score
 C $848E,3 Current player
 C $8491,3 Display score
+C $8494,2 7 frames
+C $8496,1 Wait for interrupt
+C $8498,3 Display stars
 C $849B,3 Control ship
 C $84A1,3 Display center enemies
+C $84A4,3 Upload sprites
+C $84A8,2 Loop 7 times
+C $84AC,2 Loop number of ships times
+C $84AE,3 Jump back to complete stage
 c $84B1 Routine at 84B1
-D $84B1 Used by the routines at #R$8024, #R$8139, #R$832A, #R$8368, #R$846B, #R$A33B and #R$A3E1.
+D $84B1 Used by the routines at #R$8024, #R$8139, #R$832A, #R$832A, #R$846B, #R$A33B and #R$A3E1.
 @ $84B1 label=update_frame_upload_sprites
 C $84B1,3 Update frame counter
 C $84B4,1 ...
@@ -660,9 +786,10 @@ C $84C4,1 ...
 C $84C5,2 Flip bit 4
 C $84C7,1 And set color back
 C $84C8,3 Upload sprite data
-c $84CB Routine at 84CB
+c $84CB Upload patterns
 D $84CB Used by the routine at #R$90D6.
-R $84CB Upload patterns
+R $84CB I: HL Pointer to start index and count
+@ $84CB label=upload_patterns
 C $84CD,1 DE = start index
 C $84D0,2 BC = count
 C $84D3,2 IY = count
@@ -683,7 +810,14 @@ C $84E5,4 ...
 C $84E9,2 ...
 c $84ED Routine at 84ED
 D $84ED Used by the routines at #R$8170 and #R$832A.
+C $84ED,3 Name table row 9
+C $84F0,3 32 bytes
+C $84F3,1 Clear
 C $84F4,3 FILL_VRAM
+C $84F7,3 Name table row 14
+C $84FA,3 32 bytes
+C $84FD,1 Clear
+C $84FE,3 FILL_VRAM
 c $8501 Interrupt routine
 D $8501 Calls sound player and handles screen saver Used by the routine at #R$8021.
 @ $8501 label=interrupt_routine
@@ -741,7 +875,7 @@ t $85DD Message at 85DA
 @ $85DD label=game_over_msg
 T $85DD,9,4:n1:4
 c $85E6 Routine at 85E6
-D $85E6 Used by the routines at #R$8024, #R$8139, #R$832A, #R$8368, #R$846B and #R$A3E1.
+D $85E6 Used by the routines at #R$8024, #R$8139, #R$832A, #R$832A, #R$846B and #R$A3E1.
 N $8600 This entry point is used by the routine at #R$8A41.
 N $862F This entry point is used by the routines at #R$8654, #R$8673, #R$867D and #R$8815.
 c $8654 Routine at 8654
@@ -1123,8 +1257,8 @@ C $9168,3 Draw stars
 C $916E,1 Return is no carry
 C $9172,2 Loop until no carry
 c $9175 Display planet
-D $9175 Used by the routines at #R$8368, #R$83D0 and #R$90D6.
-R $9175 I:A Index of planet (1 based)
+D $9175 Used by the routines at #R$832A, #R$83D0 and #R$90D6.
+R $9175 I:A Index of planet (1 based, 0 = undraw)
 @ $9175 label=display_planet
 C $9175,1 a *= 2
 C $9176,2 If zero then undraw planet
@@ -1169,7 +1303,7 @@ D $91CC Used by the routine at #R$9175.
 R $91CC I:HL Address of planet name prefixed by length
 @ $91CC label=display_planet_name_and_sprites
 C $91CC,1 Save address
-C $91CD,3 clear_row_7
+C $91CD,3 clear_row_7 where the planet name is displayed
 C $91D0,2 32
 C $91D2,1 32 - length
 C $91D3,2 (32 - length) / 2
@@ -1208,7 +1342,7 @@ C $9207,2 Then skip
 C $9209,1 Else increment pattern
 C $920A,2 Loop to next sprite
 c $920D Clear name table row 7
-D $920D Used by the routines at #R$8368, #R$90D6, #R$91A1 and #R$91CC.
+D $920D Where the planet name is displayed Used by the routines at #R$832A, #R$90D6, #R$91A1 and #R$91CC.
 @ $920D label=clear_row_7
 C $9210,2 Space
 C $9212,3 Address in name table (row 7)
@@ -1388,10 +1522,31 @@ D $9924 Used by the routines at #R$9861 and #R$98B5.
 c $9934 Routine at 9934
 D $9934 Used by the routine at #R$9924.
 N $9936 This entry point is used by the routine at #R$9924.
-c $9978 Routine at 9978
+C $9951,3 Record hit
+C $9954,1 ...
+c $9978 Add score when enemy destroyed
 D $9978 Used by the routine at #R$9934.
+R $9978 I:IX ?
+R $9978 I:DE Points to add
+@ $9978 label=add_score_from_enemy
+C $9978,3 Flags
+C $997B,2 If bit 5 or 6 set?
+C $997D,2 Then just add score
+C $997F,3 Flags
+C $9982,3 Enemies destroyed
+C $9985,1 +1
+C $9986,2 Check for bonus stage
+C $9988,2 Skip ahead if bonus stage
+C $998A,3 Save if not bonus stage
+C $998D,1 x2
+C $998E,3 Score table
 C $9991,1 Add A to HL
+C $9992,1 Get points (hundreds)
+C $9994,1 Get ?
+C $9998,1 100 more
 N $9999 This entry point is used by the routines at #R$9934, #R$99A0, #R$99D3 and #R$9A08.
+C $9999,1 HL = points
+C $999A,3 Add score
 c $99A0 Routine at 99A0
 D $99A0 Used by the routine at #R$98B5.
 c $99B1 Routine at 99B1
@@ -1419,7 +1574,7 @@ C $9A7D,3 Display background patterns
 c $9A86 Routine at 9A86
 D $9A86 Used by the routines at #R$870C, #R$9796, #R$9861 and #R$98B5.
 b $9AA7 Data block at 9AA7
-B $9AA7,12,8,4
+B $9AA7,12,2
 c $9AB3 Add A to HL (RST $08)
 D $9AB3 Used by the routine at #R$800C.
 @ $9AB3 label=add_a_to_hl
@@ -1464,7 +1619,7 @@ D $9B70 Used by the routine at #R$9B59.
 N $9B82 This entry point is used by the routine at #R$9B59.
 c $9B87 Routine at 9B87
 D $9B87 Used by the routines at #R$8139, #R$832A and #R$9C1C.
-@ $9B87 label=died_set_variables
+@ $9B87 label=set_variables_after_stage
 c $9B99 Sound player?
 D $9B99 Used by the routine at #R$8522.
 @ $9B99 label=sound_player
@@ -1505,7 +1660,7 @@ R $9CA8 I:C Index of sound (1-8)
 @ $9CA8 label=play_sound
 N $9CB5 This entry point is used by the routines at #R$9B54 and #R$9E01.
 C $9CC5,3 Table address
-b $9CE7 Data block at 9CE7
+b $9CE7 Sound data
 @ $9CE7 label=table_at_9CE7
 B $9CE7,86,8*10,6
 c $9D3D Routine at 9D3D
@@ -1531,12 +1686,14 @@ D $9E91 Used by the routines at #R$82BF, #R$832A and #R$846B. I:A Index of tune
 @ $9E91 label=call_play_tune
 C $9E98,3 Play tune
 c $9EA3 Routine at 9EA3
-D $9EA3 Used by the routines at #R$8139, #R$8368, #R$8C52, #R$8E9D, #R$9934, #R$99A0, #R$99B1, #R$99D3, #R$A33B and #R$A6EC.
+D $9EA3 Used by the routines at #R$8139, #R$832A, #R$8C52, #R$8E9D, #R$9934, #R$99A0, #R$99B1, #R$99D3, #R$A33B and #R$A6EC.
 R $9EA3 I:A Index of sound
 @ $9EA3 label=call_play_sound
 C $9EAB,3 Play sound
-b $9EB6 Data block at 9EB6
-B $9EB6,1029,8*128,5
+b $9EB6 Sound data
+B $9EB6,52,8*6,4
+b $9EEA Sound data
+B $9EEA,977,8*122,1
 c $A2BB Routine at A2BB
 D $A2BB Used by the routine at #R$9B99.
 C $A2BB,2 Mute channel 1
@@ -1814,7 +1971,7 @@ C $A731,3 Display lives
 C $A734,2 Play a sound
 C $A736,3 ...
 c $A73C Control ship
-D $A73C Control ship movement and fire using controllers Used by the routines at #R$8024, #R$832A, #R$8368, #R$846B and #R$A33B.
+D $A73C Control ship movement and fire using controllers Used by the routines at #R$8024, #R$832A, #R$832A, #R$846B and #R$A33B.
 @ $A73C label=control_ship
 C $A73C,3 Get frame
 C $A73F,2 Test bit 0
@@ -1916,7 +2073,7 @@ D $A805 Used by the routine at #R$A73C.
 C $A805,2 Clear bit for fire pressed
 C $A807,1 Return
 c $A808 Routine at A808
-D $A808 Used by the routines at #R$8368, #R$A33B, #R$A3E1 and #R$A73C.
+D $A808 Used by the routines at #R$832A, #R$A33B, #R$A3E1 and #R$A73C.
 @ $A808 label=display_ship_background_patterns
 C $A80F,4 Buffer for generated structure
 C $A817,4 Pattern address LSB
@@ -2046,7 +2203,7 @@ C $ACEF,4 Set as unallocated
 C $ACF4,2 Advance to next sprite
 C $ACF6,2 Loop for 32 sprites
 c $ACF9 Upload sprite data to VDP
-D $ACF9 Used by the routines at #R$8368, #R$84B1, #R$90D6, #R$A33B and #R$A3E1.
+D $ACF9 Used by the routines at #R$832A, #R$84B1, #R$90D6, #R$A33B and #R$A3E1.
 @ $ACF9 label=upload_sprite_data
 C $ACF9,4 VDP address of sprite allocation table?
 C $ACFD,3 Number of allocated sprites
@@ -2297,7 +2454,7 @@ b $AFDD Table at AFDD
 @ $AFDD label=table_at_AFDD
 B $AFDD,34,8*4,2
 c $AFFF Display stars
-D $AFFF Used by the routines at #R$8024, #R$8139, #R$8170, #R$832A, #R$8368, #R$846B, #R$90D6, #R$A33B and #R$A3E1.
+D $AFFF Used by the routines at #R$8024, #R$8139, #R$8170, #R$832A, #R$832A, #R$846B, #R$90D6, #R$A33B and #R$A3E1.
 @ $AFFF label=display_stars
 C $AFFF,3 Counter from 7 to 0
 C $B002,1 Count down

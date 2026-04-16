@@ -20,7 +20,7 @@ Prev: <a href="33550.html">830E</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#33578">Map</a></td>
 <td class="next">
-Next: <a href="33640.html">8368</a>
+Next: <a href="33744.html">83D0</a>
 </td>
 </tr>
 </table>
@@ -39,13 +39,13 @@ Used by the routine at <a href="33000.html">main_loop</a>.
 <td class="asm-label">stage_completed</td>
 <td class="address-2"><span id="33578"></span>832A</td>
 <td class="instruction">LD A,$08</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set counter for later</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33580"></span>832C</td>
-<td class="instruction">LD (<a href="29273.html">L7259</a>),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD (<a href="29273.html">counter_stage_completed</a>),A</td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -57,7 +57,7 @@ Used by the routine at <a href="33000.html">main_loop</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="33586"></span>8332</td>
 <td class="instruction">RES 6,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Clear main loop flag</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -69,20 +69,20 @@ Used by the routine at <a href="33000.html">main_loop</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="33591"></span>8337</td>
 <td class="instruction">BIT 3,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If bit 3 is set</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33593"></span>8339</td>
-<td class="instruction">JP NZ,<a href="33833.html">L8429</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JP NZ,<a href="33833.html">display_bonus</a></td>
+<td class="comment-1" rowspan="1">Then it was a bonus stage</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="33596"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routines at <a href="33872.html">L8450</a> and <a href="33899.html">L846B</a>.
+This entry point is used by the routines at <a href="33872.html">display_hits</a> and <a href="33899.html">perfect_bonus</a>.
 </div>
 </div>
 </td>
@@ -91,7 +91,7 @@ This entry point is used by the routines at <a href="33872.html">L8450</a> and <
 <td class="asm-label">stage_completed_0</td>
 <td class="address-2"><span id="33596"></span>833C</td>
 <td class="instruction">LD B,$5A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">90</td>
 </tr>
 <tr>
 <td class="asm-label">stage_completed_1</td>
@@ -103,13 +103,13 @@ This entry point is used by the routines at <a href="33872.html">L8450</a> and <
 <td class="asm-label"></td>
 <td class="address-1"><span id="33599"></span>833F</td>
 <td class="instruction">HALT</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Wait interrupt</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33600"></span>8340</td>
 <td class="instruction">CALL <a href="45055.html">display_stars</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Display stars</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -133,7 +133,7 @@ This entry point is used by the routines at <a href="33872.html">L8450</a> and <
 <td class="asm-label"></td>
 <td class="address-1"><span id="33612"></span>834C</td>
 <td class="instruction">CALL <a href="33969.html">update_frame_upload_sprites</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Upload sprites</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -145,19 +145,19 @@ This entry point is used by the routines at <a href="33872.html">L8450</a> and <
 <td class="asm-label"></td>
 <td class="address-1"><span id="33616"></span>8350</td>
 <td class="instruction">DJNZ <a href="33578.html#33598">stage_completed_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Loop for 90 frames</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33618"></span>8352</td>
-<td class="instruction">CALL <a href="39815.html">died_set_variables</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL <a href="39815.html">set_variables_after_stage</a></td>
+<td class="comment-1" rowspan="1">Set variables</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33621"></span>8355</td>
 <td class="instruction">CALL <a href="34029.html">L84ED</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Clear rows 9 and 14</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -169,37 +169,317 @@ This entry point is used by the routines at <a href="33872.html">L8450</a> and <
 <td class="asm-label"></td>
 <td class="address-1"><span id="33627"></span>835B</td>
 <td class="instruction">AND $03</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stage mod 4</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33629"></span>835D</td>
 <td class="instruction">CP $02</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If not planet reached (2)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33631"></span>835F</td>
-<td class="instruction">JR NZ,<a href="33640.html">L8368</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="33578.html#33640">stage_completed_2</a></td>
+<td class="comment-1" rowspan="1">Then skip ahead</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33633"></span>8361</td>
 <td class="instruction">LD A,$01</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Play tune 1</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33635"></span>8363</td>
 <td class="instruction">CALL <a href="40593.html">call_play_tune</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33638"></span>8366</td>
-<td class="instruction">JR <a href="33640.html#33645">L8368_0</a></td>
+<td class="instruction">JR <a href="33578.html#33645">stage_completed_3</a></td>
 <td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label">stage_completed_2</td>
+<td class="address-2"><span id="33640"></span>8368</td>
+<td class="instruction">LD A,$05</td>
+<td class="comment-1" rowspan="1">If not 2 then play sound</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33642"></span>836A</td>
+<td class="instruction">CALL <a href="40611.html">call_play_sound</a></td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label">stage_completed_3</td>
+<td class="address-2"><span id="33645"></span>836D</td>
+<td class="instruction">LD HL,<a href="29163.html">status_flags</a></td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33648"></span>8370</td>
+<td class="instruction">SET 0,(HL)</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33650"></span>8372</td>
+<td class="instruction">SET 4,(HL)</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33652"></span>8374</td>
+<td class="instruction">LD A,(<a href="29184.html">stage</a>)</td>
+<td class="comment-1" rowspan="1">Stage</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33655"></span>8377</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">B = stage</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33656"></span>8378</td>
+<td class="instruction">AND $03</td>
+<td class="comment-1" rowspan="1">Stage mod 4</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33658"></span>837A</td>
+<td class="instruction">CP $02</td>
+<td class="comment-1" rowspan="1">If not planet reached (2)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33660"></span>837C</td>
+<td class="instruction">JR NZ,<a href="33578.html#33674">stage_completed_4</a></td>
+<td class="comment-1" rowspan="1">Then skip displaying planet</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33662"></span>837E</td>
+<td class="instruction">LD A,B</td>
+<td class="comment-1" rowspan="1">Stage</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33663"></span>837F</td>
+<td class="instruction">SRL A</td>
+<td class="comment-1" rowspan="1">Divide by 4</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33665"></span>8381</td>
+<td class="instruction">SRL A</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33667"></span>8383</td>
+<td class="instruction">INC A</td>
+<td class="comment-1" rowspan="1">+ 1</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33668"></span>8384</td>
+<td class="instruction">CALL <a href="37237.html">display_planet</a></td>
+<td class="comment-1" rowspan="1">Display planet A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33671"></span>8387</td>
+<td class="instruction">CALL <a href="44281.html">upload_sprite_data</a></td>
+<td class="comment-1" rowspan="1">Upload sprite data</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="33674"></span>
+<div class="comments">
+<div class="paragraph">
+Fly towards center
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">stage_completed_4</td>
+<td class="address-2"><span id="33674"></span>838A</td>
+<td class="instruction">HALT</td>
+<td class="comment-1" rowspan="1">Wait interrupt</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33675"></span>838B</td>
+<td class="instruction">CALL <a href="45055.html">display_stars</a></td>
+<td class="comment-1" rowspan="1">Display stars</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33678"></span>838E</td>
+<td class="instruction">CALL <a href="42812.html">control_ship</a></td>
+<td class="comment-1" rowspan="1">Control ship</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33681"></span>8391</td>
+<td class="instruction">CALL <a href="34278.html">L85E6</a></td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33684"></span>8394</td>
+<td class="instruction">LD HL,<a href="29273.html">counter_stage_completed</a></td>
+<td class="comment-1" rowspan="1">Decrement counter that start at 8</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33687"></span>8397</td>
+<td class="instruction">DEC (HL)</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33688"></span>8398</td>
+<td class="instruction">JR NZ,<a href="33578.html#33739">stage_completed_7</a></td>
+<td class="comment-1" rowspan="1">If not zero yet then skip loop body</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33690"></span>839A</td>
+<td class="instruction">LD (HL),$08</td>
+<td class="comment-1" rowspan="1">Reset counter</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33692"></span>839C</td>
+<td class="instruction">LD IX,<a href="28674.html">sprite_data</a></td>
+<td class="comment-1" rowspan="1">Pointer sprite 0</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33696"></span>83A0</td>
+<td class="instruction">INC (IX+$01)</td>
+<td class="comment-1" rowspan="1">Increment polar y</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33699"></span>83A3</td>
+<td class="instruction">INC (IX+$0D)</td>
+<td class="comment-1" rowspan="1">Increment polar y for sprite 1</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33702"></span>83A6</td>
+<td class="instruction">LD A,(IX+$01)</td>
+<td class="comment-1" rowspan="1">Get polar y</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33705"></span>83A9</td>
+<td class="instruction">CP $12</td>
+<td class="comment-1" rowspan="1">Is polar y 18?</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33707"></span>83AB</td>
+<td class="instruction">JR NZ,<a href="33578.html#33714">stage_completed_5</a></td>
+<td class="comment-1" rowspan="1">No, skip ahead</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33709"></span>83AD</td>
+<td class="instruction">PUSH AF</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33710"></span>83AE</td>
+<td class="instruction">CALL <a href="37389.html">clear_row_7</a></td>
+<td class="comment-1" rowspan="1">Clear row 7 (planet name)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33713"></span>83B1</td>
+<td class="instruction">POP AF</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label">stage_completed_5</td>
+<td class="address-2"><span id="33714"></span>83B2</td>
+<td class="instruction">CP $2B</td>
+<td class="comment-1" rowspan="1">Is polar y 43?</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33716"></span>83B4</td>
+<td class="instruction">JR Z,<a href="33744.html">next_stage</a></td>
+<td class="comment-1" rowspan="1">Yes, break out of loop</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33718"></span>83B6</td>
+<td class="instruction">CP $15</td>
+<td class="comment-1" rowspan="1">Is polar y 21?</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33720"></span>83B8</td>
+<td class="instruction">JR NZ,<a href="33578.html#33730">stage_completed_6</a></td>
+<td class="comment-1" rowspan="1">No, skip ahead</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33722"></span>83BA</td>
+<td class="instruction">LD (IX+$0B),$0F</td>
+<td class="comment-1" rowspan="1">Set color of sprite 0</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33726"></span>83BE</td>
+<td class="instruction">LD (IX+$17),$09</td>
+<td class="comment-1" rowspan="1">Set color of sprite 1</td>
+</tr>
+<tr>
+<td class="asm-label">stage_completed_6</td>
+<td class="address-2"><span id="33730"></span>83C2</td>
+<td class="instruction">RST $30</td>
+<td class="comment-1" rowspan="1">Load sprite pattern sprite 0</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33731"></span>83C3</td>
+<td class="instruction">LD IX,<a href="28674.html#28686">$700E</a></td>
+<td class="comment-1" rowspan="1">Sprite 1</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33735"></span>83C7</td>
+<td class="instruction">RST $30</td>
+<td class="comment-1" rowspan="1">Load sprite pattern sprite 1</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33736"></span>83C8</td>
+<td class="instruction">CALL <a href="43016.html">display_ship_background_patterns</a></td>
+<td class="comment-1" rowspan="1">Display ship background patterns</td>
+</tr>
+<tr>
+<td class="asm-label">stage_completed_7</td>
+<td class="address-2"><span id="33739"></span>83CB</td>
+<td class="instruction">CALL <a href="33969.html">update_frame_upload_sprites</a></td>
+<td class="comment-1" rowspan="1">Upload sprites</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33742"></span>83CE</td>
+<td class="instruction">JR <a href="33578.html#33674">stage_completed_4</a></td>
+<td class="comment-1" rowspan="1">Loop</td>
 </tr>
 </table>
 <table class="asm-navigation">
@@ -209,7 +489,7 @@ Prev: <a href="33550.html">830E</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#33578">Map</a></td>
 <td class="next">
-Next: <a href="33640.html">8368</a>
+Next: <a href="33744.html">83D0</a>
 </td>
 </tr>
 </table>

@@ -24,46 +24,46 @@ Next: <a href="33969.html">84B1</a>
 </td>
 </tr>
 </table>
-<div class="description">846B: Routine at 846B</div>
+<div class="description">846B: Perfect bonus</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="33833.html">L8429</a>.
+Used by the routine at <a href="33833.html">display_bonus</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L846B</td>
+<td class="asm-label">perfect_bonus</td>
 <td class="address-2"><span id="33899"></span>846B</td>
 <td class="instruction">LD A,$02</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Play a tune</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33901"></span>846D</td>
 <td class="instruction">CALL <a href="40593.html">call_play_tune</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33904"></span>8470</td>
 <td class="instruction">LD HL,<a href="34233.html">congratulations_msg</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Display CONGRATULATIONS</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33907"></span>8473</td>
 <td class="instruction">LD DE,$1928</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33910"></span>8476</td>
 <td class="instruction">LD BC,$0010</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -75,19 +75,19 @@ Used by the routine at <a href="33833.html">L8429</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="33914"></span>847A</td>
 <td class="instruction">LD HL,<a href="34249.html">perfect_msg</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Display PERFECT 10000 PTS</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33917"></span>847D</td>
 <td class="instruction">LD DE,$19C6</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33920"></span>8480</td>
 <td class="instruction">LD BC,$0014</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -99,26 +99,26 @@ Used by the routine at <a href="33833.html">L8429</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="33924"></span>8484</td>
 <td class="instruction">LD B,$64</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">100 times</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="33926"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="33872.html">L8450</a>.
+This entry point is used by the routine at <a href="33872.html">display_hits</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L846B_0</td>
+<td class="asm-label">perfect_bonus_0</td>
 <td class="address-2"><span id="33926"></span>8486</td>
 <td class="instruction">LD HL,$0100</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">100 points</td>
 </tr>
 <tr>
-<td class="asm-label">L846B_1</td>
+<td class="asm-label">perfect_bonus_1</td>
 <td class="address-2"><span id="33929"></span>8489</td>
 <td class="instruction">PUSH HL</td>
 <td class="comment-1" rowspan="1"></td>
@@ -133,7 +133,7 @@ This entry point is used by the routine at <a href="33872.html">L8450</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="33931"></span>848B</td>
 <td class="instruction">CALL <a href="42732.html">add_score</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add 100 points to score</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -151,13 +151,13 @@ This entry point is used by the routine at <a href="33872.html">L8450</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="33940"></span>8494</td>
 <td class="instruction">LD B,$07</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">7 frames</td>
 </tr>
 <tr>
-<td class="asm-label">L846B_2</td>
+<td class="asm-label">perfect_bonus_2</td>
 <td class="address-2"><span id="33942"></span>8496</td>
 <td class="instruction">HALT</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Wait for interrupt</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -169,7 +169,7 @@ This entry point is used by the routine at <a href="33872.html">L8450</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="33944"></span>8498</td>
 <td class="instruction">CALL <a href="45055.html">display_stars</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Display stars</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -193,7 +193,7 @@ This entry point is used by the routine at <a href="33872.html">L8450</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="33956"></span>84A4</td>
 <td class="instruction">CALL <a href="33969.html">update_frame_upload_sprites</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Upload sprites</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -204,8 +204,8 @@ This entry point is used by the routine at <a href="33872.html">L8450</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33960"></span>84A8</td>
-<td class="instruction">DJNZ <a href="33899.html#33942">L846B_2</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">DJNZ <a href="33899.html#33942">perfect_bonus_2</a></td>
+<td class="comment-1" rowspan="1">Loop 7 times</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -222,14 +222,14 @@ This entry point is used by the routine at <a href="33872.html">L8450</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33964"></span>84AC</td>
-<td class="instruction">DJNZ <a href="33899.html#33929">L846B_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">DJNZ <a href="33899.html#33929">perfect_bonus_1</a></td>
+<td class="comment-1" rowspan="1">Loop number of ships times</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33966"></span>84AE</td>
 <td class="instruction">JP <a href="33578.html#33596">stage_completed_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Jump back to complete stage</td>
 </tr>
 </table>
 <table class="asm-navigation">

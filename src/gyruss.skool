@@ -101,7 +101,7 @@ b$71C2 DEFB $00,$00,$00,$00,$00,$00,$00,$00
 ; { $00 | Unknown }
 ; { $01 | Unknown }
 ; { $02 | Exits main loop. Reset at stage init }
-; { $03 | Unknown }
+; { $03 | Set during bonus stage }
 ; { $04 | Set during stage init }
 ; { $05 | Unknown }
 ; { $06 | Set during main loop }
@@ -168,14 +168,16 @@ b$7200 DEFB $00
 @label=wave
 b$7201 DEFB $00
 
-; Byte at 7202
+; Enemies destroyed not bonus stage
+@label=enemies_hit
 b$7202 DEFB $00
 
 ; Index (0-7) into #R$8541 (blocks of 8 bytes)
 @label=stage_data_index
 b$7203 DEFB $00
 
-; Byte at 7204
+; Number of times died within stage
+@label=stage_death_count
 b$7204 DEFB $00
 
 ; Completed stages
@@ -221,10 +223,11 @@ b$7253 DEFB $00
 ; Byte at 7254
 b$7254 DEFB $00
 
-; Byte at 7255
+; Enemies destroyed in bonus stage
+@label=bonus_enemies_hit
 b$7255 DEFB $00
 
-; Flags relating to fire (perhaps others)
+; Other flags
 ;
 ; #TABLE(default, default)
 ; { =h Bit | =h Purpose }
@@ -237,14 +240,15 @@ b$7255 DEFB $00
 ; { $06 | Unknown }
 ; { $07 | Unknown }
 ; TABLE#
-@label=fire_flags
+@label=other_flags
 b$7256 DEFB $00
 
 ; Countdown to screen off
 @label=screensaver_countdown
 w$7257 DEFW $0000
 
-; Data block at 7259
+; Counter used when approaching planet
+@label=counter_stage_completed
 b$7259 DEFB $00
 
 ; Interrupt flag
@@ -688,11 +692,11 @@ c$8139 CALL $9B87    ;
  $815B CP (HL)       ;
  $815C JR Z,$8170    ;
 *$815E HALT          ;
- $815F CALL $AFFF    ;
+ $815F CALL $AFFF    ; Display stars
  $8162 CALL $85E6    ;
  $8165 CALL $8E2D    ;
  $8168 CALL $AB72    ; Display center enemies
- $816B CALL $84B1    ;
+ $816B CALL $84B1    ; Upload sprites
  $816E JR $814F      ;
 
 ; Routine at 8170
@@ -941,94 +945,90 @@ c$830E LD A,($71EB)  ; Status
 ;
 ; Used by the routine at #R$80E8.
 @label=stage_completed
-c$832A LD A,$08      ;
- $832C LD ($7259),A  ;
- $832F LD HL,$71EB   ;
- $8332 RES 6,(HL)    ;
- $8334 CALL $1FDC    ; READ_REGISTER
- $8337 BIT 3,(HL)    ;
- $8339 JP NZ,$8429   ;
+c$832A LD A,$08        ; Set counter for later
+ $832C LD ($7259),A    ; ...
+ $832F LD HL,$71EB     ;
+ $8332 RES 6,(HL)      ; Clear main loop flag
+ $8334 CALL $1FDC      ; READ_REGISTER
+ $8337 BIT 3,(HL)      ; If bit 3 is set
+ $8339 JP NZ,$8429     ; Then it was a bonus stage
 ; This entry point is used by the routines at #R$8450 and #R$846B.
-*$833C LD B,$5A      ;
-*$833E PUSH BC       ;
- $833F HALT          ;
- $8340 CALL $AFFF    ;
- $8343 CALL $A73C    ; Control ship
- $8346 CALL $85E6    ;
- $8349 CALL $AB72    ; Display center enemies
- $834C CALL $84B1    ;
- $834F POP BC        ;
- $8350 DJNZ $833E    ;
- $8352 CALL $9B87    ;
- $8355 CALL $84ED    ;
- $8358 LD A,($7200)  ; Stage
- $835B AND $03       ;
- $835D CP $02        ;
- $835F JR NZ,$8368   ;
- $8361 LD A,$01      ;
- $8363 CALL $9E91    ;
- $8366 JR $836D      ;
-
-; Routine at 8368
-;
-; Used by the routine at #R$832A.
-c$8368 LD A,$05        ;
- $836A CALL $9EA3      ;
-; This entry point is used by the routine at #R$832A.
+*$833C LD B,$5A        ; 90
+*$833E PUSH BC         ;
+ $833F HALT            ; Wait interrupt
+ $8340 CALL $AFFF      ; Display stars
+ $8343 CALL $A73C      ; Control ship
+ $8346 CALL $85E6      ;
+ $8349 CALL $AB72      ; Display center enemies
+ $834C CALL $84B1      ; Upload sprites
+ $834F POP BC          ;
+ $8350 DJNZ $833E      ; Loop for 90 frames
+ $8352 CALL $9B87      ; Set variables
+ $8355 CALL $84ED      ; Clear rows 9 and 14
+ $8358 LD A,($7200)    ; Stage
+ $835B AND $03         ; Stage mod 4
+ $835D CP $02          ; If not planet reached (2)
+ $835F JR NZ,$8368     ; Then skip ahead
+ $8361 LD A,$01        ; Play tune 1
+ $8363 CALL $9E91      ; ...
+ $8366 JR $836D        ;
+*$8368 LD A,$05        ; If not 2 then play sound
+ $836A CALL $9EA3      ; ...
 *$836D LD HL,$71EB     ;
  $8370 SET 0,(HL)      ;
  $8372 SET 4,(HL)      ;
  $8374 LD A,($7200)    ; Stage
- $8377 LD B,A          ;
- $8378 AND $03         ;
- $837A CP $02          ;
- $837C JR NZ,$838A     ;
- $837E LD A,B          ;
- $837F SRL A           ;
- $8381 SRL A           ;
- $8383 INC A           ;
- $8384 CALL $9175      ;
+ $8377 LD B,A          ; B = stage
+ $8378 AND $03         ; Stage mod 4
+ $837A CP $02          ; If not planet reached (2)
+ $837C JR NZ,$838A     ; Then skip displaying planet
+ $837E LD A,B          ; Stage
+ $837F SRL A           ; Divide by 4
+ $8381 SRL A           ; ...
+ $8383 INC A           ; + 1
+ $8384 CALL $9175      ; Display planet A
  $8387 CALL $ACF9      ; Upload sprite data
-*$838A HALT            ;
- $838B CALL $AFFF      ;
+; Fly towards center
+*$838A HALT            ; Wait interrupt
+ $838B CALL $AFFF      ; Display stars
  $838E CALL $A73C      ; Control ship
  $8391 CALL $85E6      ;
- $8394 LD HL,$7259     ;
- $8397 DEC (HL)        ;
- $8398 JR NZ,$83CB     ;
- $839A LD (HL),$08     ;
- $839C LD IX,$7002     ;
- $83A0 INC (IX+$01)    ;
- $83A3 INC (IX+$0D)    ;
- $83A6 LD A,(IX+$01)   ;
- $83A9 CP $12          ;
- $83AB JR NZ,$83B2     ;
+ $8394 LD HL,$7259     ; Decrement counter that start at 8
+ $8397 DEC (HL)        ; ...
+ $8398 JR NZ,$83CB     ; If not zero yet then skip loop body
+ $839A LD (HL),$08     ; Reset counter
+ $839C LD IX,$7002     ; Pointer sprite 0
+ $83A0 INC (IX+$01)    ; Increment polar y
+ $83A3 INC (IX+$0D)    ; Increment polar y for sprite 1
+ $83A6 LD A,(IX+$01)   ; Get polar y
+ $83A9 CP $12          ; Is polar y 18?
+ $83AB JR NZ,$83B2     ; No, skip ahead
  $83AD PUSH AF         ;
- $83AE CALL $920D      ;
+ $83AE CALL $920D      ; Clear row 7 (planet name)
  $83B1 POP AF          ;
-*$83B2 CP $2B          ;
- $83B4 JR Z,$83D0      ;
- $83B6 CP $15          ;
- $83B8 JR NZ,$83C2     ;
- $83BA LD (IX+$0B),$0F ; Set color
- $83BE LD (IX+$17),$09 ;
-*$83C2 RST $30         ; Load sprite pattern
- $83C3 LD IX,$700E     ;
- $83C7 RST $30         ; Load sprite pattern
+*$83B2 CP $2B          ; Is polar y 43?
+ $83B4 JR Z,$83D0      ; Yes, break out of loop
+ $83B6 CP $15          ; Is polar y 21?
+ $83B8 JR NZ,$83C2     ; No, skip ahead
+ $83BA LD (IX+$0B),$0F ; Set color of sprite 0
+ $83BE LD (IX+$17),$09 ; Set color of sprite 1
+*$83C2 RST $30         ; Load sprite pattern sprite 0
+ $83C3 LD IX,$700E     ; Sprite 1
+ $83C7 RST $30         ; Load sprite pattern sprite 1
  $83C8 CALL $A808      ; Display ship background patterns
-*$83CB CALL $84B1      ;
- $83CE JR $838A        ;
+*$83CB CALL $84B1      ; Upload sprites
+ $83CE JR $838A        ; Loop
 
 ; Routine at 83D0
 ;
-; Used by the routine at #R$8368.
+; Used by the routine at #R$832A.
 @label=next_stage
-c$83D0 LD HL,$71EB   ;
+c$83D0 LD HL,$71EB   ; Flags
  $83D3 RES 0,(HL)    ;
  $83D5 RES 1,(HL)    ;
  $83D7 XOR A         ;
- $83D8 LD ($7201),A  ;
- $83DB LD ($7202),A  ;
+ $83D8 LD ($7201),A  ; Clear wave
+ $83DB LD ($7202),A  ; Clear enemies destroyed
  $83DE LD A,($7200)  ; Stage
  $83E1 INC A         ; Next stage
  $83E2 CP $18        ; Did we reach 24?
@@ -1038,112 +1038,115 @@ c$83D0 LD HL,$71EB   ;
  $83EA LD (HL),A     ; Save again
  $83EB XOR A         ; And set stage to zero
 *$83EC LD ($7200),A  ; Save stage
- $83EF LD HL,$71EB   ;
- $83F2 RES 3,(HL)    ;
+ $83EF LD HL,$71EB   ; Flags
+ $83F2 RES 3,(HL)    ; Reset bit 3
  $83F4 LD A,($7200)  ; Stage
- $83F7 AND $03       ;
- $83F9 CP $03        ;
- $83FB JR NZ,$83FF   ;
- $83FD SET 3,(HL)    ;
-*$83FF XOR A         ;
- $8400 LD ($7204),A  ;
- $8403 CALL $9175    ;
- $8406 LD HL,$201C   ;
- $8409 LD DE,$0004   ;
- $840C LD A,$F1      ;
+ $83F7 AND $03       ; Mod 4
+ $83F9 CP $03        ; Is it a bonus stage?
+ $83FB JR NZ,$83FF   ; No, skip ahead
+ $83FD SET 3,(HL)    ; Yes, set flag
+*$83FF XOR A         ; Reset death count
+ $8400 LD ($7204),A  ; ...
+ $8403 CALL $9175    ; Undraw planet
+ $8406 LD HL,$201C   ; Set 4 colors to white/black
+ $8409 LD DE,$0004   ; ...
+ $840C LD A,$F1      ; ...
  $840E CALL $1F82    ; FILL_VRAM
- $8411 LD HL,$0700   ;
- $8414 LD DE,$0100   ;
- $8417 XOR A         ;
+ $8411 LD HL,$0700   ; Address in pattern table
+ $8414 LD DE,$0100   ; 256 bytes = 32 patterns
+ $8417 XOR A         ; Clear
  $8418 CALL $1F82    ; FILL_VRAM
- $841B LD A,($7256)  ;
- $841E PUSH AF       ;
- $841F CALL $8212    ;
- $8422 POP AF        ;
- $8423 LD ($7256),A  ;
- $8426 JP $80E8      ;
+ $841B LD A,($7256)  ; Save flags
+ $841E PUSH AF       ; ...
+ $841F CALL $8212    ; Init stage
+ $8422 POP AF        ; Restore flags
+ $8423 LD ($7256),A  ; ...
+ $8426 JP $80E8      ; Jump to main loop
 
 ; Routine at 8429
 ;
 ; Used by the routine at #R$832A.
-c$8429 LD A,($7255)  ;
- $842C CP $28        ;
- $842E JR Z,$846B    ;
- $8430 PUSH AF       ;
- $8431 LD HL,$85A6   ;
- $8434 LD DE,$192D   ;
- $8437 LD BC,$0005   ;
+@label=display_bonus
+c$8429 LD A,($7255)  ; Number of ships destroyed in bonus stage
+ $842C CP $28        ; Is it 40?
+ $842E JR Z,$846B    ; Then it's perfect
+ $8430 PUSH AF       ; Save ships
+ $8431 LD HL,$85A6   ; Display BONUS
+ $8434 LD DE,$192D   ; ...
+ $8437 LD BC,$0005   ; ...
  $843A RST $38       ; WRITE_VRAM
- $843B LD HL,$85AB   ;
- $843E LD DE,$19C9   ;
- $8441 LD BC,$000E   ;
+ $843B LD HL,$85AB   ; Display 100 X ..  ..00
+ $843E LD DE,$19C9   ; ...
+ $8441 LD BC,$000E   ; ...
  $8444 RST $38       ; WRITE_VRAM
- $8445 POP AF        ;
- $8446 PUSH AF       ;
- $8447 LD B,$30      ;
-*$8449 SUB $0A       ;
- $844B JR C,$8450    ;
- $844D INC B         ;
- $844E JR $8449      ;
+ $8445 POP AF        ; Restore ships
+ $8446 PUSH AF       ; Save again
+ $8447 LD B,$30      ; 48
+*$8449 SUB $0A       ; Ships - 10
+ $844B JR C,$8450    ; Jump if ships < 10, A is now -10 to -1
+ $844D INC B         ; +1 for every 10 ships
+ $844E JR $8449      ; Loop
 
-; Routine at 8450
+; Display hits
 ;
 ; Used by the routine at #R$8429.
-c$8450 ADD A,$3A     ;
- $8452 LD DE,$19D0   ;
+@label=display_hits
+c$8450 ADD A,$3A     ; Add ASCII for zero + 10
+ $8452 LD DE,$19D0   ; Ones in number of ships
  $8455 RST $10       ; Write VDP byte
- $8456 LD DE,$19D4   ;
+ $8456 LD DE,$19D4   ; Hundreds in bonus
  $8459 RST $10       ; Write VDP byte
- $845A LD A,B        ;
- $845B LD DE,$19CF   ;
+ $845A LD A,B        ; Tens
+ $845B LD DE,$19CF   ; Tens in number of ships
  $845E RST $10       ; Write VDP byte
- $845F LD DE,$19D3   ;
+ $845F LD DE,$19D3   ; Thousands in bonus
  $8462 RST $10       ; Write VDP byte
- $8463 POP BC        ;
- $8464 LD A,B        ;
- $8465 OR A          ;
- $8466 JP Z,$833C    ;
- $8469 JR $8486      ;
+ $8463 POP BC        ; Restore ships destroyed
+ $8464 LD A,B        ; If it zero?
+ $8465 OR A          ; ...
+ $8466 JP Z,$833C    ; Then jump back to complete stage
+ $8469 JR $8486      ; Else add B x 100 bonus points
 
-; Routine at 846B
+; Perfect bonus
 ;
 ; Used by the routine at #R$8429.
-c$846B LD A,$02      ;
- $846D CALL $9E91    ;
- $8470 LD HL,$85B9   ;
- $8473 LD DE,$1928   ;
- $8476 LD BC,$0010   ;
+@label=perfect_bonus
+c$846B LD A,$02      ; Play a tune
+ $846D CALL $9E91    ; ...
+ $8470 LD HL,$85B9   ; Display CONGRATULATIONS
+ $8473 LD DE,$1928   ; ...
+ $8476 LD BC,$0010   ; ...
  $8479 RST $38       ; WRITE_VRAM
- $847A LD HL,$85C9   ;
- $847D LD DE,$19C6   ;
- $8480 LD BC,$0014   ;
+ $847A LD HL,$85C9   ; Display PERFECT 10000 PTS
+ $847D LD DE,$19C6   ; ...
+ $8480 LD BC,$0014   ; ...
  $8483 RST $38       ; WRITE_VRAM
- $8484 LD B,$64      ;
+ $8484 LD B,$64      ; 100 times
 ; This entry point is used by the routine at #R$8450.
-*$8486 LD HL,$0100   ;
+*$8486 LD HL,$0100   ; 100 points
 *$8489 PUSH HL       ;
  $848A PUSH BC       ;
- $848B CALL $A6EC    ;
+ $848B CALL $A6EC    ; Add 100 points to score
  $848E LD A,($71F1)  ; Current player
  $8491 CALL $A699    ; Display score
- $8494 LD B,$07      ;
-*$8496 HALT          ;
+ $8494 LD B,$07      ; 7 frames
+*$8496 HALT          ; Wait for interrupt
  $8497 PUSH BC       ;
- $8498 CALL $AFFF    ;
+ $8498 CALL $AFFF    ; Display stars
  $849B CALL $A73C    ; Control ship
  $849E CALL $85E6    ;
  $84A1 CALL $AB72    ; Display center enemies
- $84A4 CALL $84B1    ;
+ $84A4 CALL $84B1    ; Upload sprites
  $84A7 POP BC        ;
- $84A8 DJNZ $8496    ;
+ $84A8 DJNZ $8496    ; Loop 7 times
  $84AA POP BC        ;
  $84AB POP HL        ;
- $84AC DJNZ $8489    ;
- $84AE JP $833C      ;
+ $84AC DJNZ $8489    ; Loop number of ships times
+ $84AE JP $833C      ; Jump back to complete stage
 
 ; Routine at 84B1
 ;
-; Used by the routines at #R$8024, #R$8139, #R$832A, #R$8368, #R$846B, #R$A33B
+; Used by the routines at #R$8024, #R$8139, #R$832A, #R$832A, #R$846B, #R$A33B
 ; and #R$A3E1.
 @label=update_frame_upload_sprites
 c$84B1 LD HL,$71F2   ; Update frame counter
@@ -1160,11 +1163,12 @@ c$84B1 LD HL,$71F2   ; Update frame counter
  $84C7 LD (HL),A     ; And set color back
 *$84C8 JP $ACF9      ; Upload sprite data
 
-; Routine at 84CB
+; Upload patterns
 ;
 ; Used by the routine at #R$90D6.
 ;
-; Upload patterns
+; I: HL Pointer to start index and count
+@label=upload_patterns
 c$84CB LD D,$00      ;
  $84CD LD E,(HL)     ; DE = start index
  $84CE INC HL        ;
@@ -1198,14 +1202,14 @@ c$84DB PUSH DE       ;
 ; Routine at 84ED
 ;
 ; Used by the routines at #R$8170 and #R$832A.
-c$84ED LD HL,$1920   ;
- $84F0 LD DE,$0020   ;
- $84F3 XOR A         ;
+c$84ED LD HL,$1920   ; Name table row 9
+ $84F0 LD DE,$0020   ; 32 bytes
+ $84F3 XOR A         ; Clear
  $84F4 CALL $1F82    ; FILL_VRAM
- $84F7 LD HL,$19C0   ;
- $84FA LD DE,$0020   ;
- $84FD XOR A         ;
- $84FE JP $1F82      ;
+ $84F7 LD HL,$19C0   ; Name table row 14
+ $84FA LD DE,$0020   ; 32 bytes
+ $84FD XOR A         ; Clear
+ $84FE JP $1F82      ; FILL_VRAM
 
 ; Interrupt routine
 ;
@@ -1314,7 +1318,7 @@ t$85DD DEFM "GAME",$00,"OVER"
 
 ; Routine at 85E6
 ;
-; Used by the routines at #R$8024, #R$8139, #R$832A, #R$8368, #R$846B and
+; Used by the routines at #R$8024, #R$8139, #R$832A, #R$832A, #R$846B and
 ; #R$A3E1.
 c$85E6 LD HL,$71EE     ;
  $85E9 DEC (HL)        ;
@@ -2877,9 +2881,9 @@ c$90D6 CALL $1F85    ; MODE_1 (pattern generator table at  $0000, name table at
 
 ; Display planet
 ;
-; Used by the routines at #R$8368, #R$83D0 and #R$90D6.
+; Used by the routines at #R$832A, #R$83D0 and #R$90D6.
 ;
-; I:A Index of planet (1 based)
+; I:A Index of planet (1 based, 0 = undraw)
 @label=display_planet
 c$9175 ADD A,A       ; a *= 2
  $9176 JR Z,$91A1    ; If zero then undraw planet
@@ -2939,7 +2943,7 @@ c$91A1 CALL $920D    ; Clear row 7
 ; I:HL Address of planet name prefixed by length
 @label=display_planet_name_and_sprites
 c$91CC PUSH HL         ; Save address
- $91CD CALL $920D      ; clear_row_7
+ $91CD CALL $920D      ; clear_row_7 where the planet name is displayed
  $91D0 LD A,$20        ; 32
  $91D2 SUB (HL)        ; 32 - length
  $91D3 SRL A           ; (32 - length) / 2
@@ -2983,7 +2987,8 @@ c$91CC PUSH HL         ; Save address
 
 ; Clear name table row 7
 ;
-; Used by the routines at #R$8368, #R$90D6, #R$91A1 and #R$91CC.
+; Where the planet name is displayed
+; Used by the routines at #R$832A, #R$90D6, #R$91A1 and #R$91CC.
 @label=clear_row_7
 c$920D PUSH HL       ;
  $920E PUSH DE       ;
@@ -3584,8 +3589,8 @@ c$9934 LD A,$04        ;
  $9948 LD D,(IY+$0B)   ;
  $994B CALL $9A1C      ;
  $994E LD DE,$0100     ;
- $9951 LD HL,$7255     ;
- $9954 INC (HL)        ;
+ $9951 LD HL,$7255     ; Record hit
+ $9954 INC (HL)        ; ...
  $9955 LD HL,$722C     ;
  $9958 DEC (HL)        ;
  $9959 JR NZ,$9999     ;
@@ -3602,30 +3607,34 @@ c$9934 LD A,$04        ;
  $9972 LD (IX+$06),$07 ;
  $9976 JR $9999        ;
 
-; Routine at 9978
+; Add score when enemy destroyed
 ;
 ; Used by the routine at #R$9934.
-c$9978 LD A,($7256)  ;
- $997B AND $60       ;
- $997D JR NZ,$9999   ;
- $997F LD HL,$71EB   ;
- $9982 LD A,($7202)  ;
- $9985 INC A         ;
- $9986 BIT 3,(HL)    ;
- $9988 JR NZ,$998D   ;
- $998A LD ($7202),A  ;
-*$998D ADD A,A       ;
- $998E LD HL,$9AA7   ;
+;
+; I:IX ?
+; I:DE Points to add
+@label=add_score_from_enemy
+c$9978 LD A,($7256)  ; Flags
+ $997B AND $60       ; If bit 5 or 6 set?
+ $997D JR NZ,$9999   ; Then just add score
+ $997F LD HL,$71EB   ; Flags
+ $9982 LD A,($7202)  ; Enemies destroyed
+ $9985 INC A         ; +1
+ $9986 BIT 3,(HL)    ; Check for bonus stage
+ $9988 JR NZ,$998D   ; Skip ahead if bonus stage
+ $998A LD ($7202),A  ; Save if not bonus stage
+*$998D ADD A,A       ; x2
+ $998E LD HL,$9AA7   ; Score table
  $9991 RST $08       ; Add A to HL
- $9992 LD D,(HL)     ;
+ $9992 LD D,(HL)     ; Get points (hundreds)
  $9993 INC HL        ;
- $9994 LD A,(HL)     ;
+ $9994 LD A,(HL)     ; Get ?
  $9995 LD (IX+$06),A ;
- $9998 INC D         ;
+ $9998 INC D         ; 100 more
 ; This entry point is used by the routines at #R$9934, #R$99A0, #R$99D3 and
 ; #R$9A08.
-*$9999 EX DE,HL      ;
- $999A CALL $A6EC    ;
+*$9999 EX DE,HL      ; HL = points
+ $999A CALL $A6EC    ; Add score
  $999D JP $97F3      ;
 
 ; Routine at 99A0
@@ -3782,8 +3791,12 @@ c$9A86 LD ($726F),A  ;
  $9AA6 RET           ;
 
 ; Data block at 9AA7
-b$9AA7 DEFB $05,$06,$10,$07,$15,$08,$20,$09
- $9AAF DEFB $25,$0A,$30,$0B
+b$9AA7 DEFB $05,$06
+ $9AA9 DEFB $10,$07
+ $9AAB DEFB $15,$08
+ $9AAD DEFB $20,$09
+ $9AAF DEFB $25,$0A
+ $9AB1 DEFB $30,$0B
 
 ; Add A to HL (RST $08)
 ;
@@ -3940,7 +3953,7 @@ c$9B70 LD A,(IX+$07) ;
 ; Routine at 9B87
 ;
 ; Used by the routines at #R$8139, #R$832A and #R$9C1C.
-@label=died_set_variables
+@label=set_variables_after_stage
 c$9B87 XOR A         ;
  $9B88 LD ($727A),A  ;
  $9B8B DEC A         ;
@@ -4186,7 +4199,7 @@ c$9CA8 LD A,($727C)  ;
  $9CE5 LD (HL),D     ;
  $9CE6 RET           ;
 
-; Data block at 9CE7
+; Sound data
 @label=table_at_9CE7
 b$9CE7 DEFB $00,$00,$00,$00,$26,$80,$00,$00
  $9CEF DEFB $02,$00,$00,$40,$41,$81,$40,$00
@@ -4412,7 +4425,7 @@ c$9E91 PUSH BC       ;
 
 ; Routine at 9EA3
 ;
-; Used by the routines at #R$8139, #R$8368, #R$8C52, #R$8E9D, #R$9934, #R$99A0,
+; Used by the routines at #R$8139, #R$832A, #R$8C52, #R$8E9D, #R$9934, #R$99A0,
 ; #R$99B1, #R$99D3, #R$A33B and #R$A6EC.
 ;
 ; I:A Index of sound
@@ -4431,136 +4444,139 @@ c$9EA3 PUSH BC       ;
  $9EB4 POP BC        ;
  $9EB5 RET           ;
 
-; Data block at 9EB6
+; Sound data
 b$9EB6 DEFB $35,$39,$3C,$40,$43,$47,$4C,$50
  $9EBE DEFB $55,$5A,$5F,$65,$6B,$71,$78,$7F
  $9EC6 DEFB $87,$8F,$97,$A0,$AA,$B4,$BE,$CA
  $9ECE DEFB $D6,$E2,$F0,$FE,$0D,$1D,$2E,$40
  $9ED6 DEFB $53,$68,$7D,$94,$AC,$C5,$E0,$FC
  $9EDE DEFB $1B,$3B,$5D,$81,$A7,$CF,$FA,$27
- $9EE6 DEFB $57,$8A,$C0,$F9,$B6,$A2,$2A,$9F
- $9EEE DEFB $4E,$9F,$6C,$9F,$B6,$A2,$3E,$9F
- $9EF6 DEFB $62,$9F,$6E,$9F,$8F,$9F,$79,$9F
- $9EFE DEFB $83,$9F,$8B,$9F,$5D,$A0,$94,$9F
- $9F06 DEFB $FE,$9F,$56,$A0,$3A,$A2,$71,$A0
- $9F0E DEFB $3A,$A1,$CA,$A1,$3A,$A2,$92,$A0
- $9F16 DEFB $3A,$A1,$CA,$A1,$99,$A2,$B6,$A2
- $9F1E DEFB $B6,$A2,$AF,$A2,$3F,$A2,$94,$A0
- $9F26 DEFB $3E,$A1,$D0,$A1,$02,$19,$02,$1B
- $9F2E DEFB $10,$19,$04,$FF,$04,$1B,$04,$5D
- $9F36 DEFB $04,$5E,$04,$60,$08,$61,$18,$60
- $9F3E DEFB $06,$60,$06,$61,$06,$5E,$06,$1B
- $9F46 DEFB $06,$18,$06,$15,$0C,$12,$18,$14
- $9F4E DEFB $02,$65,$02,$67,$10,$65,$04,$FF
- $9F56 DEFB $04,$67,$04,$A9,$04,$AA,$04,$AC
- $9F5E DEFB $08,$AD,$18,$AC,$0C,$64,$0C,$67
- $9F66 DEFB $0C,$AA,$0C,$AD,$18,$AC,$48,$FF
- $9F6E DEFB $24,$FF,$0C,$1B,$02,$5C,$02,$5E
- $9F76 DEFB $14,$5C,$00,$02,$15,$87,$FD,$02
- $9F7E DEFB $16,$87,$FD,$18,$16,$08,$61,$08
- $9F86 DEFB $1A,$08,$15,$20,$0E,$08,$FF,$30
- $9F8E DEFB $AD,$08,$FF,$30,$80,$00,$12,$FF
- $9F96 DEFB $01,$18,$01,$19,$01,$1A,$01,$1B
- $9F9E DEFB $01,$5C,$01,$5D,$01,$5E,$01,$5F
- $9FA6 DEFB $01,$60,$01,$61,$01,$62,$01,$63
- $9FAE DEFB $01,$64,$01,$65,$02,$60,$02,$5E
- $9FB6 DEFB $02,$5D,$02,$60,$02,$5E,$02,$5D
- $9FBE DEFB $02,$1B,$02,$5E,$02,$5D,$02,$1B
- $9FC6 DEFB $02,$19,$02,$5D,$02,$1B,$02,$19
- $9FCE DEFB $02,$18,$02,$1B,$02,$19,$02,$5D
- $9FD6 DEFB $02,$1B,$02,$5E,$02,$5D,$02,$60
- $9FDE DEFB $02,$5E,$02,$61,$02,$60,$02,$65
- $9FE6 DEFB $01,$64,$01,$65,$02,$67,$06,$65
- $9FEE DEFB $02,$65,$81,$C1,$30,$FF,$10,$AC
- $9FF6 DEFB $04,$AC,$04,$AC,$04,$AC,$04,$AC
- $9FFE DEFB $12,$FF,$01,$5F,$01,$60,$01,$61
- $A006 DEFB $01,$62,$01,$63,$01,$64,$01,$65
- $A00E DEFB $01,$66,$01,$67,$01,$A8,$01,$A9
- $A016 DEFB $01,$AA,$01,$AB,$01,$AC,$04,$65
- $A01E DEFB $04,$65,$86,$FB,$08,$FF,$04,$65
- $A026 DEFB $04,$65,$85,$FB,$02,$AC,$02,$65
- $A02E DEFB $02,$64,$02,$67,$02,$65,$02,$A9
- $A036 DEFB $02,$67,$02,$AA,$02,$A9,$02,$AC
- $A03E DEFB $02,$67,$02,$AA,$02,$A9,$02,$AC
- $A046 DEFB $02,$AA,$02,$AD,$81,$DF,$10,$F1
- $A04E DEFB $04,$F1,$04,$F1,$04,$F1,$04,$F1
- $A056 DEFB $02,$AC,$02,$F1,$80,$56,$A0,$5A
- $A05E DEFB $00,$07,$FD,$A9,$6A,$00,$06,$FC
- $A066 DEFB $AA,$8A,$A9,$6A,$00,$10,$FC,$A9
- $A06E DEFB $69,$00,$80,$12,$FF,$01,$18,$01
- $A076 DEFB $16,$01,$14,$01,$12,$01,$11,$01
- $A07E DEFB $0F,$01,$0D,$01,$0C,$01,$0A,$01
- $A086 DEFB $08,$01,$06,$01,$05,$01,$0F,$01
- $A08E DEFB $0D,$80,$94,$A0,$20,$FF,$02,$18
- $A096 DEFB $04,$18,$87,$FD,$04,$19,$87,$FD
- $A09E DEFB $04,$1B,$86,$FD,$02,$1B,$02,$5D
- $A0A6 DEFB $04,$5E,$83,$FB,$04,$5D,$04,$5E
- $A0AE DEFB $02,$FF,$06,$5D,$06,$5E,$06,$60
- $A0B6 DEFB $0C,$61,$81,$F5,$02,$FF,$06,$18
- $A0BE DEFB $06,$19,$06,$1B,$06,$19,$81,$F7
- $A0C6 DEFB $06,$18,$06,$19,$12,$18,$20,$19
- $A0CE DEFB $01,$12,$01,$0F,$01,$12,$01,$15
- $A0D6 DEFB $83,$F7,$01,$15,$01,$12,$01,$15
- $A0DE DEFB $01,$18,$83,$F7,$01,$18,$01,$15
- $A0E6 DEFB $01,$18,$01,$1B,$83,$F7,$01,$1B
- $A0EE DEFB $01,$18,$01,$1B,$01,$5E,$83,$F7
- $A0F6 DEFB $01,$5E,$01,$1B,$01,$5E,$01,$61
- $A0FE DEFB $87,$F7,$01,$18,$01,$15,$01,$18
- $A106 DEFB $01,$1B,$83,$F7,$01,$1B,$01,$18
- $A10E DEFB $01,$1B,$01,$5E,$83,$F7,$01,$5E
- $A116 DEFB $01,$1B,$01,$5E,$01,$61,$8B,$F7
- $A11E DEFB $08,$67,$08,$AA,$10,$19,$06,$1B
- $A126 DEFB $02,$19,$04,$18,$04,$1B,$10,$19
- $A12E DEFB $10,$1B,$08,$1B,$04,$5D,$04,$5E
- $A136 DEFB $10,$5D,$10,$5D,$04,$65,$87,$FD
- $A13E DEFB $02,$60,$04,$60,$87,$FD,$04,$62
- $A146 DEFB $87,$FD,$04,$64,$86,$FD,$02,$64
- $A14E DEFB $02,$60,$04,$61,$83,$FB,$04,$60
- $A156 DEFB $04,$61,$02,$FF,$06,$65,$06,$67
- $A15E DEFB $06,$A9,$0C,$AA,$02,$FF,$06,$18
- $A166 DEFB $06,$19,$06,$1B,$0C,$19,$02,$FF
- $A16E DEFB $06,$5D,$06,$5E,$06,$60,$06,$61
- $A176 DEFB $06,$5D,$06,$5E,$06,$60,$06,$5E
- $A17E DEFB $06,$5D,$06,$5E,$12,$5D,$20,$65
- $A186 DEFB $04,$67,$87,$FD,$10,$1B,$10,$5E
- $A18E DEFB $10,$61,$08,$64,$08,$67,$81,$F5
- $A196 DEFB $08,$AA,$08,$67,$08,$AA,$08,$AD
- $A19E DEFB $04,$5D,$02,$5E,$02,$60,$08,$5D
- $A1A6 DEFB $04,$64,$02,$65,$02,$67,$04,$60
- $A1AE DEFB $04,$64,$04,$AD,$04,$67,$04,$65
- $A1B6 DEFB $04,$63,$04,$61,$04,$63,$04,$61
- $A1BE DEFB $04,$65,$08,$64,$04,$65,$04,$67
- $A1C6 DEFB $10,$65,$10,$65,$02,$AC,$02,$F1
- $A1CE DEFB $87,$FB,$02,$F0,$02,$A9,$87,$FB
- $A1D6 DEFB $02,$F1,$02,$AA,$87,$FB,$02,$F3
- $A1DE DEFB $02,$AC,$87,$FB,$02,$F0,$04,$F1
- $A1E6 DEFB $83,$FB,$04,$F0,$04,$F1,$02,$FF
- $A1EE DEFB $06,$AC,$06,$AE,$06,$F0,$0C,$F1
- $A1F6 DEFB $81,$F5,$02,$FF,$06,$AC,$06,$AE
- $A1FE DEFB $06,$F0,$06,$F1,$06,$F3,$06,$F1
- $A206 DEFB $06,$F0,$06,$AE,$06,$AC,$06,$AE
- $A20E DEFB $12,$AC,$20,$F1,$20,$FF,$10,$61
- $A216 DEFB $10,$64,$10,$67,$08,$AA,$08,$AD
- $A21E DEFB $81,$F5,$08,$F0,$08,$AD,$08,$AD
- $A226 DEFB $08,$F1,$10,$AC,$10,$AC,$10,$AA
- $A22E DEFB $0C,$F1,$04,$AD,$08,$AC,$08,$AC
- $A236 DEFB $10,$AC,$10,$AC,$A9,$6A,$00,$03
- $A23E DEFB $FC,$A9,$6A,$00,$02,$FC,$88,$A8
- $A246 DEFB $A9,$6A,$00,$02,$FC,$8A,$88,$A9
- $A24E DEFB $6A,$00,$02,$FC,$88,$A8,$A9,$6A
- $A256 DEFB $00,$03,$FC,$00,$82,$A9,$6A,$A9
- $A25E DEFB $6A,$A9,$6A,$AA,$A8,$00,$01,$F6
- $A266 DEFB $A9,$6A,$00,$09,$FC,$88,$00,$04
- $A26E DEFB $FD,$AA,$AA,$AA,$00,$81,$80,$00
- $A276 DEFB $0F,$FD,$88,$00,$0F,$FD,$AA,$00
- $A27E DEFB $0C,$FD,$88,$AA,$88,$88,$88,$8A
- $A286 DEFB $88,$00,$06,$FD,$AA,$88,$88,$88
- $A28E DEFB $88,$88,$8A,$88,$8A,$AA,$00,$08
- $A296 DEFB $FD,$00,$80,$7F,$FD,$7F,$FD,$7D
- $A29E DEFB $7D,$7F,$FD,$7D,$F7,$DF,$44,$5F
- $A2A6 DEFB $5F,$55,$44,$5F,$5F,$44,$55,$00
- $A2AE DEFB $00,$01,$F1,$01,$F0,$80,$AF,$A2
- $A2B6 DEFB $40,$FF,$80,$B6,$A2
+ $9EE6 DEFB $57,$8A,$C0,$F9
+
+; Sound data
+b$9EEA DEFB $B6,$A2,$2A,$9F,$4E,$9F,$6C,$9F
+ $9EF2 DEFB $B6,$A2,$3E,$9F,$62,$9F,$6E,$9F
+ $9EFA DEFB $8F,$9F,$79,$9F,$83,$9F,$8B,$9F
+ $9F02 DEFB $5D,$A0,$94,$9F,$FE,$9F,$56,$A0
+ $9F0A DEFB $3A,$A2,$71,$A0,$3A,$A1,$CA,$A1
+ $9F12 DEFB $3A,$A2,$92,$A0,$3A,$A1,$CA,$A1
+ $9F1A DEFB $99,$A2,$B6,$A2,$B6,$A2,$AF,$A2
+ $9F22 DEFB $3F,$A2,$94,$A0,$3E,$A1,$D0,$A1
+ $9F2A DEFB $02,$19,$02,$1B,$10,$19,$04,$FF
+ $9F32 DEFB $04,$1B,$04,$5D,$04,$5E,$04,$60
+ $9F3A DEFB $08,$61,$18,$60,$06,$60,$06,$61
+ $9F42 DEFB $06,$5E,$06,$1B,$06,$18,$06,$15
+ $9F4A DEFB $0C,$12,$18,$14,$02,$65,$02,$67
+ $9F52 DEFB $10,$65,$04,$FF,$04,$67,$04,$A9
+ $9F5A DEFB $04,$AA,$04,$AC,$08,$AD,$18,$AC
+ $9F62 DEFB $0C,$64,$0C,$67,$0C,$AA,$0C,$AD
+ $9F6A DEFB $18,$AC,$48,$FF,$24,$FF,$0C,$1B
+ $9F72 DEFB $02,$5C,$02,$5E,$14,$5C,$00,$02
+ $9F7A DEFB $15,$87,$FD,$02,$16,$87,$FD,$18
+ $9F82 DEFB $16,$08,$61,$08,$1A,$08,$15,$20
+ $9F8A DEFB $0E,$08,$FF,$30,$AD,$08,$FF,$30
+ $9F92 DEFB $80,$00,$12,$FF,$01,$18,$01,$19
+ $9F9A DEFB $01,$1A,$01,$1B,$01,$5C,$01,$5D
+ $9FA2 DEFB $01,$5E,$01,$5F,$01,$60,$01,$61
+ $9FAA DEFB $01,$62,$01,$63,$01,$64,$01,$65
+ $9FB2 DEFB $02,$60,$02,$5E,$02,$5D,$02,$60
+ $9FBA DEFB $02,$5E,$02,$5D,$02,$1B,$02,$5E
+ $9FC2 DEFB $02,$5D,$02,$1B,$02,$19,$02,$5D
+ $9FCA DEFB $02,$1B,$02,$19,$02,$18,$02,$1B
+ $9FD2 DEFB $02,$19,$02,$5D,$02,$1B,$02,$5E
+ $9FDA DEFB $02,$5D,$02,$60,$02,$5E,$02,$61
+ $9FE2 DEFB $02,$60,$02,$65,$01,$64,$01,$65
+ $9FEA DEFB $02,$67,$06,$65,$02,$65,$81,$C1
+ $9FF2 DEFB $30,$FF,$10,$AC,$04,$AC,$04,$AC
+ $9FFA DEFB $04,$AC,$04,$AC,$12,$FF,$01,$5F
+ $A002 DEFB $01,$60,$01,$61,$01,$62,$01,$63
+ $A00A DEFB $01,$64,$01,$65,$01,$66,$01,$67
+ $A012 DEFB $01,$A8,$01,$A9,$01,$AA,$01,$AB
+ $A01A DEFB $01,$AC,$04,$65,$04,$65,$86,$FB
+ $A022 DEFB $08,$FF,$04,$65,$04,$65,$85,$FB
+ $A02A DEFB $02,$AC,$02,$65,$02,$64,$02,$67
+ $A032 DEFB $02,$65,$02,$A9,$02,$67,$02,$AA
+ $A03A DEFB $02,$A9,$02,$AC,$02,$67,$02,$AA
+ $A042 DEFB $02,$A9,$02,$AC,$02,$AA,$02,$AD
+ $A04A DEFB $81,$DF,$10,$F1,$04,$F1,$04,$F1
+ $A052 DEFB $04,$F1,$04,$F1,$02,$AC,$02,$F1
+ $A05A DEFB $80,$56,$A0,$5A,$00,$07,$FD,$A9
+ $A062 DEFB $6A,$00,$06,$FC,$AA,$8A,$A9,$6A
+ $A06A DEFB $00,$10,$FC,$A9,$69,$00,$80,$12
+ $A072 DEFB $FF,$01,$18,$01,$16,$01,$14,$01
+ $A07A DEFB $12,$01,$11,$01,$0F,$01,$0D,$01
+ $A082 DEFB $0C,$01,$0A,$01,$08,$01,$06,$01
+ $A08A DEFB $05,$01,$0F,$01,$0D,$80,$94,$A0
+ $A092 DEFB $20,$FF,$02,$18,$04,$18,$87,$FD
+ $A09A DEFB $04,$19,$87,$FD,$04,$1B,$86,$FD
+ $A0A2 DEFB $02,$1B,$02,$5D,$04,$5E,$83,$FB
+ $A0AA DEFB $04,$5D,$04,$5E,$02,$FF,$06,$5D
+ $A0B2 DEFB $06,$5E,$06,$60,$0C,$61,$81,$F5
+ $A0BA DEFB $02,$FF,$06,$18,$06,$19,$06,$1B
+ $A0C2 DEFB $06,$19,$81,$F7,$06,$18,$06,$19
+ $A0CA DEFB $12,$18,$20,$19,$01,$12,$01,$0F
+ $A0D2 DEFB $01,$12,$01,$15,$83,$F7,$01,$15
+ $A0DA DEFB $01,$12,$01,$15,$01,$18,$83,$F7
+ $A0E2 DEFB $01,$18,$01,$15,$01,$18,$01,$1B
+ $A0EA DEFB $83,$F7,$01,$1B,$01,$18,$01,$1B
+ $A0F2 DEFB $01,$5E,$83,$F7,$01,$5E,$01,$1B
+ $A0FA DEFB $01,$5E,$01,$61,$87,$F7,$01,$18
+ $A102 DEFB $01,$15,$01,$18,$01,$1B,$83,$F7
+ $A10A DEFB $01,$1B,$01,$18,$01,$1B,$01,$5E
+ $A112 DEFB $83,$F7,$01,$5E,$01,$1B,$01,$5E
+ $A11A DEFB $01,$61,$8B,$F7,$08,$67,$08,$AA
+ $A122 DEFB $10,$19,$06,$1B,$02,$19,$04,$18
+ $A12A DEFB $04,$1B,$10,$19,$10,$1B,$08,$1B
+ $A132 DEFB $04,$5D,$04,$5E,$10,$5D,$10,$5D
+ $A13A DEFB $04,$65,$87,$FD,$02,$60,$04,$60
+ $A142 DEFB $87,$FD,$04,$62,$87,$FD,$04,$64
+ $A14A DEFB $86,$FD,$02,$64,$02,$60,$04,$61
+ $A152 DEFB $83,$FB,$04,$60,$04,$61,$02,$FF
+ $A15A DEFB $06,$65,$06,$67,$06,$A9,$0C,$AA
+ $A162 DEFB $02,$FF,$06,$18,$06,$19,$06,$1B
+ $A16A DEFB $0C,$19,$02,$FF,$06,$5D,$06,$5E
+ $A172 DEFB $06,$60,$06,$61,$06,$5D,$06,$5E
+ $A17A DEFB $06,$60,$06,$5E,$06,$5D,$06,$5E
+ $A182 DEFB $12,$5D,$20,$65,$04,$67,$87,$FD
+ $A18A DEFB $10,$1B,$10,$5E,$10,$61,$08,$64
+ $A192 DEFB $08,$67,$81,$F5,$08,$AA,$08,$67
+ $A19A DEFB $08,$AA,$08,$AD,$04,$5D,$02,$5E
+ $A1A2 DEFB $02,$60,$08,$5D,$04,$64,$02,$65
+ $A1AA DEFB $02,$67,$04,$60,$04,$64,$04,$AD
+ $A1B2 DEFB $04,$67,$04,$65,$04,$63,$04,$61
+ $A1BA DEFB $04,$63,$04,$61,$04,$65,$08,$64
+ $A1C2 DEFB $04,$65,$04,$67,$10,$65,$10,$65
+ $A1CA DEFB $02,$AC,$02,$F1,$87,$FB,$02,$F0
+ $A1D2 DEFB $02,$A9,$87,$FB,$02,$F1,$02,$AA
+ $A1DA DEFB $87,$FB,$02,$F3,$02,$AC,$87,$FB
+ $A1E2 DEFB $02,$F0,$04,$F1,$83,$FB,$04,$F0
+ $A1EA DEFB $04,$F1,$02,$FF,$06,$AC,$06,$AE
+ $A1F2 DEFB $06,$F0,$0C,$F1,$81,$F5,$02,$FF
+ $A1FA DEFB $06,$AC,$06,$AE,$06,$F0,$06,$F1
+ $A202 DEFB $06,$F3,$06,$F1,$06,$F0,$06,$AE
+ $A20A DEFB $06,$AC,$06,$AE,$12,$AC,$20,$F1
+ $A212 DEFB $20,$FF,$10,$61,$10,$64,$10,$67
+ $A21A DEFB $08,$AA,$08,$AD,$81,$F5,$08,$F0
+ $A222 DEFB $08,$AD,$08,$AD,$08,$F1,$10,$AC
+ $A22A DEFB $10,$AC,$10,$AA,$0C,$F1,$04,$AD
+ $A232 DEFB $08,$AC,$08,$AC,$10,$AC,$10,$AC
+ $A23A DEFB $A9,$6A,$00,$03,$FC,$A9,$6A,$00
+ $A242 DEFB $02,$FC,$88,$A8,$A9,$6A,$00,$02
+ $A24A DEFB $FC,$8A,$88,$A9,$6A,$00,$02,$FC
+ $A252 DEFB $88,$A8,$A9,$6A,$00,$03,$FC,$00
+ $A25A DEFB $82,$A9,$6A,$A9,$6A,$A9,$6A,$AA
+ $A262 DEFB $A8,$00,$01,$F6,$A9,$6A,$00,$09
+ $A26A DEFB $FC,$88,$00,$04,$FD,$AA,$AA,$AA
+ $A272 DEFB $00,$81,$80,$00,$0F,$FD,$88,$00
+ $A27A DEFB $0F,$FD,$AA,$00,$0C,$FD,$88,$AA
+ $A282 DEFB $88,$88,$88,$8A,$88,$00,$06,$FD
+ $A28A DEFB $AA,$88,$88,$88,$88,$88,$8A,$88
+ $A292 DEFB $8A,$AA,$00,$08,$FD,$00,$80,$7F
+ $A29A DEFB $FD,$7F,$FD,$7D,$7D,$7F,$FD,$7D
+ $A2A2 DEFB $F7,$DF,$44,$5F,$5F,$55,$44,$5F
+ $A2AA DEFB $5F,$44,$55,$00,$00,$01,$F1,$01
+ $A2B2 DEFB $F0,$80,$AF,$A2,$40,$FF,$80,$B6
+ $A2BA DEFB $A2
 
 ; Routine at A2BB
 ;
@@ -4981,7 +4997,8 @@ c$A6EC PUSH DE       ;
  $A70B POP DE        ; Restore pointer to score
  $A70C INC DE        ; Advance to last byte of extra life score $71F5 or $71FB
  $A70D INC DE        ; ...
- $A70E LD HL,$0003   ; Point HL to byte at #R$71F8 or #R$71FE (initially set to 6)
+ $A70E LD HL,$0003   ; Point HL to byte at #R$71F8 or #R$71FE (initially set to
+                     ; 6)
  $A711 ADD HL,DE     ; ...
  $A712 PUSH HL       ; Save pointer
  $A713 LD B,$03      ; 3 bytes to check
@@ -5013,7 +5030,7 @@ c$A6EC PUSH DE       ;
 ; Control ship
 ;
 ; Control ship movement and fire using controllers Used by the routines at
-; #R$8024, #R$832A, #R$8368, #R$846B and #R$A33B.
+; #R$8024, #R$832A, #R$832A, #R$846B and #R$A33B.
 @label=control_ship
 c$A73C LD A,($71F2)    ; Get frame
  $A73F AND $01         ; Test bit 0
@@ -5126,7 +5143,7 @@ c$A805 RES 0,(HL)    ; Clear bit for fire pressed
 
 ; Routine at A808
 ;
-; Used by the routines at #R$8368, #R$A33B, #R$A3E1 and #R$A73C.
+; Used by the routines at #R$832A, #R$A33B, #R$A3E1 and #R$A73C.
 @label=display_ship_background_patterns
 c$A808 PUSH HL         ;
  $A809 PUSH DE         ;
@@ -5659,7 +5676,7 @@ c$ACDF LD IX,$7002     ; Address of sprite data
 
 ; Upload sprite data to VDP
 ;
-; Used by the routines at #R$8368, #R$84B1, #R$90D6, #R$A33B and #R$A3E1.
+; Used by the routines at #R$832A, #R$84B1, #R$90D6, #R$A33B and #R$A3E1.
 @label=upload_sprite_data
 c$ACF9 LD DE,($73F2) ; VDP address of sprite allocation table?
  $ACFD LD HL,$7182   ; Number of allocated sprites
@@ -6099,7 +6116,7 @@ b$AFDD DEFB $00,$00,$08,$00,$06,$FF,$06,$FB
 
 ; Display stars
 ;
-; Used by the routines at #R$8024, #R$8139, #R$8170, #R$832A, #R$8368, #R$846B,
+; Used by the routines at #R$8024, #R$8139, #R$8170, #R$832A, #R$832A, #R$846B,
 ; #R$90D6, #R$A33B and #R$A3E1.
 @label=display_stars
 c$AFFF LD HL,$71EC   ; Counter from 7 to 0

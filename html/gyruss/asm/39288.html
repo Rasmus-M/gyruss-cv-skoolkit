@@ -24,7 +24,7 @@ Next: <a href="39328.html">99A0</a>
 </td>
 </tr>
 </table>
-<div class="description">9978: Routine at 9978</div>
+<div class="description">9978: Add score when enemy destroyed</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -33,73 +33,86 @@ Next: <a href="39328.html">99A0</a>
 Used by the routine at <a href="39220.html">L9934</a>.
 </div>
 </div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">?</td>
+</tr>
+<tr>
+<td class="register">DE</td>
+<td class="register-desc">Points to add</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L9978</td>
+<td class="asm-label">add_score_from_enemy</td>
 <td class="address-2"><span id="39288"></span>9978</td>
-<td class="instruction">LD A,(<a href="29270.html">fire_flags</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD A,(<a href="29270.html">other_flags</a>)</td>
+<td class="comment-1" rowspan="1">Flags</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39291"></span>997B</td>
 <td class="instruction">AND $60</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If bit 5 or 6 set?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39293"></span>997D</td>
-<td class="instruction">JR NZ,<a href="39288.html#39321">L9978_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="39288.html#39321">add_score_from_enemy_1</a></td>
+<td class="comment-1" rowspan="1">Then just add score</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39295"></span>997F</td>
 <td class="instruction">LD HL,<a href="29163.html">status_flags</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Flags</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39298"></span>9982</td>
-<td class="instruction">LD A,(<a href="29186.html">L7202</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD A,(<a href="29186.html">enemies_hit</a>)</td>
+<td class="comment-1" rowspan="1">Enemies destroyed</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39301"></span>9985</td>
 <td class="instruction">INC A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">+1</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39302"></span>9986</td>
 <td class="instruction">BIT 3,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Check for bonus stage</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39304"></span>9988</td>
-<td class="instruction">JR NZ,<a href="39288.html#39309">L9978_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="39288.html#39309">add_score_from_enemy_0</a></td>
+<td class="comment-1" rowspan="1">Skip ahead if bonus stage</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39306"></span>998A</td>
-<td class="instruction">LD (<a href="29186.html">L7202</a>),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD (<a href="29186.html">enemies_hit</a>),A</td>
+<td class="comment-1" rowspan="1">Save if not bonus stage</td>
 </tr>
 <tr>
-<td class="asm-label">L9978_0</td>
+<td class="asm-label">add_score_from_enemy_0</td>
 <td class="address-2"><span id="39309"></span>998D</td>
 <td class="instruction">ADD A,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">x2</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39310"></span>998E</td>
 <td class="instruction">LD HL,<a href="39591.html">L9AA7</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Score table</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -111,7 +124,7 @@ Used by the routine at <a href="39220.html">L9934</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="39314"></span>9992</td>
 <td class="instruction">LD D,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get points (hundreds)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -123,7 +136,7 @@ Used by the routine at <a href="39220.html">L9934</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="39316"></span>9994</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get ?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -135,7 +148,7 @@ Used by the routine at <a href="39220.html">L9934</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="39320"></span>9998</td>
 <td class="instruction">INC D</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">100 more</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -148,16 +161,16 @@ This entry point is used by the routines at <a href="39220.html">L9934</a>, <a h
 </td>
 </tr>
 <tr>
-<td class="asm-label">L9978_1</td>
+<td class="asm-label">add_score_from_enemy_1</td>
 <td class="address-2"><span id="39321"></span>9999</td>
 <td class="instruction">EX DE,HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">HL = points</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39322"></span>999A</td>
 <td class="instruction">CALL <a href="42732.html">add_score</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add score</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

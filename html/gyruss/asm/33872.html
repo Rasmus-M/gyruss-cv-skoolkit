@@ -24,28 +24,28 @@ Next: <a href="33899.html">846B</a>
 </td>
 </tr>
 </table>
-<div class="description">8450: Routine at 8450</div>
+<div class="description">8450: Display hits</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="33833.html">L8429</a>.
+Used by the routine at <a href="33833.html">display_bonus</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L8450</td>
+<td class="asm-label">display_hits</td>
 <td class="address-2"><span id="33872"></span>8450</td>
 <td class="instruction">ADD A,$3A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add ASCII for zero + 10</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33874"></span>8452</td>
 <td class="instruction">LD DE,$19D0</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Ones in number of ships</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -57,7 +57,7 @@ Used by the routine at <a href="33833.html">L8429</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="33878"></span>8456</td>
 <td class="instruction">LD DE,$19D4</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Hundreds in bonus</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -69,13 +69,13 @@ Used by the routine at <a href="33833.html">L8429</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="33882"></span>845A</td>
 <td class="instruction">LD A,B</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Tens</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33883"></span>845B</td>
 <td class="instruction">LD DE,$19CF</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Tens in number of ships</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -87,7 +87,7 @@ Used by the routine at <a href="33833.html">L8429</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="33887"></span>845F</td>
 <td class="instruction">LD DE,$19D3</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Thousands in bonus</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -99,31 +99,31 @@ Used by the routine at <a href="33833.html">L8429</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="33891"></span>8463</td>
 <td class="instruction">POP BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore ships destroyed</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33892"></span>8464</td>
 <td class="instruction">LD A,B</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If it zero?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33893"></span>8465</td>
 <td class="instruction">OR A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33894"></span>8466</td>
 <td class="instruction">JP Z,<a href="33578.html#33596">stage_completed_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Then jump back to complete stage</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33897"></span>8469</td>
-<td class="instruction">JR <a href="33899.html#33926">L846B_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR <a href="33899.html#33926">perfect_bonus_0</a></td>
+<td class="comment-1" rowspan="1">Else add B x 100 bonus points</td>
 </tr>
 </table>
 <table class="asm-navigation">
