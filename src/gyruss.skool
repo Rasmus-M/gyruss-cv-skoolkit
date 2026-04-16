@@ -98,14 +98,14 @@ b$71C2 DEFB $00,$00,$00,$00,$00,$00,$00,$00
 ;
 ; #TABLE(default, default)
 ; { =h Bit | =h Purpose }
-; { $00 | Unknown }
-; { $01 | Unknown }
-; { $02 | Exits main loop. Reset at stage init }
-; { $03 | Set during bonus stage }
+; { $00 | Set during warp }
+; { $01 | Set when the mines appear }
+; { $02 | You died }
+; { $03 | Set during chance stage }
 ; { $04 | Set during stage init }
-; { $05 | Unknown }
+; { $05 | Set for two-player game when one is game over }
 ; { $06 | Set during main loop }
-; { $07 | Two players }
+; { $07 | Two-player game }
 ; TABLE#
 @label=status_flags
 b$71EB DEFB $00
@@ -168,7 +168,7 @@ b$7200 DEFB $00
 @label=wave
 b$7201 DEFB $00
 
-; Enemies destroyed not bonus stage
+; Enemies destroyed not chance stage
 @label=enemies_hit
 b$7202 DEFB $00
 
@@ -186,7 +186,8 @@ b$7204 DEFB $00
 @label=completed_stages
 b$7205 DEFB $00
 
-; Byte at 7206
+; Number of active enemies
+@label=active_enemies
 b$7206 DEFB $00
 
 ; Data block at 7207
@@ -213,7 +214,8 @@ b$722E DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $7246 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $724E DEFB $00,$00,$00,$00
 
-; Byte at 7252
+; Active enemy shots, set to $FF during explosion
+@label=active_enemy_shots
 b$7252 DEFB $00
 
 ; Number of active shots
@@ -223,7 +225,7 @@ b$7253 DEFB $00
 ; Byte at 7254
 b$7254 DEFB $00
 
-; Enemies destroyed in bonus stage
+; Enemies destroyed in chance stage
 @label=bonus_enemies_hit
 b$7255 DEFB $00
 
@@ -565,7 +567,7 @@ c$8024 LD SP,$73BA   ; Init stack pointer
  $8044 LD ($7257),HL ; Set screensaver countdown
 @label=entry_wait_fire
 *$8047 HALT          ; Wait for interrupt
- $8048 CALL $AFFF    ;
+ $8048 CALL $AFFF    ; Display stars
  $804B LD HL,$0000   ; Controller 0, segment 0
  $804E CALL $1F79    ; DECODER
  $8051 BIT 6,H       ; Test fire
@@ -574,7 +576,7 @@ c$8024 LD SP,$73BA   ; Init stack pointer
  $8058 CALL $1F79    ; DECODER
  $805B BIT 6,H       ; Test fire
  $805D JR Z,$8047    ; Loop until fire pressed
- $805F LD HL,$71EB   ; Set two player flag
+ $805F LD HL,$71EB   ; Set two-player flag
  $8062 SET 7,(HL)    ; ...
 ; This entry point is used by the routine at #R$81ED. Fire pressed
 @label=new_game
@@ -594,7 +596,7 @@ c$8024 LD SP,$73BA   ; Init stack pointer
  $8086 LD (HL),A     ; ...
  $8087 LD BC,$0065   ; ...
  $808A LDIR          ; ...
- $808C LD A,($71EB)  ; Clear all but two player flag
+ $808C LD A,($71EB)  ; Clear all but two-player flag
  $808F AND $80       ; ...
  $8091 LD ($71EB),A  ; ...
  $8094 LD A,$05      ; 5 Lives
@@ -665,17 +667,17 @@ c$80E8 LD HL,$725A   ; Flag set by interrupt routine
  $8126 JP NZ,$8139   ; Exit main loop if set
  $8129 BIT 1,A       ; Test bit 1
  $812B JR Z,$80E8    ; Loop if not set
- $812D LD A,($7206)  ;
- $8130 LD HL,$7252   ;
- $8133 ADD A,(HL)    ;
- $8134 JP Z,$832A    ; Stage completed
+ $812D LD A,($7206)  ; Get active enemies
+ $8130 LD HL,$7252   ; Add enemy shots
+ $8133 ADD A,(HL)    ; ...
+ $8134 JP Z,$832A    ; Stage completed when sum is zero
  $8137 JR $80E8      ; Loop
 
-; Exit from main loop after dying
+; Died
 ;
 ; Used by the routine at #R$80E8.
 @label=died
-c$8139 CALL $9B87    ;
+c$8139 CALL $9B87    ; Set variables
  $813C LD A,$03      ; Play explosion sound
  $813E CALL $9EA3    ; ...
  $8141 LD HL,$71EB   ; Reset main loop flag
@@ -699,37 +701,39 @@ c$8139 CALL $9B87    ;
  $816B CALL $84B1    ; Upload sprites
  $816E JR $814F      ;
 
-; Routine at 8170
+; Lose life
 ;
 ; Used by the routine at #R$8139.
+@label=lose_life
 c$8170 CALL $8D21    ;
  $8173 LD HL,$7204   ;
  $8176 INC (HL)      ;
  $8177 LD HL,$71FF   ; Lives
  $817A DEC (HL)      ; Lose life
  $817B JR NZ,$81AE   ; Jump if lives left
+; Game over
  $817D LD DE,$1C00   ;
  $8180 LD A,$D0      ;
  $8182 RST $10       ; Write VDP byte
  $8183 CALL $830E    ; Display player
- $8186 LD HL,$85DD   ;
- $8189 LD DE,$19CB   ;
- $818C LD BC,$0009   ;
+ $8186 LD HL,$85DD   ; Display GAME OVER
+ $8189 LD DE,$19CB   ; ...
+ $818C LD BC,$0009   ; ...
  $818F RST $38       ; WRITE_VRAM
- $8190 LD B,$00      ;
-*$8192 PUSH BC       ;
- $8193 HALT          ;
- $8194 CALL $AFFF    ;
- $8197 POP BC        ;
- $8198 DJNZ $8192    ;
- $819A CALL $84ED    ;
- $819D LD HL,$71EB   ;
- $81A0 BIT 7,(HL)    ; Test for two players
- $81A2 JP Z,$81ED    ;
- $81A5 BIT 5,(HL)    ;
- $81A7 JP NZ,$81ED   ;
- $81AA SET 5,(HL)    ;
- $81AC JR $81B9      ;
+ $8190 LD B,$00      ; Stars for 256 frames
+*$8192 PUSH BC       ; ...
+ $8193 HALT          ; ...
+ $8194 CALL $AFFF    ; Display stars
+ $8197 POP BC        ; ...
+ $8198 DJNZ $8192    ; ...
+ $819A CALL $84ED    ; Clear rows 9 and 14
+ $819D LD HL,$71EB   ; Test for two players
+ $81A0 BIT 7,(HL)    ; ...
+ $81A2 JP Z,$81ED    ; If not, wait for restart
+ $81A5 BIT 5,(HL)    ; Is one player already game over=
+ $81A7 JP NZ,$81ED   ; If so, wait for restart
+ $81AA SET 5,(HL)    ; Else flag that one player game over
+ $81AC JR $81B9      ; And switch player
 
 ; Switch player
 ;
@@ -761,10 +765,11 @@ c$81AE LD A,($71EB)  ; Test for two players
  $81E8 SET 5,(HL)    ;
  $81EA JP $80E8      ; To main loop
 
-; Routine at 81ED
+; Wait for restart
 ;
 ; Used by the routine at #R$8170.
-c$81ED LD HL,$4650   ; 300 frames
+@label=wait_for_restart
+c$81ED LD HL,$4650   ; 300 seconds
  $81F0 LD ($7257),HL ; Set screensaver countdown
 *$81F3 HALT          ;
  $81F4 LD HL,$0001   ; Controller 0, segment 1
@@ -782,7 +787,7 @@ c$81ED LD HL,$4650   ; 300 frames
 
 ; Init stage
 ;
-; Initializa stage and display X WARPS TO Y message Used by the routines at
+; Initialize stage and display X WARPS TO Y message. Used by the routines at
 ; #R$8024, #R$81AE and #R$83D0.
 @label=init_stage
 c$8212 LD HL,$722E   ; Clear $28 bytes from $722E
@@ -792,7 +797,7 @@ c$8212 LD HL,$722E   ; Clear $28 bytes from $722E
  $821D LDIR          ; ...
  $821F LD A,$01      ;
  $8221 LD ($71EE),A  ;
- $8224 LD HL,$71EB   ; Clear flag that exists main loop
+ $8224 LD HL,$71EB   ;  Clear died flag
  $8227 RES 2,(HL)    ; ...
 ; Calculate stage data index
  $8229 LD A,($7205)  ; Get completed stages
@@ -951,7 +956,7 @@ c$832A LD A,$08        ; Set counter for later
  $8332 RES 6,(HL)      ; Clear main loop flag
  $8334 CALL $1FDC      ; READ_REGISTER
  $8337 BIT 3,(HL)      ; If bit 3 is set
- $8339 JP NZ,$8429     ; Then it was a bonus stage
+ $8339 JP NZ,$8429     ; Then it was a chance stage
 ; This entry point is used by the routines at #R$8450 and #R$846B.
 *$833C LD B,$5A        ; 90
 *$833E PUSH BC         ;
@@ -988,7 +993,7 @@ c$832A LD A,$08        ; Set counter for later
  $8383 INC A           ; + 1
  $8384 CALL $9175      ; Display planet A
  $8387 CALL $ACF9      ; Upload sprite data
-; Fly towards center
+; Warp
 *$838A HALT            ; Wait interrupt
  $838B CALL $AFFF      ; Display stars
  $838E CALL $A73C      ; Control ship
@@ -1019,7 +1024,7 @@ c$832A LD A,$08        ; Set counter for later
 *$83CB CALL $84B1      ; Upload sprites
  $83CE JR $838A        ; Loop
 
-; Routine at 83D0
+; Next stage
 ;
 ; Used by the routine at #R$832A.
 @label=next_stage
@@ -1042,7 +1047,7 @@ c$83D0 LD HL,$71EB   ; Flags
  $83F2 RES 3,(HL)    ; Reset bit 3
  $83F4 LD A,($7200)  ; Stage
  $83F7 AND $03       ; Mod 4
- $83F9 CP $03        ; Is it a bonus stage?
+ $83F9 CP $03        ; Is it a chance stage?
  $83FB JR NZ,$83FF   ; No, skip ahead
  $83FD SET 3,(HL)    ; Yes, set flag
 *$83FF XOR A         ; Reset death count
@@ -1063,11 +1068,11 @@ c$83D0 LD HL,$71EB   ; Flags
  $8423 LD ($7256),A  ; ...
  $8426 JP $80E8      ; Jump to main loop
 
-; Routine at 8429
+; Display bonus
 ;
 ; Used by the routine at #R$832A.
 @label=display_bonus
-c$8429 LD A,($7255)  ; Number of ships destroyed in bonus stage
+c$8429 LD A,($7255)  ; Number of ships destroyed in chance stage
  $842C CP $28        ; Is it 40?
  $842E JR Z,$846B    ; Then it's perfect
  $8430 PUSH AF       ; Save ships
@@ -1144,7 +1149,7 @@ c$846B LD A,$02      ; Play a tune
  $84AC DJNZ $8489    ; Loop number of ships times
  $84AE JP $833C      ; Jump back to complete stage
 
-; Routine at 84B1
+; Update frames and upload sprites
 ;
 ; Used by the routines at #R$8024, #R$8139, #R$832A, #R$832A, #R$846B, #R$A33B
 ; and #R$A3E1.
@@ -1199,9 +1204,10 @@ c$84DB PUSH DE       ;
  $84EB POP DE        ;
  $84EC RET           ;
 
-; Routine at 84ED
+; Clear rows 9 and 14
 ;
 ; Used by the routines at #R$8170 and #R$832A.
+@label=clear_rows_9_and_14
 c$84ED LD HL,$1920   ; Name table row 9
  $84F0 LD DE,$0020   ; 32 bytes
  $84F3 XOR A         ; Clear
@@ -1249,7 +1255,7 @@ c$8501 PUSH IX       ;
  $8538 POP IX        ;
  $853A RETN          ;
 
-; Message at 853C
+; STAGE message
 @label=stage_msg
 t$853C DEFM "STAGE"
 
@@ -1276,43 +1282,43 @@ b$8541 DEFB $02,$00,$28,$3F,$01,$50,$1E,$00
  $8571 DEFB $01,$03,$0F,$0F,$04,$28,$05,$03
  $8579 DEFB $01,$03,$0F,$0F,$04,$1E,$05,$03
 
-; Message at 8581
+; PLAYER message
 @label=player_msg
 t$8581 DEFM "PLAYER",$00,"1"
 
-; Message at 8589
+; READY message
 @label=ready_msg
 t$8589 DEFM $05,"READY"
 
-; Message at 858F
+; CHANCE STAGE message
 @label=chance_stage_msg
 t$858F DEFM $0C,"CHANCE",$00,"STAGE"
 
-; Message at 859D
+; WARPS message
 @label=warps_msg
 t$859C DEFM $00,"WARPS"
 
-; Message at 85A2
+; TO message
 @label=to_msg
 t$85A2 DEFM $00,"TO",$00
 
-; Message at 85A6
+; BONUS message
 @label=bonus_msg
 t$85A6 DEFM "BONUS"
 
-; Message at 85AB
+; Bonus points message
 @label=bonus_numbers_msg
 t$85AB DEFM "100",$00,"X",$00,"..",$00,$00,"..00"
 
-; Message at 85B9
+; CONGRATULATIONS message
 @label=congratulations_msg
 t$85B9 DEFM "CONGRATULATIONS?"
 
-; Message at 85C9
+; PERFECT message
 @label=perfect_msg
 t$85C9 DEFM "PERFECT?",$00,$00,$00,"10000",$00,"PTS"
 
-; Message at 85DA
+; GAME OVER message
 @label=game_over_msg
 t$85DD DEFM "GAME",$00,"OVER"
 
@@ -2542,7 +2548,7 @@ c$8E2C LD B,D        ;
  $8E7A INC A         ;
  $8E7B LD ($7266),A  ;
  $8E7E LD HL,$7256   ;
- $8E81 SET 2,(HL)    ;
+ $8E81 SET 2,(HL)    ; Set died flag
  $8E83 LD A,$01      ;
  $8E85 LD ($7264),A  ;
  $8E88 RET           ;
@@ -2743,8 +2749,8 @@ c$8FED DEC (IY+$07)    ;
  $8FFE LD HL,$722D     ;
  $9001 DEC (HL)        ;
  $9002 JR NZ,$8FAE     ;
- $9004 LD HL,$7256     ;
- $9007 RES 2,(HL)      ;
+ $9004 LD HL,$7256     ; Clear died flag
+ $9007 RES 2,(HL)      ; ...
  $9009 CALL $8E8D      ;
  $900C JR $8FAE        ;
 
@@ -2872,7 +2878,7 @@ c$90D6 CALL $1F85    ; MODE_1 (pattern generator table at  $0000, name table at
  $9166 RST $18       ; WRITE_REGISTER
 @label=start_screen_loop
 *$9167 HALT          ; Wait for interrupt
- $9168 CALL $AFFF    ; Draw stars
+ $9168 CALL $AFFF    ; Display stars
  $916B CALL $AE94    ;
  $916E RET NC        ; Return is no carry
  $916F CALL $AE94    ;
@@ -3620,9 +3626,9 @@ c$9978 LD A,($7256)  ; Flags
  $997F LD HL,$71EB   ; Flags
  $9982 LD A,($7202)  ; Enemies destroyed
  $9985 INC A         ; +1
- $9986 BIT 3,(HL)    ; Check for bonus stage
- $9988 JR NZ,$998D   ; Skip ahead if bonus stage
- $998A LD ($7202),A  ; Save if not bonus stage
+ $9986 BIT 3,(HL)    ; Check for chance stage
+ $9988 JR NZ,$998D   ; Skip ahead if chance stage
+ $998A LD ($7202),A  ; Save if not chance stage
 *$998D ADD A,A       ; x2
  $998E LD HL,$9AA7   ; Score table
  $9991 RST $08       ; Add A to HL
@@ -3691,8 +3697,8 @@ c$99D3 LD A,$04        ;
  $99F8 LD HL,$722D     ;
  $99FB DEC (HL)        ;
  $99FC JR NZ,$9A03     ;
- $99FE LD HL,$7256     ;
- $9A01 RES 2,(HL)      ;
+ $99FE LD HL,$7256     ; Clear died flag
+ $9A01 RES 2,(HL)      ; ...
 *$9A03 POP IX          ;
  $9A05 POP DE          ;
  $9A06 JR $9999        ;
@@ -3753,8 +3759,8 @@ c$9A49 CP $0E          ;
 *$9A69 LD HL,$7206     ;
  $9A6C DEC (HL)        ;
 ; This entry point is used by the routine at #R$9A38.
-*$9A6D LD HL,$71EB     ;
- $9A70 SET 2,(HL)      ;
+*$9A6D LD HL,$71EB     ; Set died flag
+ $9A70 SET 2,(HL)      ; ...
  $9A72 JP $97F3        ;
 
 ; Routine at 9A75
@@ -4695,7 +4701,7 @@ c$A33B LD HL,$80B5     ; New center of projection at bottom center for
  $A372 CALL $A73C      ; Control ship
  $A375 CALL $ACF9      ; Upload sprite data
  $A378 HALT            ; Wait interrupt
- $A379 CALL $AFFF      ;
+ $A379 CALL $AFFF      ; Display stars
  $A37C CALL $AB72      ; Display center enemies
  $A37F POP BC          ; Restore counter
  $A380 DJNZ $A36E      ; Loop 20 times
@@ -6036,9 +6042,10 @@ c$AE94 LD A,($72D5)   ; Get counter
  $AF67 LD ($72D5),A   ; ...
  $AF6A RET            ;
 
+; Flip horizontal
+;
 ; Take 8 bytes pointed to by $72DE and place them after, bit reversed. Returns
 ; address of reversed bytes in $72DE.
-;
 ; Used by the routine at #R$AE94.
 @label=flip_horz
 c$AF6B LD HL,($72DE) ;
@@ -6068,9 +6075,10 @@ c$AF6B LD HL,($72DE) ;
  $AFAB DJNZ $AF7A    ;
  $AFAD RET           ;
 
+; Flip vertical
+;
 ; Take 8 bytes pointed to by $72DE and place them after in reverse order.
 ; Returns address of reversed bytes in $72DE.
-;
 ; Used by the routine at #R$AE94.
 @label=flip_vert
 c$AFAE LD DE,($72DE) ;
@@ -6085,9 +6093,10 @@ c$AFAE LD DE,($72DE) ;
  $AFBE LD ($72DE),HL ;
  $AFC1 RET           ;
 
+; Shift left
+;
 ; Take 8 bytes pointed to by $72DE and place them after, left shifted one bit.
 ; Returns address of shifted bytes in $72DE.
-;
 ; Used by the routine at #R$AE94.
 @label=shift_left
 c$AFC2 LD DE,($72DE) ;

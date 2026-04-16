@@ -24,7 +24,7 @@ Next: <a href="33198.html">81AE</a>
 </td>
 </tr>
 </table>
-<div class="description">8170: Routine at 8170</div>
+<div class="description">8170: Lose life</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -36,7 +36,7 @@ Used by the routine at <a href="33081.html">died</a>.
 </td>
 </tr>
 <tr>
-<td class="asm-label">L8170</td>
+<td class="asm-label">lose_life</td>
 <td class="address-2"><span id="33136"></span>8170</td>
 <td class="instruction">CALL <a href="36129.html">L8D21</a></td>
 <td class="comment-1" rowspan="1"></td>
@@ -72,6 +72,16 @@ Used by the routine at <a href="33081.html">died</a>.
 <td class="comment-1" rowspan="1">Jump if lives left</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="33149"></span>
+<div class="comments">
+<div class="paragraph">
+Game over
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33149"></span>817D</td>
 <td class="instruction">LD DE,$1C00</td>
@@ -99,19 +109,19 @@ Used by the routine at <a href="33081.html">died</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="33158"></span>8186</td>
 <td class="instruction">LD HL,<a href="34269.html">game_over_msg</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Display GAME OVER</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33161"></span>8189</td>
 <td class="instruction">LD DE,$19CB</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33164"></span>818C</td>
 <td class="instruction">LD BC,$0009</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -123,85 +133,85 @@ Used by the routine at <a href="33081.html">died</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="33168"></span>8190</td>
 <td class="instruction">LD B,$00</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stars for 256 frames</td>
 </tr>
 <tr>
-<td class="asm-label">L8170_0</td>
+<td class="asm-label">lose_life_0</td>
 <td class="address-2"><span id="33170"></span>8192</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33171"></span>8193</td>
 <td class="instruction">HALT</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33172"></span>8194</td>
 <td class="instruction">CALL <a href="45055.html">display_stars</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Display stars</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33175"></span>8197</td>
 <td class="instruction">POP BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33176"></span>8198</td>
-<td class="instruction">DJNZ <a href="33136.html#33170">L8170_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">DJNZ <a href="33136.html#33170">lose_life_0</a></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33178"></span>819A</td>
-<td class="instruction">CALL <a href="34029.html">L84ED</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL <a href="34029.html">clear_rows_9_and_14</a></td>
+<td class="comment-1" rowspan="1">Clear rows 9 and 14</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33181"></span>819D</td>
 <td class="instruction">LD HL,<a href="29163.html">status_flags</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Test for two players</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33184"></span>81A0</td>
 <td class="instruction">BIT 7,(HL)</td>
-<td class="comment-1" rowspan="1">Test for two players</td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33186"></span>81A2</td>
-<td class="instruction">JP Z,<a href="33261.html">L81ED</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JP Z,<a href="33261.html">wait_for_restart</a></td>
+<td class="comment-1" rowspan="1">If not, wait for restart</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33189"></span>81A5</td>
 <td class="instruction">BIT 5,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Is one player already game over=</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33191"></span>81A7</td>
-<td class="instruction">JP NZ,<a href="33261.html">L81ED</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JP NZ,<a href="33261.html">wait_for_restart</a></td>
+<td class="comment-1" rowspan="1">If so, wait for restart</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33194"></span>81AA</td>
 <td class="instruction">SET 5,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Else flag that one player game over</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33196"></span>81AC</td>
 <td class="instruction">JR <a href="33198.html#33209">switch_player_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">And switch player</td>
 </tr>
 </table>
 <table class="asm-navigation">

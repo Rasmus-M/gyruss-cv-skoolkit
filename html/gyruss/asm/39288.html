@@ -88,19 +88,19 @@ Used by the routine at <a href="39220.html">L9934</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="39302"></span>9986</td>
 <td class="instruction">BIT 3,(HL)</td>
-<td class="comment-1" rowspan="1">Check for bonus stage</td>
+<td class="comment-1" rowspan="1">Check for chance stage</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39304"></span>9988</td>
 <td class="instruction">JR NZ,<a href="39288.html#39309">add_score_from_enemy_0</a></td>
-<td class="comment-1" rowspan="1">Skip ahead if bonus stage</td>
+<td class="comment-1" rowspan="1">Skip ahead if chance stage</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39306"></span>998A</td>
 <td class="instruction">LD (<a href="29186.html">enemies_hit</a>),A</td>
-<td class="comment-1" rowspan="1">Save if not bonus stage</td>
+<td class="comment-1" rowspan="1">Save if not chance stage</td>
 </tr>
 <tr>
 <td class="asm-label">add_score_from_enemy_0</td>

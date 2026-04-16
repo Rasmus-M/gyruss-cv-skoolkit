@@ -24,22 +24,22 @@ Next: <a href="33298.html">8212</a>
 </td>
 </tr>
 </table>
-<div class="description">81ED: Routine at 81ED</div>
+<div class="description">81ED: Wait for restart</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="33136.html">L8170</a>.
+Used by the routine at <a href="33136.html">lose_life</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L81ED</td>
+<td class="asm-label">wait_for_restart</td>
 <td class="address-2"><span id="33261"></span>81ED</td>
 <td class="instruction">LD HL,$4650</td>
-<td class="comment-1" rowspan="1">300 frames</td>
+<td class="comment-1" rowspan="1">300 seconds</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -48,7 +48,7 @@ Used by the routine at <a href="33136.html">L8170</a>.
 <td class="comment-1" rowspan="1">Set screensaver countdown</td>
 </tr>
 <tr>
-<td class="asm-label">L81ED_0</td>
+<td class="asm-label">wait_for_restart_0</td>
 <td class="address-2"><span id="33267"></span>81F3</td>
 <td class="instruction">HALT</td>
 <td class="comment-1" rowspan="1"></td>
@@ -122,7 +122,7 @@ Used by the routine at <a href="33136.html">L8170</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33296"></span>8210</td>
-<td class="instruction">JR <a href="33261.html#33267">L81ED_0</a></td>
+<td class="instruction">JR <a href="33261.html#33267">wait_for_restart_0</a></td>
 <td class="comment-1" rowspan="1">Loop</td>
 </tr>
 </table>

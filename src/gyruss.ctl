@@ -22,7 +22,7 @@ B $71A3,31,8*3,7
 b $71C2 Data block at 71C2
 B $71C2,41,8*5,1
 b $71EB Status flags
-D $71EB #TABLE(default, default) { =h Bit | =h Purpose } { $00 | Unknown } { $01 | Unknown } { $02 | Exits main loop. Reset at stage init } { $03 | Set during bonus stage } { $04 | Set during stage init } { $05 | Unknown } { $06 | Set during main loop } { $07 | Two players } TABLE#
+D $71EB #TABLE(default, default) { =h Bit | =h Purpose } { $00 | Set during warp } { $01 | Set when the mines appear } { $02 | You died } { $03 | Set during chance stage } { $04 | Set during stage init } { $05 | Set for two-player game when one is game over } { $06 | Set during main loop } { $07 | Two-player game } TABLE#
 @ $71EB label=status_flags
 B $71EB,1,1
 b $71EC Stars move countdown
@@ -67,7 +67,7 @@ B $7200,1,1
 b $7201 Wave
 @ $7201 label=wave
 B $7201,1,1
-b $7202 Enemies destroyed not bonus stage
+b $7202 Enemies destroyed not chance stage
 @ $7202 label=enemies_hit
 B $7202,1,1
 b $7203 Index (0-7) into #R$8541 (blocks of 8 bytes)
@@ -80,7 +80,8 @@ b $7205 Completed stages
 D $7205 When stage reaches 24, this number is added here, and stage is reset to 0
 @ $7205 label=completed_stages
 B $7205,1,1
-b $7206 Byte at 7206
+b $7206 Number of active enemies
+@ $7206 label=active_enemies
 B $7206,1,1
 b $7207 Data block at 7207
 @ $7207 label=buffer_at_7207
@@ -93,14 +94,15 @@ b $722D Byte at 722D
 B $722D,1,1
 b $722E Data block at 722E
 B $722E,36,8*4,4
-b $7252 Byte at 7252
+b $7252 Active enemy shots, set to $FF during explosion
+@ $7252 label=active_enemy_shots
 B $7252,1,1
 b $7253 Number of active shots
 @ $7253 label=active_shots
 B $7253,1,1
 b $7254 Byte at 7254
 B $7254,1,1
-b $7255 Enemies destroyed in bonus stage
+b $7255 Enemies destroyed in chance stage
 @ $7255 label=bonus_enemies_hit
 B $7255,1,1
 b $7256 Other flags
@@ -297,6 +299,7 @@ C $8041,3 180 * 60 frames
 C $8044,3 Set screensaver countdown
 @ $8047 label=entry_wait_fire
 C $8047,1 Wait for interrupt
+C $8048,3 Display stars
 C $804B,3 Controller 0, segment 0
 C $804E,3 DECODER
 C $8051,2 Test fire
@@ -305,7 +308,7 @@ C $8055,3 Controller 1, segment 0
 C $8058,3 DECODER
 C $805B,2 Test fire
 C $805D,2 Loop until fire pressed
-C $805F,3 Set two player flag
+C $805F,3 Set two-player flag
 C $8062,2 ...
 N $8064 This entry point is used by the routine at #R$81ED. Fire pressed
 @ $8064 label=new_game
@@ -324,7 +327,7 @@ C $8085,1 ...
 C $8086,1 ...
 C $8087,3 ...
 C $808A,2 ...
-C $808C,3 Clear all but two player flag
+C $808C,3 Clear all but two-player flag
 C $808F,2 ...
 C $8091,3 ...
 C $8094,2 5 Lives
@@ -385,11 +388,15 @@ C $8124,2 Test bit 2
 C $8126,3 Exit main loop if set
 C $8129,2 Test bit 1
 C $812B,2 Loop if not set
-C $8134,3 Stage completed
+C $812D,3 Get active enemies
+C $8130,3 Add enemy shots
+C $8133,1 ...
+C $8134,3 Stage completed when sum is zero
 C $8137,2 Loop
-c $8139 Exit from main loop after dying
+c $8139 Died
 D $8139 Used by the routine at #R$80E8.
 @ $8139 label=died
+C $8139,3 Set variables
 C $813C,2 Play explosion sound
 C $813E,3 ...
 C $8141,3 Reset main loop flag
@@ -401,15 +408,33 @@ C $814C,3 Explosion
 C $815F,3 Display stars
 C $8168,3 Display center enemies
 C $816B,3 Upload sprites
-c $8170 Routine at 8170
+c $8170 Lose life
 D $8170 Used by the routine at #R$8139.
+@ $8170 label=lose_life
 C $8177,3 Lives
 C $817A,1 Lose life
 C $817B,2 Jump if lives left
+N $817D Game over
 C $8182,1 Write VDP byte
 C $8183,3 Display player
+C $8186,3 Display GAME OVER
+C $8189,3 ...
+C $818C,3 ...
 C $818F,1 WRITE_VRAM
-C $81A0,2 Test for two players
+C $8190,2 Stars for 256 frames
+C $8192,1 ...
+C $8193,1 ...
+C $8194,3 Display stars
+C $8197,1 ...
+C $8198,2 ...
+C $819A,3 Clear rows 9 and 14
+C $819D,3 Test for two players
+C $81A0,2 ...
+C $81A2,3 If not, wait for restart
+C $81A5,2 Is one player already game over=
+C $81A7,3 If so, wait for restart
+C $81AA,2 Else flag that one player game over
+C $81AC,2 And switch player
 c $81AE Switch player
 D $81AE Used by the routine at #R$8170.
 @ $81AE label=switch_player
@@ -436,9 +461,10 @@ C $81DD,2 Switch player
 C $81DF,3 Save again
 C $81E2,3 Initialize stage
 C $81EA,3 To main loop
-c $81ED Routine at 81ED
+c $81ED Wait for restart
 D $81ED Used by the routine at #R$8170.
-C $81ED,3 300 frames
+@ $81ED label=wait_for_restart
+C $81ED,3 300 seconds
 C $81F0,3 Set screensaver countdown
 C $81F4,3 Controller 0, segment 1
 C $81F7,3 DECODER
@@ -450,14 +476,14 @@ C $820B,2 Test fire
 C $820D,3 Start a new game
 C $8210,2 Loop
 c $8212 Init stage
-D $8212 Initializa stage and display X WARPS TO Y message Used by the routines at #R$8024, #R$81AE and #R$83D0.
+D $8212 Initialize stage and display X WARPS TO Y message. Used by the routines at #R$8024, #R$81AE and #R$83D0.
 @ $8212 label=init_stage
 C $8212,3 Clear $28 bytes from $722E
 C $8215,3 ...
 C $8218,3 ...
 C $821B,2 ...
 C $821D,2 ...
-C $8224,3 Clear flag that exists main loop
+C $8224,3 Clear died flag
 C $8227,2 ...
 N $8229 Calculate stage data index
 C $8229,3 Get completed stages
@@ -606,7 +632,7 @@ C $832C,3 ...
 C $8332,2 Clear main loop flag
 C $8334,3 READ_REGISTER
 C $8337,2 If bit 3 is set
-C $8339,3 Then it was a bonus stage
+C $8339,3 Then it was a chance stage
 N $833C This entry point is used by the routines at #R$8450 and #R$846B.
 C $833C,2 90
 C $833F,1 Wait interrupt
@@ -636,7 +662,7 @@ C $8381,2 ...
 C $8383,1 + 1
 C $8384,3 Display planet A
 C $8387,3 Upload sprite data
-N $838A Fly towards center
+N $838A Warp
 C $838A,1 Wait interrupt
 C $838B,3 Display stars
 C $838E,3 Control ship
@@ -663,7 +689,7 @@ C $83C7,1 Load sprite pattern sprite 1
 C $83C8,3 Display ship background patterns
 C $83CB,3 Upload sprites
 C $83CE,2 Loop
-c $83D0 Routine at 83D0
+c $83D0 Next stage
 D $83D0 Used by the routine at #R$832A.
 @ $83D0 label=next_stage
 C $83D0,3 Flags
@@ -682,7 +708,7 @@ C $83EF,3 Flags
 C $83F2,2 Reset bit 3
 C $83F4,3 Stage
 C $83F7,2 Mod 4
-C $83F9,2 Is it a bonus stage?
+C $83F9,2 Is it a chance stage?
 C $83FB,2 No, skip ahead
 C $83FD,2 Yes, set flag
 C $83FF,1 Reset death count
@@ -702,10 +728,10 @@ C $841F,3 Init stage
 C $8422,1 Restore flags
 C $8423,3 ...
 C $8426,3 Jump to main loop
-c $8429 Routine at 8429
+c $8429 Display bonus
 D $8429 Used by the routine at #R$832A.
 @ $8429 label=display_bonus
-C $8429,3 Number of ships destroyed in bonus stage
+C $8429,3 Number of ships destroyed in chance stage
 C $842C,2 Is it 40?
 C $842E,2 Then it's perfect
 C $8430,1 Save ships
@@ -770,7 +796,7 @@ C $84A4,3 Upload sprites
 C $84A8,2 Loop 7 times
 C $84AC,2 Loop number of ships times
 C $84AE,3 Jump back to complete stage
-c $84B1 Routine at 84B1
+c $84B1 Update frames and upload sprites
 D $84B1 Used by the routines at #R$8024, #R$8139, #R$832A, #R$832A, #R$846B, #R$A33B and #R$A3E1.
 @ $84B1 label=update_frame_upload_sprites
 C $84B1,3 Update frame counter
@@ -808,8 +834,9 @@ C $84E2,1 Add #R$8541
 C $84E3,2 ...
 C $84E5,4 ...
 C $84E9,2 ...
-c $84ED Routine at 84ED
+c $84ED Clear rows 9 and 14
 D $84ED Used by the routines at #R$8170 and #R$832A.
+@ $84ED label=clear_rows_9_and_14
 C $84ED,3 Name table row 9
 C $84F0,3 32 bytes
 C $84F3,1 Clear
@@ -837,41 +864,41 @@ C $851F,1 WRITE_REGISTER
 C $8520,2 Loop
 C $8522,3 Sound player
 C $852A,3 READ_REGISTER
-t $853C Message at 853C
+t $853C STAGE message
 @ $853C label=stage_msg
 T $853C,5,5
 b $8541 Stage data (8 bytes per stage)
 D $8541 #TABLE(default, default) { =h Byte offset | =h Purpose } { $00 | Unknown } { $01 | Unknown } { $02 | Unknown } { $03 | Unknown } { $04 | Unknown } { $05 | Unknown } { $06 | Unknown } { $07 | Unknown } TABLE#
 @ $8541 label=stage_data
 B $8541,64,8
-t $8581 Message at 8581
+t $8581 PLAYER message
 @ $8581 label=player_msg
 T $8581,8,6:n1:1
-t $8589 Message at 8589
+t $8589 READY message
 @ $8589 label=ready_msg
 T $8589,6,n1:5
-t $858F Message at 858F
+t $858F CHANCE STAGE message
 @ $858F label=chance_stage_msg
 T $858F,13,n1:6:n1:5
-t $859C Message at 859D
+t $859C WARPS message
 @ $859C label=warps_msg
 T $859C,6,n1:5
-t $85A2 Message at 85A2
+t $85A2 TO message
 @ $85A2 label=to_msg
 T $85A2,4,n1:2:n1
-t $85A6 Message at 85A6
+t $85A6 BONUS message
 @ $85A6 label=bonus_msg
 T $85A6,5,5
-t $85AB Message at 85AB
+t $85AB Bonus points message
 @ $85AB label=bonus_numbers_msg
 T $85AB,14,3:n1:1:n1:2:n2:4
-t $85B9 Message at 85B9
+t $85B9 CONGRATULATIONS message
 @ $85B9 label=congratulations_msg
 T $85B9,16,16
-t $85C9 Message at 85C9
+t $85C9 PERFECT message
 @ $85C9 label=perfect_msg
 T $85C9,20,8:n3:5:n1:3
-t $85DD Message at 85DA
+t $85DD GAME OVER message
 @ $85DD label=game_over_msg
 T $85DD,9,4:n1:4
 c $85E6 Routine at 85E6
@@ -1157,6 +1184,7 @@ B $8E11,27,8*3,3
 c $8E2C Routine at 8E2C
 N $8E2D This entry point is used by the routines at #R$8024, #R$8139 and #R$A3E1.
 C $8E5C,3 Stage
+C $8E81,2 Set died flag
 c $8E89 Routine at 8E89
 D $8E89 Used by the routine at #R$8E2C.
 @ $8E89 label=init_stage_variables
@@ -1183,6 +1211,8 @@ C $8FB1,3 Polar x
 C $8FC3,3 Display background patterns
 c $8FED Routine at 8FED
 D $8FED Used by the routine at #R$8F55.
+C $9004,3 Clear died flag
+C $9007,2 ...
 c $900E Routine at 900E
 D $900E Used by the routines at #R$8E9D and #R$8F55.
 C $9023,1 Allocate sprite
@@ -1253,7 +1283,7 @@ C $9163,3 Display on, interrupt on
 C $9166,1 WRITE_REGISTER
 @ $9167 label=start_screen_loop
 C $9167,1 Wait for interrupt
-C $9168,3 Draw stars
+C $9168,3 Display stars
 C $916E,1 Return is no carry
 C $9172,2 Loop until no carry
 c $9175 Display planet
@@ -1535,9 +1565,9 @@ C $997D,2 Then just add score
 C $997F,3 Flags
 C $9982,3 Enemies destroyed
 C $9985,1 +1
-C $9986,2 Check for bonus stage
-C $9988,2 Skip ahead if bonus stage
-C $998A,3 Save if not bonus stage
+C $9986,2 Check for chance stage
+C $9988,2 Skip ahead if chance stage
+C $998A,3 Save if not chance stage
 C $998D,1 x2
 C $998E,3 Score table
 C $9991,1 Add A to HL
@@ -1556,6 +1586,8 @@ D $99D3 Used by the routine at #R$99B1.
 C $99E1,1 Add A to HL
 N $99EA This entry point is used by the routine at #R$99B1.
 C $99F5,3 Display background patterns
+C $99FE,3 Clear died flag
+C $9A01,2 ...
 c $9A08 Routine at 9A08
 D $9A08 Used by the routine at #R$9924.
 c $9A1C Routine at 9A1C
@@ -1568,6 +1600,8 @@ D $9A49 Used by the routine at #R$9A38.
 C $9A68,1 Load sprite pattern
 N $9A69 This entry point is used by the routine at #R$9A75.
 N $9A6D This entry point is used by the routine at #R$9A38.
+C $9A6D,3 Set died flag
+C $9A70,2 ...
 c $9A75 Routine at 9A75
 D $9A75 Used by the routine at #R$9796.
 C $9A7D,3 Display background patterns
@@ -1740,6 +1774,7 @@ C $A36F,3 Move dots
 C $A372,3 Control ship
 C $A375,3 Upload sprite data
 C $A378,1 Wait interrupt
+C $A379,3 Display stars
 C $A37C,3 Display center enemies
 C $A37F,1 Restore counter
 C $A380,2 Loop 20 times
@@ -2441,14 +2476,14 @@ C $AF63,1 When it reaches $1D (29)
 C $AF64,1 ...
 C $AF65,2 Then set it to $FF (done)
 C $AF67,3 ...
-c $AF6B Take 8 bytes pointed to by $72DE and place them after, bit reversed. Returns address of reversed bytes in $72DE.
-D $AF6B Used by the routine at #R$AE94.
+c $AF6B Flip horizontal
+D $AF6B Take 8 bytes pointed to by $72DE and place them after, bit reversed. Returns address of reversed bytes in $72DE. Used by the routine at #R$AE94.
 @ $AF6B label=flip_horz
-c $AFAE Take 8 bytes pointed to by $72DE and place them after in reverse order. Returns address of reversed bytes in $72DE.
-D $AFAE Used by the routine at #R$AE94.
+c $AFAE Flip vertical
+D $AFAE Take 8 bytes pointed to by $72DE and place them after in reverse order. Returns address of reversed bytes in $72DE. Used by the routine at #R$AE94.
 @ $AFAE label=flip_vert
-c $AFC2 Take 8 bytes pointed to by $72DE and place them after, left shifted one bit. Returns address of shifted bytes in $72DE.
-D $AFC2 Used by the routine at #R$AE94.
+c $AFC2 Shift left
+D $AFC2 Take 8 bytes pointed to by $72DE and place them after, left shifted one bit. Returns address of shifted bytes in $72DE. Used by the routine at #R$AE94.
 @ $AFC2 label=shift_left
 b $AFDD Table at AFDD
 @ $AFDD label=table_at_AFDD

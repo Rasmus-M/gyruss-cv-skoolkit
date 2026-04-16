@@ -24,7 +24,7 @@ Next: <a href="33136.html">8170</a>
 </td>
 </tr>
 </table>
-<div class="description">8139: Exit from main loop after dying</div>
+<div class="description">8139: Died</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -39,7 +39,7 @@ Used by the routine at <a href="33000.html">main_loop</a>.
 <td class="asm-label">died</td>
 <td class="address-2"><span id="33081"></span>8139</td>
 <td class="instruction">CALL <a href="39815.html">set_variables_after_stage</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set variables</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -104,7 +104,7 @@ Used by the routine at <a href="33000.html">main_loop</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33109"></span>8155</td>
-<td class="instruction">LD A,(<a href="29190.html">L7206</a>)</td>
+<td class="instruction">LD A,(<a href="29190.html">active_enemies</a>)</td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -122,7 +122,7 @@ Used by the routine at <a href="33000.html">main_loop</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33116"></span>815C</td>
-<td class="instruction">JR Z,<a href="33136.html">L8170</a></td>
+<td class="instruction">JR Z,<a href="33136.html">lose_life</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
