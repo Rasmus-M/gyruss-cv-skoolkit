@@ -45,13 +45,13 @@ Used by the routine at <a href="44361.html">allocate_sprite</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44389"></span>AD65</td>
 <td class="instruction">BIT 7,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Is bit 7 set, i.e. $FF?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44391"></span>AD67</td>
 <td class="instruction">JR Z,<a href="44388.html#44405">available_sprite_found_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If not, skip recoding in allocation table</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -81,19 +81,19 @@ Used by the routine at <a href="44361.html">allocate_sprite</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44399"></span>AD6F</td>
 <td class="instruction">LD L,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44400"></span>AD70</td>
 <td class="instruction">JP NC,<a href="44388.html#44404">available_sprite_found_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44403"></span>AD73</td>
 <td class="instruction">INC H</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label">available_sprite_found_0</td>

@@ -39,31 +39,41 @@ Used by the routine at <a href="34429.html">L867D</a>.
 <td class="asm-label">L86DE</td>
 <td class="address-2"><span id="34526"></span>86DE</td>
 <td class="instruction">CP $14</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Is sprite type $014</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34528"></span>86E0</td>
 <td class="instruction">JR NZ,<a href="34537.html">L86E9</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If not, jump ahead</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="34530"></span>
+<div class="comments">
+<div class="paragraph">
+Sprite type $14 (TODO)
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34530"></span>86E2</td>
 <td class="instruction">INC (IX+$05)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34533"></span>86E5</td>
 <td class="instruction">DEC (IX+$01)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Decrement polar y</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34536"></span>86E8</td>
 <td class="instruction">RET</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return to <a href="35393.html">return_from_sprite_handler</a></td>
 </tr>
 </table>
 <table class="asm-navigation">

@@ -14,6 +14,7 @@ b $7182 Number of allocated sprites
 @ $7182 label=allocated_sprites
 B $7182,1,1
 b $7183 Sprite allocation table
+D $7183 Contains #R$7182 indexes into #R$7002
 @ $7183 label=sprite_alloc_table
 B $7183,32,8
 b $71A3 Temporary storage (72 bytes)
@@ -376,6 +377,7 @@ C $80EF,2 Clear flag
 C $80F1,3 READ_REGISTER (read VDP status)
 C $80F4,3 Display stars
 C $80F7,3 Control ship
+C $80FA,3 Process sprites
 C $80FD,3 READ_REGISTER
 C $8106,3 READ_REGISTER
 C $810F,3 READ_REGISTER
@@ -406,6 +408,7 @@ C $8149,3 Update sprite types $0F - $11
 C $814C,3 Explosion
 @ $814F label=label_at_814F
 C $815F,3 Display stars
+C $8162,3 Process sprites
 C $8168,3 Display center enemies
 C $816B,3 Upload sprites
 c $8170 Lose life
@@ -638,6 +641,7 @@ C $833C,2 90
 C $833F,1 Wait interrupt
 C $8340,3 Display stars
 C $8343,3 Control ship
+C $8346,3 Process sprites
 C $8349,3 Display center enemies
 C $834C,3 Upload sprites
 C $8350,2 Loop for 90 frames
@@ -666,6 +670,7 @@ N $838A Warp
 C $838A,1 Wait interrupt
 C $838B,3 Display stars
 C $838E,3 Control ship
+C $8391,3 Process sprites
 C $8394,3 Decrement counter that start at 8
 C $8397,1 ...
 C $8398,2 If not zero yet then skip loop body
@@ -791,6 +796,7 @@ C $8494,2 7 frames
 C $8496,1 Wait for interrupt
 C $8498,3 Display stars
 C $849B,3 Control ship
+C $849E,3 Process sprites
 C $84A1,3 Display center enemies
 C $84A4,3 Upload sprites
 C $84A8,2 Loop 7 times
@@ -901,33 +907,129 @@ T $85C9,20,8:n3:5:n1:3
 t $85DD GAME OVER message
 @ $85DD label=game_over_msg
 T $85DD,9,4:n1:4
-c $85E6 Routine at 85E6
+c $85E6 Process sprites
 D $85E6 Used by the routines at #R$8024, #R$8139, #R$832A, #R$832A, #R$846B and #R$A3E1.
+@ $85E6 label=process_sprites
+C $85E6,3 Decrement counter
+C $85E9,1 ...
+C $85EA,3 Decrement counter
+C $85ED,1 ...
+C $85EE,3 Decrement counter stopping at 0
+C $85F1,1 ...
+C $85F2,3 ...
+C $85F5,3 ...
+C $85F8,3 Flags
+C $85FB,2 Reset init flag
+C $85FD,3 Table address #R$7183+2 (skip ship sprites)
 N $8600 This entry point is used by the routine at #R$8A41.
+C $8600,1 Save table address
+C $8601,3 Sprite allocation table
+C $8604,1 Clear carry
+C $8605,2 HL = offset into table
+C $8607,3 Allocated sprites
+C $860A,1 Compare to offset
+C $860B,1 Restore table address
+C $860C,3 Jump when we have reached the last allocation
+C $860F,1 Push allocation table address
+C $8610,1 Get sprite data table index
+C $8611,2 ...
+C $8613,1 Multiply by 4
+C $8614,1 ...
+C $8615,1 Store in DE
+C $8616,1 ...
+C $8617,1 Multiplied by 8
+C $8618,1 Multiplied by 12
+C $8619,1 DE = sprite data table offset
+C $861A,4 Base sprite data table address
+C $861E,2 IX = sprite data table address
+C $8620,3 Push return address of routine at #R$8A41
+C $8623,1 ...
+C $8624,3 Get sprite type
+C $8627,3 Copy it to byte 5?
+C $862A,2 Is it to be deallocated?
+C $862C,3 If not, jump ahead
 N $862F This entry point is used by the routines at #R$8654, #R$8673, #R$867D and #R$8815.
+@ $862F label=deallocate_sprite
+C $862F,4 Set as not allocated
+C $8633,1 Pop return address
+C $8634,1 Restore allocation table address of sprite to be deallocated
+C $8635,1 Push it again
+C $8636,3 Sprite allocation table
+C $8639,1 Clear carry
+C $863A,2 HL = offset into table
+C $863C,3 Decrement number of allocated sprites
+C $863F,1 ...
+C $8640,3 ...
+C $8643,1 Allocated sprites - offset = number of allocations after this one
+C $8644,2 If it was the last one, there's nothing to do
+C $8646,1 BC = number of allocations to move
+C $8647,2 ...
+C $8649,1 DE = allocation table address
+C $864A,1 ...
+C $864B,1 HL = allocation table address
+C $864C,1 ...
+C $864D,1 HL = allocation table address + 1
+C $864E,2 Copy allocations after to close hole
+C $8650,1 Restore allocation table address
+C $8651,3 Proceed with next sprite
 c $8654 Routine at 8654
 D $8654 Used by the routines at #R$870C, #R$873E and #R$8848.
-c $865A Routine at 865A
+c $865A Handle sprite
 D $865A Used by the routine at #R$85E6.
+@ $865A label=handle_sprite
+C $865A,2 Is sprite type $02?
+C $865C,3 If not proceed to next handler
+N $865F Sprite type $02 (shot)
+C $8662,3 Get polar y
+C $8665,1 Move shot
+C $8666,1 ...
+C $8667,3 And save again
+C $866A,2 Is polar y now 7?
+C $866C,2 If not, jump ahead
 C $866E,4 Set color
+C $8672,1 Return to #R$8A41
 c $8673 Routine at 8673
 D $8673 Used by the routine at #R$865A.
 c $867D Routine at 867D
 D $867D Used by the routine at #R$865A.
+C $867D,2 Is sprite type < 4 (ship1, ship2, shot)
+C $867F,2 Then jump
+C $8681,2 Is it >= $0D
+C $8683,2 Then jump
+N $8685 Sprite types $04 - $0C (TODO)
 C $869A,3 Set type
 C $86A5,4 Set color
 C $86AD,1 Load sprite pattern
 C $86B0,1 Allocate sprite
+C $86B3,4 Set type
 C $86BB,4 Set color
+C $86BF,4 Set polar y
+C $86C3,4 Set polar x
 C $86CB,1 Load sprite pattern
 C $86CF,3 Set y
+C $86D2,3 Get x
+C $86D5,2 Add 8
 C $86D7,3 Set x
 c $86DE Routine at 86DE
 D $86DE Used by the routine at #R$867D.
+C $86DE,2 Is sprite type $014
+C $86E0,2 If not, jump ahead
+N $86E2 Sprite type $14 (TODO)
+C $86E5,3 Decrement polar y
+C $86E8,1 Return to #R$8A41
 c $86E9 Routine at 86E9
 D $86E9 Used by the routine at #R$86DE.
+C $86E9,2 Is sprite type < $012
+C $86EB,2 If so, move ahead
+C $86ED,2 Is sprite type >= $014
+C $86EF,2 If so, move ahead
+N $86F1 Sprite types $12 - $13 (TODO)
+C $86F1,3 Frame counter
 c $870C Routine at 870C
 D $870C Used by the routine at #R$86E9.
+C $870C,2 Is sprite type $03?
+C $870E,2 If not, jump ahead
+N $8710 Sprite type $03 (TODO)
 c $873E Routine at 873E
 D $873E Used by the routine at #R$870C.
 c $8790 Routine at 8790
@@ -991,9 +1093,17 @@ c $8A2D Routine at 8A2D
 D $8A2D Used by the routine at #R$899E.
 c $8A3C Routine at 8A3C
 D $8A3C Used by the routine at #R$899E.
-c $8A41 Routine at 8A41
+c $8A41 Return from sprite handler
+D $8A41 Sprite handler branching out from #R$8600
+@ $8A41 label=return_from_sprite_handler
+C $8A41,3 Get sprite type
+C $8A44,3 Is it $05 (TODO)
+C $8A47,2 Skip ahead if so
 C $8A4D,1 Load sprite pattern
 N $8A4E This entry point is used by the routine at #R$867D.
+C $8A4E,1 Restore sprite allocation table address
+C $8A4F,1 Increment address
+C $8A50,3 Jump back into loop at #R$8600
 c $8A53 Routine at 8A53
 D $8A53 Used by the routine at #R$85E6.
 C $8A53,3 Get stage data address in IY
@@ -1378,8 +1488,8 @@ C $9210,2 Space
 C $9212,3 Address in name table (row 7)
 C $9215,3 32 bytes
 C $9218,3 FILL_VRAM
-c $921F Decode and upload patterns to VDP buffer at $1400
-D $921F Used by the routine at #R$90D6.
+c $921F Decode and upload patterns
+D $921F Decode and upload patterns to VDP buffer at $1400 Used by the routine at #R$90D6.
 @ $921F decode_and_upload_patterns
 C $921F,3 Number of bytes in block at $9475
 C $9222,3 Save it
@@ -1439,8 +1549,8 @@ C $927E,2 Rotate bit 0 into carry
 C $9280,1 Rotate carry into result
 C $9281,1 Pop number of bits to read
 C $9282,2 Repeat for n bits
-c $9285 Copy 135 patterns from VDP RAM buffer into pattern table from 128
-D $9285 Used by the routine at #R$9175.
+c $9285 Copy 135 patterns
+D $9285 Copy 135 patterns from VDP RAM buffer into pattern table from 128 Used by the routine at #R$9175.
 R $9285 I:HL Pattern generator table destination address ($0400)
 C $9288,2 Counter
 C $928D,3 Read 9 patterns from $1400 (?)
@@ -1533,6 +1643,9 @@ D $96FE #UDGTABLE { #UDGARRAY19,,4($96FE-$9795-8)(graphics-96FE.png) } TABLE#
 B $96FE,152,8
 c $9796 Routine at 9796
 D $9796 Used by the routine at #R$8024.
+C $9796,3 Return if only the ship sprites are allocated
+C $9799,2 ...
+C $979B,1 ...
 N $97F3 This entry point is used by the routines at #R$98B5, #R$9978 and #R$9A49.
 C $983B,1 Load sprite pattern
 C $9843,1 Load sprite pattern
@@ -1638,6 +1751,7 @@ C $9AE7,3 $727D
 C $9AEB,3 $7287
 C $9AEF,3 $7291
 C $9AF3,3 $729B
+C $9AFC,4 Set as not allocated
 C $9B04,4 Set y
 c $9B0D Play tune?
 D $9B0D Used by the routines at #R$9BD9, #R$9C1C and #R$9E91.
@@ -1865,6 +1979,7 @@ C $A454,3 Upload sprite data
 C $A457,2 9
 C $A459,1 Inner loop
 C $A45B,3 Display stars
+C $A45E,3 Process sprites
 C $A461,3 Display center enemies
 C $A467,3 Upload sprites
 C $A46B,2 Loop 9 times
@@ -1901,7 +2016,7 @@ C $A4AE,3 ...
 b $A4B2 Init data for implosion
 @ $A4B2 implosion_polar_x
 B $A4B2,6,6
-b $A4B8 Sprite init data (byte 2)
+b $A4B8 Sprite init data (polar x)
 B $A4B8,6,6
 b $A4BE Data block at A4BE
 B $A4BE,475,8*59,3
@@ -2277,7 +2392,7 @@ R $AD49 O:IX holds sprite address
 C $AD4C,3 Address of sprite data
 C $AD4F,3 Size of each sprite
 C $AD52,3 Number of sprites and sprite index
-C $AD58,2 If > $7E (usually $FF), sprite is available
+C $AD58,2 If >= $7F ($FF from init), sprite is available
 C $AD5A,1 Sprite index++
 C $AD5B,1 Advance to next sprite
 C $AD5C,2 Loop for up to 32 sprites
@@ -2287,10 +2402,15 @@ c $AD64 Routine at AD64
 D $AD64 Used by the routine at #R$AD49.
 @ $AD64 label=available_sprite_found
 C $AD64,1 Save sprite address
+C $AD65,2 Is bit 7 set, i.e. $FF?
+C $AD67,2 If not, skip recoding in allocation table
 C $AD69,3 Allocated sprites
 C $AD6C,1 Record one more
 C $AD6D,1 Read number back
 C $AD6E,1 Add number to HL
+C $AD6F,1 ...
+C $AD70,3 ...
+C $AD73,1 ...
 C $AD74,1 Record sprite index in table
 C $AD75,2 IX now holds sprite address
 C $AD77,4 Init sprite
@@ -2300,33 +2420,61 @@ c $AD8B Load sprite pattern (RST $30)
 D $AD8B Used by the routine at #R$801B.
 R $AD8B I:IX Pointer to sprite data
 @ $AD8B label=load_sprite_pattern
-C $AD90,3 Get sprite type
-C $AD95,3 Table of 29 bytes (offsets into table at $B8FA)
+C $AD90,3 DE = Sprite type
+C $AD93,2 ...
+C $AD95,3 Table of offsets for each sprite type into table at #R$B8FC
+C $AD98,1 Add sprite type
 C $AD99,1 Get graphics pointer offset for sprite type
 C $AD9A,3 Table of pointers to graphics
-C $AD9D,1 HL now pointer to graphics pointer
-C $AD9E,3 Get which transformation we want (flipped, shifted, etc.)
-C $ADA1,3 Address
-C $ADA4,2 If bit 7 of transformation is set, skip ahead with E=0
-C $ADAA,2 Jump if < $15
-C $ADAC,1 E = 1
-C $ADAF,2 Jump if < $1A
-C $ADB1,1 E = 2
-C $ADB4,2 Jump if < $22
-C $ADB6,1 E = 3
-C $ADB9,2 Jump if LSB of pointer >= E, which is 0..3
+C $AD9D,1 HL now points to graphics pointer
+C $AD9E,3 Get polar that determines which scale we want
+C $ADA1,3 Start with zero
+C $ADA4,2 If bit 7 of polar y is set, skip ahead with E=0
+C $ADA6,2 ...
+C $ADA8,2 Skip ahead if polar y < 21
+C $ADAA,2 ...
+C $ADAC,1 Else set E = 1
+C $ADAD,2 Skip ahead if polar y < 26
+C $ADAF,2 ...
+C $ADB1,1 Else set E = 2
+C $ADB2,2 Skip ahead if polar y < 34
+C $ADB4,2 ...
+C $ADB6,1 Else set E = 3
+C $ADB7,1 A = E
+C $ADB8,1 Compare with graphics pointer LSB
+C $ADB9,2 Jump if LSB of pointer >= 0..3 (not real address) TODO: Circumstantial, hard to convert?
 C $ADBB,1 Get LSB of pointer
 C $ADBC,1 Minus 1
-C $ADBD,1 To MSB
+C $ADBD,1 Advance to MSB
 C $ADBE,1 B = MSB
 C $ADBF,1 C = LSB - 1
-C $ADE1,3 Sprite type
+C $ADC0,3 Get polar x
+C $ADC3,2 Plus 2
+C $ADC5,2 Mod 64
+C $ADCA,1 If B = 0 (MSB of graphics pointer)
+C $ADCB,1 ...
+C $ADCC,2 Then skip ahead
+C $ADCE,1 Else set A = 0
+C $ADCF,2 And skip ahead
+C $ADD1,2 Divide polar x by 2
+C $ADD3,2 B times
+C $ADD5,1 * 4
+C $ADD6,1 ...
+C $ADD7,1 + LSB -1
+C $ADD8,1 Copy result into B, which is the index of pattern to fetch within sprite type
+C $ADD9,3 Same as existing?
+C $ADDC,2 If so, skip ahead
+C $ADDE,3 Save result
+C $ADE1,3 HL = Sprite type
+C $ADE4,2 ...
 C $ADE6,1 * 2
+C $ADE7,3 Table address
 C $ADEA,1 #R$72E0 + sprite type * 2
 C $ADEB,1 Get LSB of VDP address
 C $ADEC,1 TO MSB
 C $ADED,1 Get MSB of VDP address
-C $ADEE,1 B must be index of pattern to fetch within sprite type.
+C $ADEE,1 Hl = Index of pattern to fetch within sprite type
+C $ADEF,2 ...
 C $ADF1,1 Multiply by 8
 C $ADF2,1 ...
 C $ADF3,1 ...
@@ -2346,7 +2494,7 @@ C $AE0B,3 Write 8 bytes
 C $AE0E,3 WRITE_VRAM
 C $AE11,3 Get sprite type
 C $AE14,2 If 1, i.e. ship 2
-C $AE16,2 then skip ahead
+C $AE16,2 Then skip ahead
 C $AE18,3 Polar y
 C $AE1B,3 Polar x
 C $AE1E,3 Polar to screen
@@ -2355,7 +2503,9 @@ C $AE24,3 Set x
 C $AE27,2 If carry, sprite is outside visible screen, skip ahead
 C $AE29,2 Return
 C $AE2B,3 If sprite type is ship 2, set HL to table address
-C $AE3B,3 Start at #R$AFDD+2
+C $AE2E,3 Pattern index
+C $AE31,2 Mod 4
+C $AE3B,3 #R$AFDD+2 = ship 2 address
 C $AE3E,1 Add A to HL
 C $AE3F,3 Ship screen y
 C $AE42,1 Add table value
@@ -2384,6 +2534,7 @@ C $AE73,2 Set off-screen values and return
 c $AE75 Routine at AE75
 D $AE75 Used by the routine at #R$AE54.
 N $AE86 This entry point is used by the routine at #R$AE54.
+C $AE86,4 Set as not allocated
 C $AE8A,4 Set x
 C $AE8E,4 Set y
 c $AE94 Upload sprite patterns
@@ -2633,22 +2784,123 @@ b $B8FA Data block at B8FA
 B $B8FA,2,2
 w $B8FC Graphics pointers
 @ $B8FC label=graphics_pointers_table
-W $B8FC,2,2 Offset $00
-W $B8FE,8,2
-W $B906,2,2 Offset $0A
-W $B908,8,2
-W $B910,2,2 Offset $14
-W $B912,8,2
-W $B91A,2,2 Offset $1E
-W $B91C,2,2
-W $B91E,2,2 Offset $22
-W $B920,8,2
-W $B928,2,2 Offset $2C
-W $B92A,8,2
-W $B932,2,2 Offset $36
-W $B934,2,2
-W $B936,2,2 Offset $3A
-W $B938,174,2
+W $B8FC,2,2 $00 type $00: Offset $00
+W $B8FE,2,2 $01
+W $B900,2,2 $02
+W $B902,2,2 $03
+W $B904,2,2 $04
+W $B906,2,2 $05 type $01: Offset $0A
+W $B908,2,2 $06
+W $B90A,2,2 $07
+W $B90C,2,2 $08
+W $B90E,2,2 $09
+W $B910,2,2 $0A type $02: Offset $14
+W $B912,2,2 $0B
+W $B914,2,2 $0C
+W $B916,2,2 $0D
+W $B918,2,2 $0E
+W $B91A,2,2 $0F type $03: Offset $1E
+W $B91C,2,2 $10
+W $B91E,2,2 $11 type $04: Offset $22
+W $B920,2,2 $12
+W $B922,2,2 $13
+W $B924,2,2 $14
+W $B926,2,2 $15
+W $B928,2,2 $16 type $05: Offset $2C
+W $B92A,2,2 $17
+W $B92C,2,2 $18
+W $B92E,2,2 $19
+W $B930,2,2 $1A
+W $B932,2,2 $1B type $06: Offset $36
+W $B934,2,2 $1C
+W $B936,2,2 $1D type $07: Offset $3A
+W $B938,2,2 $1E
+W $B93A,2,2 $1F type $08: Offset $3E
+W $B93C,2,2 $20
+W $B93E,2,2 $21 type $09: Offset $42
+W $B940,2,2 $22
+W $B942,2,2 $23 type $0A: Offset $46
+W $B944,2,2 $24
+W $B946,2,2 $25 type $0B: Offset $4A
+W $B948,2,2 $26
+W $B94A,2,2 $27 type $0C: Offset $4E
+W $B94C,2,2 $28
+W $B94E,2,2 $29 type $0D: Offset $52
+W $B950,2,2 $2A
+W $B952,2,2 $2B type $0E: Offset $56
+W $B954,2,2 $2C
+W $B956,2,2 $2D
+W $B958,2,2 $2E
+W $B95A,2,2 $2F
+W $B95C,2,2 $30 type $0F: Offset $60
+W $B95E,2,2 $31
+W $B960,2,2 $32
+W $B962,2,2 $33
+W $B964,2,2 $34
+W $B966,2,2 $35 type $10: Offset $6A
+W $B968,2,2 $36
+W $B96A,2,2 $37
+W $B96C,2,2 $38
+W $B96E,2,2 $39
+W $B970,2,2 $3A type $11: Offset $74
+W $B972,2,2 $3B
+W $B974,2,2 $3C
+W $B976,2,2 $3D
+W $B978,2,2 $3E
+W $B97A,2,2 $3F type $12: Offset $7E
+W $B97C,2,2 $40
+W $B97E,2,2 $41
+W $B980,2,2 $42
+W $B982,2,2 $43
+W $B984,2,2 $44 type $13: Offset $88
+W $B986,2,2 $45
+W $B988,2,2 $46
+W $B98A,2,2 $47
+W $B98C,2,2 $48
+W $B98E,2,2 $49 type $14: Offset $92
+W $B990,2,2 $4A
+W $B992,2,2 $4B
+W $B994,2,2 $4C
+W $B996,2,2 $4D
+W $B998,2,2 $4E type $15: Offset $9C
+W $B99A,2,2 $4F
+W $B99C,2,2 $50
+W $B99E,2,2 $51
+W $B9A0,2,2 $52
+W $B9A2,2,2 $53 type $16: Offset $A6
+W $B9A4,2,2 $54
+W $B9A6,2,2 $55
+W $B9A8,2,2 $56
+W $B9AA,2,2 $57
+W $B9AC,2,2 $58 type $17: Offset $B0
+W $B9AE,2,2 $59
+W $B9B0,2,2 $5A
+W $B9B2,2,2 $5B
+W $B9B4,2,2 $5C
+W $B9B6,2,2 $5D type $18: Offset $BA
+W $B9B8,2,2 $5E
+W $B9BA,2,2 $5F
+W $B9BC,2,2 $60
+W $B9BE,2,2 $61
+W $B9C0,2,2 $62 type $19: Offset $C4
+W $B9C2,2,2 $63
+W $B9C4,2,2 $64
+W $B9C6,2,2 $65
+W $B9C8,2,2 $66
+W $B9CA,2,2 $67 type $1A: Offset $CE
+W $B9CC,2,2 $68
+W $B9CE,2,2 $69
+W $B9D0,2,2 $6A
+W $B9D2,2,2 $6B
+W $B9D4,2,2 $6C type $1B: Offset $D8
+W $B9D6,2,2 $6D
+W $B9D8,2,2 $6E
+W $B9DA,2,2 $6F
+W $B9DC,2,2 $70
+W $B9DE,2,2 $71 type $1C: Offset $E2
+W $B9E0,2,2 $72
+W $B9E2,2,2 $73
+W $B9E4,2,2 $74
 b $B9E6 Graphics
 D $B9E6 #UDGTABLE { #UDGARRAY37,,4($B9E6-$BFAD-8)(graphics-B9E6.png) } TABLE#
 @ $B9E6 label=graphics_patterns

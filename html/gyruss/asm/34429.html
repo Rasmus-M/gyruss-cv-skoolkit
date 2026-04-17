@@ -30,7 +30,7 @@ Next: <a href="34526.html">86DE</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="34394.html">L865A</a>.
+Used by the routine at <a href="34394.html">handle_sprite</a>.
 </div>
 </div>
 </td>
@@ -39,25 +39,35 @@ Used by the routine at <a href="34394.html">L865A</a>.
 <td class="asm-label">L867D</td>
 <td class="address-2"><span id="34429"></span>867D</td>
 <td class="instruction">CP $04</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Is sprite type &lt; 4 (ship1, ship2, shot)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34431"></span>867F</td>
 <td class="instruction">JR C,<a href="34526.html">L86DE</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Then jump</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34433"></span>8681</td>
 <td class="instruction">CP $0D</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Is it &gt;= $0D</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34435"></span>8683</td>
 <td class="instruction">JR NC,<a href="34526.html">L86DE</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Then jump</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="34437"></span>
+<div class="comments">
+<div class="paragraph">
+Sprite types $04 - $0C (TODO)
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -110,7 +120,7 @@ Used by the routine at <a href="34394.html">L865A</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34455"></span>8697</td>
-<td class="instruction">JP Z,<a href="34278.html#34351">L85E6_2</a></td>
+<td class="instruction">JP Z,<a href="34278.html#34351">deallocate_sprite</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -171,7 +181,7 @@ Used by the routine at <a href="34394.html">L865A</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="34483"></span>86B3</td>
 <td class="instruction">LD (IX+$00),$0C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set type</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -189,13 +199,13 @@ Used by the routine at <a href="34394.html">L865A</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="34495"></span>86BF</td>
 <td class="instruction">LD (IX+$01),$00</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set polar y</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34499"></span>86C3</td>
 <td class="instruction">LD (IX+$02),$00</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set polar x</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -225,13 +235,13 @@ Used by the routine at <a href="34394.html">L865A</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="34514"></span>86D2</td>
 <td class="instruction">LD A,(IY+$09)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get x</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34517"></span>86D5</td>
 <td class="instruction">ADD A,$08</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add 8</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -248,7 +258,7 @@ Used by the routine at <a href="34394.html">L865A</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34523"></span>86DB</td>
-<td class="instruction">JP <a href="35393.html#35406">L8A41_0</a></td>
+<td class="instruction">JP <a href="35393.html#35406">return_from_sprite_handler_0</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 </table>

@@ -24,31 +24,34 @@ Next: <a href="35411.html">8A53</a>
 </td>
 </tr>
 </table>
-<div class="description">8A41: Routine at 8A41</div>
+<div class="description">8A41: Return from sprite handler</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
+<div class="paragraph">
+Sprite handler branching out from <a href="34278.html#34304">process_sprites_1</a>
+</div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L8A41</td>
+<td class="asm-label">return_from_sprite_handler</td>
 <td class="address-2"><span id="35393"></span>8A41</td>
 <td class="instruction">LD A,(IX+$00)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get sprite type</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35396"></span>8A44</td>
 <td class="instruction">CP (IX+$05)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Is it $05 (TODO)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35399"></span>8A47</td>
-<td class="instruction">JR Z,<a href="35393.html#35406">L8A41_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="35393.html#35406">return_from_sprite_handler_0</a></td>
+<td class="comment-1" rowspan="1">Skip ahead if so</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -73,22 +76,22 @@ This entry point is used by the routine at <a href="34429.html">L867D</a>.
 </td>
 </tr>
 <tr>
-<td class="asm-label">L8A41_0</td>
+<td class="asm-label">return_from_sprite_handler_0</td>
 <td class="address-2"><span id="35406"></span>8A4E</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore sprite allocation table address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35407"></span>8A4F</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Increment address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35408"></span>8A50</td>
-<td class="instruction">JP <a href="34278.html#34304">L85E6_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JP <a href="34278.html#34304">process_sprites_1</a></td>
+<td class="comment-1" rowspan="1">Jump back into loop at <a href="34278.html#34304">process_sprites_1</a></td>
 </tr>
 </table>
 <table class="asm-navigation">

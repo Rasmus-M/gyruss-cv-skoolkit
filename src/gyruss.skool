@@ -73,6 +73,8 @@ b$7002 DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 b$7182 DEFB $00
 
 ; Sprite allocation table
+;
+; Contains #R$7182 indexes into #R$7002
 @label=sprite_alloc_table
 b$7183 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $718B DEFB $00,$00,$00,$00,$00,$00,$00,$00
@@ -649,7 +651,7 @@ c$80E8 LD HL,$725A   ; Flag set by interrupt routine
  $80F1 CALL $1FDC    ; READ_REGISTER (read VDP status)
  $80F4 CALL $AFFF    ; Display stars
  $80F7 CALL $A73C    ; Control ship
- $80FA CALL $85E6    ;
+ $80FA CALL $85E6    ; Process sprites
  $80FD CALL $1FDC    ; READ_REGISTER
  $8100 CALL $9796    ;
  $8103 CALL $8E2D    ;
@@ -695,7 +697,7 @@ c$8139 CALL $9B87    ; Set variables
  $815C JR Z,$8170    ;
 *$815E HALT          ;
  $815F CALL $AFFF    ; Display stars
- $8162 CALL $85E6    ;
+ $8162 CALL $85E6    ; Process sprites
  $8165 CALL $8E2D    ;
  $8168 CALL $AB72    ; Display center enemies
  $816B CALL $84B1    ; Upload sprites
@@ -963,7 +965,7 @@ c$832A LD A,$08        ; Set counter for later
  $833F HALT            ; Wait interrupt
  $8340 CALL $AFFF      ; Display stars
  $8343 CALL $A73C      ; Control ship
- $8346 CALL $85E6      ;
+ $8346 CALL $85E6      ; Process sprites
  $8349 CALL $AB72      ; Display center enemies
  $834C CALL $84B1      ; Upload sprites
  $834F POP BC          ;
@@ -997,7 +999,7 @@ c$832A LD A,$08        ; Set counter for later
 *$838A HALT            ; Wait interrupt
  $838B CALL $AFFF      ; Display stars
  $838E CALL $A73C      ; Control ship
- $8391 CALL $85E6      ;
+ $8391 CALL $85E6      ; Process sprites
  $8394 LD HL,$7259     ; Decrement counter that start at 8
  $8397 DEC (HL)        ; ...
  $8398 JR NZ,$83CB     ; If not zero yet then skip loop body
@@ -1139,7 +1141,7 @@ c$846B LD A,$02      ; Play a tune
  $8497 PUSH BC       ;
  $8498 CALL $AFFF    ; Display stars
  $849B CALL $A73C    ; Control ship
- $849E CALL $85E6    ;
+ $849E CALL $85E6    ; Process sprites
  $84A1 CALL $AB72    ; Display center enemies
  $84A4 CALL $84B1    ; Upload sprites
  $84A7 POP BC        ;
@@ -1322,72 +1324,74 @@ t$85C9 DEFM "PERFECT?",$00,$00,$00,"10000",$00,"PTS"
 @label=game_over_msg
 t$85DD DEFM "GAME",$00,"OVER"
 
-; Routine at 85E6
+; Process sprites
 ;
 ; Used by the routines at #R$8024, #R$8139, #R$832A, #R$832A, #R$846B and
 ; #R$A3E1.
-c$85E6 LD HL,$71EE     ;
- $85E9 DEC (HL)        ;
- $85EA LD HL,$7260     ;
- $85ED DEC (HL)        ;
- $85EE LD A,($71EF)    ;
- $85F1 DEC A           ;
- $85F2 JP M,$85F8      ;
- $85F5 LD ($71EF),A    ;
-*$85F8 LD HL,$7256     ;
- $85FB RES 4,(HL)      ;
- $85FD LD HL,$7185     ;
+@label=process_sprites
+c$85E6 LD HL,$71EE     ; Decrement counter
+ $85E9 DEC (HL)        ; ...
+ $85EA LD HL,$7260     ; Decrement counter
+ $85ED DEC (HL)        ; ...
+ $85EE LD A,($71EF)    ; Decrement counter stopping at 0
+ $85F1 DEC A           ; ...
+ $85F2 JP M,$85F8      ; ...
+ $85F5 LD ($71EF),A    ; ...
+*$85F8 LD HL,$7256     ; Flags
+ $85FB RES 4,(HL)      ; Reset init flag
+ $85FD LD HL,$7185     ; Table address #R$7183+2 (skip ship sprites)
 ; This entry point is used by the routine at #R$8A41.
-*$8600 PUSH HL         ;
- $8601 LD DE,$7183     ;
- $8604 XOR A           ;
- $8605 SBC HL,DE       ;
- $8607 LD A,($7182)    ;
- $860A CP L            ;
- $860B POP HL          ;
- $860C JP Z,$8A53      ;
- $860F PUSH HL         ;
- $8610 LD L,(HL)       ;
- $8611 LD H,$00        ;
- $8613 ADD HL,HL       ;
- $8614 ADD HL,HL       ;
- $8615 LD D,H          ;
- $8616 LD E,L          ;
- $8617 ADD HL,HL       ;
- $8618 ADD HL,DE       ;
- $8619 EX DE,HL        ;
- $861A LD IX,$7002     ;
- $861E ADD IX,DE       ;
- $8620 LD HL,$8A41     ;
- $8623 PUSH HL         ;
- $8624 LD A,(IX+$00)   ;
- $8627 LD (IX+$05),A   ;
- $862A CP $7F          ;
- $862C JP NZ,$865A     ;
+*$8600 PUSH HL         ; Save table address
+ $8601 LD DE,$7183     ; Sprite allocation table
+ $8604 XOR A           ; Clear carry
+ $8605 SBC HL,DE       ; HL = offset into table
+ $8607 LD A,($7182)    ; Allocated sprites
+ $860A CP L            ; Compare to offset
+ $860B POP HL          ; Restore table address
+ $860C JP Z,$8A53      ; Jump when we have reached the last allocation
+ $860F PUSH HL         ; Push allocation table address
+ $8610 LD L,(HL)       ; Get sprite data table index
+ $8611 LD H,$00        ; ...
+ $8613 ADD HL,HL       ; Multiply by 4
+ $8614 ADD HL,HL       ; ...
+ $8615 LD D,H          ; Store in DE
+ $8616 LD E,L          ; ...
+ $8617 ADD HL,HL       ; Multiplied by 8
+ $8618 ADD HL,DE       ; Multiplied by 12
+ $8619 EX DE,HL        ; DE = sprite data table offset
+ $861A LD IX,$7002     ; Base sprite data table address
+ $861E ADD IX,DE       ; IX = sprite data table address
+ $8620 LD HL,$8A41     ; Push return address of routine at #R$8A41
+ $8623 PUSH HL         ; ...
+ $8624 LD A,(IX+$00)   ; Get sprite type
+ $8627 LD (IX+$05),A   ; Copy it to byte 5?
+ $862A CP $7F          ; Is it to be deallocated?
+ $862C JP NZ,$865A     ; If not, jump ahead
 ; This entry point is used by the routines at #R$8654, #R$8673, #R$867D and
 ; #R$8815.
-*$862F LD (IX+$00),$FF ;
- $8633 POP HL          ;
- $8634 POP HL          ;
- $8635 PUSH HL         ;
- $8636 LD DE,$7183     ;
- $8639 XOR A           ;
- $863A SBC HL,DE       ;
- $863C LD A,($7182)    ;
- $863F DEC A           ;
- $8640 LD ($7182),A    ;
- $8643 SUB L           ;
- $8644 JR Z,$8650      ;
- $8646 LD C,A          ;
- $8647 LD B,$00        ;
- $8649 POP DE          ;
- $864A PUSH DE         ;
- $864B LD H,D          ;
- $864C LD L,E          ;
- $864D INC HL          ;
- $864E LDIR            ;
-*$8650 POP HL          ;
- $8651 JP $8600        ;
+@label=deallocate_sprite
+*$862F LD (IX+$00),$FF ; Set as not allocated
+ $8633 POP HL          ; Pop return address
+ $8634 POP HL          ; Restore allocation table address of sprite to be deallocated
+ $8635 PUSH HL         ; Push it again
+ $8636 LD DE,$7183     ; Sprite allocation table
+ $8639 XOR A           ; Clear carry
+ $863A SBC HL,DE       ; HL = offset into table
+ $863C LD A,($7182)    ; Decrement number of allocated sprites
+ $863F DEC A           ; ...
+ $8640 LD ($7182),A    ; ...
+ $8643 SUB L           ; Allocated sprites - offset = number of allocations after this one
+ $8644 JR Z,$8650      ; If it was the last one, there's nothing to do
+ $8646 LD C,A          ; BC = number of allocations to move
+ $8647 LD B,$00        ; ...
+ $8649 POP DE          ; DE = allocation table address
+ $864A PUSH DE         ; ...
+ $864B LD H,D          ; HL = allocation table address
+ $864C LD L,E          ; ...
+ $864D INC HL          ; HL = allocation table address + 1
+ $864E LDIR            ; Copy allocations after to close hole
+*$8650 POP HL          ; Restore allocation table address
+ $8651 JP $8600        ; Proceed with next sprite
 
 ; Routine at 8654
 ;
@@ -1396,20 +1400,22 @@ c$8654 LD HL,$7206   ;
  $8657 DEC (HL)      ;
  $8658 JR $862F      ;
 
-; Routine at 865A
+; Handle sprite
 ;
 ; Used by the routine at #R$85E6.
-c$865A CP $02          ;
- $865C JP NZ,$867D     ;
+@label=handle_sprite
+c$865A CP $02          ; Is sprite type $02?
+ $865C JP NZ,$867D     ; If not proceed to next handler
+; Sprite type $02 (shot)
  $865F INC (IX+$05)    ;
- $8662 LD A,(IX+$01)   ;
- $8665 INC A           ;
- $8666 INC A           ;
- $8667 LD (IX+$01),A   ;
- $866A CP $08          ;
- $866C JR NZ,$8673     ;
+ $8662 LD A,(IX+$01)   ; Get polar y
+ $8665 INC A           ; Move shot
+ $8666 INC A           ; ...
+ $8667 LD (IX+$01),A   ; And save again
+ $866A CP $08          ; Is polar y now 7?
+ $866C JR NZ,$8673     ; If not, jump ahead
  $866E LD (IX+$0B),$05 ; Set color
- $8672 RET             ;
+ $8672 RET             ; Return to #R$8A41
 
 ; Routine at 8673
 ;
@@ -1423,10 +1429,11 @@ c$8673 CP $2B        ;
 ; Routine at 867D
 ;
 ; Used by the routine at #R$865A.
-c$867D CP $04          ;
- $867F JR C,$86DE      ;
- $8681 CP $0D          ;
- $8683 JR NC,$86DE     ;
+c$867D CP $04          ; Is sprite type < 4 (ship1, ship2, shot)
+ $867F JR C,$86DE      ; Then jump
+ $8681 CP $0D          ; Is it >= $0D
+ $8683 JR NC,$86DE     ; Then jump
+; Sprite types $04 - $0C (TODO)
  $8685 DEC (IX+$03)    ;
  $8688 RET NZ          ;
  $8689 INC (IX+$00)    ;
@@ -1445,17 +1452,17 @@ c$867D CP $04          ;
  $86AE PUSH IX         ;
  $86B0 RST $28         ; Allocate sprite
  $86B1 POP IY          ;
- $86B3 LD (IX+$00),$0C ;
+ $86B3 LD (IX+$00),$0C ; Set type
  $86B7 LD (IX+$03),$3C ;
  $86BB LD (IX+$0B),$0F ; Set color
- $86BF LD (IX+$01),$00 ;
- $86C3 LD (IX+$02),$00 ;
+ $86BF LD (IX+$01),$00 ; Set polar y
+ $86C3 LD (IX+$02),$00 ; Set polar x
  $86C7 LD (IX+$06),$00 ;
  $86CB RST $30         ; Load sprite pattern
  $86CC LD A,(IY+$08)   ;
  $86CF LD (IX+$08),A   ; Set y
- $86D2 LD A,(IY+$09)   ;
- $86D5 ADD A,$08       ;
+ $86D2 LD A,(IY+$09)   ; Get x
+ $86D5 ADD A,$08       ; Add 8
  $86D7 LD (IX+$09),A   ; Set x
  $86DA POP BC          ;
  $86DB JP $8A4E        ;
@@ -1463,20 +1470,22 @@ c$867D CP $04          ;
 ; Routine at 86DE
 ;
 ; Used by the routine at #R$867D.
-c$86DE CP $14        ;
- $86E0 JR NZ,$86E9   ;
+c$86DE CP $14        ; Is sprite type $014
+ $86E0 JR NZ,$86E9   ; If not, jump ahead
+; Sprite type $14 (TODO)
  $86E2 INC (IX+$05)  ;
- $86E5 DEC (IX+$01)  ;
- $86E8 RET           ;
+ $86E5 DEC (IX+$01)  ; Decrement polar y
+ $86E8 RET           ; Return to #R$8A41
 
 ; Routine at 86E9
 ;
 ; Used by the routine at #R$86DE.
-c$86E9 CP $12        ;
- $86EB JR C,$870C    ;
- $86ED CP $14        ;
- $86EF JR NC,$870C   ;
- $86F1 LD A,($71F2)  ;
+c$86E9 CP $12        ; Is sprite type < $012
+ $86EB JR C,$870C    ; If so, move ahead
+ $86ED CP $14        ; Is sprite type >= $014
+ $86EF JR NC,$870C   ; If so, move ahead
+; Sprite types $12 - $13 (TODO)
+ $86F1 LD A,($71F2)  ; Frame counter
  $86F4 LD B,A        ;
  $86F5 AND $01       ;
  $86F7 RET NZ        ;
@@ -1493,8 +1502,9 @@ c$86E9 CP $12        ;
 ; Routine at 870C
 ;
 ; Used by the routine at #R$86E9.
-c$870C CP $03         ;
- $870E JR NZ,$873E    ;
+c$870C CP $03         ; Is sprite type $03?
+ $870E JR NZ,$873E    ; If not, jump ahead
+; Sprite type $03 (TODO)
  $8710 LD A,($71EB)   ;
  $8713 BIT 2,A        ;
  $8715 JP NZ,$8654    ;
@@ -1958,16 +1968,19 @@ c$8A2D LD A,(IX+$01) ;
 c$8A3C LD (IX+$07),$04 ;
  $8A40 RET             ;
 
-; Routine at 8A41
-c$8A41 LD A,(IX+$00)   ;
- $8A44 CP (IX+$05)     ;
- $8A47 JR Z,$8A4E      ;
+; Return from sprite handler
+;
+; Sprite handler branching out from #R$8600
+@label=return_from_sprite_handler
+c$8A41 LD A,(IX+$00)   ; Get sprite type
+ $8A44 CP (IX+$05)     ; Is it $05 (TODO)
+ $8A47 JR Z,$8A4E      ; Skip ahead if so
  $8A49 LD (IX+$04),$FF ;
  $8A4D RST $30         ; Load sprite pattern
 ; This entry point is used by the routine at #R$867D.
-*$8A4E POP HL          ;
- $8A4F INC HL          ;
- $8A50 JP $8600        ;
+*$8A4E POP HL          ; Restore sprite allocation table address
+ $8A4F INC HL          ; Increment address
+ $8A50 JP $8600        ; Jump back into loop at #R$8600
 
 ; Routine at 8A53
 ;
@@ -3008,8 +3021,9 @@ c$920D PUSH HL       ;
  $921D POP HL        ;
  $921E RET           ;
 
-; Decode and upload patterns to VDP buffer at $1400
+; Decode and upload patterns
 ;
+; Decode and upload patterns to VDP buffer at $1400
 ; Used by the routine at #R$90D6.
 @decode_and_upload_patterns
 c$921F LD HL,$0279   ; Number of bytes in block at $9475
@@ -3076,8 +3090,9 @@ c$9255 LD B,$08      ; Read 8 bits
  $9282 DJNZ $9258    ; Repeat for n bits
  $9284 RET           ;
 
-; Copy 135 patterns from VDP RAM buffer into pattern table from 128
+; Copy 135 patterns
 ;
+; Copy 135 patterns from VDP RAM buffer into pattern table from 128
 ; Used by the routine at #R$9175.
 ;
 ; I:HL Pattern generator table destination address ($0400)
@@ -3380,9 +3395,9 @@ b$96FE DEFB $00,$00,$50,$02,$04,$02,$56,$00
 ; Routine at 9796
 ;
 ; Used by the routine at #R$8024.
-c$9796 LD A,($7182)    ;
- $9799 SUB $02         ;
- $979B RET Z           ;
+c$9796 LD A,($7182)    ; Return if only the ship sprites are allocated
+ $9799 SUB $02         ; ...
+ $979B RET Z           ; ...
  $979C LD B,A          ;
  $979D LD HL,$7185     ;
  $97A0 XOR A           ;
@@ -3873,7 +3888,7 @@ c$9ADE CALL $1FD6      ; TURN_OFF_SOUND
  $9AF3 LD ($7276),HL   ; $729B
  $9AF6 LD B,$04        ;
  $9AF8 LD IX,$727D     ;
-*$9AFC LD (IX+$00),$FF ;
+*$9AFC LD (IX+$00),$FF ; Set as not allocated
  $9B00 LD (IX+$06),$50 ;
  $9B04 LD (IX+$08),$05 ; Set y
  $9B08 ADD IX,DE       ;
@@ -4801,7 +4816,7 @@ c$A3E1 LD A,$2A        ;
 *$A459 HALT            ; Inner loop
  $A45A PUSH BC         ;
  $A45B CALL $AFFF      ; Display stars
- $A45E CALL $85E6      ;
+ $A45E CALL $85E6      ; Process sprites
  $A461 CALL $AB72      ; Display center enemies
  $A464 CALL $8E2D      ;
  $A467 CALL $84B1      ; Upload sprites
@@ -4848,7 +4863,7 @@ c$A471 LD HL,($72C5) ; Copy #R$72C5 to #R$7000
 @implosion_polar_x
 b$A4B2 DEFB $10,$16,$1C,$24,$2A,$30
 
-; Sprite init data (byte 2)
+; Sprite init data (polar x)
 b$A4B8 DEFB $F0,$EA,$E4,$1C,$16,$10
 
 ; Data block at A4BE
@@ -5745,7 +5760,7 @@ c$AD49 PUSH HL       ;
  $AD52 LD BC,$2000   ; Number of sprites and sprite index
  $AD55 LD A,$7E      ;
 *$AD57 CP (HL)       ;
- $AD58 JR C,$AD64    ; If > $7E (usually $FF), sprite is available
+ $AD58 JR C,$AD64    ; If >= $7F ($FF from init), sprite is available
  $AD5A INC C         ; Sprite index++
  $AD5B ADD HL,DE     ; Advance to next sprite
  $AD5C DJNZ $AD57    ; Loop for up to 32 sprites
@@ -5757,15 +5772,15 @@ c$AD49 PUSH HL       ;
 ; Used by the routine at #R$AD49.
 @label=available_sprite_found
 c$AD64 PUSH HL         ; Save sprite address
- $AD65 BIT 7,(HL)      ;
- $AD67 JR Z,$AD75      ;
+ $AD65 BIT 7,(HL)      ; Is bit 7 set, i.e. $FF?
+ $AD67 JR Z,$AD75      ; If not, skip recoding in allocation table
  $AD69 LD HL,$7182     ; Allocated sprites
  $AD6C INC (HL)        ; Record one more
  $AD6D LD A,(HL)       ; Read number back
  $AD6E ADD A,L         ; Add number to HL
- $AD6F LD L,A          ;
- $AD70 JP NC,$AD74     ;
- $AD73 INC H           ;
+ $AD6F LD L,A          ; ...
+ $AD70 JP NC,$AD74     ; ...
+ $AD73 INC H           ; ...
 *$AD74 LD (HL),C       ; Record sprite index in table
 *$AD75 POP IX          ; IX now holds sprite address
  $AD77 LD (IX+$07),$00 ; Init sprite
@@ -5788,63 +5803,62 @@ c$AD8B PUSH HL       ;
  $AD8C PUSH DE       ;
  $AD8D PUSH BC       ;
  $AD8E PUSH IY       ;
- $AD90 LD E,(IX+$00) ; Get sprite type
- $AD93 LD D,$00      ;
- $AD95 LD HL,$B8DD   ; Table of 29 bytes (offsets into table at $B8FA)
- $AD98 ADD HL,DE     ;
+ $AD90 LD E,(IX+$00) ; DE = Sprite type
+ $AD93 LD D,$00      ; ...
+ $AD95 LD HL,$B8DD   ; Table of offsets for each sprite type into table at #R$B8FC
+ $AD98 ADD HL,DE     ; Add sprite type
  $AD99 LD E,(HL)     ; Get graphics pointer offset for sprite type
  $AD9A LD HL,$B8FA   ; Table of pointers to graphics
- $AD9D ADD HL,DE     ; HL now pointer to graphics pointer
- $AD9E LD A,(IX+$01) ; Get which transformation we want (flipped, shifted,
-                     ; etc.)
- $ADA1 LD DE,$0000   ; Address
- $ADA4 BIT 7,A       ; If bit 7 of transformation is set, skip ahead with E=0
- $ADA6 JR NZ,$ADB7   ;
- $ADA8 CP $15        ;
- $ADAA JR C,$ADB7    ; Jump if < $15
- $ADAC INC E         ; E = 1
- $ADAD CP $1A        ;
- $ADAF JR C,$ADB7    ; Jump if < $1A
- $ADB1 INC E         ; E = 2
- $ADB2 CP $22        ;
- $ADB4 JR C,$ADB7    ; Jump if < $22
- $ADB6 INC E         ; E = 3
-*$ADB7 LD A,E        ;
- $ADB8 CP (HL)       ;
- $ADB9 JR C,$ADBD    ; Jump if LSB of pointer >= E, which is 0..3
+ $AD9D ADD HL,DE     ; HL now points to graphics pointer
+ $AD9E LD A,(IX+$01) ; Get polar that determines which scale we want
+ $ADA1 LD DE,$0000   ; Start with zero
+ $ADA4 BIT 7,A       ; If bit 7 of polar y is set, skip ahead with E=0
+ $ADA6 JR NZ,$ADB7   ; ...
+ $ADA8 CP $15        ; Skip ahead if polar y < 21
+ $ADAA JR C,$ADB7    ; ...
+ $ADAC INC E         ; Else set E = 1
+ $ADAD CP $1A        ; Skip ahead if polar y < 26
+ $ADAF JR C,$ADB7    ; ...
+ $ADB1 INC E         ; Else set E = 2
+ $ADB2 CP $22        ; Skip ahead if polar y < 34
+ $ADB4 JR C,$ADB7    ; ...
+ $ADB6 INC E         ; Else set E = 3
+*$ADB7 LD A,E        ; A = E
+ $ADB8 CP (HL)       ; Compare with graphics pointer LSB
+ $ADB9 JR C,$ADBD    ; Jump if LSB of pointer >= 0..3 (not real address) TODO: Circumstantial, hard to convert?
  $ADBB LD A,(HL)     ; Get LSB of pointer
  $ADBC DEC A         ; Minus 1
-*$ADBD INC HL        ; To MSB
+*$ADBD INC HL        ; Advance to MSB
  $ADBE LD B,(HL)     ; B = MSB
  $ADBF LD C,A        ; C = LSB - 1
- $ADC0 LD A,(IX+$02) ;
- $ADC3 ADD A,$02     ;
- $ADC5 AND $3F       ;
+ $ADC0 LD A,(IX+$02) ; Get polar x
+ $ADC3 ADD A,$02     ; Plus 2
+ $ADC5 AND $3F       ; Mod 64
  $ADC7 LD (IX+$05),A ;
- $ADCA INC B         ;
- $ADCB DEC B         ;
- $ADCC JR NZ,$ADD1   ;
- $ADCE XOR A         ;
- $ADCF JR $ADD7      ;
-*$ADD1 SRL A         ;
- $ADD3 DJNZ $ADD1    ;
- $ADD5 ADD A,A       ;
- $ADD6 ADD A,A       ;
-*$ADD7 ADD A,C       ;
- $ADD8 LD B,A        ;
- $ADD9 CP (IX+$04)   ;
- $ADDC JR Z,$AE11    ;
- $ADDE LD (IX+$04),A ;
- $ADE1 LD L,(IX+$00) ; Sprite type
- $ADE4 LD H,$00      ;
+ $ADCA INC B         ; If B = 0 (MSB of graphics pointer)
+ $ADCB DEC B         ; ...
+ $ADCC JR NZ,$ADD1   ; Then skip ahead
+ $ADCE XOR A         ; Else set A = 0
+ $ADCF JR $ADD7      ; And skip ahead
+*$ADD1 SRL A         ; Divide polar x by 2
+ $ADD3 DJNZ $ADD1    ; B times
+ $ADD5 ADD A,A       ; * 4
+ $ADD6 ADD A,A       ; ...
+*$ADD7 ADD A,C       ; + LSB -1
+ $ADD8 LD B,A        ; Copy result into B, which is the index of pattern to fetch within sprite type
+ $ADD9 CP (IX+$04)   ; Same as existing?
+ $ADDC JR Z,$AE11    ; If so, skip ahead
+ $ADDE LD (IX+$04),A ; Save result
+ $ADE1 LD L,(IX+$00) ; HL = Sprite type
+ $ADE4 LD H,$00      ; ...
  $ADE6 ADD HL,HL     ; * 2
- $ADE7 LD DE,$72E0   ;
+ $ADE7 LD DE,$72E0   ; Table address
  $ADEA ADD HL,DE     ; #R$72E0 + sprite type * 2
  $ADEB LD E,(HL)     ; Get LSB of VDP address
  $ADEC INC HL        ; TO MSB
  $ADED LD D,(HL)     ; Get MSB of VDP address
- $ADEE LD L,B        ; B must be index of pattern to fetch within sprite type.
- $ADEF LD H,$00      ;
+ $ADEE LD L,B        ; Hl = Index of pattern to fetch within sprite type
+ $ADEF LD H,$00      ; ...
  $ADF1 ADD HL,HL     ; Multiply by 8
  $ADF2 ADD HL,HL     ; ...
  $ADF3 ADD HL,HL     ; ...
@@ -5864,7 +5878,7 @@ c$AD8B PUSH HL       ;
  $AE0E CALL $1FDF    ; WRITE_VRAM
 *$AE11 LD A,(IX+$00) ; Get sprite type
  $AE14 CP $01        ; If 1, i.e. ship 2
- $AE16 JR Z,$AE2B    ; then skip ahead
+ $AE16 JR Z,$AE2B    ; Then skip ahead
  $AE18 LD D,(IX+$01) ; Polar y
  $AE1B LD E,(IX+$02) ; Polar x
  $AE1E CALL $B1C6    ; Polar to screen
@@ -5873,13 +5887,13 @@ c$AD8B PUSH HL       ;
  $AE27 JR C,$AE54    ; If carry, sprite is outside visible screen, skip ahead
  $AE29 JR $AE4E      ; Return
 *$AE2B LD HL,$AFDD   ; If sprite type is ship 2, set HL to table address
- $AE2E LD A,(IX+$04) ;
- $AE31 AND $03       ;
+ $AE2E LD A,(IX+$04) ; Pattern index
+ $AE31 AND $03       ; Mod 4
  $AE33 JR NZ,$AE3F   ;
  $AE35 LD A,(IX+$05) ;
  $AE38 RRA           ;
  $AE39 AND $1E       ;
- $AE3B LD HL,$AFDF   ; Start at #R$AFDD+2
+ $AE3B LD HL,$AFDF   ; #R$AFDD+2 = ship 2 address
  $AE3E RST $08       ; Add A to HL
 *$AE3F LD A,($700A)  ; Ship screen y
  $AE42 ADD A,(HL)    ; Add table value
@@ -5927,7 +5941,7 @@ c$AE75 LD HL,$7206     ;
  $AE81 LD HL,$7256     ;
  $AE84 RES 3,(HL)      ;
 ; This entry point is used by the routine at #R$AE54.
-*$AE86 LD (IX+$00),$7F ;
+*$AE86 LD (IX+$00),$7F ; Set as not allocated
  $AE8A LD (IX+$09),$00 ; Set x
  $AE8E LD (IX+$08),$F8 ; Set y
  $AE92 JR $AE4E        ;
@@ -6408,123 +6422,123 @@ b$B8FA DEFB $04,$02
 
 ; Graphics pointers
 @label=graphics_pointers_table
-w$B8FC DEFW $B9E6    ; Offset $00
- $B8FE DEFW $BA06
- $B900 DEFW $BA26
- $B902 DEFW $BA46
- $B904 DEFW $0204
- $B906 DEFW $BA66    ; Offset $0A
- $B908 DEFW $BA86
- $B90A DEFW $BAA6
- $B90C DEFW $BAC6
- $B90E DEFW $0004
- $B910 DEFW $BAE6    ; Offset $14
- $B912 DEFW $BAEE
- $B914 DEFW $BAF6
- $B916 DEFW $BAFE
- $B918 DEFW $0001
- $B91A DEFW $BB06    ; Offset $1E
- $B91C DEFW $0004
- $B91E DEFW $BB0E    ; Offset $22
- $B920 DEFW $BB16
- $B922 DEFW $BB1E
- $B924 DEFW $BB26
- $B926 DEFW $0004
- $B928 DEFW $BB2E    ; Offset $2C
- $B92A DEFW $BB36
- $B92C DEFW $BB3E
- $B92E DEFW $BB46
- $B930 DEFW $0001
- $B932 DEFW $BB4E    ; Offset $36
- $B934 DEFW $0001
- $B936 DEFW $BB56    ; Offset $3A
- $B938 DEFW $0001
- $B93A DEFW $BB5E
- $B93C DEFW $0001
- $B93E DEFW $BB66
- $B940 DEFW $0001
- $B942 DEFW $BB6E
- $B944 DEFW $0001
- $B946 DEFW $BB76
- $B948 DEFW $0001
- $B94A DEFW $BB7E
- $B94C DEFW $0001
- $B94E DEFW $BDE6
- $B950 DEFW $0204
- $B952 DEFW $BB86
- $B954 DEFW $BBA6
- $B956 DEFW $BBC6
- $B958 DEFW $BBE6
- $B95A DEFW $0204
- $B95C DEFW $BC06
- $B95E DEFW $BC26
- $B960 DEFW $BC46
- $B962 DEFW $BC66
- $B964 DEFW $0204
- $B966 DEFW $BC86
- $B968 DEFW $BCA6
- $B96A DEFW $BCC6
- $B96C DEFW $BCE6
- $B96E DEFW $0204
- $B970 DEFW $BD06
- $B972 DEFW $BD26
- $B974 DEFW $BD46
- $B976 DEFW $BD66
- $B978 DEFW $0004
- $B97A DEFW $BD86
- $B97C DEFW $BD8E
- $B97E DEFW $BD96
- $B980 DEFW $BD9E
- $B982 DEFW $0004
- $B984 DEFW $BDA6
- $B986 DEFW $BDAE
- $B988 DEFW $BDB6
- $B98A DEFW $BDBE
- $B98C DEFW $0004
- $B98E DEFW $BDC6
- $B990 DEFW $BDCE
- $B992 DEFW $BDD6
- $B994 DEFW $BDDE
- $B996 DEFW $0204
- $B998 DEFW $BDEE
- $B99A DEFW $BE0E
- $B99C DEFW $BE1E
- $B99E DEFW $BE1E
- $B9A0 DEFW $0204
- $B9A2 DEFW $BE4E
- $B9A4 DEFW $BE6E
- $B9A6 DEFW $BE7E
- $B9A8 DEFW $BE7E
- $B9AA DEFW $0204
- $B9AC DEFW $BEAE
- $B9AE DEFW $BECE
- $B9B0 DEFW $BEDE
- $B9B2 DEFW $BEDE
- $B9B4 DEFW $0204
- $B9B6 DEFW $BF0E
- $B9B8 DEFW $BF0E
- $B9BA DEFW $BF0E
- $B9BC DEFW $BF0E
- $B9BE DEFW $0204
- $B9C0 DEFW $BF2E
- $B9C2 DEFW $BF2E
- $B9C4 DEFW $BF2E
- $B9C6 DEFW $BF2E
- $B9C8 DEFW $0004
- $B9CA DEFW $BF4E
- $B9CC DEFW $BF56
- $B9CE DEFW $BF5E
- $B9D0 DEFW $BF66
- $B9D2 DEFW $0004
- $B9D4 DEFW $BF6E
- $B9D6 DEFW $BF76
- $B9D8 DEFW $BF7E
- $B9DA DEFW $BF86
- $B9DC DEFW $0004
- $B9DE DEFW $BF8E
- $B9E0 DEFW $BF96
- $B9E2 DEFW $BF9E
- $B9E4 DEFW $BFA6
+w$B8FC DEFW $B9E6    ; $00 type $00: Offset $00
+ $B8FE DEFW $BA06    ; $01
+ $B900 DEFW $BA26    ; $02
+ $B902 DEFW $BA46    ; $03
+ $B904 DEFW $0204    ; $04
+ $B906 DEFW $BA66    ; $05 type $01: Offset $0A
+ $B908 DEFW $BA86    ; $06
+ $B90A DEFW $BAA6    ; $07
+ $B90C DEFW $BAC6    ; $08
+ $B90E DEFW $0004    ; $09
+ $B910 DEFW $BAE6    ; $0A type $02: Offset $14
+ $B912 DEFW $BAEE    ; $0B
+ $B914 DEFW $BAF6    ; $0C
+ $B916 DEFW $BAFE    ; $0D
+ $B918 DEFW $0001    ; $0E
+ $B91A DEFW $BB06    ; $0F type $03: Offset $1E
+ $B91C DEFW $0004    ; $10
+ $B91E DEFW $BB0E    ; $11 type $04: Offset $22
+ $B920 DEFW $BB16    ; $12
+ $B922 DEFW $BB1E    ; $13
+ $B924 DEFW $BB26    ; $14
+ $B926 DEFW $0004    ; $15
+ $B928 DEFW $BB2E    ; $16 type $05: Offset $2C
+ $B92A DEFW $BB36    ; $17
+ $B92C DEFW $BB3E    ; $18
+ $B92E DEFW $BB46    ; $19
+ $B930 DEFW $0001    ; $1A
+ $B932 DEFW $BB4E    ; $1B type $06: Offset $36
+ $B934 DEFW $0001    ; $1C
+ $B936 DEFW $BB56    ; $1D type $07: Offset $3A
+ $B938 DEFW $0001    ; $1E
+ $B93A DEFW $BB5E    ; $1F type $08: Offset $3E
+ $B93C DEFW $0001    ; $20
+ $B93E DEFW $BB66    ; $21 type $09: Offset $42
+ $B940 DEFW $0001    ; $22
+ $B942 DEFW $BB6E    ; $23 type $0A: Offset $46
+ $B944 DEFW $0001    ; $24
+ $B946 DEFW $BB76    ; $25 type $0B: Offset $4A
+ $B948 DEFW $0001    ; $26
+ $B94A DEFW $BB7E    ; $27 type $0C: Offset $4E
+ $B94C DEFW $0001    ; $28
+ $B94E DEFW $BDE6    ; $29 type $0D: Offset $52
+ $B950 DEFW $0204    ; $2A
+ $B952 DEFW $BB86    ; $2B type $0E: Offset $56
+ $B954 DEFW $BBA6    ; $2C
+ $B956 DEFW $BBC6    ; $2D
+ $B958 DEFW $BBE6    ; $2E
+ $B95A DEFW $0204    ; $2F
+ $B95C DEFW $BC06    ; $30 type $0F: Offset $60
+ $B95E DEFW $BC26    ; $31
+ $B960 DEFW $BC46    ; $32
+ $B962 DEFW $BC66    ; $33
+ $B964 DEFW $0204    ; $34
+ $B966 DEFW $BC86    ; $35 type $10: Offset $6A
+ $B968 DEFW $BCA6    ; $36
+ $B96A DEFW $BCC6    ; $37
+ $B96C DEFW $BCE6    ; $38
+ $B96E DEFW $0204    ; $39
+ $B970 DEFW $BD06    ; $3A type $11: Offset $74
+ $B972 DEFW $BD26    ; $3B
+ $B974 DEFW $BD46    ; $3C
+ $B976 DEFW $BD66    ; $3D
+ $B978 DEFW $0004    ; $3E
+ $B97A DEFW $BD86    ; $3F type $12: Offset $7E
+ $B97C DEFW $BD8E    ; $40
+ $B97E DEFW $BD96    ; $41
+ $B980 DEFW $BD9E    ; $42
+ $B982 DEFW $0004    ; $43
+ $B984 DEFW $BDA6    ; $44 type $13: Offset $88
+ $B986 DEFW $BDAE    ; $45
+ $B988 DEFW $BDB6    ; $46
+ $B98A DEFW $BDBE    ; $47
+ $B98C DEFW $0004    ; $48
+ $B98E DEFW $BDC6    ; $49 type $14: Offset $92
+ $B990 DEFW $BDCE    ; $4A
+ $B992 DEFW $BDD6    ; $4B
+ $B994 DEFW $BDDE    ; $4C
+ $B996 DEFW $0204    ; $4D
+ $B998 DEFW $BDEE    ; $4E type $15: Offset $9C
+ $B99A DEFW $BE0E    ; $4F
+ $B99C DEFW $BE1E    ; $50
+ $B99E DEFW $BE1E    ; $51
+ $B9A0 DEFW $0204    ; $52
+ $B9A2 DEFW $BE4E    ; $53 type $16: Offset $A6
+ $B9A4 DEFW $BE6E    ; $54
+ $B9A6 DEFW $BE7E    ; $55
+ $B9A8 DEFW $BE7E    ; $56
+ $B9AA DEFW $0204    ; $57
+ $B9AC DEFW $BEAE    ; $58 type $17: Offset $B0
+ $B9AE DEFW $BECE    ; $59
+ $B9B0 DEFW $BEDE    ; $5A
+ $B9B2 DEFW $BEDE    ; $5B
+ $B9B4 DEFW $0204    ; $5C
+ $B9B6 DEFW $BF0E    ; $5D type $18: Offset $BA
+ $B9B8 DEFW $BF0E    ; $5E
+ $B9BA DEFW $BF0E    ; $5F
+ $B9BC DEFW $BF0E    ; $60
+ $B9BE DEFW $0204    ; $61
+ $B9C0 DEFW $BF2E    ; $62 type $19: Offset $C4
+ $B9C2 DEFW $BF2E    ; $63
+ $B9C4 DEFW $BF2E    ; $64
+ $B9C6 DEFW $BF2E    ; $65
+ $B9C8 DEFW $0004    ; $66
+ $B9CA DEFW $BF4E    ; $67 type $1A: Offset $CE
+ $B9CC DEFW $BF56    ; $68
+ $B9CE DEFW $BF5E    ; $69
+ $B9D0 DEFW $BF66    ; $6A
+ $B9D2 DEFW $0004    ; $6B
+ $B9D4 DEFW $BF6E    ; $6C type $1B: Offset $D8
+ $B9D6 DEFW $BF76    ; $6D
+ $B9D8 DEFW $BF7E    ; $6E
+ $B9DA DEFW $BF86    ; $6F
+ $B9DC DEFW $0004    ; $70
+ $B9DE DEFW $BF8E    ; $71 type $1C: Offset $E2
+ $B9E0 DEFW $BF96    ; $72
+ $B9E2 DEFW $BF9E    ; $73
+ $B9E4 DEFW $BFA6    ; $74
 
 ; Graphics
 ;
