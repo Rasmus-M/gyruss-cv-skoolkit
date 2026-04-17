@@ -2499,7 +2499,7 @@ C $AE18,3 Polar y
 C $AE1B,3 Polar x
 C $AE1E,3 Polar to screen
 C $AE21,3 Set y
-C $AE24,3 Set x
+C $AE24,3 Set x<
 C $AE27,2 If carry, sprite is outside visible screen, skip ahead
 C $AE29,2 Return
 C $AE2B,3 If sprite type is ship 2, set HL to table address

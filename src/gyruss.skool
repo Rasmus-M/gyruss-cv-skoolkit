@@ -5883,7 +5883,7 @@ c$AD8B PUSH HL       ;
  $AE1B LD E,(IX+$02) ; Polar x
  $AE1E CALL $B1C6    ; Polar to screen
  $AE21 LD (IX+$08),D ; Set y
- $AE24 LD (IX+$09),E ; Set x
+ $AE24 LD (IX+$09),E ; Set x<
  $AE27 JR C,$AE54    ; If carry, sprite is outside visible screen, skip ahead
  $AE29 JR $AE4E      ; Return
 *$AE2B LD HL,$AFDD   ; If sprite type is ship 2, set HL to table address
