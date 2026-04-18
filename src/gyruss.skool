@@ -17,7 +17,7 @@ w$7000 DEFW $0000
 ; { $02 | Polar x (angle, 0 at bottom center, moving clockwise to 16 at the
 ; left side, 32 at the top, and 48 at the right side) }
 ; { $03 | Close to polar y ($01) }
-; { $04 | Close to polar x ($02) }
+; { $04 | Polar x + 2 of pattern loaded in #R$AD8B }
 ; { $05 | Close to polar x ($02) }
 ; { $06 | Unknown }
 ; { $07 | Unknown }
@@ -28,11 +28,36 @@ w$7000 DEFW $0000
 ; TABLE#
 ; .
 ; #TABLE(default, default)
-; { =h Sprite type | =h Description }
-; { $00 | Ship 1 }
-; { $01 | Ship 2 }
-; { $02 | Shot }
-; { $0D | Explosion dot }
+; { =h Sprite type | =h Pattern example | =h Description }
+; { $00 | #UDG$B9E6 | Ship body }
+; { $01 | #UDG$BA66 | Ship exhaust }
+; { $02 | #UDG$BAE6 | Shot }
+; { $03 | #UDG$BB06 | Circle }
+; { $04 | #UDG$BB0E | Dots }
+; { $05 | #UDG$BB2E | Dotted circle }
+; { $06 | #UDG$BB4E | Number 5 }
+; { $07 | #UDG$BB56 | Number 10 }
+; { $08 | #UDG$BB5E | Number 15 }
+; { $09 | #UDG$BB66 | Number 20 }
+; { $0A | #UDG$BB6E | Number 25 }
+; { $0B | #UDG$BB76 | Number 30 }
+; { $0C | #UDG$BB7E | Number 00 }
+; { $0D | #UDG$BDE6 | Explosion dot }
+; { $0E | #UDG$BB86 | Enemy }
+; { $0F | #UDG$BC06 | Enemy }
+; { $10 | #UDG$BC86 | Enemy }
+; { $11 | #UDG$BD06 | Enemy }
+; { $12 | #UDG$BD86 | Diagonal dots }
+; { $13 | #UDG$BDA6 | Laser fence }
+; { $14 | #UDG$BDC6 | Meteor }
+; { $15 | #UDG$BDEE | Bomb facing left }
+; { $16 | #UDG$BE4E | Bomb facing right }
+; { $17 | #UDG$BEAE | Parallel lines, maybe enemy? }
+; { $18 | #UDG$BF0E | Star shape }
+; { $19 | #UDG$BF2E | Three spheres }
+; { $1A | #UDG$BF4E | Dotted circle 1 }
+; { $1B | #UDG$BF6E | Dotted circle 2 }
+; { $1C | #UDG$BF8E | Dotted circle 3 }
 ; TABLE#
 @label=sprite_data
 b$7002 DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
@@ -412,25 +437,46 @@ b$72D3 DEFB $00
 ; Data block at 72D4
 b$72D4 DEFB $00
 
-; Byte at 72D5
+; Sprite type processed
+;
+; Sprite type processed by #R$AE94
+@label=sprite_type_processed
 b$72D5 DEFB $00
 
-; Byte at 72D6
+; Transformation processed
+;
+; Transformation processed by #R$AE94
+@label=transformation_processed
 b$72D6 DEFB $00
 
-; Byte at 72D6
+; Pattern index
+;
+; Pattern index (within sprite type) processed by #R$AE94
+@label=pattern_processed
 b$72D7 DEFB $00
 
-; Word at 72D8
+; Destination address in VDP
+;
+; Destination address in VDP used by #R$AE94
+@label=upload_destination
 w$72D8 DEFW $0000
 
-; Word at 72DA
+; Graphics pointer address
+;
+; Pointer to first entry in R#$B8FA for the current sprite type processed by #R$AE94
+@label=graphics_pointer_address
 w$72DA DEFW $0000
 
-; Word at 72DC
+; Source address
+;
+; Source address used by #R$AE94
+@label=upload_source
 w$72DC DEFW $0000
 
-; Word at 72DE
+; Pattern address
+;
+; Pattern address used by #R$AE94
+@label=pattern_address
 w$72DE DEFW $0000
 
 ; Sprite patterns addresses in VDP
@@ -1975,7 +2021,7 @@ c$8A3C LD (IX+$07),$04 ;
 ; Sprite handler branching out from #R$8600
 @label=return_from_sprite_handler
 c$8A41 LD A,(IX+$00)   ; Get sprite type
- $8A44 CP (IX+$05)     ; Is it $05 (TODO)
+ $8A44 CP (IX+$05)     ; Same as before?
  $8A47 JR Z,$8A4E      ; Skip ahead if so
  $8A49 LD (IX+$04),$FF ;
  $8A4D RST $30         ; Load sprite pattern
@@ -4725,13 +4771,13 @@ c$A33B LD HL,$80B5     ; New center of projection at bottom center for
 ; Allocate ship etc.
  $A382 CALL $ACDF      ;
  $A385 RST $28         ; Allocate sprite
- $A386 LD (IX+$00),$00 ; Sprite type $01 (ship 1)
+ $A386 LD (IX+$00),$00 ; Sprite type $00 (ship body)
  $A38A LD (IX+$01),$00 ; Polar y
  $A38E LD (IX+$02),$00 ; Polar x
  $A392 LD (IX+$0B),$06 ; Set color (red)
  $A396 RST $30         ; Load sprite pattern
  $A397 RST $28         ; Allocate sprite
- $A398 LD (IX+$00),$01 ; Sprite type $01 (ship 2)
+ $A398 LD (IX+$00),$01 ; Sprite type $01 (ship exhaust)
  $A39C LD (IX+$01),$00 ; Polar y
  $A3A0 LD (IX+$02),$00 ; Polar x
  $A3A4 LD (IX+$0B),$04 ; Set color (blue)
@@ -5065,7 +5111,7 @@ c$A73C LD A,($71F2)    ; Get frame
  $A74A LD H,$00        ; Reset fire
  $A74C LD DE,$A865     ; Movement table
  $A74F ADD HL,DE       ; Add joystick result (0 - 12, some values not possible)
- $A750 LD IX,$7002     ; Sprite 0 data (ship)
+ $A750 LD IX,$7002     ; Sprite 0 data (ship body)
  $A754 LD B,$01        ; Direction = 1 (clockwise)
  $A756 LD A,(HL)       ; Get table value, which is the value of polar x to move
                        ; towards
@@ -5797,6 +5843,7 @@ c$AD64 PUSH HL         ; Save sprite address
 
 ; Load sprite pattern (RST $30)
 ;
+; Ensure sprite pattern is loaded and set screen position
 ; Used by the routine at #R$801B.
 ;
 ; I:IX Pointer to sprite data
@@ -5808,13 +5855,13 @@ c$AD8B PUSH HL       ;
  $AD90 LD E,(IX+$00) ; DE = Sprite type
  $AD93 LD D,$00      ; ...
  $AD95 LD HL,$B8DD   ; Table of offsets for each sprite type into table at
-                     ; #R$B8FC
+                     ; #R$B8FA
  $AD98 ADD HL,DE     ; Add sprite type
  $AD99 LD E,(HL)     ; Get graphics pointer offset for sprite type
  $AD9A LD HL,$B8FA   ; Table of pointers to graphics
- $AD9D ADD HL,DE     ; HL now points to graphics pointer
- $AD9E LD A,(IX+$01) ; Get polar that determines which scale we want
- $ADA1 LD DE,$0000   ; Start with zero
+ $AD9D ADD HL,DE     ; HL now points to graphics pointer (control word)
+ $AD9E LD A,(IX+$01) ; Get polar y, which determines which scale we want
+ $ADA1 LD DE,$0000   ; Pattern index within sprite type
  $ADA4 BIT 7,A       ; If bit 7 of polar y is set, skip ahead with E=0
  $ADA6 JR NZ,$ADB7   ; ...
  $ADA8 CP $15        ; Skip ahead if polar y < 21
@@ -5826,20 +5873,19 @@ c$AD8B PUSH HL       ;
  $ADB2 CP $22        ; Skip ahead if polar y < 34
  $ADB4 JR C,$ADB7    ; ...
  $ADB6 INC E         ; Else set E = 3
-*$ADB7 LD A,E        ; A = E
- $ADB8 CP (HL)       ; Compare with graphics pointer LSB
- $ADB9 JR C,$ADBD    ; Jump if LSB of pointer >= 0..3 (not real address) TODO:
-                     ; Circumstantial, hard to convert?
- $ADBB LD A,(HL)     ; Get LSB of pointer
+*$ADB7 LD A,E        ; A = pattern index
+ $ADB8 CP (HL)       ; Compare with control word LSB (number of patterns for sprite type)
+ $ADB9 JR C,$ADBD    ; Jump if number of patterns > pattern index (?)
+ $ADBB LD A,(HL)     ; Get number of patterns
  $ADBC DEC A         ; Minus 1
-*$ADBD INC HL        ; Advance to MSB
- $ADBE LD B,(HL)     ; B = MSB
- $ADBF LD C,A        ; C = LSB - 1
+*$ADBD INC HL        ; Advance to MSB (transformation)
+ $ADBE LD B,(HL)     ; B = transformation
+ $ADBF LD C,A        ; C = number of patterns - 1
  $ADC0 LD A,(IX+$02) ; Get polar x
  $ADC3 ADD A,$02     ; Plus 2
  $ADC5 AND $3F       ; Mod 64
- $ADC7 LD (IX+$05),A ;
- $ADCA INC B         ; If B = 0 (MSB of graphics pointer)
+ $ADC7 LD (IX+$05),A ; Save in sprite data
+ $ADCA INC B         ; If transformation = 0
  $ADCB DEC B         ; ...
  $ADCC JR NZ,$ADD1   ; Then skip ahead
  $ADCE XOR A         ; Else set A = 0
@@ -5848,12 +5894,12 @@ c$AD8B PUSH HL       ;
  $ADD3 DJNZ $ADD1    ; B times
  $ADD5 ADD A,A       ; * 4
  $ADD6 ADD A,A       ; ...
-*$ADD7 ADD A,C       ; + LSB -1
+*$ADD7 ADD A,C       ; + number of patterns -1
  $ADD8 LD B,A        ; Copy result into B, which is the index of pattern to
                      ; fetch within sprite type
  $ADD9 CP (IX+$04)   ; Same as existing?
  $ADDC JR Z,$AE11    ; If so, skip ahead
- $ADDE LD (IX+$04),A ; Save result
+ $ADDE LD (IX+$04),A ; Save new value
  $ADE1 LD L,(IX+$00) ; HL = Sprite type
  $ADE4 LD H,$00      ; ...
  $ADE6 ADD HL,HL     ; * 2
@@ -5862,12 +5908,12 @@ c$AD8B PUSH HL       ;
  $ADEB LD E,(HL)     ; Get LSB of VDP address
  $ADEC INC HL        ; TO MSB
  $ADED LD D,(HL)     ; Get MSB of VDP address
- $ADEE LD L,B        ; Hl = Index of pattern to fetch within sprite type
+ $ADEE LD L,B        ; HL = Index of pattern to fetch within sprite type
  $ADEF LD H,$00      ; ...
  $ADF1 ADD HL,HL     ; Multiply by 8
  $ADF2 ADD HL,HL     ; ...
  $ADF3 ADD HL,HL     ; ...
- $ADF4 ADD HL,DE     ; And add DE
+ $ADF4 ADD HL,DE     ; And add base VDP address
  $ADF5 EX DE,HL      ; Move HL into DE, which becomes source address
  $ADF6 LD HL,$71A3   ; Buffer
  $ADF9 LD BC,$0008   ; Read 8 bytes
@@ -5882,23 +5928,23 @@ c$AD8B PUSH HL       ;
  $AE0B LD BC,$0008   ; Write 8 bytes
  $AE0E CALL $1FDF    ; WRITE_VRAM
 *$AE11 LD A,(IX+$00) ; Get sprite type
- $AE14 CP $01        ; If 1, i.e. ship 2
+ $AE14 CP $01        ; If 1, i.e. ship exhaust
  $AE16 JR Z,$AE2B    ; Then skip ahead
  $AE18 LD D,(IX+$01) ; Polar y
  $AE1B LD E,(IX+$02) ; Polar x
  $AE1E CALL $B1C6    ; Polar to screen
  $AE21 LD (IX+$08),D ; Set y
- $AE24 LD (IX+$09),E ; Set x<
+ $AE24 LD (IX+$09),E ; Set x
  $AE27 JR C,$AE54    ; If carry, sprite is outside visible screen, skip ahead
  $AE29 JR $AE4E      ; Return
-*$AE2B LD HL,$AFDD   ; If sprite type is ship 2, set HL to table address
+*$AE2B LD HL,$AFDD   ; If sprite type is ship exhaust, set HL to table address
  $AE2E LD A,(IX+$04) ; Pattern index
  $AE31 AND $03       ; Mod 4
- $AE33 JR NZ,$AE3F   ;
- $AE35 LD A,(IX+$05) ;
- $AE38 RRA           ;
- $AE39 AND $1E       ;
- $AE3B LD HL,$AFDF   ; #R$AFDD+2 = ship 2 address
+ $AE33 JR NZ,$AE3F   ; If not zero, skip ahead
+ $AE35 LD A,(IX+$05) ; Get polar x (saved by #R$ADC7?)
+ $AE38 RRA           ; / 2
+ $AE39 AND $1E       ; 0, 2, 4 ... $1E
+ $AE3B LD HL,$AFDF   ; #R$AFDD+2
  $AE3E RST $08       ; Add A to HL
 *$AE3F LD A,($700A)  ; Ship screen y
  $AE42 ADD A,(HL)    ; Add table value
@@ -5914,7 +5960,7 @@ c$AD8B PUSH HL       ;
  $AE52 POP HL        ;
  $AE53 RET           ;
 
-; Routine at AE54
+; Sprite outside visible screen
 ;
 ; Used by the routine at #R$ADD1.
 c$AE54 LD A,(IX+$00) ; Get sprite type
@@ -5953,186 +5999,186 @@ c$AE75 LD HL,$7206     ;
 
 ; Upload sprite patterns
 ;
-; Fill VDP RAM from $2100 to $3868 with sprite patterns that may be flipped and
-; shifted. One new pattern is generated with each call. Builds a table of VDP
+; Fill VDP RAM from $2100 to $3868 with sprite patterns that may be rotated and
+; flipped. One new pattern is generated with each call. Builds a table of VDP
 ; addresses in #R$72E0. Used by the routine at #R$90D6.
 @label=upload_sprite_patterns
-c$AE94 LD A,($72D5)   ; Get counter
+c$AE94 LD A,($72D5)   ; Get sprite type
  $AE97 CP $FF         ; If maxed out
  $AE99 RET Z          ; Then return
- $AE9A LD HL,($72D8)  ; Get word (only used locally)
+ $AE9A LD HL,($72D8)  ; Get destination address (only used locally)
  $AE9D LD A,H         ; Is it zero?
- $AE9E OR L           ;
+ $AE9E OR L           ; ...
  $AE9F JR NZ,$AEAD    ; No - skip ahead
  $AEA1 LD HL,$2100    ; Yes - set it to $2100
- $AEA4 LD ($72D8),HL  ;
- $AEA7 LD HL,$72E0    ; Set another word to $72E0 (pointer to a RAM block)
- $AEAA LD ($72DC),HL  ;
-*$AEAD LD A,($72D6)   ; Get counter
- $AEB0 LD HL,$72D7    ; And next counter
- $AEB3 OR (HL)        ;
+ $AEA4 LD ($72D8),HL  ; ...
+ $AEA7 LD HL,$72E0    ; Set source to #R$72E0 (pointer to a RAM block)
+ $AEAA LD ($72DC),HL  ; ...
+*$AEAD LD A,($72D6)   ; Get transformation process
+ $AEB0 LD HL,$72D7    ; OR with pattern processed
+ $AEB3 OR (HL)        ; ...
  $AEB4 JR NZ,$AEC4    ; If any is non-zero skip ahead
- $AEB6 LD HL,($72DC)  ; HL = $72E0
- $AEB9 LD DE,($72D8)  ; DE = $2100 initially
- $AEBD LD (HL),E      ; Write $00
- $AEBE INC HL         ;
- $AEBF LD (HL),D      ; Write $21
- $AEC0 INC HL         ;
+ $AEB6 LD HL,($72DC)  ; HL = #R$72E0 initially. Table for storing VDP addresses.
+ $AEB9 LD DE,($72D8)  ; DE = $2100 initially. Destination in VDP RAM.
+ $AEBD LD (HL),E      ; Write destination address to word pointed to table.
+ $AEBE INC HL         ; ...
+ $AEBF LD (HL),D      ; ...
+ $AEC0 INC HL         ; ...
  $AEC1 LD ($72DC),HL  ; Save updated pointer, e.g. $72E0
-*$AEC4 LD A,($72D5)   ; Get counter
- $AEC7 LD HL,$B8DD    ; Table of 29 bytes (offsets into table at $B8FA)
+*$AEC4 LD A,($72D5)   ; Get sprite type
+ $AEC7 LD HL,$B8DD    ; Table of 29 offsets into table at #R$B8FA
  $AECA RST $08        ; Add A to HL
- $AECB LD E,(HL)      ; Load DE with value from table
- $AECC LD D,$00       ;
+ $AECB LD E,(HL)      ; Load DE with offset
+ $AECC LD D,$00       ; ...
  $AECE LD HL,$B8FA    ; Table of pointers to graphics
  $AED1 ADD HL,DE      ; Add offset
- $AED2 LD ($72DA),HL  ; Save address of pointer
- $AED5 LD A,($72D7)   ; Get counter
+ $AED2 LD ($72DA),HL  ; Save address of pointer (control word)
+ $AED5 LD A,($72D7)   ; Get pattern being processed
  $AED8 INC A          ; Increment
  $AED9 ADD A,A        ; Double
- $AEDA RST $08        ; Add A to HL
- $AEDB LD E,(HL)      ; Get LSB of pointer
- $AEDC INC HL         ;
- $AEDD LD D,(HL)      ; Get MSB of pointer
- $AEDE EX DE,HL       ; Now HL pointer to graphics
- $AEDF LD A,($72D6)   ; Get counter
+ $AEDA RST $08        ; Add A to HL, so HL not points to a patten pointer in #R$B8FA
+ $AEDB LD E,(HL)      ; Set DE = pointer to graphics
+ $AEDC INC HL         ; ...
+ $AEDD LD D,(HL)      ; ...
+ $AEDE EX DE,HL       ; Now HL points to graphics
+ $AEDF LD A,($72D6)   ; Get transformation processed
  $AEE2 AND $03        ; 0, 1, 2, 3
  $AEE4 ADD A,A        ; 0, 2, 4, 6
  $AEE5 ADD A,A        ; 0, 4, 8, 12
- $AEE6 ADD A,A        ; 0, 8, 16, 32
+ $AEE6 ADD A,A        ; 0, 8, 16, 24
  $AEE7 RST $08        ; Add A to HL
  $AEE8 LD DE,$71A3    ; Buffer
  $AEEB LD ($72DE),DE  ; Store as source address
  $AEEF LD BC,$0008    ; Copy 8 bytes
  $AEF2 LDIR           ; of graphics data info buffer
- $AEF4 LD HL,($72DA)  ; Get address of graphics pointer
+ $AEF4 LD HL,($72DA)  ; Get address of graphics pointer (control word)
  $AEF7 INC HL         ; To MSB
- $AEF8 LD A,(HL)      ; Get MSB
- $AEF9 OR A           ; Is it 0, i.e. not a real address?
+ $AEF8 LD A,(HL)      ; Get MSB (transformation)
+ $AEF9 OR A           ; Is it 0, i.e. no transformation
  $AEFA JR Z,$AF15     ; Then skip ahead
- $AEFC LD IX,$72D6    ; Address of counter
+ $AEFC LD IX,$72D6    ; Pointer to transformation
  $AF00 BIT 2,(IX+$00) ; Is bit 2 set?
  $AF04 JR Z,$AF09     ; If not, skip ahead
- $AF06 CALL $AF6B     ; flip_horz
+ $AF06 CALL $AF6B     ; Rotate left
 *$AF09 BIT 3,(IX+$00) ; Is bit 3 set?
  $AF0D JR NZ,$AF15    ; If not, skip ahead
- $AF0F CALL $AFAE     ; flip_vert
- $AF12 CALL $AFC2     ; shift_left
+ $AF0F CALL $AFAE     ; Upside down
+ $AF12 CALL $AFC2     ; Mirror
 *$AF15 LD HL,($72DE)  ; Source for writing to VDP RAM
  $AF18 LD DE,($72D8)  ; Destination
  $AF1C LD BC,$0008    ; 8 bytes
  $AF1F CALL $1FDF     ; WRITE_VRAM
  $AF22 LD HL,($72D8)  ; Get destination address
- $AF25 LD BC,$0008    ;
- $AF28 ADD HL,BC      ; Add 8
+ $AF25 LD BC,$0008    ; Add 8
+ $AF28 ADD HL,BC      ; ...
  $AF29 LD ($72D8),HL  ; Write back
-@label=inc_counters_1
- $AF2C LD IX,($72DA)  ; Get address of graphics pointer
- $AF30 LD A,($72D7)   ; Get counter
+@label=upload_next_pattern
+ $AF2C LD IX,($72DA)  ; Get address of graphics pointer (control word)
+ $AF30 LD A,($72D7)   ; Get pattern processed
  $AF33 INC A          ; Increment it
- $AF34 CP (IX+$00)    ; When it reaches LSB of graphics pointer
- $AF37 JR NC,$AF3E    ; Then increment other counters
+ $AF34 CP (IX+$00)    ; When it reaches LSB of control word (pattern count)
+ $AF37 JR NC,$AF3E    ; Then move to next transformation
  $AF39 LD ($72D7),A   ; Otherwise store new value
  $AF3C SCF            ; Set carry flag
  $AF3D RET            ;
-@label=inc_counters_2
+@label=upload_next_transformation
 *$AF3E XOR A          ;
- $AF3F LD ($72D7),A   ; Set counter at $72D7 to zero
- $AF42 LD A,(IX+$01)  ; Get MSB of graphics pointer
- $AF45 OR A           ; If zero
- $AF46 JR Z,$AF55     ; Then increment other counters
- $AF48 LD A,($72D6)   ; Get counter
+ $AF3F LD ($72D7),A   ; Set pattens processed zero
+ $AF42 LD A,(IX+$01)  ; Get transformation
+ $AF45 OR A           ; Is it zero?
+ $AF46 JR Z,$AF55     ; Then move to next sprite type
+ $AF48 LD A,($72D6)   ; Get transformation processed
  $AF4B INC A          ; Increment it
- $AF4C CP $10         ; When it reaches 10
- $AF4E JR NC,$AF55    ; Then increment other counters
+ $AF4C CP $10         ; When it reaches 16
+ $AF4E JR NC,$AF55    ; Then move to next sprite type
  $AF50 LD ($72D6),A   ; Otherwise store new value
  $AF53 SCF            ; Set carry flag
  $AF54 RET            ;
-@label=inc_counters_3
+@label=upload_next_sprite_type
 *$AF55 XOR A          ;
- $AF56 LD ($72D6),A   ; Set counter at $72D6 to zero
- $AF59 LD A,($72D5)   ; Increment counter at $72D5
- $AF5C INC A          ;
- $AF5D LD ($72D5),A   ; Get counter
- $AF60 LD HL,$001D    ;
- $AF63 CP L           ; When it reaches $1D (29)
- $AF64 RET C          ; ...
- $AF65 LD A,$FF       ; Then set it to $FF (done)
+ $AF56 LD ($72D6),A   ; Set transformation processed to zero
+ $AF59 LD A,($72D5)   ; Increment sprite type processed
+ $AF5C INC A          ; ...
+ $AF5D LD ($72D5),A   ; ...
+ $AF60 LD HL,$001D    ; When it's <= $1D (29), which is the last sprite type
+ $AF63 CP L           ; ...
+ $AF64 RET C          ; Then return
+ $AF65 LD A,$FF       ; Else set it to $FF (done)
  $AF67 LD ($72D5),A   ; ...
  $AF6A RET            ;
 
-; Flip horizontal
+; Rotate pattern
 ;
-; Take 8 bytes pointed to by $72DE and place them after, bit reversed. Returns
-; address of reversed bytes in $72DE. Used by the routine at #R$AE94.
-@label=flip_horz
-c$AF6B LD HL,($72DE) ;
- $AF6E PUSH HL       ;
- $AF6F POP IY        ;
- $AF71 LD DE,$0008   ;
- $AF74 ADD HL,DE     ;
- $AF75 LD ($72DE),HL ;
- $AF78 LD B,$08      ;
-*$AF7A RL (IY+$00)   ;
- $AF7E RR (HL)       ;
- $AF80 RL (IY+$01)   ;
- $AF84 RR (HL)       ;
- $AF86 RL (IY+$02)   ;
- $AF8A RR (HL)       ;
- $AF8C RL (IY+$03)   ;
- $AF90 RR (HL)       ;
- $AF92 RL (IY+$04)   ;
- $AF96 RR (HL)       ;
- $AF98 RL (IY+$05)   ;
- $AF9C RR (HL)       ;
- $AF9E RL (IY+$06)   ;
- $AFA2 RR (HL)       ;
- $AFA4 RL (IY+$07)   ;
- $AFA8 RR (HL)       ;
- $AFAA INC HL        ;
- $AFAB DJNZ $AF7A    ;
+; Take a pattern pointed to by #R$72DE and rotate it left 90 degrees. Returns
+; address of rotate pattern in #R$72DE. Used by the routine at #R$AE94.
+@label=rotate
+c$AF6B LD HL,($72DE) ; HL = source address
+ $AF6E PUSH HL       ; Copy source into IY
+ $AF6F POP IY        ; ...
+ $AF71 LD DE,$0008   ; HL = destination address
+ $AF74 ADD HL,DE     ; ...
+ $AF75 LD ($72DE),HL ; Store destination
+ $AF78 LD B,$08      ; 8 bytes in pattern
+*$AF7A RL (IY+$00)   ; Shift bit 0 of source byte 0 into carry
+ $AF7E RR (HL)       ; Shift carry into bit 0 of destination byte
+ $AF80 RL (IY+$01)   ; Shift bit 0 of source byte 1 into carry
+ $AF84 RR (HL)       ; Shift carry into bit 0 of destination byte
+ $AF86 RL (IY+$02)   ; Shift bit 0 of source byte 2 into carry
+ $AF8A RR (HL)       ; Shift carry into bit 0 of destination byte
+ $AF8C RL (IY+$03)   ; Shift bit 0 of source byte 3 into carry
+ $AF90 RR (HL)       ; Shift carry into bit 0 of destination byte
+ $AF92 RL (IY+$04)   ; Shift bit 0 of source byte 4 into carry
+ $AF96 RR (HL)       ; Shift carry into bit 0 of destination byte
+ $AF98 RL (IY+$05)   ; Shift bit 0 of source byte 5 into carry
+ $AF9C RR (HL)       ; Shift carry into bit 0 of destination byte
+ $AF9E RL (IY+$06)   ; Shift bit 0 of source byte 6 into carry
+ $AFA2 RR (HL)       ; Shift carry into bit 0 of destination byte
+ $AFA4 RL (IY+$07)   ; Shift bit 0 of source byte 7 into carry
+ $AFA8 RR (HL)       ; Shift carry into bit 0 of destination byte
+ $AFAA INC HL        ; Next destination
+ $AFAB DJNZ $AF7A    ; Repeat 8 times
  $AFAD RET           ;
 
-; Flip vertical
+; Flip pattern vertically
 ;
-; Take 8 bytes pointed to by $72DE and place them after in reverse order.
-; Returns address of reversed bytes in $72DE. Used by the routine at #R$AE94.
-@label=flip_vert
-c$AFAE LD DE,($72DE) ;
- $AFB2 LD HL,$0010   ;
- $AFB5 ADD HL,DE     ;
- $AFB6 LD B,$08      ;
-*$AFB8 LD A,(DE)     ;
- $AFB9 DEC HL        ;
- $AFBA LD (HL),A     ;
- $AFBB INC DE        ;
- $AFBC DJNZ $AFB8    ;
- $AFBE LD ($72DE),HL ;
+; Take a pattern pointed to by #R$72DE and flip it vertically (upside down).
+; Returns address of result in #R$72DE. Used by the routine at #R$AE94.
+@label=flip_vertical
+c$AFAE LD DE,($72DE) ; DE = source address
+ $AFB2 LD HL,$0010   ; HL = right after end of destination buffer
+ $AFB5 ADD HL,DE     ; ...
+ $AFB6 LD B,$08      ; 8 bytes in pattern
+*$AFB8 LD A,(DE)     ; Get source byte
+ $AFB9 DEC HL        ; Destination address moves backwards
+ $AFBA LD (HL),A     ; Store result
+ $AFBB INC DE        ; Next source
+ $AFBC DJNZ $AFB8    ; Repeat 8 times
+ $AFBE LD ($72DE),HL ; Store destination
  $AFC1 RET           ;
 
-; Shift left
+; Flip pattern horizontally
 ;
-; Take 8 bytes pointed to by $72DE and place them after, left shifted one bit.
-; Returns address of shifted bytes in $72DE. Used by the routine at #R$AE94.
-@label=shift_left
-c$AFC2 LD DE,($72DE) ;
- $AFC6 LD HL,$0008   ;
- $AFC9 ADD HL,DE     ;
- $AFCA LD ($72DE),HL ;
- $AFCD EX DE,HL      ;
- $AFCE LD B,$08      ;
-*$AFD0 LD A,$80      ;
-*$AFD2 RL (HL)       ;
- $AFD4 RRA           ;
- $AFD5 JR NC,$AFD2   ;
- $AFD7 LD (DE),A     ;
- $AFD8 INC DE        ;
- $AFD9 INC HL        ;
- $AFDA DJNZ $AFD0    ;
+; Take a pattern pointed to by #R$72DE and flip it horizontally (mirrored).
+; Returns address of result in #R$72DE. Used by the routine at #R$AE94.
+@label=flip_horizontal
+c$AFC2 LD DE,($72DE) ; DE = source address
+ $AFC6 LD HL,$0008   ; HL = destination address
+ $AFC9 ADD HL,DE     ; ...
+ $AFCA LD ($72DE),HL ; Store destination
+ $AFCD EX DE,HL      ; HL = source, DE = destination
+ $AFCE LD B,$08      ; 8 bytes in pattern
+*$AFD0 LD A,$80      ; Result starts with 10000000
+*$AFD2 RL (HL)       ; Shift source byte left, bit 7 to carry
+ $AFD4 RRA           ; Shift right, carry to bit 7, bit 0 to carry
+ $AFD5 JR NC,$AFD2   ; Repeat until bit 7 reaches carry (8 times)
+ $AFD7 LD (DE),A     ; Store result
+ $AFD8 INC DE        ; Next destination
+ $AFD9 INC HL        ; Next source
+ $AFDA DJNZ $AFD0    ; Repeat 8 times
  $AFDC RET           ;
 
-; Table at AFDD
-@label=table_at_AFDD
+; Ship exhaust position relative to ship body
+@label=exhaust_position_table
 b$AFDD DEFB $00,$00,$08,$00,$06,$FF,$06,$FB
  $AFE5 DEFB $05,$FB,$00,$F9,$FF,$FA,$FB,$FB
  $AFED DEFB $FC,$FB,$F9,$00,$FA,$01,$FB,$05
@@ -6444,134 +6490,133 @@ b$B8DD DEFB $00      ; Type $00
  $B8F8 DEFB $D8      ; Type $1B
  $B8F9 DEFB $E2      ; Type $1C
 
-; Data block at B8FA
-b$B8FA DEFB $04,$02
-
 ; Graphics pointers
+;
+; For each sprite type we start with a word where the LSB is the number of
+; patterns (n) in this sprite type, and the MSB is the transformations.
+; Then follows n pointers to patterns in #R$B9E6.
 @label=graphics_pointers_table
-w$B8FC DEFW $B9E6    ; $00 type $00
- $B8FE DEFW $BA06    ; $02
- $B900 DEFW $BA26    ; $04
- $B902 DEFW $BA46    ; $06
- $B904 DEFW $0204    ; $08
- $B906 DEFW $BA66    ; $0A type $01
- $B908 DEFW $BA86    ; $0C
- $B90A DEFW $BAA6    ; $0E
- $B90C DEFW $BAC6    ; $10
- $B90E DEFW $0004    ; $12
- $B910 DEFW $BAE6    ; $14 type $02
- $B912 DEFW $BAEE    ; $16
- $B914 DEFW $BAF6    ; $18
- $B916 DEFW $BAFE    ; $1A
- $B918 DEFW $0001    ; $1C
- $B91A DEFW $BB06    ; $1E type $03
- $B91C DEFW $0004    ; $20
- $B91E DEFW $BB0E    ; $22 type $04
- $B920 DEFW $BB16    ; $24
- $B922 DEFW $BB1E    ; $26
- $B924 DEFW $BB26    ; $28
- $B926 DEFW $0004    ; $2A
- $B928 DEFW $BB2E    ; $2C type $05
- $B92A DEFW $BB36    ; $2E
- $B92C DEFW $BB3E    ; $30
- $B92E DEFW $BB46    ; $32
- $B930 DEFW $0001    ; $34
- $B932 DEFW $BB4E    ; $36 type $06
- $B934 DEFW $0001    ; $38
- $B936 DEFW $BB56    ; $3A type $07
- $B938 DEFW $0001    ; $3C
- $B93A DEFW $BB5E    ; $3E type $08
- $B93C DEFW $0001    ; $40
- $B93E DEFW $BB66    ; $42 type $09
- $B940 DEFW $0001    ; $44
- $B942 DEFW $BB6E    ; $46 type $0A
- $B944 DEFW $0001    ; $48
- $B946 DEFW $BB76    ; $4A type $0B
- $B948 DEFW $0001    ; $4C
- $B94A DEFW $BB7E    ; $4E type $0C
- $B94C DEFW $0001    ; $50
- $B94E DEFW $BDE6    ; $52 type $0D
- $B950 DEFW $0204    ; $54
- $B952 DEFW $BB86    ; $56 type $0E
- $B954 DEFW $BBA6    ; $58
- $B956 DEFW $BBC6    ; $5A
- $B958 DEFW $BBE6    ; $5C
- $B95A DEFW $0204    ; $5E
- $B95C DEFW $BC06    ; $60 type $0F
- $B95E DEFW $BC26    ; $62
- $B960 DEFW $BC46    ; $64
- $B962 DEFW $BC66    ; $66
- $B964 DEFW $0204    ; $68
- $B966 DEFW $BC86    ; $6A type $10
- $B968 DEFW $BCA6    ; $6C
- $B96A DEFW $BCC6    ; $6E
- $B96C DEFW $BCE6    ; $70
- $B96E DEFW $0204    ; $72
- $B970 DEFW $BD06    ; $74 type $11
- $B972 DEFW $BD26    ; $76
- $B974 DEFW $BD46    ; $78
- $B976 DEFW $BD66    ; $7A
- $B978 DEFW $0004    ; $7C
- $B97A DEFW $BD86    ; $7E type $12
- $B97C DEFW $BD8E    ; $80
- $B97E DEFW $BD96    ; $82
- $B980 DEFW $BD9E    ; $84
- $B982 DEFW $0004    ; $86
- $B984 DEFW $BDA6    ; $88 type $13
- $B986 DEFW $BDAE    ; $8A
- $B988 DEFW $BDB6    ; $8C
- $B98A DEFW $BDBE    ; $8E
- $B98C DEFW $0004    ; $90
- $B98E DEFW $BDC6    ; $92 type $14
- $B990 DEFW $BDCE    ; $94
- $B992 DEFW $BDD6    ; $96
- $B994 DEFW $BDDE    ; $98
- $B996 DEFW $0204    ; $9A
- $B998 DEFW $BDEE    ; $9C type $15
- $B99A DEFW $BE0E    ; $9E
- $B99C DEFW $BE1E    ; $A0
- $B99E DEFW $BE1E    ; $A2
- $B9A0 DEFW $0204    ; $A4
- $B9A2 DEFW $BE4E    ; $A6 type $16
- $B9A4 DEFW $BE6E    ; $A8
- $B9A6 DEFW $BE7E    ; $AA
- $B9A8 DEFW $BE7E    ; $AC
- $B9AA DEFW $0204    ; $AE
- $B9AC DEFW $BEAE    ; $B0 type $17
- $B9AE DEFW $BECE    ; $B2
- $B9B0 DEFW $BEDE    ; $B4
- $B9B2 DEFW $BEDE    ; $B6
- $B9B4 DEFW $0204    ; $B8
- $B9B6 DEFW $BF0E    ; $BA type $18
- $B9B8 DEFW $BF0E    ; $BC
- $B9BA DEFW $BF0E    ; $BE
- $B9BC DEFW $BF0E    ; $C0
- $B9BE DEFW $0204    ; $C2
- $B9C0 DEFW $BF2E    ; $C4 type $19
- $B9C2 DEFW $BF2E    ; $C6
- $B9C4 DEFW $BF2E    ; $C8
- $B9C6 DEFW $BF2E    ; $CA
- $B9C8 DEFW $0004    ; $CC
- $B9CA DEFW $BF4E    ; $CE type $1A
- $B9CC DEFW $BF56    ; $D0
- $B9CE DEFW $BF5E    ; $D2
- $B9D0 DEFW $BF66    ; $D4
- $B9D2 DEFW $0004    ; $D6
- $B9D4 DEFW $BF6E    ; $D8 type $1B
- $B9D6 DEFW $BF76    ; $DA
- $B9D8 DEFW $BF7E    ; $DC
- $B9DA DEFW $BF86    ; $DE
- $B9DC DEFW $0004    ; $E0
- $B9DE DEFW $BF8E    ; $E2 type $1C
- $B9E0 DEFW $BF96    ; $E4
- $B9E2 DEFW $BF9E    ; $E6
- $B9E4 DEFW $BFA6    ; $E8
+w$B8FA DEFW $0204    ; $00 type $00
+ $B8FC DEFW $B9E6    ; $02
+ $B8FE DEFW $BA06    ; $04
+ $B900 DEFW $BA26    ; $06
+ $B902 DEFW $BA46    ; $08
+ $B904 DEFW $0204    ; $0A type $01
+ $B906 DEFW $BA66    ; $0C
+ $B908 DEFW $BA86    ; $0E
+ $B90A DEFW $BAA6    ; $10
+ $B90C DEFW $BAC6    ; $12
+ $B90E DEFW $0004    ; $14 type $02
+ $B910 DEFW $BAE6    ; $16
+ $B912 DEFW $BAEE    ; $18
+ $B914 DEFW $BAF6    ; $1A
+ $B916 DEFW $BAFE    ; $1C
+ $B918 DEFW $0001    ; $1E type $03
+ $B91A DEFW $BB06    ; $20
+ $B91C DEFW $0004    ; $22 type $04
+ $B91E DEFW $BB0E    ; $24
+ $B920 DEFW $BB16    ; $26
+ $B922 DEFW $BB1E    ; $28
+ $B924 DEFW $BB26    ; $2A
+ $B926 DEFW $0004    ; $2C type $05
+ $B928 DEFW $BB2E    ; $2E
+ $B92A DEFW $BB36    ; $30
+ $B92C DEFW $BB3E    ; $32
+ $B92E DEFW $BB46    ; $34
+ $B930 DEFW $0001    ; $36 type $06
+ $B932 DEFW $BB4E    ; $38
+ $B934 DEFW $0001    ; $3A type $07
+ $B936 DEFW $BB56    ; $3C
+ $B938 DEFW $0001    ; $3E type $08
+ $B93A DEFW $BB5E    ; $40
+ $B93C DEFW $0001    ; $42 type $09
+ $B93E DEFW $BB66    ; $44
+ $B940 DEFW $0001    ; $46 type $0A
+ $B942 DEFW $BB6E    ; $48
+ $B944 DEFW $0001    ; $4A type $0B
+ $B946 DEFW $BB76    ; $4C
+ $B948 DEFW $0001    ; $4E type $0C
+ $B94A DEFW $BB7E    ; $50
+ $B94C DEFW $0001    ; $52 type $0D
+ $B94E DEFW $BDE6    ; $54
+ $B950 DEFW $0204    ; $56 type $0E
+ $B952 DEFW $BB86    ; $58
+ $B954 DEFW $BBA6    ; $5A
+ $B956 DEFW $BBC6    ; $5C
+ $B958 DEFW $BBE6    ; $5E
+ $B95A DEFW $0204    ; $60 type $0F
+ $B95C DEFW $BC06    ; $62
+ $B95E DEFW $BC26    ; $64
+ $B960 DEFW $BC46    ; $66
+ $B962 DEFW $BC66    ; $68
+ $B964 DEFW $0204    ; $6A type $10
+ $B966 DEFW $BC86    ; $6C
+ $B968 DEFW $BCA6    ; $6E
+ $B96A DEFW $BCC6    ; $70
+ $B96C DEFW $BCE6    ; $72
+ $B96E DEFW $0204    ; $74 type $11
+ $B970 DEFW $BD06    ; $76
+ $B972 DEFW $BD26    ; $78
+ $B974 DEFW $BD46    ; $7A
+ $B976 DEFW $BD66    ; $7C
+ $B978 DEFW $0004    ; $7D type $12
+ $B97A DEFW $BD86    ; $80
+ $B97C DEFW $BD8E    ; $82
+ $B97E DEFW $BD96    ; $84
+ $B980 DEFW $BD9E    ; $86
+ $B982 DEFW $0004    ; $88 type $13
+ $B984 DEFW $BDA6    ; $8A
+ $B986 DEFW $BDAE    ; $8C
+ $B988 DEFW $BDB6    ; $8E
+ $B98A DEFW $BDBE    ; $90
+ $B98C DEFW $0004    ; $92 type $14
+ $B98E DEFW $BDC6    ; $94
+ $B990 DEFW $BDCE    ; $96
+ $B992 DEFW $BDD6    ; $98
+ $B994 DEFW $BDDE    ; $9A
+ $B996 DEFW $0204    ; $9C type $15
+ $B998 DEFW $BDEE    ; $9E
+ $B99A DEFW $BE0E    ; $A0
+ $B99C DEFW $BE1E    ; $A2
+ $B99E DEFW $BE1E    ; $A4
+ $B9A0 DEFW $0204    ; $A6 type $16
+ $B9A2 DEFW $BE4E    ; $A8
+ $B9A4 DEFW $BE6E    ; $AA
+ $B9A6 DEFW $BE7E    ; $AC
+ $B9A8 DEFW $BE7E    ; $AD
+ $B9AA DEFW $0204    ; $B0 type $17
+ $B9AC DEFW $BEAE    ; $B2
+ $B9AE DEFW $BECE    ; $B4
+ $B9B0 DEFW $BEDE    ; $B6
+ $B9B2 DEFW $BEDE    ; $B8
+ $B9B4 DEFW $0204    ; $BA type $18
+ $B9B6 DEFW $BF0E    ; $BC
+ $B9B8 DEFW $BF0E    ; $BE
+ $B9BA DEFW $BF0E    ; $C0
+ $B9BC DEFW $BF0E    ; $C2
+ $B9BE DEFW $0204    ; $C4 type $19
+ $B9C0 DEFW $BF2E    ; $C6
+ $B9C2 DEFW $BF2E    ; $C8
+ $B9C4 DEFW $BF2E    ; $CA
+ $B9C6 DEFW $BF2E    ; $CC
+ $B9C8 DEFW $0004    ; $CB type $1A
+ $B9CA DEFW $BF4E    ; $D0
+ $B9CC DEFW $BF56    ; $D2
+ $B9CE DEFW $BF5E    ; $D4
+ $B9D0 DEFW $BF66    ; $D6
+ $B9D2 DEFW $0004    ; $D8 type $1B
+ $B9D4 DEFW $BF6E    ; $DA
+ $B9D6 DEFW $BF76    ; $DC
+ $B9D8 DEFW $BF7E    ; $DE
+ $B9DA DEFW $BF86    ; $E0
+ $B9DC DEFW $0004    ; $E2 type $1C
+ $B9DE DEFW $BF8E    ; $E4
+ $B9E0 DEFW $BF96    ; $E6
+ $B9E2 DEFW $BF9E    ; $E8
+ $B9E4 DEFW $BFA6    ; $EA
 
 ; Graphics
 ;
-; #UDGTABLE
-; { #UDGARRAY37,,4($B9E6-$BFAD-8)(graphics-B9E6.png) }
-; TABLE#
 ; #UDGTABLE(default, default)
 ; { =h Address | =h Pattern | =h Sprite type }
 ; { $B9E6 | #UDG$B9E6 | $00 }

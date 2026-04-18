@@ -6,8 +6,8 @@ w $7000 Center of projection
 @ $7000 label=center_of_projection
 W $7000,2,2
 b $7002 Sprite data (32 sprites)
-D $7002 #TABLE(default, default) { =h Byte offset | =h Purpose } { $00 | Sprite type, or $FF if not allocated } { $01 | Polar y (depth, 0 is closest (normal ship position), 116 is furthest away) } { $02 | Polar x (angle, 0 at bottom center, moving clockwise to 16 at the left side, 32 at the top, and 48 at the right side) } { $03 | Close to polar y ($01) } { $04 | Close to polar x ($02) } { $05 | Close to polar x ($02) } { $06 | Unknown } { $07 | Unknown } { $08 | Screen y } { $09 | Screen x } { $0A | Pattern } { $0B | Color } TABLE#
-D $7002 #TABLE(default, default) { =h Sprite type | =h Description } { $00 | Ship 1 } { $01 | Ship 2 } { $02 | Shot } { $0D | Explosion dot } TABLE#
+D $7002 #TABLE(default, default) { =h Byte offset | =h Purpose } { $00 | Sprite type, or $FF if not allocated } { $01 | Polar y (depth, 0 is closest (normal ship position), 116 is furthest away) } { $02 | Polar x (angle, 0 at bottom center, moving clockwise to 16 at the left side, 32 at the top, and 48 at the right side) } { $03 | Close to polar y ($01) } { $04 | Polar x + 2 of pattern loaded in #R$AD8B } { $05 | Close to polar x ($02) } { $06 | Unknown } { $07 | Unknown } { $08 | Screen y } { $09 | Screen x } { $0A | Pattern } { $0B | Color } TABLE#
+D $7002 #TABLE(default, default) { =h Sprite type | =h Pattern example | =h Description } { $00 | #UDG$B9E6 | Ship body } { $01 | #UDG$BA66 | Ship exhaust } { $02 | #UDG$BAE6 | Shot } { $03 | #UDG$BB06 | Circle } { $04 | #UDG$BB0E | Dots } { $05 | #UDG$BB2E | Dotted circle } { $06 | #UDG$BB4E | Number 5 } { $07 | #UDG$BB56 | Number 10 } { $08 | #UDG$BB5E | Number 15 } { $09 | #UDG$BB66 | Number 20 } { $0A | #UDG$BB6E | Number 25 } { $0B | #UDG$BB76 | Number 30 } { $0C | #UDG$BB7E | Number 00 } { $0D | #UDG$BDE6 | Explosion dot } { $0E | #UDG$BB86 | Enemy } { $0F | #UDG$BC06 | Enemy } { $10 | #UDG$BC86 | Enemy } { $11 | #UDG$BD06 | Enemy } { $12 | #UDG$BD86 | Diagonal dots } { $13 | #UDG$BDA6 | Laser fence } { $14 | #UDG$BDC6 | Meteor } { $15 | #UDG$BDEE | Bomb facing left } { $16 | #UDG$BE4E | Bomb facing right } { $17 | #UDG$BEAE | Parallel lines, maybe enemy? } { $18 | #UDG$BF0E | Star shape } { $19 | #UDG$BF2E | Three spheres } { $1A | #UDG$BF4E | Dotted circle 1 } { $1B | #UDG$BF6E | Dotted circle 2 } { $1C | #UDG$BF8E | Dotted circle 3 } TABLE#
 @ $7002 label=sprite_data
 B $7002,384,12
 b $7182 Number of allocated sprites
@@ -220,19 +220,33 @@ b $72D3 Data block at 72D3
 B $72D3,1,1
 b $72D4 Data block at 72D4
 B $72D4,1,1
-b $72D5 Byte at 72D5
+b $72D5 Sprite type processed
+D $72D5 Sprite type processed by #R$AE94
+@ $72D5 label=sprite_type_processed
 B $72D5,1,1
-b $72D6 Byte at 72D6
+b $72D6 Transformation processed
+D $72D6 Transformation processed by #R$AE94
+@ $72D6 label=transformation_processed
 B $72D6,1,1
-b $72D7 Byte at 72D6
+b $72D7 Pattern index
+D $72D7 Pattern index (within sprite type) processed by #R$AE94
+@ $72D7 label=pattern_processed
 B $72D7,1,1
-w $72D8 Word at 72D8
+w $72D8 Destination address in VDP
+D $72D8 Destination address in VDP used by #R$AE94
+@ $72D8 label=upload_destination
 W $72D8,2,2
-w $72DA Word at 72DA
+w $72DA Graphics pointer address
+D $72DA Pointer to first entry in R#$B8FA for the current sprite type processed by #R$AE94
+@ $72DA label=graphics_pointer_address
 W $72DA,2,2
-w $72DC Word at 72DC
+w $72DC Source address
+D $72DC Source address used by #R$AE94
+@ $72DC label=upload_source
 W $72DC,2,2
-w $72DE Word at 72DE
+w $72DE Pattern address
+D $72DE Pattern address used by #R$AE94
+@ $72DE label=pattern_address
 W $72DE,2,2
 w $72E0 Sprite patterns addresses in VDP
 D $72E0 One entry for each of the 29 sprite types.
@@ -1097,7 +1111,7 @@ c $8A41 Return from sprite handler
 D $8A41 Sprite handler branching out from #R$8600
 @ $8A41 label=return_from_sprite_handler
 C $8A41,3 Get sprite type
-C $8A44,3 Is it $05 (TODO)
+C $8A44,3 Same as before?
 C $8A47,2 Skip ahead if so
 C $8A4D,1 Load sprite pattern
 N $8A4E This entry point is used by the routine at #R$867D.
@@ -1894,13 +1908,13 @@ C $A37F,1 Restore counter
 C $A380,2 Loop 20 times
 N $A382 Allocate ship etc.
 C $A385,1 Allocate sprite
-C $A386,4 Sprite type $01 (ship 1)
+C $A386,4 Sprite type $00 (ship body)
 C $A38A,4 Polar y
 C $A38E,4 Polar x
 C $A392,4 Set color (red)
 C $A396,1 Load sprite pattern
 C $A397,1 Allocate sprite
-C $A398,4 Sprite type $01 (ship 2)
+C $A398,4 Sprite type $01 (ship exhaust)
 C $A39C,4 Polar y
 C $A3A0,4 Polar x
 C $A3A4,4 Set color (blue)
@@ -2132,7 +2146,7 @@ C $A747,3 DECODER (H = fire, L = joystick (bit 0: up, bit 1: right, bit 2: down,
 C $A74A,2 Reset fire
 C $A74C,3 Movement table
 C $A74F,1 Add joystick result (0 - 12, some values not possible)
-C $A750,4 Sprite 0 data (ship)
+C $A750,4 Sprite 0 data (ship body)
 C $A754,2 Direction = 1 (clockwise)
 C $A756,1 Get table value, which is the value of polar x to move towards
 C $A757,2 Is it an impossible joystick value, e.g. up + down?
@@ -2417,18 +2431,18 @@ C $AD77,4 Init sprite
 C $AD83,4 Set y
 N $AD87 This entry point is used by the routine at #R$AD49.
 c $AD8B Load sprite pattern (RST $30)
-D $AD8B Used by the routine at #R$801B.
+D $AD8B Ensure sprite pattern is loaded and set screen position Used by the routine at #R$801B.
 R $AD8B I:IX Pointer to sprite data
 @ $AD8B label=load_sprite_pattern
 C $AD90,3 DE = Sprite type
 C $AD93,2 ...
-C $AD95,3 Table of offsets for each sprite type into table at #R$B8FC
+C $AD95,3 Table of offsets for each sprite type into table at #R$B8FA
 C $AD98,1 Add sprite type
 C $AD99,1 Get graphics pointer offset for sprite type
 C $AD9A,3 Table of pointers to graphics
-C $AD9D,1 HL now points to graphics pointer
-C $AD9E,3 Get polar that determines which scale we want
-C $ADA1,3 Start with zero
+C $AD9D,1 HL now points to graphics pointer (control word)
+C $AD9E,3 Get polar y, which determines which scale we want
+C $ADA1,3 Pattern index within sprite type
 C $ADA4,2 If bit 7 of polar y is set, skip ahead with E=0
 C $ADA6,2 ...
 C $ADA8,2 Skip ahead if polar y < 21
@@ -2440,18 +2454,19 @@ C $ADB1,1 Else set E = 2
 C $ADB2,2 Skip ahead if polar y < 34
 C $ADB4,2 ...
 C $ADB6,1 Else set E = 3
-C $ADB7,1 A = E
-C $ADB8,1 Compare with graphics pointer LSB
-C $ADB9,2 Jump if LSB of pointer >= 0..3 (not real address) TODO: Circumstantial, hard to convert?
-C $ADBB,1 Get LSB of pointer
+C $ADB7,1 A = pattern index
+C $ADB8,1 Compare with control word LSB (number of patterns for sprite type)
+C $ADB9,2 Jump if number of patterns > pattern index (?)
+C $ADBB,1 Get number of patterns
 C $ADBC,1 Minus 1
-C $ADBD,1 Advance to MSB
-C $ADBE,1 B = MSB
-C $ADBF,1 C = LSB - 1
+C $ADBD,1 Advance to MSB (transformation)
+C $ADBE,1 B = transformation
+C $ADBF,1 C = number of patterns - 1
 C $ADC0,3 Get polar x
 C $ADC3,2 Plus 2
 C $ADC5,2 Mod 64
-C $ADCA,1 If B = 0 (MSB of graphics pointer)
+C $ADC7,3 Save in sprite data
+C $ADCA,1 If transformation = 0
 C $ADCB,1 ...
 C $ADCC,2 Then skip ahead
 C $ADCE,1 Else set A = 0
@@ -2460,11 +2475,11 @@ C $ADD1,2 Divide polar x by 2
 C $ADD3,2 B times
 C $ADD5,1 * 4
 C $ADD6,1 ...
-C $ADD7,1 + LSB -1
+C $ADD7,1 + number of patterns -1
 C $ADD8,1 Copy result into B, which is the index of pattern to fetch within sprite type
 C $ADD9,3 Same as existing?
 C $ADDC,2 If so, skip ahead
-C $ADDE,3 Save result
+C $ADDE,3 Save new value
 C $ADE1,3 HL = Sprite type
 C $ADE4,2 ...
 C $ADE6,1 * 2
@@ -2473,12 +2488,12 @@ C $ADEA,1 #R$72E0 + sprite type * 2
 C $ADEB,1 Get LSB of VDP address
 C $ADEC,1 TO MSB
 C $ADED,1 Get MSB of VDP address
-C $ADEE,1 Hl = Index of pattern to fetch within sprite type
+C $ADEE,1 HL = Index of pattern to fetch within sprite type
 C $ADEF,2 ...
 C $ADF1,1 Multiply by 8
 C $ADF2,1 ...
 C $ADF3,1 ...
-C $ADF4,1 And add DE
+C $ADF4,1 And add base VDP address
 C $ADF5,1 Move HL into DE, which becomes source address
 C $ADF6,3 Buffer
 C $ADF9,3 Read 8 bytes
@@ -2493,19 +2508,23 @@ C $AE08,3 Source
 C $AE0B,3 Write 8 bytes
 C $AE0E,3 WRITE_VRAM
 C $AE11,3 Get sprite type
-C $AE14,2 If 1, i.e. ship 2
+C $AE14,2 If 1, i.e. ship exhaust
 C $AE16,2 Then skip ahead
 C $AE18,3 Polar y
 C $AE1B,3 Polar x
 C $AE1E,3 Polar to screen
 C $AE21,3 Set y
-C $AE24,3 Set x<
+C $AE24,3 Set x
 C $AE27,2 If carry, sprite is outside visible screen, skip ahead
 C $AE29,2 Return
-C $AE2B,3 If sprite type is ship 2, set HL to table address
+C $AE2B,3 If sprite type is ship exhaust, set HL to table address
 C $AE2E,3 Pattern index
 C $AE31,2 Mod 4
-C $AE3B,3 #R$AFDD+2 = ship 2 address
+C $AE33,2 If not zero, skip ahead
+C $AE35,3 Get polar x (saved by #R$ADC7?)
+C $AE38,1 / 2
+C $AE39,2 0, 2, 4 ... $1E
+C $AE3B,3 #R$AFDD+2
 C $AE3E,1 Add A to HL
 C $AE3F,3 Ship screen y
 C $AE42,1 Add table value
@@ -2515,7 +2534,7 @@ C $AE47,3 Ship screen x
 C $AE4A,1 Add table value
 C $AE4B,3 Set x
 N $AE4E This entry point is used by the routines at #R$AE54 and #R$AE75.
-c $AE54 Routine at AE54
+c $AE54 Sprite outside visible screen
 D $AE54 Used by the routine at #R$ADD1.
 C $AE54,3 Get sprite type
 C $AE57,2 Jump if < 12
@@ -2538,106 +2557,166 @@ C $AE86,4 Set as not allocated
 C $AE8A,4 Set x
 C $AE8E,4 Set y
 c $AE94 Upload sprite patterns
-D $AE94 Fill VDP RAM from $2100 to $3868 with sprite patterns that may be flipped and shifted. One new pattern is generated with each call. Builds a table of VDP addresses in #R$72E0. Used by the routine at #R$90D6.
+D $AE94 Fill VDP RAM from $2100 to $3868 with sprite patterns that may be rotated and flipped. One new pattern is generated with each call. Builds a table of VDP addresses in #R$72E0. Used by the routine at #R$90D6.
 @ $AE94 label=upload_sprite_patterns
-C $AE94,3 Get counter
+C $AE94,3 Get sprite type
 C $AE97,2 If maxed out
 C $AE99,1 Then return
-C $AE9A,3 Get word (only used locally)
+C $AE9A,3 Get destination address (only used locally)
 C $AE9D,1 Is it zero?
+C $AE9E,1 ...
 C $AE9F,2 No - skip ahead
 C $AEA1,3 Yes - set it to $2100
-C $AEA7,3 Set another word to $72E0 (pointer to a RAM block)
-C $AEAD,3 Get counter
-C $AEB0,3 And next counter
+C $AEA4,3 ...
+C $AEA7,3 Set source to #R$72E0 (pointer to a RAM block)
+C $AEAA,3 ...
+C $AEAD,3 Get transformation process
+C $AEB0,3 OR with pattern processed
+C $AEB3,1 ...
 C $AEB4,2 If any is non-zero skip ahead
-C $AEB6,3 HL = $72E0
-C $AEB9,4 DE = $2100 initially
-C $AEBD,1 Write $00
-C $AEBF,1 Write $21
+C $AEB6,3 HL = #R$72E0 initially. Table for storing VDP addresses.
+C $AEB9,4 DE = $2100 initially. Destination in VDP RAM.
+C $AEBD,1 Write destination address to word pointed to table.
+C $AEBE,1 ...
+C $AEBF,1 ...
+C $AEC0,1 ...
 C $AEC1,3 Save updated pointer, e.g. $72E0
-C $AEC4,3 Get counter
-C $AEC7,3 Table of 29 bytes (offsets into table at $B8FA)
+C $AEC4,3 Get sprite type
+C $AEC7,3 Table of 29 offsets into table at #R$B8FA
 C $AECA,1 Add A to HL
-C $AECB,1 Load DE with value from table
+C $AECB,1 Load DE with offset
+C $AECC,2 ...
 C $AECE,3 Table of pointers to graphics
 C $AED1,1 Add offset
-C $AED2,3 Save address of pointer
-C $AED5,3 Get counter
+C $AED2,3 Save address of pointer (control word)
+C $AED5,3 Get pattern being processed
 C $AED8,1 Increment
 C $AED9,1 Double
-C $AEDA,1 Add A to HL
-C $AEDB,1 Get LSB of pointer
-C $AEDD,1 Get MSB of pointer
-C $AEDE,1 Now HL pointer to graphics
-C $AEDF,3 Get counter
+C $AEDA,1 Add A to HL, so HL not points to a patten pointer in #R$B8FA
+C $AEDB,1 Set DE = pointer to graphics
+C $AEDC,1 ...
+C $AEDD,1 ...
+C $AEDE,1 Now HL points to graphics
+C $AEDF,3 Get transformation processed
 C $AEE2,2 0, 1, 2, 3
 C $AEE4,1 0, 2, 4, 6
 C $AEE5,1 0, 4, 8, 12
-C $AEE6,1 0, 8, 16, 32
+C $AEE6,1 0, 8, 16, 24
 C $AEE7,1 Add A to HL
 C $AEE8,3 Buffer
 C $AEEB,4 Store as source address
 C $AEEF,3 Copy 8 bytes
 C $AEF2,2 of graphics data info buffer
-C $AEF4,3 Get address of graphics pointer
+C $AEF4,3 Get address of graphics pointer (control word)
 C $AEF7,1 To MSB
-C $AEF8,1 Get MSB
-C $AEF9,1 Is it 0, i.e. not a real address?
+C $AEF8,1 Get MSB (transformation)
+C $AEF9,1 Is it 0, i.e. no transformation
 C $AEFA,2 Then skip ahead
-C $AEFC,4 Address of counter
+C $AEFC,4 Pointer to transformation
 C $AF00,4 Is bit 2 set?
 C $AF04,2 If not, skip ahead
-C $AF06,3 flip_horz
+C $AF06,3 Rotate left
 C $AF09,4 Is bit 3 set?
 C $AF0D,2 If not, skip ahead
-C $AF0F,3 flip_vert
-C $AF12,3 shift_left
+C $AF0F,3 Upside down
+C $AF12,3 Mirror
 C $AF15,3 Source for writing to VDP RAM
 C $AF18,4 Destination
 C $AF1C,3 8 bytes
 C $AF1F,3 WRITE_VRAM
 C $AF22,3 Get destination address
-C $AF28,1 Add 8
+C $AF25,3 Add 8
+C $AF28,1 ...
 C $AF29,3 Write back
-@ $AF2C label=inc_counters_1
-C $AF2C,4 Get address of graphics pointer
-C $AF30,3 Get counter
+@ $AF2C label=upload_next_pattern
+C $AF2C,4 Get address of graphics pointer (control word)
+C $AF30,3 Get pattern processed
 C $AF33,1 Increment it
-C $AF34,3 When it reaches LSB of graphics pointer
-C $AF37,2 Then increment other counters
+C $AF34,3 When it reaches LSB of control word (pattern count)
+C $AF37,2 Then move to next transformation
 C $AF39,3 Otherwise store new value
 C $AF3C,1 Set carry flag
-@ $AF3E label=inc_counters_2
-C $AF3F,3 Set counter at $72D7 to zero
-C $AF42,3 Get MSB of graphics pointer
-C $AF45,1 If zero
-C $AF46,2 Then increment other counters
-C $AF48,3 Get counter
+@ $AF3E label=upload_next_transformation
+C $AF3F,3 Set pattens processed zero
+C $AF42,3 Get transformation
+C $AF45,1 Is it zero?
+C $AF46,2 Then move to next sprite type
+C $AF48,3 Get transformation processed
 C $AF4B,1 Increment it
-C $AF4C,2 When it reaches 10
-C $AF4E,2 Then increment other counters
+C $AF4C,2 When it reaches 16
+C $AF4E,2 Then move to next sprite type
 C $AF50,3 Otherwise store new value
 C $AF53,1 Set carry flag
-@ $AF55 label=inc_counters_3
-C $AF56,3 Set counter at $72D6 to zero
-C $AF59,3 Increment counter at $72D5
-C $AF5D,3 Get counter
-C $AF63,1 When it reaches $1D (29)
-C $AF64,1 ...
-C $AF65,2 Then set it to $FF (done)
+@ $AF55 label=upload_next_sprite_type
+C $AF56,3 Set transformation processed to zero
+C $AF59,3 Increment sprite type processed
+C $AF5C,1 ...
+C $AF5D,3 ...
+C $AF60,3 When it's <= $1D (29), which is the last sprite type
+C $AF63,1 ...
+C $AF64,1 Then return
+C $AF65,2 Else set it to $FF (done)
 C $AF67,3 ...
-c $AF6B Flip horizontal
-D $AF6B Take 8 bytes pointed to by $72DE and place them after, bit reversed. Returns address of reversed bytes in $72DE. Used by the routine at #R$AE94.
-@ $AF6B label=flip_horz
-c $AFAE Flip vertical
-D $AFAE Take 8 bytes pointed to by $72DE and place them after in reverse order. Returns address of reversed bytes in $72DE. Used by the routine at #R$AE94.
-@ $AFAE label=flip_vert
-c $AFC2 Shift left
-D $AFC2 Take 8 bytes pointed to by $72DE and place them after, left shifted one bit. Returns address of shifted bytes in $72DE. Used by the routine at #R$AE94.
-@ $AFC2 label=shift_left
-b $AFDD Table at AFDD
-@ $AFDD label=table_at_AFDD
+c $AF6B Rotate pattern
+D $AF6B Take a pattern pointed to by #R$72DE and rotate it left 90 degrees. Returns address of rotate pattern in #R$72DE. Used by the routine at #R$AE94.
+@ $AF6B label=rotate
+C $AF6B,3 HL = source address
+C $AF6E,1 Copy source into IY
+C $AF6F,2 ...
+C $AF71,3 HL = destination address
+C $AF74,1 ...
+C $AF75,3 Store destination
+C $AF78,2 8 bytes in pattern
+C $AF7A,4 Shift bit 0 of source byte 0 into carry
+C $AF7E,2 Shift carry into bit 0 of destination byte
+C $AF80,4 Shift bit 0 of source byte 1 into carry
+C $AF84,2 Shift carry into bit 0 of destination byte
+C $AF86,4 Shift bit 0 of source byte 2 into carry
+C $AF8A,2 Shift carry into bit 0 of destination byte
+C $AF8C,4 Shift bit 0 of source byte 3 into carry
+C $AF90,2 Shift carry into bit 0 of destination byte
+C $AF92,4 Shift bit 0 of source byte 4 into carry
+C $AF96,2 Shift carry into bit 0 of destination byte
+C $AF98,4 Shift bit 0 of source byte 5 into carry
+C $AF9C,2 Shift carry into bit 0 of destination byte
+C $AF9E,4 Shift bit 0 of source byte 6 into carry
+C $AFA2,2 Shift carry into bit 0 of destination byte
+C $AFA4,4 Shift bit 0 of source byte 7 into carry
+C $AFA8,2 Shift carry into bit 0 of destination byte
+C $AFAA,1 Next destination
+C $AFAB,2 Repeat 8 times
+c $AFAE Flip pattern vertically
+D $AFAE Take a pattern pointed to by #R$72DE and flip it vertically (upside down). Returns address of result in #R$72DE. Used by the routine at #R$AE94.
+@ $AFAE label=flip_vertical
+C $AFAE,4 DE = source address
+C $AFB2,3 HL = right after end of destination buffer
+C $AFB5,1 ...
+C $AFB6,2 8 bytes in pattern
+C $AFB8,1 Get source byte
+C $AFB9,1 Destination address moves backwards
+C $AFBA,1 Store result
+C $AFBB,1 Next source
+C $AFBC,2 Repeat 8 times
+C $AFBE,3 Store destination
+c $AFC2 Flip pattern horizontally
+D $AFC2 Take a pattern pointed to by #R$72DE and flip it horizontally (mirrored). Returns address of result in #R$72DE. Used by the routine at #R$AE94.
+@ $AFC2 label=flip_horizontal
+C $AFC2,4 DE = source address
+C $AFC6,3 HL = destination address
+C $AFC9,1 ...
+C $AFCA,3 Store destination
+C $AFCD,1 HL = source, DE = destination
+C $AFCE,2 8 bytes in pattern
+C $AFD0,2 Result starts with 10000000
+C $AFD2,2 Shift source byte left, bit 7 to carry
+C $AFD4,1 Shift right, carry to bit 7, bit 0 to carry
+C $AFD5,2 Repeat until bit 7 reaches carry (8 times)
+C $AFD7,1 Store result
+C $AFD8,1 Next destination
+C $AFD9,1 Next source
+C $AFDA,2 Repeat 8 times
+b $AFDD Ship exhaust position relative to ship body
+@ $AFDD label=exhaust_position_table
 B $AFDD,34,8*4,2
 c $AFFF Display stars
 D $AFFF Used by the routines at #R$8024, #R$8139, #R$8170, #R$832A, #R$832A, #R$846B, #R$90D6, #R$A33B and #R$A3E1.
@@ -2808,129 +2887,129 @@ B $B8F6,1,1 Type $19
 B $B8F7,1,1 Type $1A
 B $B8F8,1,1 Type $1B
 B $B8F9,1,1 Type $1C
-b $B8FA Data block at B8FA
-B $B8FA,2,2
-w $B8FC Graphics pointers
-@ $B8FC label=graphics_pointers_table
-W $B8FC,2,2 $00 type $00
-W $B8FE,2,2 $02
-W $B900,2,2 $04
-W $B902,2,2 $06
-W $B904,2,2 $08
-W $B906,2,2 $0A type $01
-W $B908,2,2 $0C
-W $B90A,2,2 $0E
-W $B90C,2,2 $10
-W $B90E,2,2 $12
-W $B910,2,2 $14 type $02
-W $B912,2,2 $16
-W $B914,2,2 $18
-W $B916,2,2 $1A
-W $B918,2,2 $1C
-W $B91A,2,2 $1E type $03
-W $B91C,2,2 $20
-W $B91E,2,2 $22 type $04
-W $B920,2,2 $24
-W $B922,2,2 $26
-W $B924,2,2 $28
-W $B926,2,2 $2A
-W $B928,2,2 $2C type $05
-W $B92A,2,2 $2E
-W $B92C,2,2 $30
-W $B92E,2,2 $32
-W $B930,2,2 $34
-W $B932,2,2 $36 type $06
-W $B934,2,2 $38
-W $B936,2,2 $3A type $07
-W $B938,2,2 $3C
-W $B93A,2,2 $3E type $08
-W $B93C,2,2 $40
-W $B93E,2,2 $42 type $09
-W $B940,2,2 $44
-W $B942,2,2 $46 type $0A
-W $B944,2,2 $48
-W $B946,2,2 $4A type $0B
-W $B948,2,2 $4C
-W $B94A,2,2 $4E type $0C
-W $B94C,2,2 $50
-W $B94E,2,2 $52 type $0D
-W $B950,2,2 $54
-W $B952,2,2 $56 type $0E
-W $B954,2,2 $58
-W $B956,2,2 $5A
-W $B958,2,2 $5C
-W $B95A,2,2 $5E
-W $B95C,2,2 $60 type $0F
-W $B95E,2,2 $62
-W $B960,2,2 $64
-W $B962,2,2 $66
-W $B964,2,2 $68
-W $B966,2,2 $6A type $10
-W $B968,2,2 $6C
-W $B96A,2,2 $6E
-W $B96C,2,2 $70
-W $B96E,2,2 $72
-W $B970,2,2 $74 type $11
-W $B972,2,2 $76
-W $B974,2,2 $78
-W $B976,2,2 $7A
-W $B978,2,2 $7C
-W $B97A,2,2 $7E type $12
-W $B97C,2,2 $80
-W $B97E,2,2 $82
-W $B980,2,2 $84
-W $B982,2,2 $86
-W $B984,2,2 $88 type $13
-W $B986,2,2 $8A
-W $B988,2,2 $8C
-W $B98A,2,2 $8E
-W $B98C,2,2 $90
-W $B98E,2,2 $92 type $14
-W $B990,2,2 $94
-W $B992,2,2 $96
-W $B994,2,2 $98
-W $B996,2,2 $9A
-W $B998,2,2 $9C type $15
-W $B99A,2,2 $9E
-W $B99C,2,2 $A0
-W $B99E,2,2 $A2
-W $B9A0,2,2 $A4
-W $B9A2,2,2 $A6 type $16
-W $B9A4,2,2 $A8
-W $B9A6,2,2 $AA
-W $B9A8,2,2 $AC
-W $B9AA,2,2 $AE
-W $B9AC,2,2 $B0 type $17
-W $B9AE,2,2 $B2
-W $B9B0,2,2 $B4
-W $B9B2,2,2 $B6
-W $B9B4,2,2 $B8
-W $B9B6,2,2 $BA type $18
-W $B9B8,2,2 $BC
-W $B9BA,2,2 $BE
-W $B9BC,2,2 $C0
-W $B9BE,2,2 $C2
-W $B9C0,2,2 $C4 type $19
-W $B9C2,2,2 $C6
-W $B9C4,2,2 $C8
-W $B9C6,2,2 $CA
-W $B9C8,2,2 $CC
-W $B9CA,2,2 $CE type $1A
-W $B9CC,2,2 $D0
-W $B9CE,2,2 $D2
-W $B9D0,2,2 $D4
-W $B9D2,2,2 $D6
-W $B9D4,2,2 $D8 type $1B
-W $B9D6,2,2 $DA
-W $B9D8,2,2 $DC
-W $B9DA,2,2 $DE
-W $B9DC,2,2 $E0
-W $B9DE,2,2 $E2 type $1C
-W $B9E0,2,2 $E4
-W $B9E2,2,2 $E6
-W $B9E4,2,2 $E8
+w $B8FA Graphics pointers
+D $B8FA For each sprite type we start with a word where the LSB is the number of patterns (n) in this sprite type, and the MSB is the transformations. Then follows n pointers to patterns in #R$B9E6.
+@ $B8FA label=graphics_pointers_table
+W $B8FA,2,2 $00 type $00
+W $B8FC,2,2 $02
+W $B8FE,2,2 $04
+W $B900,2,2 $06
+W $B902,2,2 $08
+W $B904,2,2 $0A type $01
+W $B906,2,2 $0C
+W $B908,2,2 $0E
+W $B90A,2,2 $10
+W $B90C,2,2 $12
+W $B90E,2,2 $14 type $02
+W $B910,2,2 $16
+W $B912,2,2 $18
+W $B914,2,2 $1A
+W $B916,2,2 $1C
+W $B918,2,2 $1E type $03
+W $B91A,2,2 $20
+W $B91C,2,2 $22 type $04
+W $B91E,2,2 $24
+W $B920,2,2 $26
+W $B922,2,2 $28
+W $B924,2,2 $2A
+W $B926,2,2 $2C type $05
+W $B928,2,2 $2E
+W $B92A,2,2 $30
+W $B92C,2,2 $32
+W $B92E,2,2 $34
+W $B930,2,2 $36 type $06
+W $B932,2,2 $38
+W $B934,2,2 $3A type $07
+W $B936,2,2 $3C
+W $B938,2,2 $3E type $08
+W $B93A,2,2 $40
+W $B93C,2,2 $42 type $09
+W $B93E,2,2 $44
+W $B940,2,2 $46 type $0A
+W $B942,2,2 $48
+W $B944,2,2 $4A type $0B
+W $B946,2,2 $4C
+W $B948,2,2 $4E type $0C
+W $B94A,2,2 $50
+W $B94C,2,2 $52 type $0D
+W $B94E,2,2 $54
+W $B950,2,2 $56 type $0E
+W $B952,2,2 $58
+W $B954,2,2 $5A
+W $B956,2,2 $5C
+W $B958,2,2 $5E
+W $B95A,2,2 $60 type $0F
+W $B95C,2,2 $62
+W $B95E,2,2 $64
+W $B960,2,2 $66
+W $B962,2,2 $68
+W $B964,2,2 $6A type $10
+W $B966,2,2 $6C
+W $B968,2,2 $6E
+W $B96A,2,2 $70
+W $B96C,2,2 $72
+W $B96E,2,2 $74 type $11
+W $B970,2,2 $76
+W $B972,2,2 $78
+W $B974,2,2 $7A
+W $B976,2,2 $7C
+W $B978,2,2 $7D type $12
+W $B97A,2,2 $80
+W $B97C,2,2 $82
+W $B97E,2,2 $84
+W $B980,2,2 $86
+W $B982,2,2 $88 type $13
+W $B984,2,2 $8A
+W $B986,2,2 $8C
+W $B988,2,2 $8E
+W $B98A,2,2 $90
+W $B98C,2,2 $92 type $14
+W $B98E,2,2 $94
+W $B990,2,2 $96
+W $B992,2,2 $98
+W $B994,2,2 $9A
+W $B996,2,2 $9C type $15
+W $B998,2,2 $9E
+W $B99A,2,2 $A0
+W $B99C,2,2 $A2
+W $B99E,2,2 $A4
+W $B9A0,2,2 $A6 type $16
+W $B9A2,2,2 $A8
+W $B9A4,2,2 $AA
+W $B9A6,2,2 $AC
+W $B9A8,2,2 $AD
+W $B9AA,2,2 $B0 type $17
+W $B9AC,2,2 $B2
+W $B9AE,2,2 $B4
+W $B9B0,2,2 $B6
+W $B9B2,2,2 $B8
+W $B9B4,2,2 $BA type $18
+W $B9B6,2,2 $BC
+W $B9B8,2,2 $BE
+W $B9BA,2,2 $C0
+W $B9BC,2,2 $C2
+W $B9BE,2,2 $C4 type $19
+W $B9C0,2,2 $C6
+W $B9C2,2,2 $C8
+W $B9C4,2,2 $CA
+W $B9C6,2,2 $CC
+W $B9C8,2,2 $CB type $1A
+W $B9CA,2,2 $D0
+W $B9CC,2,2 $D2
+W $B9CE,2,2 $D4
+W $B9D0,2,2 $D6
+W $B9D2,2,2 $D8 type $1B
+W $B9D4,2,2 $DA
+W $B9D6,2,2 $DC
+W $B9D8,2,2 $DE
+W $B9DA,2,2 $E0
+W $B9DC,2,2 $E2 type $1C
+W $B9DE,2,2 $E4
+W $B9E0,2,2 $E6
+W $B9E2,2,2 $E8
+W $B9E4,2,2 $EA
 b $B9E6 Graphics
-D $B9E6 #UDGTABLE { #UDGARRAY37,,4($B9E6-$BFAD-8)(graphics-B9E6.png) } TABLE# #UDGTABLE(default, default) { =h Address | =h Pattern | =h Sprite type } { $B9E6 | #UDG$B9E6 | $00 } { $B9EE | #UDG$B9EE |     } { $B9F6 | #UDG$B9F6 |     } { $B9FE | #UDG$B9FE |     } { $BA06 | #UDG$BA06 |     } { $BA0E | #UDG$BA0E |     } { $BA16 | #UDG$BA16 |     } { $BA1E | #UDG$BA1E |     } { $BA26 | #UDG$BA26 |     } { $BA2E | #UDG$BA2E |     } { $BA36 | #UDG$BA36 |     } { $BA3E | #UDG$BA3E |     } { $BA46 | #UDG$BA46 |     } { $BA4E | #UDG$BA4E |     } { $BA56 | #UDG$BA56 |     } { $BA5E | #UDG$BA5E |     } { $BA66 | #UDG$BA66 | $01 } { $BA6E | #UDG$BA6E |     } { $BA76 | #UDG$BA76 |     } { $BA7E | #UDG$BA7E |     } { $BA86 | #UDG$BA86 |     } { $BA8E | #UDG$BA8E |     } { $BA96 | #UDG$BA96 |     } { $BA9E | #UDG$BA9E |     } { $BAA6 | #UDG$BAA6 |     } { $BAAE | #UDG$BAAE |     } { $BAB6 | #UDG$BAB6 |     } { $BABE | #UDG$BABE |     } { $BAC6 | #UDG$BAC6 |     } { $BACE | #UDG$BACE |     } { $BAD6 | #UDG$BAD6 |     } { $BADE | #UDG$BADE |     } { $BAE6 | #UDG$BAE6 | $02 } { $BAEE | #UDG$BAEE |     } { $BAF6 | #UDG$BAF6 |     } { $BAFE | #UDG$BAFE |     } { $BB06 | #UDG$BB06 | $03 } { $BB0E | #UDG$BB0E | $04 } { $BB16 | #UDG$BB16 |     } { $BB1E | #UDG$BB1E |     } { $BB26 | #UDG$BB26 |     } { $BB2E | #UDG$BB2E | $05 } { $BB36 | #UDG$BB36 |     } { $BB3E | #UDG$BB3E |     } { $BB46 | #UDG$BB46 |     } { $BB4E | #UDG$BB4E | $06 } { $BB56 | #UDG$BB56 | $07 } { $BB5E | #UDG$BB5E | $08 } { $BB66 | #UDG$BB66 | $09 } { $BB6E | #UDG$BB6E | $0A } { $BB76 | #UDG$BB76 | $0B } { $BB7E | #UDG$BB7E | $0C } { $BB86 | #UDG$BB86 | $0E } { $BB8E | #UDG$BB8E |     } { $BB96 | #UDG$BB96 |     } { $BB9E | #UDG$BB9E |     } { $BBA6 | #UDG$BBA6 |     } { $BBAE | #UDG$BBAE |     } { $BBB6 | #UDG$BBB6 |     } { $BBBE | #UDG$BBBE |     } { $BBC6 | #UDG$BBC6 |     } { $BBCE | #UDG$BBCE |     } { $BBD6 | #UDG$BBD6 |     } { $BBDE | #UDG$BBDE |     } { $BBE6 | #UDG$BBE6 |     } { $BBEE | #UDG$BBEE |     } { $BBF6 | #UDG$BBF6 |     } { $BBFE | #UDG$BBFE |     } { $BC06 | #UDG$BC06 | $0F } { $BC0E | #UDG$BC0E |     } { $BC16 | #UDG$BC16 |     } { $BC1E | #UDG$BC1E |     } { $BC26 | #UDG$BC26 |     } { $BC2E | #UDG$BC2E |     } { $BC36 | #UDG$BC36 |     } { $BC3E | #UDG$BC3E |     } { $BC46 | #UDG$BC46 |     } { $BC4E | #UDG$BC4E |     } { $BC56 | #UDG$BC56 |     } { $BC5E | #UDG$BC5E |     } { $BC66 | #UDG$BC66 |     } { $BC6E | #UDG$BC6E |     } { $BC76 | #UDG$BC76 |     } { $BC7E | #UDG$BC7E |     } { $BC86 | #UDG$BC86 | $10 } { $BC8E | #UDG$BC8E |     } { $BC96 | #UDG$BC96 |     } { $BC9E | #UDG$BC9E |     } { $BCA6 | #UDG$BCA6 |     } { $BCAE | #UDG$BCAE |     } { $BCB6 | #UDG$BCB6 |     } { $BCBE | #UDG$BCBE |     } { $BCC6 | #UDG$BCC6 |     } { $BCCE | #UDG$BCCE |     } { $BCD6 | #UDG$BCD6 |     } { $BCDE | #UDG$BCDE |     } { $BCE6 | #UDG$BCE6 |     } { $BCEE | #UDG$BCEE |     } { $BCF6 | #UDG$BCF6 |     } { $BCFE | #UDG$BCFE |     } { $BD06 | #UDG$BD06 | $11 } { $BD0E | #UDG$BD0E |     } { $BD16 | #UDG$BD16 |     } { $BD1E | #UDG$BD1E |     } { $BD26 | #UDG$BD26 |     } { $BD2E | #UDG$BD2E |     } { $BD36 | #UDG$BD36 |     } { $BD3E | #UDG$BD3E |     } { $BD46 | #UDG$BD46 |     } { $BD4E | #UDG$BD4E |     } { $BD56 | #UDG$BD56 |     } { $BD5E | #UDG$BD5E |     } { $BD66 | #UDG$BD66 |     } { $BD6E | #UDG$BD6E |     } { $BD76 | #UDG$BD76 |     } { $BD7E | #UDG$BD7E |     } { $BD86 | #UDG$BD86 | $12 } { $BD8E | #UDG$BD8E |     } { $BD96 | #UDG$BD96 |     } { $BD9E | #UDG$BD9E |     } { $BDA6 | #UDG$BDA6 | $13 } { $BDAE | #UDG$BDAE |     } { $BDB6 | #UDG$BDB6 |     } { $BDBE | #UDG$BDBE |     } { $BDC6 | #UDG$BDC6 | $14 } { $BDCE | #UDG$BDCE |     } { $BDD6 | #UDG$BDD6 |     } { $BDDE | #UDG$BDDE |     } { $BDE6 | #UDG$BDE6 | $0D } { $BDEE | #UDG$BDEE | $15 } { $BDF6 | #UDG$BDF6 |     } { $BDFE | #UDG$BDFE |     } { $BE06 | #UDG$BE06 |     } { $BE0E | #UDG$BE0E |     } { $BE16 | #UDG$BE16 |     } { $BE1E | #UDG$BE1E |     } { $BE26 | #UDG$BE26 |     } { $BE2E | #UDG$BE2E |     } { $BE36 | #UDG$BE36 |     } { $BE3E | #UDG$BE3E |     } { $BE46 | #UDG$BE46 |     } { $BE4E | #UDG$BE4E | $16 } { $BE56 | #UDG$BE56 |     } { $BE5E | #UDG$BE5E |     } { $BE66 | #UDG$BE66 |     } { $BE6E | #UDG$BE6E |     } { $BE76 | #UDG$BE76 |     } { $BE7E | #UDG$BE7E |     } { $BE86 | #UDG$BE86 |     } { $BE8E | #UDG$BE8E |     } { $BE96 | #UDG$BE96 |     } { $BE9E | #UDG$BE9E |     } { $BEA6 | #UDG$BEA6 |     } { $BEAE | #UDG$BEAE | $17 } { $BEB6 | #UDG$BEB6 |     } { $BEBE | #UDG$BEBE |     } { $BEC6 | #UDG$BEC6 |     } { $BECE | #UDG$BECE |     } { $BED6 | #UDG$BED6 |     } { $BEDE | #UDG$BEDE |     } { $BEE6 | #UDG$BEE6 |     } { $BEEE | #UDG$BEEE |     } { $BEF6 | #UDG$BEF6 |     } { $BEFE | #UDG$BEFE |     } { $BF06 | #UDG$BF06 |     } { $BF0E | #UDG$BF0E | $18 } { $BF16 | #UDG$BF16 |     } { $BF1E | #UDG$BF1E |     } { $BF26 | #UDG$BF26 |     } { $BF2E | #UDG$BF2E | $19 } { $BF36 | #UDG$BF36 |     } { $BF3E | #UDG$BF3E |     } { $BF46 | #UDG$BF46 |     } { $BF4E | #UDG$BF4E | $1A } { $BF56 | #UDG$BF56 |     } { $BF5E | #UDG$BF5E |     } { $BF66 | #UDG$BF66 |     } { $BF6E | #UDG$BF6E | $1B } { $BF76 | #UDG$BF76 |     } { $BF7E | #UDG$BF7E |     } { $BF86 | #UDG$BF86 |     } { $BF8E | #UDG$BF8E | $1C } { $BF96 | #UDG$BF96 |     } { $BF9E | #UDG$BF9E |     } { $BFA6 | #UDG$BFA6 |     } TABLE#
+D $B9E6 #UDGTABLE(default, default) { =h Address | =h Pattern | =h Sprite type } { $B9E6 | #UDG$B9E6 | $00 } { $B9EE | #UDG$B9EE |     } { $B9F6 | #UDG$B9F6 |     } { $B9FE | #UDG$B9FE |     } { $BA06 | #UDG$BA06 |     } { $BA0E | #UDG$BA0E |     } { $BA16 | #UDG$BA16 |     } { $BA1E | #UDG$BA1E |     } { $BA26 | #UDG$BA26 |     } { $BA2E | #UDG$BA2E |     } { $BA36 | #UDG$BA36 |     } { $BA3E | #UDG$BA3E |     } { $BA46 | #UDG$BA46 |     } { $BA4E | #UDG$BA4E |     } { $BA56 | #UDG$BA56 |     } { $BA5E | #UDG$BA5E |     } { $BA66 | #UDG$BA66 | $01 } { $BA6E | #UDG$BA6E |     } { $BA76 | #UDG$BA76 |     } { $BA7E | #UDG$BA7E |     } { $BA86 | #UDG$BA86 |     } { $BA8E | #UDG$BA8E |     } { $BA96 | #UDG$BA96 |     } { $BA9E | #UDG$BA9E |     } { $BAA6 | #UDG$BAA6 |     } { $BAAE | #UDG$BAAE |     } { $BAB6 | #UDG$BAB6 |     } { $BABE | #UDG$BABE |     } { $BAC6 | #UDG$BAC6 |     } { $BACE | #UDG$BACE |     } { $BAD6 | #UDG$BAD6 |     } { $BADE | #UDG$BADE |     } { $BAE6 | #UDG$BAE6 | $02 } { $BAEE | #UDG$BAEE |     } { $BAF6 | #UDG$BAF6 |     } { $BAFE | #UDG$BAFE |     } { $BB06 | #UDG$BB06 | $03 } { $BB0E | #UDG$BB0E | $04 } { $BB16 | #UDG$BB16 |     } { $BB1E | #UDG$BB1E |     } { $BB26 | #UDG$BB26 |     } { $BB2E | #UDG$BB2E | $05 } { $BB36 | #UDG$BB36 |     } { $BB3E | #UDG$BB3E |     } { $BB46 | #UDG$BB46 |     } { $BB4E | #UDG$BB4E | $06 } { $BB56 | #UDG$BB56 | $07 } { $BB5E | #UDG$BB5E | $08 } { $BB66 | #UDG$BB66 | $09 } { $BB6E | #UDG$BB6E | $0A } { $BB76 | #UDG$BB76 | $0B } { $BB7E | #UDG$BB7E | $0C } { $BB86 | #UDG$BB86 | $0E } { $BB8E | #UDG$BB8E |     } { $BB96 | #UDG$BB96 |     } { $BB9E | #UDG$BB9E |     } { $BBA6 | #UDG$BBA6 |     } { $BBAE | #UDG$BBAE |     } { $BBB6 | #UDG$BBB6 |     } { $BBBE | #UDG$BBBE |     } { $BBC6 | #UDG$BBC6 |     } { $BBCE | #UDG$BBCE |     } { $BBD6 | #UDG$BBD6 |     } { $BBDE | #UDG$BBDE |     } { $BBE6 | #UDG$BBE6 |     } { $BBEE | #UDG$BBEE |     } { $BBF6 | #UDG$BBF6 |     } { $BBFE | #UDG$BBFE |     } { $BC06 | #UDG$BC06 | $0F } { $BC0E | #UDG$BC0E |     } { $BC16 | #UDG$BC16 |     } { $BC1E | #UDG$BC1E |     } { $BC26 | #UDG$BC26 |     } { $BC2E | #UDG$BC2E |     } { $BC36 | #UDG$BC36 |     } { $BC3E | #UDG$BC3E |     } { $BC46 | #UDG$BC46 |     } { $BC4E | #UDG$BC4E |     } { $BC56 | #UDG$BC56 |     } { $BC5E | #UDG$BC5E |     } { $BC66 | #UDG$BC66 |     } { $BC6E | #UDG$BC6E |     } { $BC76 | #UDG$BC76 |     } { $BC7E | #UDG$BC7E |     } { $BC86 | #UDG$BC86 | $10 } { $BC8E | #UDG$BC8E |     } { $BC96 | #UDG$BC96 |     } { $BC9E | #UDG$BC9E |     } { $BCA6 | #UDG$BCA6 |     } { $BCAE | #UDG$BCAE |     } { $BCB6 | #UDG$BCB6 |     } { $BCBE | #UDG$BCBE |     } { $BCC6 | #UDG$BCC6 |     } { $BCCE | #UDG$BCCE |     } { $BCD6 | #UDG$BCD6 |     } { $BCDE | #UDG$BCDE |     } { $BCE6 | #UDG$BCE6 |     } { $BCEE | #UDG$BCEE |     } { $BCF6 | #UDG$BCF6 |     } { $BCFE | #UDG$BCFE |     } { $BD06 | #UDG$BD06 | $11 } { $BD0E | #UDG$BD0E |     } { $BD16 | #UDG$BD16 |     } { $BD1E | #UDG$BD1E |     } { $BD26 | #UDG$BD26 |     } { $BD2E | #UDG$BD2E |     } { $BD36 | #UDG$BD36 |     } { $BD3E | #UDG$BD3E |     } { $BD46 | #UDG$BD46 |     } { $BD4E | #UDG$BD4E |     } { $BD56 | #UDG$BD56 |     } { $BD5E | #UDG$BD5E |     } { $BD66 | #UDG$BD66 |     } { $BD6E | #UDG$BD6E |     } { $BD76 | #UDG$BD76 |     } { $BD7E | #UDG$BD7E |     } { $BD86 | #UDG$BD86 | $12 } { $BD8E | #UDG$BD8E |     } { $BD96 | #UDG$BD96 |     } { $BD9E | #UDG$BD9E |     } { $BDA6 | #UDG$BDA6 | $13 } { $BDAE | #UDG$BDAE |     } { $BDB6 | #UDG$BDB6 |     } { $BDBE | #UDG$BDBE |     } { $BDC6 | #UDG$BDC6 | $14 } { $BDCE | #UDG$BDCE |     } { $BDD6 | #UDG$BDD6 |     } { $BDDE | #UDG$BDDE |     } { $BDE6 | #UDG$BDE6 | $0D } { $BDEE | #UDG$BDEE | $15 } { $BDF6 | #UDG$BDF6 |     } { $BDFE | #UDG$BDFE |     } { $BE06 | #UDG$BE06 |     } { $BE0E | #UDG$BE0E |     } { $BE16 | #UDG$BE16 |     } { $BE1E | #UDG$BE1E |     } { $BE26 | #UDG$BE26 |     } { $BE2E | #UDG$BE2E |     } { $BE36 | #UDG$BE36 |     } { $BE3E | #UDG$BE3E |     } { $BE46 | #UDG$BE46 |     } { $BE4E | #UDG$BE4E | $16 } { $BE56 | #UDG$BE56 |     } { $BE5E | #UDG$BE5E |     } { $BE66 | #UDG$BE66 |     } { $BE6E | #UDG$BE6E |     } { $BE76 | #UDG$BE76 |     } { $BE7E | #UDG$BE7E |     } { $BE86 | #UDG$BE86 |     } { $BE8E | #UDG$BE8E |     } { $BE96 | #UDG$BE96 |     } { $BE9E | #UDG$BE9E |     } { $BEA6 | #UDG$BEA6 |     } { $BEAE | #UDG$BEAE | $17 } { $BEB6 | #UDG$BEB6 |     } { $BEBE | #UDG$BEBE |     } { $BEC6 | #UDG$BEC6 |     } { $BECE | #UDG$BECE |     } { $BED6 | #UDG$BED6 |     } { $BEDE | #UDG$BEDE |     } { $BEE6 | #UDG$BEE6 |     } { $BEEE | #UDG$BEEE |     } { $BEF6 | #UDG$BEF6 |     } { $BEFE | #UDG$BEFE |     } { $BF06 | #UDG$BF06 |     } { $BF0E | #UDG$BF0E | $18 } { $BF16 | #UDG$BF16 |     } { $BF1E | #UDG$BF1E |     } { $BF26 | #UDG$BF26 |     } { $BF2E | #UDG$BF2E | $19 } { $BF36 | #UDG$BF36 |     } { $BF3E | #UDG$BF3E |     } { $BF46 | #UDG$BF46 |     } { $BF4E | #UDG$BF4E | $1A } { $BF56 | #UDG$BF56 |     } { $BF5E | #UDG$BF5E |     } { $BF66 | #UDG$BF66 |     } { $BF6E | #UDG$BF6E | $1B } { $BF76 | #UDG$BF76 |     } { $BF7E | #UDG$BF7E |     } { $BF86 | #UDG$BF86 |     } { $BF8E | #UDG$BF8E | $1C } { $BF96 | #UDG$BF96 |     } { $BF9E | #UDG$BF9E |     } { $BFA6 | #UDG$BFA6 |     } TABLE#
 @ $B9E6 label=graphics_patterns
 B $B9E6,1480,8
 c $BFAE Random number generator (RST $20)

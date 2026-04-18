@@ -30,7 +30,7 @@ Next: <a href="44628.html">AE54</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="32795.html">L801B</a>.
+Ensure sprite pattern is loaded and set screen position Used by the routine at <a href="32795.html">L801B</a>.
 </div>
 </div>
 <table class="input">
@@ -84,7 +84,7 @@ Used by the routine at <a href="32795.html">L801B</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44437"></span>AD95</td>
 <td class="instruction">LD HL,<a href="47325.html">graphics_pointer_offsets_table</a></td>
-<td class="comment-1" rowspan="1">Table of offsets for each sprite type into table at <a href="47356.html">graphics_pointers_table</a></td>
+<td class="comment-1" rowspan="1">Table of offsets for each sprite type into table at <a href="47354.html">graphics_pointers_table</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -101,26 +101,26 @@ Used by the routine at <a href="32795.html">L801B</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44442"></span>AD9A</td>
-<td class="instruction">LD HL,<a href="47354.html">LB8FA</a></td>
+<td class="instruction">LD HL,<a href="47354.html">graphics_pointers_table</a></td>
 <td class="comment-1" rowspan="1">Table of pointers to graphics</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44445"></span>AD9D</td>
 <td class="instruction">ADD HL,DE</td>
-<td class="comment-1" rowspan="1">HL now points to graphics pointer</td>
+<td class="comment-1" rowspan="1">HL now points to graphics pointer (control word)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44446"></span>AD9E</td>
 <td class="instruction">LD A,(IX+$01)</td>
-<td class="comment-1" rowspan="1">Get polar that determines which scale we want</td>
+<td class="comment-1" rowspan="1">Get polar y, which determines which scale we want</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44449"></span>ADA1</td>
 <td class="instruction">LD DE,$0000</td>
-<td class="comment-1" rowspan="1">Start with zero</td>
+<td class="comment-1" rowspan="1">Pattern index within sprite type</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -192,25 +192,25 @@ Used by the routine at <a href="32795.html">L801B</a>.
 <td class="asm-label">load_sprite_pattern_0</td>
 <td class="address-2"><span id="44471"></span>ADB7</td>
 <td class="instruction">LD A,E</td>
-<td class="comment-1" rowspan="1">A = E</td>
+<td class="comment-1" rowspan="1">A = pattern index</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44472"></span>ADB8</td>
 <td class="instruction">CP (HL)</td>
-<td class="comment-1" rowspan="1">Compare with graphics pointer LSB</td>
+<td class="comment-1" rowspan="1">Compare with control word LSB (number of patterns for sprite type)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44473"></span>ADB9</td>
 <td class="instruction">JR C,<a href="44427.html#44477">load_sprite_pattern_1</a></td>
-<td class="comment-1" rowspan="1">Jump if LSB of pointer &gt;= 0..3 (not real address) TODO: Circumstantial, hard to convert?</td>
+<td class="comment-1" rowspan="1">Jump if number of patterns &gt; pattern index (?)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44475"></span>ADBB</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1">Get LSB of pointer</td>
+<td class="comment-1" rowspan="1">Get number of patterns</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -222,19 +222,19 @@ Used by the routine at <a href="32795.html">L801B</a>.
 <td class="asm-label">load_sprite_pattern_1</td>
 <td class="address-2"><span id="44477"></span>ADBD</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1">Advance to MSB</td>
+<td class="comment-1" rowspan="1">Advance to MSB (transformation)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44478"></span>ADBE</td>
 <td class="instruction">LD B,(HL)</td>
-<td class="comment-1" rowspan="1">B = MSB</td>
+<td class="comment-1" rowspan="1">B = transformation</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44479"></span>ADBF</td>
 <td class="instruction">LD C,A</td>
-<td class="comment-1" rowspan="1">C = LSB - 1</td>
+<td class="comment-1" rowspan="1">C = number of patterns - 1</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -258,13 +258,13 @@ Used by the routine at <a href="32795.html">L801B</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44487"></span>ADC7</td>
 <td class="instruction">LD (IX+$05),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save in sprite data</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44490"></span>ADCA</td>
 <td class="instruction">INC B</td>
-<td class="comment-1" rowspan="1">If B = 0 (MSB of graphics pointer)</td>
+<td class="comment-1" rowspan="1">If transformation = 0</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -318,7 +318,7 @@ Used by the routine at <a href="32795.html">L801B</a>.
 <td class="asm-label">load_sprite_pattern_3</td>
 <td class="address-2"><span id="44503"></span>ADD7</td>
 <td class="instruction">ADD A,C</td>
-<td class="comment-1" rowspan="1">+ LSB -1</td>
+<td class="comment-1" rowspan="1">+ number of patterns -1</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -342,7 +342,7 @@ Used by the routine at <a href="32795.html">L801B</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44510"></span>ADDE</td>
 <td class="instruction">LD (IX+$04),A</td>
-<td class="comment-1" rowspan="1">Save result</td>
+<td class="comment-1" rowspan="1">Save new value</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -396,7 +396,7 @@ Used by the routine at <a href="32795.html">L801B</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44526"></span>ADEE</td>
 <td class="instruction">LD L,B</td>
-<td class="comment-1" rowspan="1">Hl = Index of pattern to fetch within sprite type</td>
+<td class="comment-1" rowspan="1">HL = Index of pattern to fetch within sprite type</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -426,7 +426,7 @@ Used by the routine at <a href="32795.html">L801B</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44532"></span>ADF4</td>
 <td class="instruction">ADD HL,DE</td>
-<td class="comment-1" rowspan="1">And add DE</td>
+<td class="comment-1" rowspan="1">And add base VDP address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -516,7 +516,7 @@ Used by the routine at <a href="32795.html">L801B</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44564"></span>AE14</td>
 <td class="instruction">CP $01</td>
-<td class="comment-1" rowspan="1">If 1, i.e. ship 2</td>
+<td class="comment-1" rowspan="1">If 1, i.e. ship exhaust</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -552,7 +552,7 @@ Used by the routine at <a href="32795.html">L801B</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44580"></span>AE24</td>
 <td class="instruction">LD (IX+$09),E</td>
-<td class="comment-1" rowspan="1">Set x&lt;</td>
+<td class="comment-1" rowspan="1">Set x</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -569,8 +569,8 @@ Used by the routine at <a href="32795.html">L801B</a>.
 <tr>
 <td class="asm-label">load_sprite_pattern_5</td>
 <td class="address-2"><span id="44587"></span>AE2B</td>
-<td class="instruction">LD HL,<a href="45021.html">table_at_AFDD</a></td>
-<td class="comment-1" rowspan="1">If sprite type is ship 2, set HL to table address</td>
+<td class="instruction">LD HL,<a href="45021.html">exhaust_position_table</a></td>
+<td class="comment-1" rowspan="1">If sprite type is ship exhaust, set HL to table address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -588,31 +588,31 @@ Used by the routine at <a href="32795.html">L801B</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44595"></span>AE33</td>
 <td class="instruction">JR NZ,<a href="44427.html#44607">load_sprite_pattern_6</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If not zero, skip ahead</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44597"></span>AE35</td>
 <td class="instruction">LD A,(IX+$05)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get polar x (saved by <a href="44427.html#44487">ADC7</a>?)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44600"></span>AE38</td>
 <td class="instruction">RRA</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">/ 2</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44601"></span>AE39</td>
 <td class="instruction">AND $1E</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">0, 2, 4 ... $1E</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44603"></span>AE3B</td>
 <td class="instruction">LD HL,$AFDF</td>
-<td class="comment-1" rowspan="1"><a href="45021.html">table_at_AFDD</a>+2 = ship 2 address</td>
+<td class="comment-1" rowspan="1"><a href="45021.html">exhaust_position_table</a>+2</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
