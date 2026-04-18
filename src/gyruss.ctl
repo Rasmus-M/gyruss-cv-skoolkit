@@ -2779,130 +2779,158 @@ B $B21D,1728,32
 b $B8DD Graphics pointer offsets
 D $B8DD Offsets into data block at B8FA
 @ $B8DD label=graphics_pointer_offsets_table
-B $B8DD,29,8*3,5
+B $B8DD,1,1 Type $00
+B $B8DE,1,1 Type $01
+B $B8DF,1,1 Type $02
+B $B8E0,1,1 Type $03
+B $B8E1,1,1 Type $04
+B $B8E2,1,1 Type $05
+B $B8E3,1,1 Type $06
+B $B8E4,1,1 Type $07
+B $B8E5,1,1 Type $08
+B $B8E6,1,1 Type $09
+B $B8E7,1,1 Type $0A
+B $B8E8,1,1 Type $0B
+B $B8E9,1,1 Type $0C
+B $B8EA,1,1 Type $0D
+B $B8EB,1,1 Type $0E
+B $B8EC,1,1 Type $0F
+B $B8ED,1,1 Type $10
+B $B8EE,1,1 Type $11
+B $B8EF,1,1 Type $12
+B $B8F0,1,1 Type $13
+B $B8F1,1,1 Type $14
+B $B8F2,1,1 Type $15
+B $B8F3,1,1 Type $16
+B $B8F4,1,1 Type $17
+B $B8F5,1,1 Type $18
+B $B8F6,1,1 Type $19
+B $B8F7,1,1 Type $1A
+B $B8F8,1,1 Type $1B
+B $B8F9,1,1 Type $1C
 b $B8FA Data block at B8FA
 B $B8FA,2,2
 w $B8FC Graphics pointers
 @ $B8FC label=graphics_pointers_table
-W $B8FC,2,2 $00 type $00: Offset $00
-W $B8FE,2,2 $01
-W $B900,2,2 $02
-W $B902,2,2 $03
-W $B904,2,2 $04
-W $B906,2,2 $05 type $01: Offset $0A
-W $B908,2,2 $06
-W $B90A,2,2 $07
-W $B90C,2,2 $08
-W $B90E,2,2 $09
-W $B910,2,2 $0A type $02: Offset $14
-W $B912,2,2 $0B
-W $B914,2,2 $0C
-W $B916,2,2 $0D
-W $B918,2,2 $0E
-W $B91A,2,2 $0F type $03: Offset $1E
-W $B91C,2,2 $10
-W $B91E,2,2 $11 type $04: Offset $22
-W $B920,2,2 $12
-W $B922,2,2 $13
-W $B924,2,2 $14
-W $B926,2,2 $15
-W $B928,2,2 $16 type $05: Offset $2C
-W $B92A,2,2 $17
-W $B92C,2,2 $18
-W $B92E,2,2 $19
-W $B930,2,2 $1A
-W $B932,2,2 $1B type $06: Offset $36
-W $B934,2,2 $1C
-W $B936,2,2 $1D type $07: Offset $3A
-W $B938,2,2 $1E
-W $B93A,2,2 $1F type $08: Offset $3E
-W $B93C,2,2 $20
-W $B93E,2,2 $21 type $09: Offset $42
-W $B940,2,2 $22
-W $B942,2,2 $23 type $0A: Offset $46
-W $B944,2,2 $24
-W $B946,2,2 $25 type $0B: Offset $4A
-W $B948,2,2 $26
-W $B94A,2,2 $27 type $0C: Offset $4E
-W $B94C,2,2 $28
-W $B94E,2,2 $29 type $0D: Offset $52
-W $B950,2,2 $2A
-W $B952,2,2 $2B type $0E: Offset $56
-W $B954,2,2 $2C
-W $B956,2,2 $2D
-W $B958,2,2 $2E
-W $B95A,2,2 $2F
-W $B95C,2,2 $30 type $0F: Offset $60
-W $B95E,2,2 $31
-W $B960,2,2 $32
-W $B962,2,2 $33
-W $B964,2,2 $34
-W $B966,2,2 $35 type $10: Offset $6A
-W $B968,2,2 $36
-W $B96A,2,2 $37
-W $B96C,2,2 $38
-W $B96E,2,2 $39
-W $B970,2,2 $3A type $11: Offset $74
-W $B972,2,2 $3B
-W $B974,2,2 $3C
-W $B976,2,2 $3D
-W $B978,2,2 $3E
-W $B97A,2,2 $3F type $12: Offset $7E
-W $B97C,2,2 $40
-W $B97E,2,2 $41
-W $B980,2,2 $42
-W $B982,2,2 $43
-W $B984,2,2 $44 type $13: Offset $88
-W $B986,2,2 $45
-W $B988,2,2 $46
-W $B98A,2,2 $47
-W $B98C,2,2 $48
-W $B98E,2,2 $49 type $14: Offset $92
-W $B990,2,2 $4A
-W $B992,2,2 $4B
-W $B994,2,2 $4C
-W $B996,2,2 $4D
-W $B998,2,2 $4E type $15: Offset $9C
-W $B99A,2,2 $4F
-W $B99C,2,2 $50
-W $B99E,2,2 $51
-W $B9A0,2,2 $52
-W $B9A2,2,2 $53 type $16: Offset $A6
-W $B9A4,2,2 $54
-W $B9A6,2,2 $55
-W $B9A8,2,2 $56
-W $B9AA,2,2 $57
-W $B9AC,2,2 $58 type $17: Offset $B0
-W $B9AE,2,2 $59
-W $B9B0,2,2 $5A
-W $B9B2,2,2 $5B
-W $B9B4,2,2 $5C
-W $B9B6,2,2 $5D type $18: Offset $BA
-W $B9B8,2,2 $5E
-W $B9BA,2,2 $5F
-W $B9BC,2,2 $60
-W $B9BE,2,2 $61
-W $B9C0,2,2 $62 type $19: Offset $C4
-W $B9C2,2,2 $63
-W $B9C4,2,2 $64
-W $B9C6,2,2 $65
-W $B9C8,2,2 $66
-W $B9CA,2,2 $67 type $1A: Offset $CE
-W $B9CC,2,2 $68
-W $B9CE,2,2 $69
-W $B9D0,2,2 $6A
-W $B9D2,2,2 $6B
-W $B9D4,2,2 $6C type $1B: Offset $D8
-W $B9D6,2,2 $6D
-W $B9D8,2,2 $6E
-W $B9DA,2,2 $6F
-W $B9DC,2,2 $70
-W $B9DE,2,2 $71 type $1C: Offset $E2
-W $B9E0,2,2 $72
-W $B9E2,2,2 $73
-W $B9E4,2,2 $74
+W $B8FC,2,2 $00 type $00
+W $B8FE,2,2 $02
+W $B900,2,2 $04
+W $B902,2,2 $06
+W $B904,2,2 $08
+W $B906,2,2 $0A type $01
+W $B908,2,2 $0C
+W $B90A,2,2 $0E
+W $B90C,2,2 $10
+W $B90E,2,2 $12
+W $B910,2,2 $14 type $02
+W $B912,2,2 $16
+W $B914,2,2 $18
+W $B916,2,2 $1A
+W $B918,2,2 $1C
+W $B91A,2,2 $1E type $03
+W $B91C,2,2 $20
+W $B91E,2,2 $22 type $04
+W $B920,2,2 $24
+W $B922,2,2 $26
+W $B924,2,2 $28
+W $B926,2,2 $2A
+W $B928,2,2 $2C type $05
+W $B92A,2,2 $2E
+W $B92C,2,2 $30
+W $B92E,2,2 $32
+W $B930,2,2 $34
+W $B932,2,2 $36 type $06
+W $B934,2,2 $38
+W $B936,2,2 $3A type $07
+W $B938,2,2 $3C
+W $B93A,2,2 $3E type $08
+W $B93C,2,2 $40
+W $B93E,2,2 $42 type $09
+W $B940,2,2 $44
+W $B942,2,2 $46 type $0A
+W $B944,2,2 $48
+W $B946,2,2 $4A type $0B
+W $B948,2,2 $4C
+W $B94A,2,2 $4E type $0C
+W $B94C,2,2 $50
+W $B94E,2,2 $52 type $0D
+W $B950,2,2 $54
+W $B952,2,2 $56 type $0E
+W $B954,2,2 $58
+W $B956,2,2 $5A
+W $B958,2,2 $5C
+W $B95A,2,2 $5E
+W $B95C,2,2 $60 type $0F
+W $B95E,2,2 $62
+W $B960,2,2 $64
+W $B962,2,2 $66
+W $B964,2,2 $68
+W $B966,2,2 $6A type $10
+W $B968,2,2 $6C
+W $B96A,2,2 $6E
+W $B96C,2,2 $70
+W $B96E,2,2 $72
+W $B970,2,2 $74 type $11
+W $B972,2,2 $76
+W $B974,2,2 $78
+W $B976,2,2 $7A
+W $B978,2,2 $7C
+W $B97A,2,2 $7E type $12
+W $B97C,2,2 $80
+W $B97E,2,2 $82
+W $B980,2,2 $84
+W $B982,2,2 $86
+W $B984,2,2 $88 type $13
+W $B986,2,2 $8A
+W $B988,2,2 $8C
+W $B98A,2,2 $8E
+W $B98C,2,2 $90
+W $B98E,2,2 $92 type $14
+W $B990,2,2 $94
+W $B992,2,2 $96
+W $B994,2,2 $98
+W $B996,2,2 $9A
+W $B998,2,2 $9C type $15
+W $B99A,2,2 $9E
+W $B99C,2,2 $A0
+W $B99E,2,2 $A2
+W $B9A0,2,2 $A4
+W $B9A2,2,2 $A6 type $16
+W $B9A4,2,2 $A8
+W $B9A6,2,2 $AA
+W $B9A8,2,2 $AC
+W $B9AA,2,2 $AE
+W $B9AC,2,2 $B0 type $17
+W $B9AE,2,2 $B2
+W $B9B0,2,2 $B4
+W $B9B2,2,2 $B6
+W $B9B4,2,2 $B8
+W $B9B6,2,2 $BA type $18
+W $B9B8,2,2 $BC
+W $B9BA,2,2 $BE
+W $B9BC,2,2 $C0
+W $B9BE,2,2 $C2
+W $B9C0,2,2 $C4 type $19
+W $B9C2,2,2 $C6
+W $B9C4,2,2 $C8
+W $B9C6,2,2 $CA
+W $B9C8,2,2 $CC
+W $B9CA,2,2 $CE type $1A
+W $B9CC,2,2 $D0
+W $B9CE,2,2 $D2
+W $B9D0,2,2 $D4
+W $B9D2,2,2 $D6
+W $B9D4,2,2 $D8 type $1B
+W $B9D6,2,2 $DA
+W $B9D8,2,2 $DC
+W $B9DA,2,2 $DE
+W $B9DC,2,2 $E0
+W $B9DE,2,2 $E2 type $1C
+W $B9E0,2,2 $E4
+W $B9E2,2,2 $E6
+W $B9E4,2,2 $E8
 b $B9E6 Graphics
-D $B9E6 #UDGTABLE { #UDGARRAY37,,4($B9E6-$BFAD-8)(graphics-B9E6.png) } TABLE# #UDGTABLE(default, default) { $B9E6 | #UDG$B9E6 } { $B9EE | #UDG$B9EE } { $B9F6 | #UDG$B9F6 } { $B9FE | #UDG$B9FE } { $BA06 | #UDG$BA06 } { $BA0E | #UDG$BA0E } { $BA16 | #UDG$BA16 } { $BA1E | #UDG$BA1E } { $BA26 | #UDG$BA26 } { $BA2E | #UDG$BA2E } { $BA36 | #UDG$BA36 } { $BA3E | #UDG$BA3E } { $BA46 | #UDG$BA46 } { $BA4E | #UDG$BA4E } { $BA56 | #UDG$BA56 } { $BA5E | #UDG$BA5E } { $BA66 | #UDG$BA66 } { $BA6E | #UDG$BA6E } { $BA76 | #UDG$BA76 } { $BA7E | #UDG$BA7E } { $BA86 | #UDG$BA86 } { $BA8E | #UDG$BA8E } { $BA96 | #UDG$BA96 } { $BA9E | #UDG$BA9E } { $BAA6 | #UDG$BAA6 } { $BAAE | #UDG$BAAE } { $BAB6 | #UDG$BAB6 } { $BABE | #UDG$BABE } { $BAC6 | #UDG$BAC6 } { $BACE | #UDG$BACE } { $BAD6 | #UDG$BAD6 } { $BADE | #UDG$BADE } { $BAE6 | #UDG$BAE6 } { $BAEE | #UDG$BAEE } { $BAF6 | #UDG$BAF6 } { $BAFE | #UDG$BAFE } { $BB06 | #UDG$BB06 } { $BB0E | #UDG$BB0E } { $BB16 | #UDG$BB16 } { $BB1E | #UDG$BB1E } { $BB26 | #UDG$BB26 } { $BB2E | #UDG$BB2E } { $BB36 | #UDG$BB36 } { $BB3E | #UDG$BB3E } { $BB46 | #UDG$BB46 } { $BB4E | #UDG$BB4E } { $BB56 | #UDG$BB56 } { $BB5E | #UDG$BB5E } { $BB66 | #UDG$BB66 } { $BB6E | #UDG$BB6E } { $BB76 | #UDG$BB76 } { $BB7E | #UDG$BB7E } { $BB86 | #UDG$BB86 } { $BB8E | #UDG$BB8E } { $BB96 | #UDG$BB96 } { $BB9E | #UDG$BB9E } { $BBA6 | #UDG$BBA6 } { $BBAE | #UDG$BBAE } { $BBB6 | #UDG$BBB6 } { $BBBE | #UDG$BBBE } { $BBC6 | #UDG$BBC6 } { $BBCE | #UDG$BBCE } { $BBD6 | #UDG$BBD6 } { $BBDE | #UDG$BBDE } { $BBE6 | #UDG$BBE6 } { $BBEE | #UDG$BBEE } { $BBF6 | #UDG$BBF6 } { $BBFE | #UDG$BBFE } { $BC06 | #UDG$BC06 } { $BC0E | #UDG$BC0E } { $BC16 | #UDG$BC16 } { $BC1E | #UDG$BC1E } { $BC26 | #UDG$BC26 } { $BC2E | #UDG$BC2E } { $BC36 | #UDG$BC36 } { $BC3E | #UDG$BC3E } { $BC46 | #UDG$BC46 } { $BC4E | #UDG$BC4E } { $BC56 | #UDG$BC56 } { $BC5E | #UDG$BC5E } { $BC66 | #UDG$BC66 } { $BC6E | #UDG$BC6E } { $BC76 | #UDG$BC76 } { $BC7E | #UDG$BC7E } { $BC86 | #UDG$BC86 } { $BC8E | #UDG$BC8E } { $BC96 | #UDG$BC96 } { $BC9E | #UDG$BC9E } { $BCA6 | #UDG$BCA6 } { $BCAE | #UDG$BCAE } { $BCB6 | #UDG$BCB6 } { $BCBE | #UDG$BCBE } { $BCC6 | #UDG$BCC6 } { $BCCE | #UDG$BCCE } { $BCD6 | #UDG$BCD6 } { $BCDE | #UDG$BCDE } { $BCE6 | #UDG$BCE6 } { $BCEE | #UDG$BCEE } { $BCF6 | #UDG$BCF6 } { $BCFE | #UDG$BCFE } { $BD06 | #UDG$BD06 } { $BD0E | #UDG$BD0E } { $BD16 | #UDG$BD16 } { $BD1E | #UDG$BD1E } { $BD26 | #UDG$BD26 } { $BD2E | #UDG$BD2E } { $BD36 | #UDG$BD36 } { $BD3E | #UDG$BD3E } { $BD46 | #UDG$BD46 } { $BD4E | #UDG$BD4E } { $BD56 | #UDG$BD56 } { $BD5E | #UDG$BD5E } { $BD66 | #UDG$BD66 } { $BD6E | #UDG$BD6E } { $BD76 | #UDG$BD76 } { $BD7E | #UDG$BD7E } { $BD86 | #UDG$BD86 } { $BD8E | #UDG$BD8E } { $BD96 | #UDG$BD96 } { $BD9E | #UDG$BD9E } { $BDA6 | #UDG$BDA6 } { $BDAE | #UDG$BDAE } { $BDB6 | #UDG$BDB6 } { $BDBE | #UDG$BDBE } { $BDC6 | #UDG$BDC6 } { $BDCE | #UDG$BDCE } { $BDD6 | #UDG$BDD6 } { $BDDE | #UDG$BDDE } { $BDE6 | #UDG$BDE6 } { $BDEE | #UDG$BDEE } { $BDF6 | #UDG$BDF6 } { $BDFE | #UDG$BDFE } { $BE06 | #UDG$BE06 } { $BE0E | #UDG$BE0E } { $BE16 | #UDG$BE16 } { $BE1E | #UDG$BE1E } { $BE26 | #UDG$BE26 } { $BE2E | #UDG$BE2E } { $BE36 | #UDG$BE36 } { $BE3E | #UDG$BE3E } { $BE46 | #UDG$BE46 } { $BE4E | #UDG$BE4E } { $BE56 | #UDG$BE56 } { $BE5E | #UDG$BE5E } { $BE66 | #UDG$BE66 } { $BE6E | #UDG$BE6E } { $BE76 | #UDG$BE76 } { $BE7E | #UDG$BE7E } { $BE86 | #UDG$BE86 } { $BE8E | #UDG$BE8E } { $BE96 | #UDG$BE96 } { $BE9E | #UDG$BE9E } { $BEA6 | #UDG$BEA6 } { $BEAE | #UDG$BEAE } { $BEB6 | #UDG$BEB6 } { $BEBE | #UDG$BEBE } { $BEC6 | #UDG$BEC6 } { $BECE | #UDG$BECE } { $BED6 | #UDG$BED6 } { $BEDE | #UDG$BEDE } { $BEE6 | #UDG$BEE6 } { $BEEE | #UDG$BEEE } { $BEF6 | #UDG$BEF6 } { $BEFE | #UDG$BEFE } { $BF06 | #UDG$BF06 } { $BF0E | #UDG$BF0E } { $BF16 | #UDG$BF16 } { $BF1E | #UDG$BF1E } { $BF26 | #UDG$BF26 } { $BF2E | #UDG$BF2E } { $BF36 | #UDG$BF36 } { $BF3E | #UDG$BF3E } { $BF46 | #UDG$BF46 } { $BF4E | #UDG$BF4E } { $BF56 | #UDG$BF56 } { $BF5E | #UDG$BF5E } { $BF66 | #UDG$BF66 } { $BF6E | #UDG$BF6E } { $BF76 | #UDG$BF76 } { $BF7E | #UDG$BF7E } { $BF86 | #UDG$BF86 } { $BF8E | #UDG$BF8E } { $BF96 | #UDG$BF96 } { $BF9E | #UDG$BF9E } { $BFA6 | #UDG$BFA6 } TABLE#
+D $B9E6 #UDGTABLE { #UDGARRAY37,,4($B9E6-$BFAD-8)(graphics-B9E6.png) } TABLE# #UDGTABLE(default, default) { =h Address | =h Pattern | =h Sprite type } { $B9E6 | #UDG$B9E6 | $00 } { $B9EE | #UDG$B9EE |     } { $B9F6 | #UDG$B9F6 |     } { $B9FE | #UDG$B9FE |     } { $BA06 | #UDG$BA06 |     } { $BA0E | #UDG$BA0E |     } { $BA16 | #UDG$BA16 |     } { $BA1E | #UDG$BA1E |     } { $BA26 | #UDG$BA26 |     } { $BA2E | #UDG$BA2E |     } { $BA36 | #UDG$BA36 |     } { $BA3E | #UDG$BA3E |     } { $BA46 | #UDG$BA46 |     } { $BA4E | #UDG$BA4E |     } { $BA56 | #UDG$BA56 |     } { $BA5E | #UDG$BA5E |     } { $BA66 | #UDG$BA66 | $01 } { $BA6E | #UDG$BA6E |     } { $BA76 | #UDG$BA76 |     } { $BA7E | #UDG$BA7E |     } { $BA86 | #UDG$BA86 |     } { $BA8E | #UDG$BA8E |     } { $BA96 | #UDG$BA96 |     } { $BA9E | #UDG$BA9E |     } { $BAA6 | #UDG$BAA6 |     } { $BAAE | #UDG$BAAE |     } { $BAB6 | #UDG$BAB6 |     } { $BABE | #UDG$BABE |     } { $BAC6 | #UDG$BAC6 |     } { $BACE | #UDG$BACE |     } { $BAD6 | #UDG$BAD6 |     } { $BADE | #UDG$BADE |     } { $BAE6 | #UDG$BAE6 | $02 } { $BAEE | #UDG$BAEE |     } { $BAF6 | #UDG$BAF6 |     } { $BAFE | #UDG$BAFE |     } { $BB06 | #UDG$BB06 | $03 } { $BB0E | #UDG$BB0E | $04 } { $BB16 | #UDG$BB16 |     } { $BB1E | #UDG$BB1E |     } { $BB26 | #UDG$BB26 |     } { $BB2E | #UDG$BB2E | $05 } { $BB36 | #UDG$BB36 |     } { $BB3E | #UDG$BB3E |     } { $BB46 | #UDG$BB46 |     } { $BB4E | #UDG$BB4E | $06 } { $BB56 | #UDG$BB56 | $07 } { $BB5E | #UDG$BB5E | $08 } { $BB66 | #UDG$BB66 | $09 } { $BB6E | #UDG$BB6E | $0A } { $BB76 | #UDG$BB76 | $0B } { $BB7E | #UDG$BB7E | $0C } { $BB86 | #UDG$BB86 | $0E } { $BB8E | #UDG$BB8E |     } { $BB96 | #UDG$BB96 |     } { $BB9E | #UDG$BB9E |     } { $BBA6 | #UDG$BBA6 |     } { $BBAE | #UDG$BBAE |     } { $BBB6 | #UDG$BBB6 |     } { $BBBE | #UDG$BBBE |     } { $BBC6 | #UDG$BBC6 |     } { $BBCE | #UDG$BBCE |     } { $BBD6 | #UDG$BBD6 |     } { $BBDE | #UDG$BBDE |     } { $BBE6 | #UDG$BBE6 |     } { $BBEE | #UDG$BBEE |     } { $BBF6 | #UDG$BBF6 |     } { $BBFE | #UDG$BBFE |     } { $BC06 | #UDG$BC06 | $0F } { $BC0E | #UDG$BC0E |     } { $BC16 | #UDG$BC16 |     } { $BC1E | #UDG$BC1E |     } { $BC26 | #UDG$BC26 |     } { $BC2E | #UDG$BC2E |     } { $BC36 | #UDG$BC36 |     } { $BC3E | #UDG$BC3E |     } { $BC46 | #UDG$BC46 |     } { $BC4E | #UDG$BC4E |     } { $BC56 | #UDG$BC56 |     } { $BC5E | #UDG$BC5E |     } { $BC66 | #UDG$BC66 |     } { $BC6E | #UDG$BC6E |     } { $BC76 | #UDG$BC76 |     } { $BC7E | #UDG$BC7E |     } { $BC86 | #UDG$BC86 | $10 } { $BC8E | #UDG$BC8E |     } { $BC96 | #UDG$BC96 |     } { $BC9E | #UDG$BC9E |     } { $BCA6 | #UDG$BCA6 |     } { $BCAE | #UDG$BCAE |     } { $BCB6 | #UDG$BCB6 |     } { $BCBE | #UDG$BCBE |     } { $BCC6 | #UDG$BCC6 |     } { $BCCE | #UDG$BCCE |     } { $BCD6 | #UDG$BCD6 |     } { $BCDE | #UDG$BCDE |     } { $BCE6 | #UDG$BCE6 |     } { $BCEE | #UDG$BCEE |     } { $BCF6 | #UDG$BCF6 |     } { $BCFE | #UDG$BCFE |     } { $BD06 | #UDG$BD06 | $11 } { $BD0E | #UDG$BD0E |     } { $BD16 | #UDG$BD16 |     } { $BD1E | #UDG$BD1E |     } { $BD26 | #UDG$BD26 |     } { $BD2E | #UDG$BD2E |     } { $BD36 | #UDG$BD36 |     } { $BD3E | #UDG$BD3E |     } { $BD46 | #UDG$BD46 |     } { $BD4E | #UDG$BD4E |     } { $BD56 | #UDG$BD56 |     } { $BD5E | #UDG$BD5E |     } { $BD66 | #UDG$BD66 |     } { $BD6E | #UDG$BD6E |     } { $BD76 | #UDG$BD76 |     } { $BD7E | #UDG$BD7E |     } { $BD86 | #UDG$BD86 | $12 } { $BD8E | #UDG$BD8E |     } { $BD96 | #UDG$BD96 |     } { $BD9E | #UDG$BD9E |     } { $BDA6 | #UDG$BDA6 | $13 } { $BDAE | #UDG$BDAE |     } { $BDB6 | #UDG$BDB6 |     } { $BDBE | #UDG$BDBE |     } { $BDC6 | #UDG$BDC6 | $14 } { $BDCE | #UDG$BDCE |     } { $BDD6 | #UDG$BDD6 |     } { $BDDE | #UDG$BDDE |     } { $BDE6 | #UDG$BDE6 | $0D } { $BDEE | #UDG$BDEE | $15 } { $BDF6 | #UDG$BDF6 |     } { $BDFE | #UDG$BDFE |     } { $BE06 | #UDG$BE06 |     } { $BE0E | #UDG$BE0E |     } { $BE16 | #UDG$BE16 |     } { $BE1E | #UDG$BE1E |     } { $BE26 | #UDG$BE26 |     } { $BE2E | #UDG$BE2E |     } { $BE36 | #UDG$BE36 |     } { $BE3E | #UDG$BE3E |     } { $BE46 | #UDG$BE46 |     } { $BE4E | #UDG$BE4E | $16 } { $BE56 | #UDG$BE56 |     } { $BE5E | #UDG$BE5E |     } { $BE66 | #UDG$BE66 |     } { $BE6E | #UDG$BE6E |     } { $BE76 | #UDG$BE76 |     } { $BE7E | #UDG$BE7E |     } { $BE86 | #UDG$BE86 |     } { $BE8E | #UDG$BE8E |     } { $BE96 | #UDG$BE96 |     } { $BE9E | #UDG$BE9E |     } { $BEA6 | #UDG$BEA6 |     } { $BEAE | #UDG$BEAE | $17 } { $BEB6 | #UDG$BEB6 |     } { $BEBE | #UDG$BEBE |     } { $BEC6 | #UDG$BEC6 |     } { $BECE | #UDG$BECE |     } { $BED6 | #UDG$BED6 |     } { $BEDE | #UDG$BEDE |     } { $BEE6 | #UDG$BEE6 |     } { $BEEE | #UDG$BEEE |     } { $BEF6 | #UDG$BEF6 |     } { $BEFE | #UDG$BEFE |     } { $BF06 | #UDG$BF06 |     } { $BF0E | #UDG$BF0E | $18 } { $BF16 | #UDG$BF16 |     } { $BF1E | #UDG$BF1E |     } { $BF26 | #UDG$BF26 |     } { $BF2E | #UDG$BF2E | $19 } { $BF36 | #UDG$BF36 |     } { $BF3E | #UDG$BF3E |     } { $BF46 | #UDG$BF46 |     } { $BF4E | #UDG$BF4E | $1A } { $BF56 | #UDG$BF56 |     } { $BF5E | #UDG$BF5E |     } { $BF66 | #UDG$BF66 |     } { $BF6E | #UDG$BF6E | $1B } { $BF76 | #UDG$BF76 |     } { $BF7E | #UDG$BF7E |     } { $BF86 | #UDG$BF86 |     } { $BF8E | #UDG$BF8E | $1C } { $BF96 | #UDG$BF96 |     } { $BF9E | #UDG$BF9E |     } { $BFA6 | #UDG$BFA6 |     } TABLE#
 @ $B9E6 label=graphics_patterns
 B $B9E6,1480,8
 c $BFAE Random number generator (RST $20)

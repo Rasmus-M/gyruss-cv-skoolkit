@@ -799,7 +799,7 @@ c$8212 LD HL,$722E   ; Clear $28 bytes from $722E
  $821D LDIR          ; ...
  $821F LD A,$01      ;
  $8221 LD ($71EE),A  ;
- $8224 LD HL,$71EB   ;  Clear died flag
+ $8224 LD HL,$71EB   ; Clear died flag
  $8227 RES 2,(HL)    ; ...
 ; Calculate stage data index
  $8229 LD A,($7205)  ; Get completed stages
@@ -1372,7 +1372,8 @@ c$85E6 LD HL,$71EE     ; Decrement counter
 @label=deallocate_sprite
 *$862F LD (IX+$00),$FF ; Set as not allocated
  $8633 POP HL          ; Pop return address
- $8634 POP HL          ; Restore allocation table address of sprite to be deallocated
+ $8634 POP HL          ; Restore allocation table address of sprite to be
+                       ; deallocated
  $8635 PUSH HL         ; Push it again
  $8636 LD DE,$7183     ; Sprite allocation table
  $8639 XOR A           ; Clear carry
@@ -1380,7 +1381,8 @@ c$85E6 LD HL,$71EE     ; Decrement counter
  $863C LD A,($7182)    ; Decrement number of allocated sprites
  $863F DEC A           ; ...
  $8640 LD ($7182),A    ; ...
- $8643 SUB L           ; Allocated sprites - offset = number of allocations after this one
+ $8643 SUB L           ; Allocated sprites - offset = number of allocations
+                       ; after this one
  $8644 JR Z,$8650      ; If it was the last one, there's nothing to do
  $8646 LD C,A          ; BC = number of allocations to move
  $8647 LD B,$00        ; ...
@@ -3006,8 +3008,8 @@ c$91CC PUSH HL         ; Save address
 
 ; Clear name table row 7
 ;
-; Where the planet name is displayed
-; Used by the routines at #R$832A, #R$90D6, #R$91A1 and #R$91CC.
+; Where the planet name is displayed Used by the routines at #R$832A, #R$90D6,
+; #R$91A1 and #R$91CC.
 @label=clear_row_7
 c$920D PUSH HL       ;
  $920E PUSH DE       ;
@@ -3023,8 +3025,8 @@ c$920D PUSH HL       ;
 
 ; Decode and upload patterns
 ;
-; Decode and upload patterns to VDP buffer at $1400
-; Used by the routine at #R$90D6.
+; Decode and upload patterns to VDP buffer at $1400 Used by the routine at
+; #R$90D6.
 @decode_and_upload_patterns
 c$921F LD HL,$0279   ; Number of bytes in block at $9475
  $9222 LD ($726A),HL ; Save it
@@ -3092,8 +3094,8 @@ c$9255 LD B,$08      ; Read 8 bits
 
 ; Copy 135 patterns
 ;
-; Copy 135 patterns from VDP RAM buffer into pattern table from 128
-; Used by the routine at #R$9175.
+; Copy 135 patterns from VDP RAM buffer into pattern table from 128 Used by the
+; routine at #R$9175.
 ;
 ; I:HL Pattern generator table destination address ($0400)
 c$9285 LD DE,$1400   ;
@@ -5805,7 +5807,8 @@ c$AD8B PUSH HL       ;
  $AD8E PUSH IY       ;
  $AD90 LD E,(IX+$00) ; DE = Sprite type
  $AD93 LD D,$00      ; ...
- $AD95 LD HL,$B8DD   ; Table of offsets for each sprite type into table at #R$B8FC
+ $AD95 LD HL,$B8DD   ; Table of offsets for each sprite type into table at
+                     ; #R$B8FC
  $AD98 ADD HL,DE     ; Add sprite type
  $AD99 LD E,(HL)     ; Get graphics pointer offset for sprite type
  $AD9A LD HL,$B8FA   ; Table of pointers to graphics
@@ -5825,7 +5828,8 @@ c$AD8B PUSH HL       ;
  $ADB6 INC E         ; Else set E = 3
 *$ADB7 LD A,E        ; A = E
  $ADB8 CP (HL)       ; Compare with graphics pointer LSB
- $ADB9 JR C,$ADBD    ; Jump if LSB of pointer >= 0..3 (not real address) TODO: Circumstantial, hard to convert?
+ $ADB9 JR C,$ADBD    ; Jump if LSB of pointer >= 0..3 (not real address) TODO:
+                     ; Circumstantial, hard to convert?
  $ADBB LD A,(HL)     ; Get LSB of pointer
  $ADBC DEC A         ; Minus 1
 *$ADBD INC HL        ; Advance to MSB
@@ -5845,7 +5849,8 @@ c$AD8B PUSH HL       ;
  $ADD5 ADD A,A       ; * 4
  $ADD6 ADD A,A       ; ...
 *$ADD7 ADD A,C       ; + LSB -1
- $ADD8 LD B,A        ; Copy result into B, which is the index of pattern to fetch within sprite type
+ $ADD8 LD B,A        ; Copy result into B, which is the index of pattern to
+                     ; fetch within sprite type
  $ADD9 CP (IX+$04)   ; Same as existing?
  $ADDC JR Z,$AE11    ; If so, skip ahead
  $ADDE LD (IX+$04),A ; Save result
@@ -6059,8 +6064,7 @@ c$AE94 LD A,($72D5)   ; Get counter
 ; Flip horizontal
 ;
 ; Take 8 bytes pointed to by $72DE and place them after, bit reversed. Returns
-; address of reversed bytes in $72DE.
-; Used by the routine at #R$AE94.
+; address of reversed bytes in $72DE. Used by the routine at #R$AE94.
 @label=flip_horz
 c$AF6B LD HL,($72DE) ;
  $AF6E PUSH HL       ;
@@ -6092,8 +6096,7 @@ c$AF6B LD HL,($72DE) ;
 ; Flip vertical
 ;
 ; Take 8 bytes pointed to by $72DE and place them after in reverse order.
-; Returns address of reversed bytes in $72DE.
-; Used by the routine at #R$AE94.
+; Returns address of reversed bytes in $72DE. Used by the routine at #R$AE94.
 @label=flip_vert
 c$AFAE LD DE,($72DE) ;
  $AFB2 LD HL,$0010   ;
@@ -6110,8 +6113,7 @@ c$AFAE LD DE,($72DE) ;
 ; Shift left
 ;
 ; Take 8 bytes pointed to by $72DE and place them after, left shifted one bit.
-; Returns address of shifted bytes in $72DE.
-; Used by the routine at #R$AE94.
+; Returns address of shifted bytes in $72DE. Used by the routine at #R$AE94.
 @label=shift_left
 c$AFC2 LD DE,($72DE) ;
  $AFC6 LD HL,$0008   ;
@@ -6412,133 +6414,158 @@ b$B21D DEFB $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,
 ;
 ; Offsets into data block at B8FA
 @label=graphics_pointer_offsets_table
-b$B8DD DEFB $00,$0A,$14,$1E,$22,$2C,$36,$3A
- $B8E5 DEFB $3E,$42,$46,$4A,$4E,$52,$56,$60
- $B8ED DEFB $6A,$74,$7E,$88,$92,$9C,$A6,$B0
- $B8F5 DEFB $BA,$C4,$CE,$D8,$E2
+b$B8DD DEFB $00      ; Type $00
+ $B8DE DEFB $0A      ; Type $01
+ $B8DF DEFB $14      ; Type $02
+ $B8E0 DEFB $1E      ; Type $03
+ $B8E1 DEFB $22      ; Type $04
+ $B8E2 DEFB $2C      ; Type $05
+ $B8E3 DEFB $36      ; Type $06
+ $B8E4 DEFB $3A      ; Type $07
+ $B8E5 DEFB $3E      ; Type $08
+ $B8E6 DEFB $42      ; Type $09
+ $B8E7 DEFB $46      ; Type $0A
+ $B8E8 DEFB $4A      ; Type $0B
+ $B8E9 DEFB $4E      ; Type $0C
+ $B8EA DEFB $52      ; Type $0D
+ $B8EB DEFB $56      ; Type $0E
+ $B8EC DEFB $60      ; Type $0F
+ $B8ED DEFB $6A      ; Type $10
+ $B8EE DEFB $74      ; Type $11
+ $B8EF DEFB $7E      ; Type $12
+ $B8F0 DEFB $88      ; Type $13
+ $B8F1 DEFB $92      ; Type $14
+ $B8F2 DEFB $9C      ; Type $15
+ $B8F3 DEFB $A6      ; Type $16
+ $B8F4 DEFB $B0      ; Type $17
+ $B8F5 DEFB $BA      ; Type $18
+ $B8F6 DEFB $C4      ; Type $19
+ $B8F7 DEFB $CE      ; Type $1A
+ $B8F8 DEFB $D8      ; Type $1B
+ $B8F9 DEFB $E2      ; Type $1C
 
 ; Data block at B8FA
 b$B8FA DEFB $04,$02
 
 ; Graphics pointers
 @label=graphics_pointers_table
-w$B8FC DEFW $B9E6    ; $00 type $00: Offset $00
- $B8FE DEFW $BA06    ; $01
- $B900 DEFW $BA26    ; $02
- $B902 DEFW $BA46    ; $03
- $B904 DEFW $0204    ; $04
- $B906 DEFW $BA66    ; $05 type $01: Offset $0A
- $B908 DEFW $BA86    ; $06
- $B90A DEFW $BAA6    ; $07
- $B90C DEFW $BAC6    ; $08
- $B90E DEFW $0004    ; $09
- $B910 DEFW $BAE6    ; $0A type $02: Offset $14
- $B912 DEFW $BAEE    ; $0B
- $B914 DEFW $BAF6    ; $0C
- $B916 DEFW $BAFE    ; $0D
- $B918 DEFW $0001    ; $0E
- $B91A DEFW $BB06    ; $0F type $03: Offset $1E
- $B91C DEFW $0004    ; $10
- $B91E DEFW $BB0E    ; $11 type $04: Offset $22
- $B920 DEFW $BB16    ; $12
- $B922 DEFW $BB1E    ; $13
- $B924 DEFW $BB26    ; $14
- $B926 DEFW $0004    ; $15
- $B928 DEFW $BB2E    ; $16 type $05: Offset $2C
- $B92A DEFW $BB36    ; $17
- $B92C DEFW $BB3E    ; $18
- $B92E DEFW $BB46    ; $19
- $B930 DEFW $0001    ; $1A
- $B932 DEFW $BB4E    ; $1B type $06: Offset $36
- $B934 DEFW $0001    ; $1C
- $B936 DEFW $BB56    ; $1D type $07: Offset $3A
- $B938 DEFW $0001    ; $1E
- $B93A DEFW $BB5E    ; $1F type $08: Offset $3E
- $B93C DEFW $0001    ; $20
- $B93E DEFW $BB66    ; $21 type $09: Offset $42
- $B940 DEFW $0001    ; $22
- $B942 DEFW $BB6E    ; $23 type $0A: Offset $46
- $B944 DEFW $0001    ; $24
- $B946 DEFW $BB76    ; $25 type $0B: Offset $4A
- $B948 DEFW $0001    ; $26
- $B94A DEFW $BB7E    ; $27 type $0C: Offset $4E
- $B94C DEFW $0001    ; $28
- $B94E DEFW $BDE6    ; $29 type $0D: Offset $52
- $B950 DEFW $0204    ; $2A
- $B952 DEFW $BB86    ; $2B type $0E: Offset $56
- $B954 DEFW $BBA6    ; $2C
- $B956 DEFW $BBC6    ; $2D
- $B958 DEFW $BBE6    ; $2E
- $B95A DEFW $0204    ; $2F
- $B95C DEFW $BC06    ; $30 type $0F: Offset $60
- $B95E DEFW $BC26    ; $31
- $B960 DEFW $BC46    ; $32
- $B962 DEFW $BC66    ; $33
- $B964 DEFW $0204    ; $34
- $B966 DEFW $BC86    ; $35 type $10: Offset $6A
- $B968 DEFW $BCA6    ; $36
- $B96A DEFW $BCC6    ; $37
- $B96C DEFW $BCE6    ; $38
- $B96E DEFW $0204    ; $39
- $B970 DEFW $BD06    ; $3A type $11: Offset $74
- $B972 DEFW $BD26    ; $3B
- $B974 DEFW $BD46    ; $3C
- $B976 DEFW $BD66    ; $3D
- $B978 DEFW $0004    ; $3E
- $B97A DEFW $BD86    ; $3F type $12: Offset $7E
- $B97C DEFW $BD8E    ; $40
- $B97E DEFW $BD96    ; $41
- $B980 DEFW $BD9E    ; $42
- $B982 DEFW $0004    ; $43
- $B984 DEFW $BDA6    ; $44 type $13: Offset $88
- $B986 DEFW $BDAE    ; $45
- $B988 DEFW $BDB6    ; $46
- $B98A DEFW $BDBE    ; $47
- $B98C DEFW $0004    ; $48
- $B98E DEFW $BDC6    ; $49 type $14: Offset $92
- $B990 DEFW $BDCE    ; $4A
- $B992 DEFW $BDD6    ; $4B
- $B994 DEFW $BDDE    ; $4C
- $B996 DEFW $0204    ; $4D
- $B998 DEFW $BDEE    ; $4E type $15: Offset $9C
- $B99A DEFW $BE0E    ; $4F
- $B99C DEFW $BE1E    ; $50
- $B99E DEFW $BE1E    ; $51
- $B9A0 DEFW $0204    ; $52
- $B9A2 DEFW $BE4E    ; $53 type $16: Offset $A6
- $B9A4 DEFW $BE6E    ; $54
- $B9A6 DEFW $BE7E    ; $55
- $B9A8 DEFW $BE7E    ; $56
- $B9AA DEFW $0204    ; $57
- $B9AC DEFW $BEAE    ; $58 type $17: Offset $B0
- $B9AE DEFW $BECE    ; $59
- $B9B0 DEFW $BEDE    ; $5A
- $B9B2 DEFW $BEDE    ; $5B
- $B9B4 DEFW $0204    ; $5C
- $B9B6 DEFW $BF0E    ; $5D type $18: Offset $BA
- $B9B8 DEFW $BF0E    ; $5E
- $B9BA DEFW $BF0E    ; $5F
- $B9BC DEFW $BF0E    ; $60
- $B9BE DEFW $0204    ; $61
- $B9C0 DEFW $BF2E    ; $62 type $19: Offset $C4
- $B9C2 DEFW $BF2E    ; $63
- $B9C4 DEFW $BF2E    ; $64
- $B9C6 DEFW $BF2E    ; $65
- $B9C8 DEFW $0004    ; $66
- $B9CA DEFW $BF4E    ; $67 type $1A: Offset $CE
- $B9CC DEFW $BF56    ; $68
- $B9CE DEFW $BF5E    ; $69
- $B9D0 DEFW $BF66    ; $6A
- $B9D2 DEFW $0004    ; $6B
- $B9D4 DEFW $BF6E    ; $6C type $1B: Offset $D8
- $B9D6 DEFW $BF76    ; $6D
- $B9D8 DEFW $BF7E    ; $6E
- $B9DA DEFW $BF86    ; $6F
- $B9DC DEFW $0004    ; $70
- $B9DE DEFW $BF8E    ; $71 type $1C: Offset $E2
- $B9E0 DEFW $BF96    ; $72
- $B9E2 DEFW $BF9E    ; $73
- $B9E4 DEFW $BFA6    ; $74
+w$B8FC DEFW $B9E6    ; $00 type $00
+ $B8FE DEFW $BA06    ; $02
+ $B900 DEFW $BA26    ; $04
+ $B902 DEFW $BA46    ; $06
+ $B904 DEFW $0204    ; $08
+ $B906 DEFW $BA66    ; $0A type $01
+ $B908 DEFW $BA86    ; $0C
+ $B90A DEFW $BAA6    ; $0E
+ $B90C DEFW $BAC6    ; $10
+ $B90E DEFW $0004    ; $12
+ $B910 DEFW $BAE6    ; $14 type $02
+ $B912 DEFW $BAEE    ; $16
+ $B914 DEFW $BAF6    ; $18
+ $B916 DEFW $BAFE    ; $1A
+ $B918 DEFW $0001    ; $1C
+ $B91A DEFW $BB06    ; $1E type $03
+ $B91C DEFW $0004    ; $20
+ $B91E DEFW $BB0E    ; $22 type $04
+ $B920 DEFW $BB16    ; $24
+ $B922 DEFW $BB1E    ; $26
+ $B924 DEFW $BB26    ; $28
+ $B926 DEFW $0004    ; $2A
+ $B928 DEFW $BB2E    ; $2C type $05
+ $B92A DEFW $BB36    ; $2E
+ $B92C DEFW $BB3E    ; $30
+ $B92E DEFW $BB46    ; $32
+ $B930 DEFW $0001    ; $34
+ $B932 DEFW $BB4E    ; $36 type $06
+ $B934 DEFW $0001    ; $38
+ $B936 DEFW $BB56    ; $3A type $07
+ $B938 DEFW $0001    ; $3C
+ $B93A DEFW $BB5E    ; $3E type $08
+ $B93C DEFW $0001    ; $40
+ $B93E DEFW $BB66    ; $42 type $09
+ $B940 DEFW $0001    ; $44
+ $B942 DEFW $BB6E    ; $46 type $0A
+ $B944 DEFW $0001    ; $48
+ $B946 DEFW $BB76    ; $4A type $0B
+ $B948 DEFW $0001    ; $4C
+ $B94A DEFW $BB7E    ; $4E type $0C
+ $B94C DEFW $0001    ; $50
+ $B94E DEFW $BDE6    ; $52 type $0D
+ $B950 DEFW $0204    ; $54
+ $B952 DEFW $BB86    ; $56 type $0E
+ $B954 DEFW $BBA6    ; $58
+ $B956 DEFW $BBC6    ; $5A
+ $B958 DEFW $BBE6    ; $5C
+ $B95A DEFW $0204    ; $5E
+ $B95C DEFW $BC06    ; $60 type $0F
+ $B95E DEFW $BC26    ; $62
+ $B960 DEFW $BC46    ; $64
+ $B962 DEFW $BC66    ; $66
+ $B964 DEFW $0204    ; $68
+ $B966 DEFW $BC86    ; $6A type $10
+ $B968 DEFW $BCA6    ; $6C
+ $B96A DEFW $BCC6    ; $6E
+ $B96C DEFW $BCE6    ; $70
+ $B96E DEFW $0204    ; $72
+ $B970 DEFW $BD06    ; $74 type $11
+ $B972 DEFW $BD26    ; $76
+ $B974 DEFW $BD46    ; $78
+ $B976 DEFW $BD66    ; $7A
+ $B978 DEFW $0004    ; $7C
+ $B97A DEFW $BD86    ; $7E type $12
+ $B97C DEFW $BD8E    ; $80
+ $B97E DEFW $BD96    ; $82
+ $B980 DEFW $BD9E    ; $84
+ $B982 DEFW $0004    ; $86
+ $B984 DEFW $BDA6    ; $88 type $13
+ $B986 DEFW $BDAE    ; $8A
+ $B988 DEFW $BDB6    ; $8C
+ $B98A DEFW $BDBE    ; $8E
+ $B98C DEFW $0004    ; $90
+ $B98E DEFW $BDC6    ; $92 type $14
+ $B990 DEFW $BDCE    ; $94
+ $B992 DEFW $BDD6    ; $96
+ $B994 DEFW $BDDE    ; $98
+ $B996 DEFW $0204    ; $9A
+ $B998 DEFW $BDEE    ; $9C type $15
+ $B99A DEFW $BE0E    ; $9E
+ $B99C DEFW $BE1E    ; $A0
+ $B99E DEFW $BE1E    ; $A2
+ $B9A0 DEFW $0204    ; $A4
+ $B9A2 DEFW $BE4E    ; $A6 type $16
+ $B9A4 DEFW $BE6E    ; $A8
+ $B9A6 DEFW $BE7E    ; $AA
+ $B9A8 DEFW $BE7E    ; $AC
+ $B9AA DEFW $0204    ; $AE
+ $B9AC DEFW $BEAE    ; $B0 type $17
+ $B9AE DEFW $BECE    ; $B2
+ $B9B0 DEFW $BEDE    ; $B4
+ $B9B2 DEFW $BEDE    ; $B6
+ $B9B4 DEFW $0204    ; $B8
+ $B9B6 DEFW $BF0E    ; $BA type $18
+ $B9B8 DEFW $BF0E    ; $BC
+ $B9BA DEFW $BF0E    ; $BE
+ $B9BC DEFW $BF0E    ; $C0
+ $B9BE DEFW $0204    ; $C2
+ $B9C0 DEFW $BF2E    ; $C4 type $19
+ $B9C2 DEFW $BF2E    ; $C6
+ $B9C4 DEFW $BF2E    ; $C8
+ $B9C6 DEFW $BF2E    ; $CA
+ $B9C8 DEFW $0004    ; $CC
+ $B9CA DEFW $BF4E    ; $CE type $1A
+ $B9CC DEFW $BF56    ; $D0
+ $B9CE DEFW $BF5E    ; $D2
+ $B9D0 DEFW $BF66    ; $D4
+ $B9D2 DEFW $0004    ; $D6
+ $B9D4 DEFW $BF6E    ; $D8 type $1B
+ $B9D6 DEFW $BF76    ; $DA
+ $B9D8 DEFW $BF7E    ; $DC
+ $B9DA DEFW $BF86    ; $DE
+ $B9DC DEFW $0004    ; $E0
+ $B9DE DEFW $BF8E    ; $E2 type $1C
+ $B9E0 DEFW $BF96    ; $E4
+ $B9E2 DEFW $BF9E    ; $E6
+ $B9E4 DEFW $BFA6    ; $E8
 
 ; Graphics
 ;
@@ -6546,191 +6573,192 @@ w$B8FC DEFW $B9E6    ; $00 type $00: Offset $00
 ; { #UDGARRAY37,,4($B9E6-$BFAD-8)(graphics-B9E6.png) }
 ; TABLE#
 ; #UDGTABLE(default, default)
-; { $B9E6 | #UDG$B9E6 }
-; { $B9EE | #UDG$B9EE }
-; { $B9F6 | #UDG$B9F6 }
-; { $B9FE | #UDG$B9FE }
-; { $BA06 | #UDG$BA06 }
-; { $BA0E | #UDG$BA0E }
-; { $BA16 | #UDG$BA16 }
-; { $BA1E | #UDG$BA1E }
-; { $BA26 | #UDG$BA26 }
-; { $BA2E | #UDG$BA2E }
-; { $BA36 | #UDG$BA36 }
-; { $BA3E | #UDG$BA3E }
-; { $BA46 | #UDG$BA46 }
-; { $BA4E | #UDG$BA4E }
-; { $BA56 | #UDG$BA56 }
-; { $BA5E | #UDG$BA5E }
-; { $BA66 | #UDG$BA66 }
-; { $BA6E | #UDG$BA6E }
-; { $BA76 | #UDG$BA76 }
-; { $BA7E | #UDG$BA7E }
-; { $BA86 | #UDG$BA86 }
-; { $BA8E | #UDG$BA8E }
-; { $BA96 | #UDG$BA96 }
-; { $BA9E | #UDG$BA9E }
-; { $BAA6 | #UDG$BAA6 }
-; { $BAAE | #UDG$BAAE }
-; { $BAB6 | #UDG$BAB6 }
-; { $BABE | #UDG$BABE }
-; { $BAC6 | #UDG$BAC6 }
-; { $BACE | #UDG$BACE }
-; { $BAD6 | #UDG$BAD6 }
-; { $BADE | #UDG$BADE }
-; { $BAE6 | #UDG$BAE6 }
-; { $BAEE | #UDG$BAEE }
-; { $BAF6 | #UDG$BAF6 }
-; { $BAFE | #UDG$BAFE }
-; { $BB06 | #UDG$BB06 }
-; { $BB0E | #UDG$BB0E }
-; { $BB16 | #UDG$BB16 }
-; { $BB1E | #UDG$BB1E }
-; { $BB26 | #UDG$BB26 }
-; { $BB2E | #UDG$BB2E }
-; { $BB36 | #UDG$BB36 }
-; { $BB3E | #UDG$BB3E }
-; { $BB46 | #UDG$BB46 }
-; { $BB4E | #UDG$BB4E }
-; { $BB56 | #UDG$BB56 }
-; { $BB5E | #UDG$BB5E }
-; { $BB66 | #UDG$BB66 }
-; { $BB6E | #UDG$BB6E }
-; { $BB76 | #UDG$BB76 }
-; { $BB7E | #UDG$BB7E }
-; { $BB86 | #UDG$BB86 }
-; { $BB8E | #UDG$BB8E }
-; { $BB96 | #UDG$BB96 }
-; { $BB9E | #UDG$BB9E }
-; { $BBA6 | #UDG$BBA6 }
-; { $BBAE | #UDG$BBAE }
-; { $BBB6 | #UDG$BBB6 }
-; { $BBBE | #UDG$BBBE }
-; { $BBC6 | #UDG$BBC6 }
-; { $BBCE | #UDG$BBCE }
-; { $BBD6 | #UDG$BBD6 }
-; { $BBDE | #UDG$BBDE }
-; { $BBE6 | #UDG$BBE6 }
-; { $BBEE | #UDG$BBEE }
-; { $BBF6 | #UDG$BBF6 }
-; { $BBFE | #UDG$BBFE }
-; { $BC06 | #UDG$BC06 }
-; { $BC0E | #UDG$BC0E }
-; { $BC16 | #UDG$BC16 }
-; { $BC1E | #UDG$BC1E }
-; { $BC26 | #UDG$BC26 }
-; { $BC2E | #UDG$BC2E }
-; { $BC36 | #UDG$BC36 }
-; { $BC3E | #UDG$BC3E }
-; { $BC46 | #UDG$BC46 }
-; { $BC4E | #UDG$BC4E }
-; { $BC56 | #UDG$BC56 }
-; { $BC5E | #UDG$BC5E }
-; { $BC66 | #UDG$BC66 }
-; { $BC6E | #UDG$BC6E }
-; { $BC76 | #UDG$BC76 }
-; { $BC7E | #UDG$BC7E }
-; { $BC86 | #UDG$BC86 }
-; { $BC8E | #UDG$BC8E }
-; { $BC96 | #UDG$BC96 }
-; { $BC9E | #UDG$BC9E }
-; { $BCA6 | #UDG$BCA6 }
-; { $BCAE | #UDG$BCAE }
-; { $BCB6 | #UDG$BCB6 }
-; { $BCBE | #UDG$BCBE }
-; { $BCC6 | #UDG$BCC6 }
-; { $BCCE | #UDG$BCCE }
-; { $BCD6 | #UDG$BCD6 }
-; { $BCDE | #UDG$BCDE }
-; { $BCE6 | #UDG$BCE6 }
-; { $BCEE | #UDG$BCEE }
-; { $BCF6 | #UDG$BCF6 }
-; { $BCFE | #UDG$BCFE }
-; { $BD06 | #UDG$BD06 }
-; { $BD0E | #UDG$BD0E }
-; { $BD16 | #UDG$BD16 }
-; { $BD1E | #UDG$BD1E }
-; { $BD26 | #UDG$BD26 }
-; { $BD2E | #UDG$BD2E }
-; { $BD36 | #UDG$BD36 }
-; { $BD3E | #UDG$BD3E }
-; { $BD46 | #UDG$BD46 }
-; { $BD4E | #UDG$BD4E }
-; { $BD56 | #UDG$BD56 }
-; { $BD5E | #UDG$BD5E }
-; { $BD66 | #UDG$BD66 }
-; { $BD6E | #UDG$BD6E }
-; { $BD76 | #UDG$BD76 }
-; { $BD7E | #UDG$BD7E }
-; { $BD86 | #UDG$BD86 }
-; { $BD8E | #UDG$BD8E }
-; { $BD96 | #UDG$BD96 }
-; { $BD9E | #UDG$BD9E }
-; { $BDA6 | #UDG$BDA6 }
-; { $BDAE | #UDG$BDAE }
-; { $BDB6 | #UDG$BDB6 }
-; { $BDBE | #UDG$BDBE }
-; { $BDC6 | #UDG$BDC6 }
-; { $BDCE | #UDG$BDCE }
-; { $BDD6 | #UDG$BDD6 }
-; { $BDDE | #UDG$BDDE }
-; { $BDE6 | #UDG$BDE6 }
-; { $BDEE | #UDG$BDEE }
-; { $BDF6 | #UDG$BDF6 }
-; { $BDFE | #UDG$BDFE }
-; { $BE06 | #UDG$BE06 }
-; { $BE0E | #UDG$BE0E }
-; { $BE16 | #UDG$BE16 }
-; { $BE1E | #UDG$BE1E }
-; { $BE26 | #UDG$BE26 }
-; { $BE2E | #UDG$BE2E }
-; { $BE36 | #UDG$BE36 }
-; { $BE3E | #UDG$BE3E }
-; { $BE46 | #UDG$BE46 }
-; { $BE4E | #UDG$BE4E }
-; { $BE56 | #UDG$BE56 }
-; { $BE5E | #UDG$BE5E }
-; { $BE66 | #UDG$BE66 }
-; { $BE6E | #UDG$BE6E }
-; { $BE76 | #UDG$BE76 }
-; { $BE7E | #UDG$BE7E }
-; { $BE86 | #UDG$BE86 }
-; { $BE8E | #UDG$BE8E }
-; { $BE96 | #UDG$BE96 }
-; { $BE9E | #UDG$BE9E }
-; { $BEA6 | #UDG$BEA6 }
-; { $BEAE | #UDG$BEAE }
-; { $BEB6 | #UDG$BEB6 }
-; { $BEBE | #UDG$BEBE }
-; { $BEC6 | #UDG$BEC6 }
-; { $BECE | #UDG$BECE }
-; { $BED6 | #UDG$BED6 }
-; { $BEDE | #UDG$BEDE }
-; { $BEE6 | #UDG$BEE6 }
-; { $BEEE | #UDG$BEEE }
-; { $BEF6 | #UDG$BEF6 }
-; { $BEFE | #UDG$BEFE }
-; { $BF06 | #UDG$BF06 }
-; { $BF0E | #UDG$BF0E }
-; { $BF16 | #UDG$BF16 }
-; { $BF1E | #UDG$BF1E }
-; { $BF26 | #UDG$BF26 }
-; { $BF2E | #UDG$BF2E }
-; { $BF36 | #UDG$BF36 }
-; { $BF3E | #UDG$BF3E }
-; { $BF46 | #UDG$BF46 }
-; { $BF4E | #UDG$BF4E }
-; { $BF56 | #UDG$BF56 }
-; { $BF5E | #UDG$BF5E }
-; { $BF66 | #UDG$BF66 }
-; { $BF6E | #UDG$BF6E }
-; { $BF76 | #UDG$BF76 }
-; { $BF7E | #UDG$BF7E }
-; { $BF86 | #UDG$BF86 }
-; { $BF8E | #UDG$BF8E }
-; { $BF96 | #UDG$BF96 }
-; { $BF9E | #UDG$BF9E }
-; { $BFA6 | #UDG$BFA6 }
+; { =h Address | =h Pattern | =h Sprite type }
+; { $B9E6 | #UDG$B9E6 | $00 }
+; { $B9EE | #UDG$B9EE |     }
+; { $B9F6 | #UDG$B9F6 |     }
+; { $B9FE | #UDG$B9FE |     }
+; { $BA06 | #UDG$BA06 |     }
+; { $BA0E | #UDG$BA0E |     }
+; { $BA16 | #UDG$BA16 |     }
+; { $BA1E | #UDG$BA1E |     }
+; { $BA26 | #UDG$BA26 |     }
+; { $BA2E | #UDG$BA2E |     }
+; { $BA36 | #UDG$BA36 |     }
+; { $BA3E | #UDG$BA3E |     }
+; { $BA46 | #UDG$BA46 |     }
+; { $BA4E | #UDG$BA4E |     }
+; { $BA56 | #UDG$BA56 |     }
+; { $BA5E | #UDG$BA5E |     }
+; { $BA66 | #UDG$BA66 | $01 }
+; { $BA6E | #UDG$BA6E |     }
+; { $BA76 | #UDG$BA76 |     }
+; { $BA7E | #UDG$BA7E |     }
+; { $BA86 | #UDG$BA86 |     }
+; { $BA8E | #UDG$BA8E |     }
+; { $BA96 | #UDG$BA96 |     }
+; { $BA9E | #UDG$BA9E |     }
+; { $BAA6 | #UDG$BAA6 |     }
+; { $BAAE | #UDG$BAAE |     }
+; { $BAB6 | #UDG$BAB6 |     }
+; { $BABE | #UDG$BABE |     }
+; { $BAC6 | #UDG$BAC6 |     }
+; { $BACE | #UDG$BACE |     }
+; { $BAD6 | #UDG$BAD6 |     }
+; { $BADE | #UDG$BADE |     }
+; { $BAE6 | #UDG$BAE6 | $02 }
+; { $BAEE | #UDG$BAEE |     }
+; { $BAF6 | #UDG$BAF6 |     }
+; { $BAFE | #UDG$BAFE |     }
+; { $BB06 | #UDG$BB06 | $03 }
+; { $BB0E | #UDG$BB0E | $04 }
+; { $BB16 | #UDG$BB16 |     }
+; { $BB1E | #UDG$BB1E |     }
+; { $BB26 | #UDG$BB26 |     }
+; { $BB2E | #UDG$BB2E | $05 }
+; { $BB36 | #UDG$BB36 |     }
+; { $BB3E | #UDG$BB3E |     }
+; { $BB46 | #UDG$BB46 |     }
+; { $BB4E | #UDG$BB4E | $06 }
+; { $BB56 | #UDG$BB56 | $07 }
+; { $BB5E | #UDG$BB5E | $08 }
+; { $BB66 | #UDG$BB66 | $09 }
+; { $BB6E | #UDG$BB6E | $0A }
+; { $BB76 | #UDG$BB76 | $0B }
+; { $BB7E | #UDG$BB7E | $0C }
+; { $BB86 | #UDG$BB86 | $0E }
+; { $BB8E | #UDG$BB8E |     }
+; { $BB96 | #UDG$BB96 |     }
+; { $BB9E | #UDG$BB9E |     }
+; { $BBA6 | #UDG$BBA6 |     }
+; { $BBAE | #UDG$BBAE |     }
+; { $BBB6 | #UDG$BBB6 |     }
+; { $BBBE | #UDG$BBBE |     }
+; { $BBC6 | #UDG$BBC6 |     }
+; { $BBCE | #UDG$BBCE |     }
+; { $BBD6 | #UDG$BBD6 |     }
+; { $BBDE | #UDG$BBDE |     }
+; { $BBE6 | #UDG$BBE6 |     }
+; { $BBEE | #UDG$BBEE |     }
+; { $BBF6 | #UDG$BBF6 |     }
+; { $BBFE | #UDG$BBFE |     }
+; { $BC06 | #UDG$BC06 | $0F }
+; { $BC0E | #UDG$BC0E |     }
+; { $BC16 | #UDG$BC16 |     }
+; { $BC1E | #UDG$BC1E |     }
+; { $BC26 | #UDG$BC26 |     }
+; { $BC2E | #UDG$BC2E |     }
+; { $BC36 | #UDG$BC36 |     }
+; { $BC3E | #UDG$BC3E |     }
+; { $BC46 | #UDG$BC46 |     }
+; { $BC4E | #UDG$BC4E |     }
+; { $BC56 | #UDG$BC56 |     }
+; { $BC5E | #UDG$BC5E |     }
+; { $BC66 | #UDG$BC66 |     }
+; { $BC6E | #UDG$BC6E |     }
+; { $BC76 | #UDG$BC76 |     }
+; { $BC7E | #UDG$BC7E |     }
+; { $BC86 | #UDG$BC86 | $10 }
+; { $BC8E | #UDG$BC8E |     }
+; { $BC96 | #UDG$BC96 |     }
+; { $BC9E | #UDG$BC9E |     }
+; { $BCA6 | #UDG$BCA6 |     }
+; { $BCAE | #UDG$BCAE |     }
+; { $BCB6 | #UDG$BCB6 |     }
+; { $BCBE | #UDG$BCBE |     }
+; { $BCC6 | #UDG$BCC6 |     }
+; { $BCCE | #UDG$BCCE |     }
+; { $BCD6 | #UDG$BCD6 |     }
+; { $BCDE | #UDG$BCDE |     }
+; { $BCE6 | #UDG$BCE6 |     }
+; { $BCEE | #UDG$BCEE |     }
+; { $BCF6 | #UDG$BCF6 |     }
+; { $BCFE | #UDG$BCFE |     }
+; { $BD06 | #UDG$BD06 | $11 }
+; { $BD0E | #UDG$BD0E |     }
+; { $BD16 | #UDG$BD16 |     }
+; { $BD1E | #UDG$BD1E |     }
+; { $BD26 | #UDG$BD26 |     }
+; { $BD2E | #UDG$BD2E |     }
+; { $BD36 | #UDG$BD36 |     }
+; { $BD3E | #UDG$BD3E |     }
+; { $BD46 | #UDG$BD46 |     }
+; { $BD4E | #UDG$BD4E |     }
+; { $BD56 | #UDG$BD56 |     }
+; { $BD5E | #UDG$BD5E |     }
+; { $BD66 | #UDG$BD66 |     }
+; { $BD6E | #UDG$BD6E |     }
+; { $BD76 | #UDG$BD76 |     }
+; { $BD7E | #UDG$BD7E |     }
+; { $BD86 | #UDG$BD86 | $12 }
+; { $BD8E | #UDG$BD8E |     }
+; { $BD96 | #UDG$BD96 |     }
+; { $BD9E | #UDG$BD9E |     }
+; { $BDA6 | #UDG$BDA6 | $13 }
+; { $BDAE | #UDG$BDAE |     }
+; { $BDB6 | #UDG$BDB6 |     }
+; { $BDBE | #UDG$BDBE |     }
+; { $BDC6 | #UDG$BDC6 | $14 }
+; { $BDCE | #UDG$BDCE |     }
+; { $BDD6 | #UDG$BDD6 |     }
+; { $BDDE | #UDG$BDDE |     }
+; { $BDE6 | #UDG$BDE6 | $0D }
+; { $BDEE | #UDG$BDEE | $15 }
+; { $BDF6 | #UDG$BDF6 |     }
+; { $BDFE | #UDG$BDFE |     }
+; { $BE06 | #UDG$BE06 |     }
+; { $BE0E | #UDG$BE0E |     }
+; { $BE16 | #UDG$BE16 |     }
+; { $BE1E | #UDG$BE1E |     }
+; { $BE26 | #UDG$BE26 |     }
+; { $BE2E | #UDG$BE2E |     }
+; { $BE36 | #UDG$BE36 |     }
+; { $BE3E | #UDG$BE3E |     }
+; { $BE46 | #UDG$BE46 |     }
+; { $BE4E | #UDG$BE4E | $16 }
+; { $BE56 | #UDG$BE56 |     }
+; { $BE5E | #UDG$BE5E |     }
+; { $BE66 | #UDG$BE66 |     }
+; { $BE6E | #UDG$BE6E |     }
+; { $BE76 | #UDG$BE76 |     }
+; { $BE7E | #UDG$BE7E |     }
+; { $BE86 | #UDG$BE86 |     }
+; { $BE8E | #UDG$BE8E |     }
+; { $BE96 | #UDG$BE96 |     }
+; { $BE9E | #UDG$BE9E |     }
+; { $BEA6 | #UDG$BEA6 |     }
+; { $BEAE | #UDG$BEAE | $17 }
+; { $BEB6 | #UDG$BEB6 |     }
+; { $BEBE | #UDG$BEBE |     }
+; { $BEC6 | #UDG$BEC6 |     }
+; { $BECE | #UDG$BECE |     }
+; { $BED6 | #UDG$BED6 |     }
+; { $BEDE | #UDG$BEDE |     }
+; { $BEE6 | #UDG$BEE6 |     }
+; { $BEEE | #UDG$BEEE |     }
+; { $BEF6 | #UDG$BEF6 |     }
+; { $BEFE | #UDG$BEFE |     }
+; { $BF06 | #UDG$BF06 |     }
+; { $BF0E | #UDG$BF0E | $18 }
+; { $BF16 | #UDG$BF16 |     }
+; { $BF1E | #UDG$BF1E |     }
+; { $BF26 | #UDG$BF26 |     }
+; { $BF2E | #UDG$BF2E | $19 }
+; { $BF36 | #UDG$BF36 |     }
+; { $BF3E | #UDG$BF3E |     }
+; { $BF46 | #UDG$BF46 |     }
+; { $BF4E | #UDG$BF4E | $1A }
+; { $BF56 | #UDG$BF56 |     }
+; { $BF5E | #UDG$BF5E |     }
+; { $BF66 | #UDG$BF66 |     }
+; { $BF6E | #UDG$BF6E | $1B }
+; { $BF76 | #UDG$BF76 |     }
+; { $BF7E | #UDG$BF7E |     }
+; { $BF86 | #UDG$BF86 |     }
+; { $BF8E | #UDG$BF8E | $1C }
+; { $BF96 | #UDG$BF96 |     }
+; { $BF9E | #UDG$BF9E |     }
+; { $BFA6 | #UDG$BFA6 |     }
 ; TABLE#
 @label=graphics_patterns
 b$B9E6 DEFB $00,$7F,$3E,$63,$41,$00,$00,$00
