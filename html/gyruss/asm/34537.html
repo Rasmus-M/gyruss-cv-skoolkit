@@ -24,19 +24,19 @@ Next: <a href="34572.html">870C</a>
 </td>
 </tr>
 </table>
-<div class="description">86E9: Routine at 86E9</div>
+<div class="description">86E9: Handle sprite types $12 - $13</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="34526.html">L86DE</a>.
+Used by the routine at <a href="34526.html">handle_sprite_type_14</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L86E9</td>
+<td class="asm-label">handle_sprite_types_12_13</td>
 <td class="address-2"><span id="34537"></span>86E9</td>
 <td class="instruction">CP $12</td>
 <td class="comment-1" rowspan="1">Is sprite type &lt; $012</td>
@@ -44,7 +44,7 @@ Used by the routine at <a href="34526.html">L86DE</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34539"></span>86EB</td>
-<td class="instruction">JR C,<a href="34572.html">L870C</a></td>
+<td class="instruction">JR C,<a href="34572.html">handle_sprite_type_03</a></td>
 <td class="comment-1" rowspan="1">If so, jump ahead</td>
 </tr>
 <tr>
@@ -56,7 +56,7 @@ Used by the routine at <a href="34526.html">L86DE</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34543"></span>86EF</td>
-<td class="instruction">JR NC,<a href="34572.html">L870C</a></td>
+<td class="instruction">JR NC,<a href="34572.html">handle_sprite_type_03</a></td>
 <td class="comment-1" rowspan="1">If so, jump ahead</td>
 </tr>
 <tr>
@@ -108,7 +108,7 @@ Sprite types $12 - $13 (laser fence)
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34555"></span>86FB</td>
-<td class="instruction">JR NZ,<a href="34537.html#34565">L86E9_0</a></td>
+<td class="instruction">JR NZ,<a href="34537.html#34565">handle_sprite_types_12_13_0</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -130,7 +130,7 @@ Sprite types $12 - $13 (laser fence)
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">L86E9_0</td>
+<td class="asm-label">handle_sprite_types_12_13_0</td>
 <td class="address-2"><span id="34565"></span>8705</td>
 <td class="instruction">INC (IX+$05)</td>
 <td class="comment-1" rowspan="1"></td>

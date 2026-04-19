@@ -24,7 +24,7 @@ Next: <a href="35602.html">8B12</a>
 </td>
 </tr>
 </table>
-<div class="description">8AE6: Update sprite types $0F - $11</div>
+<div class="description">8AE6: Update sprite types $0E - $11</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -36,7 +36,7 @@ Used by the routine at <a href="33081.html">died</a>.
 </td>
 </tr>
 <tr>
-<td class="asm-label">L8AE6</td>
+<td class="asm-label">update_enemy_sprite_types</td>
 <td class="address-2"><span id="35558"></span>8AE6</td>
 <td class="instruction">LD IX,<a href="28674.html">sprite_data</a></td>
 <td class="comment-1" rowspan="1">Sprite data</td>
@@ -54,7 +54,7 @@ Used by the routine at <a href="33081.html">died</a>.
 <td class="comment-1" rowspan="1">32 sprites</td>
 </tr>
 <tr>
-<td class="asm-label">L8AE6_0</td>
+<td class="asm-label">update_enemy_sprite_types_0</td>
 <td class="address-2"><span id="35567"></span>8AEF</td>
 <td class="instruction">LD A,(IX+$00)</td>
 <td class="comment-1" rowspan="1">Get type</td>
@@ -68,7 +68,7 @@ Used by the routine at <a href="33081.html">died</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35572"></span>8AF4</td>
-<td class="instruction">JR C,<a href="35558.html#35597">L8AE6_1</a></td>
+<td class="instruction">JR C,<a href="35558.html#35597">update_enemy_sprite_types_1</a></td>
 <td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
@@ -80,19 +80,19 @@ Used by the routine at <a href="33081.html">died</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35576"></span>8AF8</td>
-<td class="instruction">JR NC,<a href="35558.html#35597">L8AE6_1</a></td>
+<td class="instruction">JR NC,<a href="35558.html#35597">update_enemy_sprite_types_1</a></td>
 <td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35578"></span>8AFA</td>
 <td class="instruction">BIT 6,(IX+$07)</td>
-<td class="comment-1" rowspan="1">For types $0F - $11, test bit 6 of ?</td>
+<td class="comment-1" rowspan="1">For types $0F - $11 (enemies), test flag bit 6</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35582"></span>8AFE</td>
-<td class="instruction">JR NZ,<a href="35558.html#35597">L8AE6_1</a></td>
+<td class="instruction">JR NZ,<a href="35558.html#35597">update_enemy_sprite_types_1</a></td>
 <td class="comment-1" rowspan="1">If not set, move on</td>
 </tr>
 <tr>
@@ -105,7 +105,7 @@ Used by the routine at <a href="33081.html">died</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="35588"></span>8B04</td>
 <td class="instruction">LD (IX+$07),$0C</td>
-<td class="comment-1" rowspan="1">Set ? to $0C</td>
+<td class="comment-1" rowspan="1">Set flags to $0C</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -120,7 +120,7 @@ Used by the routine at <a href="33081.html">died</a>.
 <td class="comment-1" rowspan="1">Load sprite pattern</td>
 </tr>
 <tr>
-<td class="asm-label">L8AE6_1</td>
+<td class="asm-label">update_enemy_sprite_types_1</td>
 <td class="address-2"><span id="35597"></span>8B0D</td>
 <td class="instruction">ADD IX,DE</td>
 <td class="comment-1" rowspan="1">Next sprite</td>
@@ -128,7 +128,7 @@ Used by the routine at <a href="33081.html">died</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35599"></span>8B0F</td>
-<td class="instruction">DJNZ <a href="35558.html#35567">L8AE6_0</a></td>
+<td class="instruction">DJNZ <a href="35558.html#35567">update_enemy_sprite_types_0</a></td>
 <td class="comment-1" rowspan="1">Loop for 32 sprites</td>
 </tr>
 <tr>

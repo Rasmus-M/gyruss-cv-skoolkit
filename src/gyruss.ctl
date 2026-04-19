@@ -87,8 +87,9 @@ b $7205 Completed stages
 D $7205 When stage reaches 24, this number is added here, and stage is reset to 0
 @ $7205 label=completed_stages
 B $7205,1,1
-b $7206 Number of active enemies
-@ $7206 label=active_enemies
+b $7206 Number of enemies
+D $7206 Including enemies at the center of the screen
+@ $7206 label=total_enemies
 B $7206,1,1
 b $7207 Map at 7207
 D $7207 Initialized to $FF meaning unused
@@ -98,8 +99,9 @@ b $722B Number of map entries
 D $722B Number of map entries in #R$7207
 @ $722B label=map_entries
 B $722B,1,1
-b $722C Number of something
-@ $722C label=byte_at_722C
+b $722C Number of active enemies
+D $722C Excluding enemies at the center of the screen.
+@ $722C label=active_enemies
 B $722C,1,1
 b $722D Byte at 722D
 B $722D,1,1
@@ -231,10 +233,11 @@ b $72CD Counter for drawing center enemies
 D $72CD Counts from $00 up to $24. Updated each frame.
 @ $72CD label=center_enemy_processed
 B $72CD,1,1
-b $72CE Byte at 72CE
+b $72CE First name used for center enemies 1
+@ $72CE label=center_enemies_name_1
 B $72CE,1,1
-b $72CF First name used for center enemies
-@ $72CF label=center_enemies_name
+b $72CF First name used for center enemies 2
+@ $72CF label=center_enemies_name_2
 B $72CF,1,1
 w $72D0 Pattern table address of center enemies
 @ $72D0 label=center_enemies_pattern
@@ -382,6 +385,7 @@ C $809A,3 Set #R$71F6+2 to 6 (extra life at 60000)
 C $809D,3 Set #R$71FC+2 to 6 (extra life at 60000)
 C $80A0,2 Stage
 C $80A2,3 Set to 1
+C $80A5,3 Init variables
 C $80A8,3 Display stage message
 C $80AB,3 ...
 C $80AE,3 ...
@@ -434,7 +438,7 @@ C $8124,2 Test bit 2
 C $8126,3 Exit main loop if set
 C $8129,2 Test bit 1
 C $812B,2 Loop if not set
-C $812D,3 Get active enemies
+C $812D,3 Get total enemies
 C $8130,3 Add enemy shots
 C $8133,1 ...
 C $8134,3 Stage completed when sum is zero
@@ -450,6 +454,8 @@ C $8144,2 ...
 C $8146,3 READ_REGISTER
 C $8149,3 Update sprite types $0F - $11
 C $814C,3 Explosion
+C $814F,3 Get active enemies
+C $8155,3 Get total enemies
 C $815F,3 Display stars
 C $8162,3 Process sprites
 C $8168,3 Display center enemies
@@ -1019,11 +1025,15 @@ C $864D,1 HL = allocation table address + 1
 C $864E,2 Copy allocations after to close hole
 C $8650,1 Restore allocation table address
 C $8651,3 Proceed with next sprite
-c $8654 Routine at 8654
+c $8654 Deallocate enemy
 D $8654 Used by the routines at #R$870C, #R$873E and #R$8848.
-c $865A Handle sprite
+@ $8654 label=deallocate_enemy
+C $8654,3 Decrease total enemies
+C $8657,1 ...
+C $8658,2 Deallocate sprite
+c $865A Handle sprite type $02
 D $865A Used by the routine at #R$85E6.
-@ $865A label=handle_sprite
+@ $865A label=handle_sprite_type_02
 C $865A,2 Is sprite type $02?
 C $865C,3 If not proceed to next handler
 N $865F Sprite type $02 (shot)
@@ -1035,10 +1045,14 @@ C $866A,2 Is polar y now 7?
 C $866C,2 If not, jump ahead
 C $866E,4 Set color
 C $8672,1 Return to #R$8A41
-c $8673 Routine at 8673
-D $8673 Used by the routine at #R$865A.
-c $867D Routine at 867D
+C $8673,2 Is polar y 43?
+C $8675,1 Return if less than
+C $8676,3 Decrease active shots
+C $8679,1 ...
+C $867A,3 Deallocate sprite
+c $867D Handle sprite type $04 - $0C
 D $867D Used by the routine at #R$865A.
+@ $867D label=handle_sprite_types_04_0C
 C $867D,2 Is sprite type < $04
 C $867F,2 Then jump
 C $8681,2 Is it >= $0D
@@ -1057,35 +1071,40 @@ C $86CF,3 Set y
 C $86D2,3 Get x
 C $86D5,2 Add 8
 C $86D7,3 Set x
-c $86DE Routine at 86DE
+c $86DE Handle sprite type  $14
 D $86DE Used by the routine at #R$867D.
+@ $86DE label=handle_sprite_type_14
 C $86DE,2 Is sprite type $014
 C $86E0,2 If not, jump ahead
 N $86E2 Sprite type $14 (meteor)
 C $86E5,3 Decrement polar y
 C $86E8,1 Return to #R$8A41
-c $86E9 Routine at 86E9
+c $86E9 Handle sprite types $12 - $13
 D $86E9 Used by the routine at #R$86DE.
+@ $86E9 label=handle_sprite_types_12_13
 C $86E9,2 Is sprite type < $012
 C $86EB,2 If so, jump ahead
 C $86ED,2 Is sprite type >= $014
 C $86EF,2 If so, jump ahead
 N $86F1 Sprite types $12 - $13 (laser fence)
 C $86F1,3 Frame counter
-c $870C Routine at 870C
+c $870C Handle sprite type $03
 D $870C Used by the routine at #R$86E9.
+@ $870C label=handle_sprite_type_03
 C $870C,2 Is sprite type $03?
 C $870E,2 If not, jump ahead
 N $8710 Sprite type $03 (circle)
-c $873E Routine at 873E
+c $873E Handle sprite types $15 - $17
 D $873E Used by the routine at #R$870C.
+@ $873E label=handle_sprite_types_15_17
 C $873E,2 Is sprite type < $15
 C $8740,2 If so, jump ahead
 C $8742,2 Is sprite type >= $18
 C $8744,2 If so, jump ahead
 N $8746 sprite types $15 - $17 (bombs, parallel lines)
-c $8790 Routine at 8790
+c $8790 Handle sprite types $0E - $11
 D $8790 Used by the routine at #R$873E.
+@ $8790 label=handle_sprite_types_0E_11
 C $8790,2 Is sprite type < $0E
 C $8792,3 If so, jump ahead
 C $8795,2 Is sprite type >= $12
@@ -1122,6 +1141,8 @@ C $8811,3 Increment polar y
 c $8815 Routine at 8815
 D $8815 Used by the routine at #R$8801.
 C $8815,3 Get color
+C $8819,3 Decrease active enemies
+C $881C,1 ...
 c $8825 Routine at 8825
 D $8825 Used by the routine at #R$8790.
 N $8835 This entry point is used by the routine at #R$8A2D.
@@ -1129,6 +1150,8 @@ N $883B This entry point is used by the routine at #R$8848.
 c $8848 Routine at 8848
 D $8848 Used by the routine at #R$8825.
 C $884E,1 Random number
+C $8853,3 Decrease active enemies
+C $8856,1 ...
 c $885F Routine at 885F
 D $885F Used by the routine at #R$8790.
 c $8878 Routine at 8878
@@ -1162,18 +1185,25 @@ c $8994 Routine at 8994
 D $8994 Used by the routine at #R$88FE.
 c $8999 Routine at 8999
 D $8999 Used by the routine at #R$88FE.
-c $899E Routine at 899E
+c $899E Handle sprite types $18 - $1C
 D $899E Used by the routine at #R$8790.
+@ $899E label=handle_sprite_types_18_1C
 C $899E,2 Is sprite type < $18
 C $89A0,1 Then return
-C $89A1,2 Is sprite type >= $1A
+C $89A1,2 Is sprite type < $1A
 C $89A3,2 If so, jump ahead
-N $89A5 Sprite types $18 - $19 (three spheres, star shape)
-N $89B8 Other sprite types
-c $8A2D Routine at 8A2D
-D $8A2D Used by the routine at #R$899E.
-c $8A3C Routine at 8A3C
-D $8A3C Used by the routine at #R$899E.
+N $89A5 Sprite types $1A - $1C
+C $89A5,1 B = sprite type
+C $89A6,3 Frame counter
+C $89A9,2 Mod 4
+C $89AB,2 If not zero the skip ahead
+C $89AD,1 A = sprite type
+C $89AE,1 A = sprite type + 1
+C $89AF,2 Is sprite type + 1 < $1D, i.e. sprite type < $1C, i.e. $1A or $1B
+C $89B1,2 Then skip next
+C $89B3,2 Else set sprite type to $1A
+C $89B5,3 This means rotate between $1A, $1B, and $1C
+N $89B8 Sprite types $18 - $19 (three spheres, star shape) plus $1A, $1B, and $1C
 c $8A41 Return from sprite handler
 D $8A41 Sprite handler branching out from #R$8600
 @ $8A41 label=return_from_sprite_handler
@@ -1211,8 +1241,9 @@ C $8AA4,1 Allocate sprite
 C $8AB9,4 Set color
 c $8AC0 Routine at 8AC0
 D $8AC0 Used by the routines at #R$8790, #R$87F5, #R$8878 and #R$88D4.
-c $8AE6 Update sprite types $0F - $11
+c $8AE6 Update sprite types $0E - $11
 D $8AE6 Used by the routine at #R$8139.
+@ $8AE6 label=update_enemy_sprite_types
 C $8AE6,4 Sprite data
 C $8AEA,3 Size of each sprite
 C $8AED,2 32 sprites
@@ -1221,10 +1252,10 @@ C $8AF2,2 If < 14 then move on
 C $8AF4,2 ...
 C $8AF6,2 If >= 18 then move on
 C $8AF8,2 ...
-C $8AFA,4 For types $0F - $11, test bit 6 of ?
+C $8AFA,4 For types $0F - $11 (enemies), test flag bit 6
 C $8AFE,2 If not set, move on
 C $8B00,4 Set type to $10
-C $8B04,4 Set ? to $0C
+C $8B04,4 Set flags to $0C
 C $8B08,4 Set ? to $FF
 C $8B0C,1 Load sprite pattern
 C $8B0D,2 Next sprite
@@ -1339,6 +1370,9 @@ C $8BD5,1 Row counter
 C $8BD6,2 Outer loop for 3 bytes
 c $8BD9 Routine at 8BD9
 D $8BD9 Used by the routine at #R$8024.
+C $8BE6,3 Get active enemies
+C $8BE9,1 Return if not zero
+C $8BEA,1 ...
 c $8C07 Routine at 8C07
 D $8C07 Used by the routine at #R$8BD9.
 C $8C15,1 Random number
@@ -1360,9 +1394,14 @@ C $8CA0,1 Add A to HL
 C $8CA2,1 Allocate sprite
 C $8CAF,3 Set color
 C $8CF5,1 Load sprite pattern
+C $8CF6,3 Increase active enemies
+C $8CF9,1 ...
+C $8CFA,3 Increase total enemies
+C $8CFD,1 ...
 C $8D17,3 Get stage data address in IY
 c $8D21 Routine at 8D21
 D $8D21 Used by the routine at #R$8170.
+C $8D31,3 Total enemies
 c $8D50 Routine at 8D50
 D $8D50 Used by the routine at #R$8024.
 C $8D68,3 Get stage data address in IY
@@ -1377,24 +1416,32 @@ C $8DB2,1 Load sprite pattern
 C $8DB3,1 Allocate sprite
 C $8DBC,4 Set color
 C $8DCC,1 Load sprite pattern
+C $8DCD,3 Total enemies
+C $8DD0,2 Add 3
+C $8DD2,3 Store again
 c $8DD7 Routine at 8DD7
 D $8DD7 Used by the routine at #R$8D50.
 C $8DDD,1 Allocate sprite
 C $8DE6,1 Random number
 C $8DFC,4 Set color
+C $8E00,3 Increase total enemies
+C $8E03,1 ...
 N $8E04 This entry point is used by the routine at #R$8D50.
 C $8E04,1 Random number
-c $8E0D Routine at 8E0D
-c $8E0F Routine at 8E0F
-b $8E11 Data block at 8E11
-B $8E11,27,8*3,3
-c $8E2C Routine at 8E2C
-N $8E2D This entry point is used by the routines at #R$8024, #R$8139 and #R$A3E1.
+b $8E0D Data block at 8E0D
+B $8E0D,24,8
+b $8E25 Data block at 8E25
+B $8E25,8,8
+c $8E2D Routine at 8E2D
+D $8E2D Used by the routines at #R$80E8, #R$8139 and #R$A3E1.
+C $8E2D,3 Get flags
+C $8E30,2 If half stage bit is not set
+C $8E32,2 Then init variables
 C $8E5C,3 Stage
 C $8E81,2 Set died flag
-c $8E89 Routine at 8E89
-D $8E89 Used by the routine at #R$8E2C.
-@ $8E89 label=init_stage_variables
+c $8E89 Init half stage variables
+D $8E89 Used by the routine at #R$8E2D.
+@ $8E89 label=init_half_stage_variables
 N $8E8D This entry point is used by the routines at #R$82BF and #R$8FED.
 C $8E8D,1 Random number
 C $8E8E,2 0 - 15
@@ -1404,20 +1451,23 @@ C $8E95,1 A = 0
 C $8E96,3 Set to 0
 C $8E99,3 Set to 0
 c $8E9D Routine at 8E9D
-D $8E9D Used by the routine at #R$8E2C.
+D $8E9D Used by the routine at #R$8E2D.
+C $8EED,3 Total enemies
 C $8F00,3 Get stage data address in IY
 c $8F0F Routine at 8F0F
 D $8F0F Used by the routine at #R$8E9D.
 C $8F44,3 FILL_VRAM
 C $8F52,3 Display background patterns
 c $8F55 Routine at 8F55
-D $8F55 Used by the routine at #R$8E2C.
+D $8F55 Used by the routine at #R$8E2D.
 N $8FAE This entry point is used by the routine at #R$8FED.
 C $8FAE,3 Polar y
 C $8FB1,3 Polar x
 C $8FC3,3 Display background patterns
 c $8FED Routine at 8FED
 D $8FED Used by the routine at #R$8F55.
+C $8FFA,3 Decrease total enemies
+C $8FFD,1 ...
 C $9004,3 Clear died flag
 C $9007,2 ...
 c $900E Routine at 900E
@@ -1748,6 +1798,8 @@ c $9845 Routine at 9845
 D $9845 Used by the routine at #R$9796.
 C $9845,1 Allocate sprite
 C $9858,4 Set color
+C $985C,3 Increase total enemies
+C $985F,1 ...
 c $9861 Routine at 9861
 D $9861 Used by the routine at #R$9796.
 C $986B,3 Size of each sprite
@@ -1763,6 +1815,8 @@ D $9934 Used by the routine at #R$9924.
 N $9936 This entry point is used by the routine at #R$9924.
 C $9951,3 Record hit
 C $9954,1 ...
+C $9955,3 Decrease active enemies
+C $9958,1 ...
 c $9978 Add score when enemy destroyed
 D $9978 Used by the routine at #R$9934.
 R $9978 I:IX ?
@@ -1802,12 +1856,18 @@ D $9A08 Used by the routine at #R$9924.
 c $9A1C Routine at 9A1C
 D $9A1C Used by the routines at #R$9934, #R$99A0, #R$99B1 and #R$9A08.
 C $9A20,3 Set color
+C $9A33,3 Decrease toral enemies
+C $9A36,1 ...
 c $9A38 Routine at 9A38
 D $9A38 Used by the routine at #R$9796.
 c $9A49 Routine at 9A49
 D $9A49 Used by the routine at #R$9A38.
+C $9A51,3 Decrease active enemies
+C $9A54,1 ...
 C $9A68,1 Load sprite pattern
 N $9A69 This entry point is used by the routine at #R$9A75.
+C $9A69,3 Decrease total enemies
+C $9A6C,1 ...
 N $9A6D This entry point is used by the routine at #R$9A38.
 C $9A6D,3 Set died flag
 C $9A70,2 ...
@@ -1839,7 +1899,7 @@ C $9AD0,1 Set LSB of VDP address
 C $9AD4,2 Set MSB of VDP address
 C $9AD6,2 Delay
 C $9ADB,2 Read byte
-c $9ADE Routine at 9ADE
+c $9ADE Init sound
 D $9ADE Used by the routine at #R$8024.
 @ $9ADE label=init_sound
 C $9ADE,3 TURN_OFF_SOUND
@@ -1853,18 +1913,11 @@ c $9B0D Play tune?
 D $9B0D Used by the routines at #R$9BD9, #R$9C1C and #R$9E91.
 R $9B0D I:A Index of tune (0 - 6)
 @ $9B0D label=play_tune
-c $9B54 Routine at 9B54
-D $9B54 Used by the routine at #R$9B0D.
-N $9B56 This entry point is used by the routine at #R$9B0D.
-c $9B59 Routine at 9B59
-D $9B59 Used by the routine at #R$9B99.
-c $9B70 Routine at 9B70
-D $9B70 Used by the routine at #R$9B59.
-N $9B82 This entry point is used by the routine at #R$9B59.
-c $9B87 Routine at 9B87
+N $9B59 This entry point is used by the routine at #R$9B99.
+c $9B87 Stop tune
 D $9B87 Used by the routines at #R$8139, #R$832A and #R$9C1C.
-@ $9B87 label=set_variables_after_stage
-c $9B99 Sound player?
+@ $9B87 label=stop_tune
+c $9B99 Sound player
 D $9B99 Used by the routine at #R$8522.
 @ $9B99 label=sound_player
 N $9BAE This entry point is used by the routine at #R$9BD9.
@@ -1956,7 +2009,7 @@ R $A314 I:IX
 @ $A314 label=output_sound
 c $A31D Routine at A31D
 D $A31D Used by the routine at #R$A314.
-c $A33B Routine at A33B
+c $A33B Initial game loop
 D $A33B Used by the routine at #R$82BF.
 @ $A33B label=initial_game_loop
 C $A33B,3 New center of projection at bottom center for implosion
@@ -2024,7 +2077,7 @@ C $A3D7,3 Clear player message
 C $A3DA,3 ...
 C $A3DD,1 ...
 C $A3DE,3 FILL_VRAM and return
-c $A3E1 Routine at A3E1
+c $A3E1 Explode
 D $A3E1 Used by the routine at #R$8139.
 @ $A3E1 label=explode
 C $A3E6,3 Display ship background patterns
@@ -2080,7 +2133,7 @@ C $A461,3 Display center enemies
 C $A467,3 Upload sprites
 C $A46B,2 Loop 9 times
 C $A46E,2 Loop 20 times
-c $A471 Routine at A471
+c $A471 Move explosion dots
 D $A471 Change polar y of sprite types $0D, according to bit 2 of #R$71EB. Used by the routines at #R$A33B and #R$A3E1.
 @ $A471 label=move_dots
 C $A471,3 Copy #R$72C5 to #R$7000
@@ -2318,7 +2371,7 @@ c $A805 Routine at A805
 D $A805 Used by the routine at #R$A73C.
 C $A805,2 Clear bit for fire pressed
 C $A807,1 Return
-c $A808 Routine at A808
+c $A808 Display ship background patterns
 D $A808 Used by the routines at #R$832A, #R$A33B, #R$A3E1 and #R$A73C.
 @ $A808 label=display_ship_background_patterns
 C $A80F,4 Buffer for generated structure
@@ -2353,7 +2406,7 @@ C $A853,1 Add to offset
 C $A854,3 Save LSB
 C $A857,3 Save MSB
 C $A85A,3 Display background patterns
-b $A865 Data block at A865
+b $A865 Controller movement table
 @ $A865 label=movement_table
 B $A865,1,1 0000
 B $A866,1,1 0001 Up
@@ -2371,7 +2424,7 @@ B $A871,1,1 1100 Left + down
 B $A872,1,1 1101
 B $A873,1,1 1110
 B $A874,1,1 1111
-b $A875 Data block at A875
+b $A875 Adjust ship coordinates table
 @ $A875 label=adjust_ship_x_y_table
 B $A875,8,8
 b $A87D Ship background patterns
@@ -2388,6 +2441,7 @@ C $AA86,2 ...
 C $AA88,2 ...
 C $AA8A,1 A = 0
 C $AA97,1 A = 1
+C $AAA0,2 First name used for center enemies
 c $AAA6 Allocate map entry
 D $AAA6 Used by the routines at #R$87D5 and #R$8D21.
 R $AAA6 I: A value to place in #R$7207 at an unused spot
@@ -2424,10 +2478,13 @@ c $AAE3 Deallocate map entry
 D $AAE3 Used by the routines at #R$99A0, #R$AB17 and #R$AB6C.
 R $AAE3 I:HL Address in #R$7207
 @ $AAE3 label=deallocate_map_entry
+C $AAE3,1 Save map address
+C $AAE4,2 Set entry to $FF
 C $AAE6,3 Set flag
 C $AAE9,2 ...
 C $AAEB,3 Decrement number of entries
 C $AAEE,1 ...
+C $AAEF,1 Restore map address
 c $AAF1 Routine at AAF1
 D $AAF1 Used by the routine at #R$8024.
 C $AAF1,3 Is half stage flag set?
@@ -2436,10 +2493,10 @@ C $AAF6,1 Return if not
 C $AAF7,2 Is died flag set?
 C $AAF9,1 Return if so
 C $AAFA,3 Get stage data address in IY
-C $AAFD,3 Get number of ?
+C $AAFD,3 Get number of active enemies
 C $AB00,3 Compare with byte 4 of stage data
 C $AB03,1 Return if >=
-C $AB04,3 Get number of map entires
+C $AB04,3 Get number of map entries
 C $AB07,1 Return is zero
 C $AB08,1 ...
 C $AB09,3 End of #R$7207
@@ -2463,7 +2520,7 @@ C $AB2A,1 Restore value from map
 C $AB2B,3 Use it as color
 C $AB2E,4 Set flag
 C $AB32,1 Load sprite pattern
-C $AB33,3 Increment number of ?
+C $AB33,3 Increase number of active enemies
 C $AB36,1 ...
 c $AB38 Get sprite coordinates
 D $AB38 Returns sprite coordinates when a center enemy turns into a sprite? Used by the routines at #R$87F5, #R$98B5, #R$AB17 and #R$AB72.
@@ -2519,7 +2576,7 @@ C $AB9B,3 Set flag
 C $AB9E,2 ...
 C $ABA0,3 Get enemy to process
 C $ABA3,2 If 36,
-C $ABA5,3 Then jump ahead
+C $ABA5,3 Then jump to update name table
 C $ABA8,1 If 0 then erase all enemies
 C $ABA9,2 Else jump ahead
 C $ABAB,3 Get first name used for center enemies
@@ -2568,16 +2625,53 @@ C $ABF6,1 ...
 C $ABF7,3 Plot pixel
 C $ABFA,3 Update counter
 C $ABFD,1 ...
-c $ABFF Routine at ABFF
+c $ABFF Update name table to display center enemies
 D $ABFF Used by the routine at #R$AB72.
+@ $ABFF label=display_center_enemies_names
+C $ABFF,3 Test flag
+C $AC02,2 If not set
+C $AC04,1 Then return
+C $AC05,2 Else reset flag
+C $AC07,3 Get number of map entries
+C $AC0A,1 Skip ahead if zero
+C $AC0B,2 ...
+C $AC0D,3 Name table VDP address
+C $AC10,3 Get first name used for center enemies
+C $AC13,2 4 rows
+C $AC15,2 4 columns
 C $AC17,1 Write VDP byte
+C $AC18,1 Next name
+C $AC19,1 Next VDP address
+C $AC1A,2 Loop for 4 columns
+C $AC1C,3 One row down
+C $AC1F,1 ...
+C $AC20,1 ...
+C $AC21,1 Row counter
+C $AC22,2 Loop for 4 rows
+C $AC24,3 Swap #R$72CE and #R$72CF
+C $AC27,1 ...
+C $AC28,1 ...
+C $AC29,1 ...
+C $AC2A,3 ...
 C $AC2D,1 Reset center enemy to process
 C $AC2E,3 ...
-c $AC32 Routine at AC32
+c $AC32 Erase center enemies
 D $AC32 Used by the routine at #R$ABFF.
+@ $AC32 label=erase_center_enemies
+C $AC32,3 Name table VDP address
+C $AC35,1 Space
+C $AC36,2 4 rows
+C $AC38,2 4 columns
 C $AC3A,1 Write VDP byte
-c $AC47 Routine at AC47
-D $AC47 Used by the routine at #R$AB72.
+C $AC3B,1 Next VDP address
+C $AC3C,2 Loop for 4 columns
+C $AC3E,3 One row down
+C $AC41,1 ...
+C $AC42,1 ...
+C $AC43,1 Row counter
+C $AC44,2 Lopp for 4 rows
+c $AC47 Plot pixel
+D $AC47 Plot pixel in center enemies bit map. Used by the routine at #R$AB72.
 R $AC47 D: Screen y
 R $AC47 E: Screen x
 R $AC47 I: HL Address in #R$ACCF
@@ -2826,6 +2920,8 @@ C $AE6D,2 ...
 C $AE73,2 Set off-screen values and return
 c $AE75 Routine at AE75
 D $AE75 Used by the routine at #R$AE54.
+C $AE75,3 Decrease total enemies
+C $AE78,1 ...
 N $AE86 This entry point is used by the routine at #R$AE54.
 C $AE86,4 Set as not allocated
 C $AE8A,4 Set x

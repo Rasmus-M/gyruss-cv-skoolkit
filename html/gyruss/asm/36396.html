@@ -52,19 +52,19 @@ This entry point is used by the routines at <a href="32804.html">entry</a>, <a h
 <td class="asm-label">L8E2C_0</td>
 <td class="address-2"><span id="36397"></span>8E2D</td>
 <td class="instruction">LD A,(<a href="29163.html">status_flags</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get flags</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36400"></span>8E30</td>
 <td class="instruction">BIT 1,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If half stage bit is not set</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36402"></span>8E32</td>
-<td class="instruction">JR Z,<a href="36489.html">init_stage_variables</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="36489.html">init_half_stage_variables</a></td>
+<td class="comment-1" rowspan="1">Then init variables</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

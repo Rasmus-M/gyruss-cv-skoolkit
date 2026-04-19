@@ -20,11 +20,11 @@ Prev: <a href="34388.html">8654</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#34394">Map</a></td>
 <td class="next">
-Next: <a href="34419.html">8673</a>
+Next: <a href="34429.html">867D</a>
 </td>
 </tr>
 </table>
-<div class="description">865A: Handle sprite</div>
+<div class="description">865A: Handle sprite type $02</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -36,7 +36,7 @@ Used by the routine at <a href="34278.html">process_sprites</a>.
 </td>
 </tr>
 <tr>
-<td class="asm-label">handle_sprite</td>
+<td class="asm-label">handle_sprite_type_02</td>
 <td class="address-2"><span id="34394"></span>865A</td>
 <td class="instruction">CP $02</td>
 <td class="comment-1" rowspan="1">Is sprite type $02?</td>
@@ -44,7 +44,7 @@ Used by the routine at <a href="34278.html">process_sprites</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34396"></span>865C</td>
-<td class="instruction">JP NZ,<a href="34429.html">L867D</a></td>
+<td class="instruction">JP NZ,<a href="34429.html">handle_sprite_types_04_0C</a></td>
 <td class="comment-1" rowspan="1">If not proceed to next handler</td>
 </tr>
 <tr>
@@ -96,7 +96,7 @@ Sprite type $02 (shot)
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34412"></span>866C</td>
-<td class="instruction">JR NZ,<a href="34419.html">L8673</a></td>
+<td class="instruction">JR NZ,<a href="34394.html#34419">handle_sprite_type_02_0</a></td>
 <td class="comment-1" rowspan="1">If not, jump ahead</td>
 </tr>
 <tr>
@@ -111,6 +111,36 @@ Sprite type $02 (shot)
 <td class="instruction">RET</td>
 <td class="comment-1" rowspan="1">Return to <a href="35393.html">return_from_sprite_handler</a></td>
 </tr>
+<tr>
+<td class="asm-label">handle_sprite_type_02_0</td>
+<td class="address-2"><span id="34419"></span>8673</td>
+<td class="instruction">CP $2B</td>
+<td class="comment-1" rowspan="1">Is polar y 43?</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34421"></span>8675</td>
+<td class="instruction">RET C</td>
+<td class="comment-1" rowspan="1">Return if less than</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34422"></span>8676</td>
+<td class="instruction">LD HL,<a href="29267.html">active_shots</a></td>
+<td class="comment-1" rowspan="1">Decrease active shots</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34425"></span>8679</td>
+<td class="instruction">DEC (HL)</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34426"></span>867A</td>
+<td class="instruction">JP <a href="34278.html#34351">deallocate_sprite</a></td>
+<td class="comment-1" rowspan="1">Deallocate sprite</td>
+</tr>
 </table>
 <table class="asm-navigation">
 <tr>
@@ -119,7 +149,7 @@ Prev: <a href="34388.html">8654</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#34394">Map</a></td>
 <td class="next">
-Next: <a href="34419.html">8673</a>
+Next: <a href="34429.html">867D</a>
 </td>
 </tr>
 </table>

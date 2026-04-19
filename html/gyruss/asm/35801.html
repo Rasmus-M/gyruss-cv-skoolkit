@@ -39,127 +39,127 @@ Used by the routine at <a href="32804.html">entry</a>.
 <td class="asm-label">L8BD9</td>
 <td class="address-2"><span id="35801"></span>8BD9</td>
 <td class="instruction">LD A,(<a href="29163.html">status_flags</a>)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35804"></span>8BDC</td>
 <td class="instruction">BIT 1,A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35806"></span>8BDE</td>
 <td class="instruction">RET NZ</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35807"></span>8BDF</td>
 <td class="instruction">LD A,(<a href="29276.html">L725C</a>)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35810"></span>8BE2</td>
 <td class="instruction">OR A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35811"></span>8BE3</td>
 <td class="instruction">JP NZ,<a href="35944.html">L8C68</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35814"></span>8BE6</td>
-<td class="instruction">LD A,(<a href="29228.html">byte_at_722C</a>)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">LD A,(<a href="29228.html">active_enemies</a>)</td>
+<td class="comment-1" rowspan="1">Get active enemies</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35817"></span>8BE9</td>
 <td class="instruction">OR A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return if not zero</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35818"></span>8BEA</td>
 <td class="instruction">RET NZ</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35819"></span>8BEB</td>
 <td class="instruction">LD A,(<a href="29170.html">frame_counter</a>)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35822"></span>8BEE</td>
 <td class="instruction">AND $03</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35824"></span>8BF0</td>
 <td class="instruction">JR NZ,<a href="35801.html#35836">L8BD9_0</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35826"></span>8BF2</td>
 <td class="instruction">LD A,(<a href="29168.html">L71F0</a>)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35829"></span>8BF5</td>
 <td class="instruction">DEC A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35830"></span>8BF6</td>
 <td class="instruction">JP M,<a href="35801.html#35836">L8BD9_0</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35833"></span>8BF9</td>
 <td class="instruction">LD (<a href="29168.html">L71F0</a>),A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label">L8BD9_0</td>
 <td class="address-2"><span id="35836"></span>8BFC</td>
 <td class="instruction">LD A,(<a href="29185.html">wave</a>)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35839"></span>8BFF</td>
 <td class="instruction">CP $04</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35841"></span>8C01</td>
 <td class="instruction">JR C,<a href="35888.html">L8C30</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35843"></span>8C03</td>
 <td class="instruction">JR Z,<a href="35847.html">L8C07</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35845"></span>8C05</td>
 <td class="instruction">JR <a href="35870.html">L8C1E</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 </table>
 <table class="asm-navigation">

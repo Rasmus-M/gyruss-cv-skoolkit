@@ -20,23 +20,23 @@ Prev: <a href="35225.html">8999</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#35230">Map</a></td>
 <td class="next">
-Next: <a href="35373.html">8A2D</a>
+Next: <a href="35393.html">8A41</a>
 </td>
 </tr>
 </table>
-<div class="description">899E: Routine at 899E</div>
+<div class="description">899E: Handle sprite types $18 - $1C</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="34704.html">L8790</a>.
+Used by the routine at <a href="34704.html">handle_sprite_types_0E_11</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L899E</td>
+<td class="asm-label">handle_sprite_types_18_1C</td>
 <td class="address-2"><span id="35230"></span>899E</td>
 <td class="instruction">CP $18</td>
 <td class="comment-1" rowspan="1">Is sprite type &lt; $18</td>
@@ -51,12 +51,12 @@ Used by the routine at <a href="34704.html">L8790</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="35233"></span>89A1</td>
 <td class="instruction">CP $1A</td>
-<td class="comment-1" rowspan="1">Is sprite type &gt;= $1A</td>
+<td class="comment-1" rowspan="1">Is sprite type &lt; $1A</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35235"></span>89A3</td>
-<td class="instruction">JR C,<a href="35230.html#35256">L899E_1</a></td>
+<td class="instruction">JR C,<a href="35230.html#35256">handle_sprite_types_18_1C_1</a></td>
 <td class="comment-1" rowspan="1">If so, jump ahead</td>
 </tr>
 <tr>
@@ -64,7 +64,7 @@ Used by the routine at <a href="34704.html">L8790</a>.
 <span id="35237"></span>
 <div class="comments">
 <div class="paragraph">
-Sprite types $18 - $19 (three spheres, star shape)
+Sprite types $1A - $1C
 </div>
 </div>
 </td>
@@ -73,74 +73,74 @@ Sprite types $18 - $19 (three spheres, star shape)
 <td class="asm-label"></td>
 <td class="address-1"><span id="35237"></span>89A5</td>
 <td class="instruction">LD B,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">B = sprite type</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35238"></span>89A6</td>
 <td class="instruction">LD A,(<a href="29170.html">frame_counter</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Frame counter</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35241"></span>89A9</td>
 <td class="instruction">AND $03</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Mod 4</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35243"></span>89AB</td>
-<td class="instruction">JR NZ,<a href="35230.html#35256">L899E_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="35230.html#35256">handle_sprite_types_18_1C_1</a></td>
+<td class="comment-1" rowspan="1">If not zero the skip ahead</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35245"></span>89AD</td>
 <td class="instruction">LD A,B</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">A = sprite type</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35246"></span>89AE</td>
 <td class="instruction">INC A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">A = sprite type + 1</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35247"></span>89AF</td>
 <td class="instruction">CP $1D</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Is sprite type + 1 &lt; $1D, i.e. sprite type &lt; $1C, i.e. $1A or $1B</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35249"></span>89B1</td>
-<td class="instruction">JR C,<a href="35230.html#35253">L899E_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR C,<a href="35230.html#35253">handle_sprite_types_18_1C_0</a></td>
+<td class="comment-1" rowspan="1">Then skip next</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35251"></span>89B3</td>
 <td class="instruction">LD A,$1A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Else set sprite type to $1A</td>
 </tr>
 <tr>
-<td class="asm-label">L899E_0</td>
+<td class="asm-label">handle_sprite_types_18_1C_0</td>
 <td class="address-2"><span id="35253"></span>89B5</td>
 <td class="instruction">LD (IX+$00),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">This means rotate between $1A, $1B, and $1C</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="35256"></span>
 <div class="comments">
 <div class="paragraph">
-Other sprite types
+Sprite types $18 - $19 (three spheres, star shape) plus $1A, $1B, and $1C
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L899E_1</td>
+<td class="asm-label">handle_sprite_types_18_1C_1</td>
 <td class="address-2"><span id="35256"></span>89B8</td>
 <td class="instruction">BIT 7,(IX+$07)</td>
 <td class="comment-1" rowspan="1"></td>
@@ -148,7 +148,7 @@ Other sprite types
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35260"></span>89BC</td>
-<td class="instruction">JR Z,<a href="35373.html">L8A2D</a></td>
+<td class="instruction">JR Z,<a href="35230.html#35373">handle_sprite_types_18_1C_9</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -202,7 +202,7 @@ Other sprite types
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35281"></span>89D1</td>
-<td class="instruction">JR NC,<a href="35230.html#35307">L899E_2</a></td>
+<td class="instruction">JR NC,<a href="35230.html#35307">handle_sprite_types_18_1C_2</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -226,7 +226,7 @@ Other sprite types
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35287"></span>89D7</td>
-<td class="instruction">JR C,<a href="35388.html">L8A3C</a></td>
+<td class="instruction">JR C,<a href="35230.html#35388">handle_sprite_types_18_1C_10</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -278,7 +278,7 @@ Other sprite types
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">L899E_2</td>
+<td class="asm-label">handle_sprite_types_18_1C_2</td>
 <td class="address-2"><span id="35307"></span>89EB</td>
 <td class="instruction">LD A,(HL)</td>
 <td class="comment-1" rowspan="1"></td>
@@ -298,7 +298,7 @@ Other sprite types
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35315"></span>89F3</td>
-<td class="instruction">JR Z,<a href="35230.html#35318">L899E_3</a></td>
+<td class="instruction">JR Z,<a href="35230.html#35318">handle_sprite_types_18_1C_3</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -308,7 +308,7 @@ Other sprite types
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">L899E_3</td>
+<td class="asm-label">handle_sprite_types_18_1C_3</td>
 <td class="address-2"><span id="35318"></span>89F6</td>
 <td class="instruction">BIT 7,(HL)</td>
 <td class="comment-1" rowspan="1"></td>
@@ -316,7 +316,7 @@ Other sprite types
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35320"></span>89F8</td>
-<td class="instruction">JR Z,<a href="35230.html#35334">L899E_4</a></td>
+<td class="instruction">JR Z,<a href="35230.html#35334">handle_sprite_types_18_1C_4</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -334,7 +334,7 @@ Other sprite types
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35326"></span>89FE</td>
-<td class="instruction">JR Z,<a href="35230.html#35334">L899E_4</a></td>
+<td class="instruction">JR Z,<a href="35230.html#35334">handle_sprite_types_18_1C_4</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -346,7 +346,7 @@ Other sprite types
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35330"></span>8A02</td>
-<td class="instruction">JR Z,<a href="35230.html#35334">L899E_4</a></td>
+<td class="instruction">JR Z,<a href="35230.html#35334">handle_sprite_types_18_1C_4</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -356,7 +356,7 @@ Other sprite types
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">L899E_4</td>
+<td class="asm-label">handle_sprite_types_18_1C_4</td>
 <td class="address-2"><span id="35334"></span>8A06</td>
 <td class="instruction">LD E,(IX+$02)</td>
 <td class="comment-1" rowspan="1"></td>
@@ -376,7 +376,7 @@ Other sprite types
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35342"></span>8A0E</td>
-<td class="instruction">JR Z,<a href="35230.html#35345">L899E_5</a></td>
+<td class="instruction">JR Z,<a href="35230.html#35345">handle_sprite_types_18_1C_5</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -386,7 +386,7 @@ Other sprite types
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">L899E_5</td>
+<td class="asm-label">handle_sprite_types_18_1C_5</td>
 <td class="address-2"><span id="35345"></span>8A11</td>
 <td class="instruction">BIT 2,A</td>
 <td class="comment-1" rowspan="1"></td>
@@ -394,7 +394,7 @@ Other sprite types
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35347"></span>8A13</td>
-<td class="instruction">JR Z,<a href="35230.html#35350">L899E_6</a></td>
+<td class="instruction">JR Z,<a href="35230.html#35350">handle_sprite_types_18_1C_6</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -404,7 +404,7 @@ Other sprite types
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">L899E_6</td>
+<td class="asm-label">handle_sprite_types_18_1C_6</td>
 <td class="address-2"><span id="35350"></span>8A16</td>
 <td class="instruction">BIT 1,A</td>
 <td class="comment-1" rowspan="1"></td>
@@ -412,7 +412,7 @@ Other sprite types
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35352"></span>8A18</td>
-<td class="instruction">JR Z,<a href="35230.html#35355">L899E_7</a></td>
+<td class="instruction">JR Z,<a href="35230.html#35355">handle_sprite_types_18_1C_7</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -422,7 +422,7 @@ Other sprite types
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">L899E_7</td>
+<td class="asm-label">handle_sprite_types_18_1C_7</td>
 <td class="address-2"><span id="35355"></span>8A1B</td>
 <td class="instruction">BIT 3,A</td>
 <td class="comment-1" rowspan="1"></td>
@@ -430,7 +430,7 @@ Other sprite types
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35357"></span>8A1D</td>
-<td class="instruction">JR Z,<a href="35230.html#35360">L899E_8</a></td>
+<td class="instruction">JR Z,<a href="35230.html#35360">handle_sprite_types_18_1C_8</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -440,7 +440,7 @@ Other sprite types
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">L899E_8</td>
+<td class="asm-label">handle_sprite_types_18_1C_8</td>
 <td class="address-2"><span id="35360"></span>8A20</td>
 <td class="instruction">LD (IX+$01),D</td>
 <td class="comment-1" rowspan="1"></td>
@@ -475,6 +475,54 @@ Other sprite types
 <td class="instruction">RET</td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
+<tr>
+<td class="asm-label">handle_sprite_types_18_1C_9</td>
+<td class="address-2"><span id="35373"></span>8A2D</td>
+<td class="instruction">LD A,(IX+$01)</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35376"></span>8A30</td>
+<td class="instruction">CP $F2</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35378"></span>8A32</td>
+<td class="instruction">JP Z,<a href="34853.html#34869">L8825_0</a></td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35381"></span>8A35</td>
+<td class="instruction">DEC (IX+$01)</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35384"></span>8A38</td>
+<td class="instruction">INC (IX+$05)</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35387"></span>8A3B</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label">handle_sprite_types_18_1C_10</td>
+<td class="address-2"><span id="35388"></span>8A3C</td>
+<td class="instruction">LD (IX+$07),$04</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35392"></span>8A40</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
 </table>
 <table class="asm-navigation">
 <tr>
@@ -483,7 +531,7 @@ Prev: <a href="35225.html">8999</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#35230">Map</a></td>
 <td class="next">
-Next: <a href="35373.html">8A2D</a>
+Next: <a href="35393.html">8A41</a>
 </td>
 </tr>
 </table>

@@ -24,43 +24,43 @@ Next: <a href="44103.html">AC47</a>
 </td>
 </tr>
 </table>
-<div class="description">AC32: Routine at AC32</div>
+<div class="description">AC32: Erase center enemies</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="44031.html">LABFF</a>.
+Used by the routine at <a href="44031.html">display_center_enemies_names</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">LAC32</td>
+<td class="asm-label">erase_center_enemies</td>
 <td class="address-2"><span id="44082"></span>AC32</td>
 <td class="instruction">LD DE,$194E</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Name table VDP address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44085"></span>AC35</td>
 <td class="instruction">XOR A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Space</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44086"></span>AC36</td>
 <td class="instruction">LD C,$04</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">4 rows</td>
 </tr>
 <tr>
-<td class="asm-label">LAC32_0</td>
+<td class="asm-label">erase_center_enemies_0</td>
 <td class="address-2"><span id="44088"></span>AC38</td>
 <td class="instruction">LD B,$04</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">4 columns</td>
 </tr>
 <tr>
-<td class="asm-label">LAC32_1</td>
+<td class="asm-label">erase_center_enemies_1</td>
 <td class="address-2"><span id="44090"></span>AC3A</td>
 <td class="instruction">RST $10</td>
 <td class="comment-1" rowspan="1">Write VDP byte</td>
@@ -69,43 +69,43 @@ Used by the routine at <a href="44031.html">LABFF</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44091"></span>AC3B</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Next VDP address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44092"></span>AC3C</td>
-<td class="instruction">DJNZ <a href="44082.html#44090">LAC32_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">DJNZ <a href="44082.html#44090">erase_center_enemies_1</a></td>
+<td class="comment-1" rowspan="1">Loop for 4 columns</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44094"></span>AC3E</td>
 <td class="instruction">LD HL,$001C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">One row down</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44097"></span>AC41</td>
 <td class="instruction">ADD HL,DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44098"></span>AC42</td>
 <td class="instruction">EX DE,HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44099"></span>AC43</td>
 <td class="instruction">DEC C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Row counter</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44100"></span>AC44</td>
-<td class="instruction">JR NZ,<a href="44082.html#44088">LAC32_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="44082.html#44088">erase_center_enemies_0</a></td>
+<td class="comment-1" rowspan="1">Lopp for 4 rows</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

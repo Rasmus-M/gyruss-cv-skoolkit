@@ -38,7 +38,7 @@ Used by the routine at <a href="33000.html">main_loop</a>.
 <tr>
 <td class="asm-label">died</td>
 <td class="address-2"><span id="33081"></span>8139</td>
-<td class="instruction">CALL <a href="39815.html">set_variables_after_stage</a></td>
+<td class="instruction">CALL <a href="39815.html">stop_tune</a></td>
 <td class="comment-1" rowspan="1">Set variables</td>
 </tr>
 <tr>
@@ -74,7 +74,7 @@ Used by the routine at <a href="33000.html">main_loop</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33097"></span>8149</td>
-<td class="instruction">CALL <a href="35558.html">L8AE6</a></td>
+<td class="instruction">CALL <a href="35558.html">update_enemy_sprite_types</a></td>
 <td class="comment-1" rowspan="1">Update sprite types $0F - $11</td>
 </tr>
 <tr>
@@ -86,8 +86,8 @@ Used by the routine at <a href="33000.html">main_loop</a>.
 <tr>
 <td class="asm-label">died_0</td>
 <td class="address-2"><span id="33103"></span>814F</td>
-<td class="instruction">LD A,(<a href="29228.html">byte_at_722C</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD A,(<a href="29228.html">active_enemies</a>)</td>
+<td class="comment-1" rowspan="1">Get active enemies</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -104,8 +104,8 @@ Used by the routine at <a href="33000.html">main_loop</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33109"></span>8155</td>
-<td class="instruction">LD A,(<a href="29190.html">active_enemies</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD A,(<a href="29190.html">total_enemies</a>)</td>
+<td class="comment-1" rowspan="1">Get total enemies</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -146,7 +146,7 @@ Used by the routine at <a href="33000.html">main_loop</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33125"></span>8165</td>
-<td class="instruction">CALL <a href="36396.html#36397">L8E2C_0</a></td>
+<td class="instruction">CALL <a href="36397.html">L8E2D</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>

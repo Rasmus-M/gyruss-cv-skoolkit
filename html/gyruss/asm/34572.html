@@ -24,19 +24,19 @@ Next: <a href="34622.html">873E</a>
 </td>
 </tr>
 </table>
-<div class="description">870C: Routine at 870C</div>
+<div class="description">870C: Handle sprite type $03</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="34537.html">L86E9</a>.
+Used by the routine at <a href="34537.html">handle_sprite_types_12_13</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L870C</td>
+<td class="asm-label">handle_sprite_type_03</td>
 <td class="address-2"><span id="34572"></span>870C</td>
 <td class="instruction">CP $03</td>
 <td class="comment-1" rowspan="1">Is sprite type $03?</td>
@@ -44,7 +44,7 @@ Used by the routine at <a href="34537.html">L86E9</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34574"></span>870E</td>
-<td class="instruction">JR NZ,<a href="34622.html">L873E</a></td>
+<td class="instruction">JR NZ,<a href="34622.html">handle_sprite_types_15_17</a></td>
 <td class="comment-1" rowspan="1">If not, jump ahead</td>
 </tr>
 <tr>
@@ -72,7 +72,7 @@ Sprite type $03 (circle)
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34581"></span>8715</td>
-<td class="instruction">JP NZ,<a href="34388.html">L8654</a></td>
+<td class="instruction">JP NZ,<a href="34388.html">deallocate_enemy</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -162,7 +162,7 @@ Sprite type $03 (circle)
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34619"></span>873B</td>
-<td class="instruction">JP <a href="34388.html">L8654</a></td>
+<td class="instruction">JP <a href="34388.html">deallocate_enemy</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 </table>

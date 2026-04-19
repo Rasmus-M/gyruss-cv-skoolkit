@@ -16,7 +16,7 @@
 <table class="asm-navigation">
 <tr>
 <td class="prev">
-Prev: <a href="34419.html">8673</a>
+Prev: <a href="34394.html">865A</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#34429">Map</a></td>
 <td class="next">
@@ -24,19 +24,19 @@ Next: <a href="34526.html">86DE</a>
 </td>
 </tr>
 </table>
-<div class="description">867D: Routine at 867D</div>
+<div class="description">867D: Handle sprite type $04 - $0C</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="34394.html">handle_sprite</a>.
+Used by the routine at <a href="34394.html">handle_sprite_type_02</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L867D</td>
+<td class="asm-label">handle_sprite_types_04_0C</td>
 <td class="address-2"><span id="34429"></span>867D</td>
 <td class="instruction">CP $04</td>
 <td class="comment-1" rowspan="1">Is sprite type &lt; $04</td>
@@ -44,7 +44,7 @@ Used by the routine at <a href="34394.html">handle_sprite</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34431"></span>867F</td>
-<td class="instruction">JR C,<a href="34526.html">L86DE</a></td>
+<td class="instruction">JR C,<a href="34526.html">handle_sprite_type_14</a></td>
 <td class="comment-1" rowspan="1">Then jump</td>
 </tr>
 <tr>
@@ -56,7 +56,7 @@ Used by the routine at <a href="34394.html">handle_sprite</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34435"></span>8683</td>
-<td class="instruction">JR NC,<a href="34526.html">L86DE</a></td>
+<td class="instruction">JR NC,<a href="34526.html">handle_sprite_type_14</a></td>
 <td class="comment-1" rowspan="1">Then jump</td>
 </tr>
 <tr>
@@ -265,7 +265,7 @@ Sprite types $04 - $0C (dots, dotted circle, numbers)
 <table class="asm-navigation">
 <tr>
 <td class="prev">
-Prev: <a href="34419.html">8673</a>
+Prev: <a href="34394.html">865A</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#34429">Map</a></td>
 <td class="next">

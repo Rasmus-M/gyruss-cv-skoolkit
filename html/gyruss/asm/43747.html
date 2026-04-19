@@ -48,13 +48,13 @@ Used by the routines at <a href="39328.html">L99A0</a>, <a href="43799.html">LAB
 <td class="asm-label">deallocate_map_entry</td>
 <td class="address-2"><span id="43747"></span>AAE3</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save map address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43748"></span>AAE4</td>
 <td class="instruction">LD (HL),$FF</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set entry to $FF</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -84,7 +84,7 @@ Used by the routines at <a href="39328.html">L99A0</a>, <a href="43799.html">LAB
 <td class="asm-label"></td>
 <td class="address-1"><span id="43759"></span>AAEF</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore map address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
