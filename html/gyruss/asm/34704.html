@@ -39,145 +39,155 @@ Used by the routine at <a href="34622.html">L873E</a>.
 <td class="asm-label">L8790</td>
 <td class="address-2"><span id="34704"></span>8790</td>
 <td class="instruction">CP $0E</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Is sprite type &lt; $0E</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34706"></span>8792</td>
 <td class="instruction">JP C,<a href="35230.html">L899E</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If so, jump ahead</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34709"></span>8795</td>
 <td class="instruction">CP $12</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Is sprite type &gt;= $12</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34711"></span>8797</td>
 <td class="instruction">JP NC,<a href="35230.html">L899E</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If so, jump ahead</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="34714"></span>
+<div class="comments">
+<div class="paragraph">
+Sprite type $0E - $11 (enemies)
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34714"></span>879A</td>
 <td class="instruction">BIT 7,(IX+$07)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34718"></span>879E</td>
 <td class="instruction">JP NZ,<a href="35070.html">L88FE</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34721"></span>87A1</td>
 <td class="instruction">BIT 7,(IX+$01)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34725"></span>87A5</td>
 <td class="instruction">JP NZ,<a href="34853.html">L8825</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34728"></span>87A8</td>
 <td class="instruction">BIT 6,(IX+$07)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34732"></span>87AC</td>
 <td class="instruction">JR NZ,<a href="34773.html">L87D5</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34734"></span>87AE</td>
 <td class="instruction">BIT 2,(IX+$07)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34738"></span>87B2</td>
 <td class="instruction">JP NZ,<a href="34853.html">L8825</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34741"></span>87B5</td>
 <td class="instruction">BIT 0,(IX+$07)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34745"></span>87B9</td>
 <td class="instruction">JP NZ,<a href="34911.html">L885F</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34748"></span>87BC</td>
-<td class="instruction">LD A,(<a href="29280.html">L7260</a>)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">LD A,(<a href="29280.html">sprite_countdown_2</a>)</td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34751"></span>87BF</td>
 <td class="instruction">OR A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34752"></span>87C0</td>
 <td class="instruction">RET NZ</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34753"></span>87C1</td>
 <td class="instruction">CALL <a href="35446.html">L8A76</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34756"></span>87C4</td>
 <td class="instruction">DEC (IX+$01)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34759"></span>87C7</td>
 <td class="instruction">LD A,($7004)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34762"></span>87CA</td>
 <td class="instruction">CALL <a href="35520.html">L8AC0</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34765"></span>87CD</td>
 <td class="instruction">LD (IX+$00),$10</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34769"></span>87D1</td>
 <td class="instruction">INC (IX+$05)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34772"></span>87D4</td>
 <td class="instruction">RET</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 </table>
 <table class="asm-navigation">

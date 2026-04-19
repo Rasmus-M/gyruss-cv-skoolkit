@@ -38,8 +38,8 @@ Used by the routines at <a href="32804.html">entry</a>, <a href="33081.html">die
 <tr>
 <td class="asm-label">process_sprites</td>
 <td class="address-2"><span id="34278"></span>85E6</td>
-<td class="instruction">LD HL,<a href="29166.html">L71EE</a></td>
-<td class="comment-1" rowspan="1">Decrement counter</td>
+<td class="instruction">LD HL,<a href="29166.html">sprite_countdown</a></td>
+<td class="comment-1" rowspan="1">Decrement counter 1</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -50,8 +50,8 @@ Used by the routines at <a href="32804.html">entry</a>, <a href="33081.html">die
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34282"></span>85EA</td>
-<td class="instruction">LD HL,<a href="29280.html">L7260</a></td>
-<td class="comment-1" rowspan="1">Decrement counter</td>
+<td class="instruction">LD HL,<a href="29280.html">sprite_countdown_2</a></td>
+<td class="comment-1" rowspan="1">Decrement counter 2</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -156,7 +156,7 @@ This entry point is used by the routine at <a href="35393.html">return_from_spri
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34316"></span>860C</td>
-<td class="instruction">JP Z,<a href="35411.html">L8A53</a></td>
+<td class="instruction">JP Z,<a href="35411.html">all_sprites_processed</a></td>
 <td class="comment-1" rowspan="1">Jump when we have reached the last allocation</td>
 </tr>
 <tr>

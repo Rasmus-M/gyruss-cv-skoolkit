@@ -38,7 +38,7 @@ Initialize stage and display X WARPS TO Y message. Used by the routines at <a hr
 <tr>
 <td class="asm-label">init_stage</td>
 <td class="address-2"><span id="33298"></span>8212</td>
-<td class="instruction">LD HL,<a href="29230.html">L722E</a></td>
+<td class="instruction">LD HL,<a href="29230.html">buffer_at_722E</a></td>
 <td class="comment-1" rowspan="1">Clear $28 bytes from $722E</td>
 </tr>
 <tr>
@@ -69,13 +69,13 @@ Initialize stage and display X WARPS TO Y message. Used by the routines at <a hr
 <td class="asm-label"></td>
 <td class="address-1"><span id="33311"></span>821F</td>
 <td class="instruction">LD A,$01</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set sprite countdown to 1</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33313"></span>8221</td>
-<td class="instruction">LD (<a href="29166.html">L71EE</a>),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD (<a href="29166.html">sprite_countdown</a>),A</td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -127,7 +127,7 @@ Calculate stage data index
 <td class="asm-label"></td>
 <td class="address-1"><span id="33330"></span>8232</td>
 <td class="instruction">CP $04</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Compare stage to 4</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

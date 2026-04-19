@@ -38,7 +38,7 @@ Used by the routine at <a href="43890.html">display_center_enemies</a>.
 <tr>
 <td class="asm-label">LABFF</td>
 <td class="address-2"><span id="44031"></span>ABFF</td>
-<td class="instruction">LD HL,<a href="29388.html">L72CC</a></td>
+<td class="instruction">LD HL,<a href="29388.html">flag_at_72CC</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -62,7 +62,7 @@ Used by the routine at <a href="43890.html">display_center_enemies</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44039"></span>AC07</td>
-<td class="instruction">LD A,(<a href="29227.html">L722B</a>)</td>
+<td class="instruction">LD A,(<a href="29227.html">map_entries</a>)</td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -86,7 +86,7 @@ Used by the routine at <a href="43890.html">display_center_enemies</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44048"></span>AC10</td>
-<td class="instruction">LD A,(<a href="29391.html">L72CF</a>)</td>
+<td class="instruction">LD A,(<a href="29391.html">center_enemies_name</a>)</td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -189,13 +189,13 @@ Used by the routine at <a href="43890.html">display_center_enemies</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44077"></span>AC2D</td>
 <td class="instruction">XOR A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Reset center enemy to process</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44078"></span>AC2E</td>
-<td class="instruction">LD (<a href="29389.html">L72CD</a>),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD (<a href="29389.html">center_enemy_processed</a>),A</td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

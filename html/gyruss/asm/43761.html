@@ -39,31 +39,31 @@ Used by the routine at <a href="32804.html">entry</a>.
 <td class="asm-label">LAAF1</td>
 <td class="address-2"><span id="43761"></span>AAF1</td>
 <td class="instruction">LD A,(<a href="29163.html">status_flags</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Is half stage flag set?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43764"></span>AAF4</td>
 <td class="instruction">BIT 1,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43766"></span>AAF6</td>
 <td class="instruction">RET Z</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return if not</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43767"></span>AAF7</td>
 <td class="instruction">BIT 2,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Is died flag set?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43769"></span>AAF9</td>
 <td class="instruction">RET NZ</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return if so</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -74,44 +74,44 @@ Used by the routine at <a href="32804.html">entry</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43773"></span>AAFD</td>
-<td class="instruction">LD A,(<a href="29228.html">L722C</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD A,(<a href="29228.html">byte_at_722C</a>)</td>
+<td class="comment-1" rowspan="1">Get number of ?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43776"></span>AB00</td>
 <td class="instruction">CP (IY+$04)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Compare with byte 4 of stage data</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43779"></span>AB03</td>
 <td class="instruction">RET NC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return if &gt;=</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43780"></span>AB04</td>
-<td class="instruction">LD A,(<a href="29227.html">L722B</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD A,(<a href="29227.html">map_entries</a>)</td>
+<td class="comment-1" rowspan="1">Get number of map entires</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43783"></span>AB07</td>
 <td class="instruction">OR A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return is zero</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43784"></span>AB08</td>
 <td class="instruction">RET Z</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43785"></span>AB09</td>
 <td class="instruction">LD HL,$722A</td>
-<td class="comment-1" rowspan="1">End of <a href="29191.html">buffer_at_7207</a></td>
+<td class="comment-1" rowspan="1">End of <a href="29191.html">map_at_7207</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>

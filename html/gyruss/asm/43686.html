@@ -20,11 +20,11 @@ Prev: <a href="43645.html">AA7D</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#43686">Map</a></td>
 <td class="next">
-Next: <a href="43715.html">AAC3</a>
+Next: <a href="43747.html">AAE3</a>
 </td>
 </tr>
 </table>
-<div class="description">AAA6: Routine at AAA6</div>
+<div class="description">AAA6: Allocate map entry</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -33,103 +33,232 @@ Next: <a href="43715.html">AAC3</a>
 Used by the routines at <a href="34773.html">L87D5</a> and <a href="36129.html">L8D21</a>.
 </div>
 </div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register"></td>
+<td class="register-desc">A value to place in <a href="29191.html">map_at_7207</a> at an unused spot</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
-<td class="asm-label">LAAA6</td>
+<td class="asm-label">allocate_map_entry</td>
 <td class="address-2"><span id="43686"></span>AAA6</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43687"></span>AAA7</td>
 <td class="instruction">PUSH DE</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43688"></span>AAA8</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43689"></span>AAA9</td>
 <td class="instruction">PUSH AF</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save value to write</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43690"></span>AAAA</td>
-<td class="instruction">LD A,(<a href="29227.html">L722B</a>)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">LD A,(<a href="29227.html">map_entries</a>)</td>
+<td class="comment-1" rowspan="1">Get number of entries</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43693"></span>AAAD</td>
 <td class="instruction">CP $24</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If map is full</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43695"></span>AAAF</td>
-<td class="instruction">JR Z,<a href="43742.html">LAADE</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="43686.html#43742">allocate_map_entry_5</a></td>
+<td class="comment-1" rowspan="1">Then return</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43697"></span>AAB1</td>
 <td class="instruction">LD A,(<a href="29163.html">status_flags</a>)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If half stage flag is set</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43700"></span>AAB4</td>
 <td class="instruction">BIT 1,A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">The search backwards</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43702"></span>AAB6</td>
-<td class="instruction">JR NZ,<a href="43718.html">LAAC6</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="43686.html#43718">allocate_map_entry_2</a></td>
+<td class="comment-1" rowspan="1">Else search forwards</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43704"></span>AAB8</td>
 <td class="instruction">LD HL,$722A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Start at end of <a href="29191.html">map_at_7207</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43707"></span>AABB</td>
 <td class="instruction">LD A,$FF</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Byte to search for</td>
 </tr>
 <tr>
-<td class="asm-label">LAAA6_0</td>
+<td class="asm-label">allocate_map_entry_0</td>
 <td class="address-2"><span id="43709"></span>AABD</td>
 <td class="instruction">CP (HL)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Check byte</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43710"></span>AABE</td>
-<td class="instruction">JR NZ,<a href="43715.html">LAAC3</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="43686.html#43715">allocate_map_entry_1</a></td>
+<td class="comment-1" rowspan="1">Break out if not $FF</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43712"></span>AAC0</td>
 <td class="instruction">DEC HL</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Previous address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43713"></span>AAC1</td>
-<td class="instruction">JR <a href="43686.html#43709">LAAA6_0</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JR <a href="43686.html#43709">allocate_map_entry_0</a></td>
+<td class="comment-1" rowspan="1">Loop forever</td>
+</tr>
+<tr>
+<td class="asm-label">allocate_map_entry_1</td>
+<td class="address-2"><span id="43715"></span>AAC3</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">HL now points to group of $FF at the end of buffer</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43716"></span>AAC4</td>
+<td class="instruction">JR <a href="43686.html#43729">allocate_map_entry_4</a></td>
+<td class="comment-1" rowspan="1">Skip next loop</td>
+</tr>
+<tr>
+<td class="asm-label">allocate_map_entry_2</td>
+<td class="address-2"><span id="43718"></span>AAC6</td>
+<td class="instruction">LD HL,<a href="29191.html">map_at_7207</a></td>
+<td class="comment-1" rowspan="1">Start at beginning of <a href="29191.html">map_at_7207</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43721"></span>AAC9</td>
+<td class="instruction">LD A,$FF</td>
+<td class="comment-1" rowspan="1">Byte to search for</td>
+</tr>
+<tr>
+<td class="asm-label">allocate_map_entry_3</td>
+<td class="address-2"><span id="43723"></span>AACB</td>
+<td class="instruction">CP (HL)</td>
+<td class="comment-1" rowspan="1">Check byte</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43724"></span>AACC</td>
+<td class="instruction">JR Z,<a href="43686.html#43729">allocate_map_entry_4</a></td>
+<td class="comment-1" rowspan="1">Break out if found HL now points to first $FF in buffer</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43726"></span>AACE</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Next address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43727"></span>AACF</td>
+<td class="instruction">JR <a href="43686.html#43723">allocate_map_entry_3</a></td>
+<td class="comment-1" rowspan="1">Loop forever</td>
+</tr>
+<tr>
+<td class="asm-label">allocate_map_entry_4</td>
+<td class="address-2"><span id="43729"></span>AAD1</td>
+<td class="instruction">POP AF</td>
+<td class="comment-1" rowspan="1">Restore value to write</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43730"></span>AAD2</td>
+<td class="instruction">LD (HL),A</td>
+<td class="comment-1" rowspan="1">Set byte to A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43731"></span>AAD3</td>
+<td class="instruction">LD HL,<a href="29227.html">map_entries</a></td>
+<td class="comment-1" rowspan="1">Increment number of entries</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43734"></span>AAD6</td>
+<td class="instruction">INC (HL)</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43735"></span>AAD7</td>
+<td class="instruction">LD HL,<a href="29388.html">flag_at_72CC</a></td>
+<td class="comment-1" rowspan="1">Set flag</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43738"></span>AADA</td>
+<td class="instruction">SET 0,(HL)</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43740"></span>AADC</td>
+<td class="instruction">JR <a href="43686.html#43743">allocate_map_entry_6</a></td>
+<td class="comment-1" rowspan="1">Skip popping AF</td>
+</tr>
+<tr>
+<td class="asm-label">allocate_map_entry_5</td>
+<td class="address-2"><span id="43742"></span>AADE</td>
+<td class="instruction">POP AF</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label">allocate_map_entry_6</td>
+<td class="address-2"><span id="43743"></span>AADF</td>
+<td class="instruction">POP BC</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43744"></span>AAE0</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43745"></span>AAE1</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43746"></span>AAE2</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 </table>
 <table class="asm-navigation">
@@ -139,7 +268,7 @@ Prev: <a href="43645.html">AA7D</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#43686">Map</a></td>
 <td class="next">
-Next: <a href="43715.html">AAC3</a>
+Next: <a href="43747.html">AAE3</a>
 </td>
 </tr>
 </table>

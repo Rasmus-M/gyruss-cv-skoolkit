@@ -6,8 +6,8 @@ w $7000 Center of projection
 @ $7000 label=center_of_projection
 W $7000,2,2
 b $7002 Sprite data (32 sprites)
-D $7002 #TABLE(default, default) { =h Byte offset | =h Purpose } { $00 | Sprite type, or $FF if not allocated } { $01 | Polar y (depth, 0 is closest (normal ship position), 116 is furthest away) } { $02 | Polar x (angle, 0 at bottom center, moving clockwise to 16 at the left side, 32 at the top, and 48 at the right side) } { $03 | Close to polar y ($01) } { $04 | Polar x + 2 of pattern loaded in #R$AD8B } { $05 | Close to polar x ($02) } { $06 | Unknown } { $07 | Unknown } { $08 | Screen y } { $09 | Screen x } { $0A | Pattern } { $0B | Color } TABLE#
-D $7002 #TABLE(default, default) { =h Sprite type | =h Pattern example | =h Description } { $00 | #UDG$B9E6 | Ship body } { $01 | #UDG$BA66 | Ship exhaust } { $02 | #UDG$BAE6 | Shot } { $03 | #UDG$BB06 | Circle } { $04 | #UDG$BB0E | Dots } { $05 | #UDG$BB2E | Dotted circle } { $06 | #UDG$BB4E | Number 5 } { $07 | #UDG$BB56 | Number 10 } { $08 | #UDG$BB5E | Number 15 } { $09 | #UDG$BB66 | Number 20 } { $0A | #UDG$BB6E | Number 25 } { $0B | #UDG$BB76 | Number 30 } { $0C | #UDG$BB7E | Number 00 } { $0D | #UDG$BDE6 | Explosion dot } { $0E | #UDG$BB86 | Enemy } { $0F | #UDG$BC06 | Enemy } { $10 | #UDG$BC86 | Enemy } { $11 | #UDG$BD06 | Enemy } { $12 | #UDG$BD86 | Diagonal dots } { $13 | #UDG$BDA6 | Laser fence } { $14 | #UDG$BDC6 | Meteor } { $15 | #UDG$BDEE | Bomb facing left } { $16 | #UDG$BE4E | Bomb facing right } { $17 | #UDG$BEAE | Parallel lines, maybe enemy? } { $18 | #UDG$BF0E | Star shape } { $19 | #UDG$BF2E | Three spheres } { $1A | #UDG$BF4E | Dotted circle 1 } { $1B | #UDG$BF6E | Dotted circle 2 } { $1C | #UDG$BF8E | Dotted circle 3 } TABLE#
+D $7002 #TABLE(default, default) { =h Byte offset | =h Purpose } { $00 | Sprite type, or $FF if not allocated } { $01 | Polar y (depth, 0 is closest (normal ship position), 116 is furthest away) } { $02 | Polar x (angle, 0 at bottom center, moving clockwise to 16 at the left side, 32 at the top, and 48 at the right side) } { $03 | Close to polar y ($01) } { $04 | Polar x + 2 of pattern loaded in #R$AD8B } { $05 | Close to polar x ($02) } { $06 | Unknown } { $07 | Unknown flags } { $08 | Screen y } { $09 | Screen x } { $0A | Pattern } { $0B | Color } TABLE#
+D $7002 #TABLE(default, default) { =h Sprite type | =h Pattern example | =h Description } { $00 | #UDG$B9E6 | Ship body } { $01 | #UDG$BA66 | Ship exhaust } { $02 | #UDG$BAE6 | Shot } { $03 | #UDG$BB06 | Circle or O } { $04 | #UDG$BB0E | Dots } { $05 | #UDG$BB2E | Dotted circle } { $06 | #UDG$BB4E | Number 5 } { $07 | #UDG$BB56 | Number 10 } { $08 | #UDG$BB5E | Number 15 } { $09 | #UDG$BB66 | Number 20 } { $0A | #UDG$BB6E | Number 25 } { $0B | #UDG$BB76 | Number 30 } { $0C | #UDG$BB7E | Number 00 } { $0D | #UDG$BDE6 | Explosion dot } { $0E | #UDG$BB86 | Enemy } { $0F | #UDG$BC06 | Enemy } { $10 | #UDG$BC86 | Enemy } { $11 | #UDG$BD06 | Enemy } { $12 | #UDG$BD86 | Diagonal dots } { $13 | #UDG$BDA6 | Laser fence } { $14 | #UDG$BDC6 | Meteor } { $15 | #UDG$BDEE | Bomb facing left } { $16 | #UDG$BE4E | Bomb facing right } { $17 | #UDG$BEAE | Parallel lines, maybe enemy? } { $18 | #UDG$BF0E | Star shape } { $19 | #UDG$BF2E | Three spheres } { $1A | #UDG$BF4E | Dotted circle 1 } { $1B | #UDG$BF6E | Dotted circle 2 } { $1C | #UDG$BF8E | Dotted circle 3 } TABLE#
 @ $7002 label=sprite_data
 B $7002,384,12
 b $7182 Number of allocated sprites
@@ -19,23 +19,27 @@ D $7183 Contains #R$7182 indexes into #R$7002
 B $7183,32,8
 b $71A3 Temporary storage (72 bytes)
 @ $71A3 label=buffer
-B $71A3,31,8*3,7
-b $71C2 Data block at 71C2
-B $71C2,41,8*5,1
+B $71A3,72,8
 b $71EB Status flags
-D $71EB #TABLE(default, default) { =h Bit | =h Purpose } { $00 | Set during warp } { $01 | Set when the mines appear } { $02 | You died } { $03 | Set during chance stage } { $04 | Set during stage init } { $05 | Set for two-player game when one is game over } { $06 | Set during main loop } { $07 | Two-player game } TABLE#
+D $71EB #TABLE(default, default) { =h Bit | =h Purpose } { $00 | Set during warp } { $01 | Half stage (set when the mines appear) } { $02 | You died } { $03 | Set during chance stage } { $04 | Set during stage init } { $05 | Set for two-player game when one is game over } { $06 | Set during main loop } { $07 | Two-player game } TABLE#
 @ $71EB label=status_flags
 B $71EB,1,1
 b $71EC Stars move countdown
 @ $71EC label=stars_countdown
 B $71EC,1,1
-b $71ED Byte at 71ED
+b $71ED Unused byte at 71ED
 B $71ED,1,1
-b $71EE Byte at 71EE
+b $71EE Sprite countdown
+D $71EE Decremented when #R$85E6 is called, and it reset to first byte of level data by #R$8A53. 4 sprite handler actions are only executed when counter is zero.
+@ $71EE label=sprite_countdown
 B $71EE,1,1
-b $71EF Byte at 71EF
+b $71EF Countdown at 71EF
+D $71EF Reset to 2nd byte of stage data
+@ $71EF countdown_at_71EF
 B $71EF,1,1
-b $71F0 Byte at 71F0
+b $71F0 Countdown at 71F0
+D $71F0 Reset to 6th byte of stage data
+@ $71F0 countdown_at_71F0
 B $71F0,1,1
 b $71F1 Current player (0 or 1)
 @ $71F1 label=current_player
@@ -49,7 +53,8 @@ B $71F3,3,3
 b $71F6 Score for getting extra life player 1
 @ $71F6 label=score_extra_life_1
 B $71F6,2,2
-b $71F8 Byte at 71F8 (initially set to 6)
+b $71F8 Score for getting extra life player 1 MSB
+@ $71F8 label=score_extra_life_1_MSB
 B $71F8,1,1
 b $71F9 Score player 2
 @ $71F9 label=score_player_2
@@ -57,7 +62,8 @@ B $71F9,3,3
 b $71FC Score for getting extra life player 2
 @ $71FC label=score_extra_life_2
 B $71FC,2,2
-b $71FE Byte at 71FE (initially set to 6)
+b $71FE Score for getting extra life player 2 (MSB)
+@ $71FE label=score_extra_life_2_MSB
 B $71FE,1,1
 b $71FF Lives
 @ $71FF label=lives
@@ -84,16 +90,21 @@ B $7205,1,1
 b $7206 Number of active enemies
 @ $7206 label=active_enemies
 B $7206,1,1
-b $7207 Data block at 7207
-@ $7207 label=buffer_at_7207
-B $7207,36,8*4,4
-b $722B Byte at 722B
+b $7207 Map at 7207
+D $7207 Initialized to $FF meaning unused
+@ $7207 label=map_at_7207
+B $7207,36,6
+b $722B Number of map entries
+D $722B Number of map entries in #R$7207
+@ $722B label=map_entries
 B $722B,1,1
-b $722C Byte at 722C
+b $722C Number of something
+@ $722C label=byte_at_722C
 B $722C,1,1
 b $722D Byte at 722D
 B $722D,1,1
-b $722E Data block at 722E
+b $722E Buffer at 722E
+@ $722E label=buffer_at_722E
 B $722E,36,8*4,4
 b $7252 Active enemy shots, set to $FF during explosion
 @ $7252 label=active_enemy_shots
@@ -127,7 +138,9 @@ w $725D Word at 725D
 W $725D,2,2
 b $725F Byte at 725F
 B $725F,1,1
-b $7260 Byte at 7260
+b $7260 Sprite countdown 2
+D $7260 Decremented when #R$85E6 is called, and it reset to first byte of level data (x2) by #R$8A53. One action at #R$87C1 is only executed when counter is zero.
+@ $7260 label=sprite_countdown_2
 B $7260,1,1
 b $7261 Byte at 7261
 B $7261,1,1
@@ -183,15 +196,20 @@ b $7291 Sound channel 3
 B $7291,10,10
 b $729B Sound channel 4
 B $729B,10,10
-b $72A5 Data block at 72A5
+b $72A5 Buffer at 72A5
+D $72A5 Used by sound routines.
+@ $72A5 label=sound_buffer
 B $72A5,25,8*3,1
 w $72BE Word at 72BE
+D $72BE Used by sound routines.
 W $72BE,2,2
 w $72C0 Word at 72C0
+D $72C0 Used by sound routines.
 W $72C0,2,2
-b $72C2 Byte at 72C2
+b $72C2 Byte at 72C2 (unused?)
 B $72C2,1,1
 w $72C3 Word at 72C3
+D $72C3 Used by sound routines.
 W $72C3,2,2
 w $72C5 Temporary center of projection
 D $72C5 Will be copied to #R$7000
@@ -202,23 +220,35 @@ B $72C7,1,1
 b $72C8 Temp points to add
 @ $72C8 label=points_to_add
 B $72C8,3,3
-b $72CB Byte at 72CB
+b $72CB Update counters countdown
+D $72CB Counter from $0F to $00. Other counters are updated when 0.
+@ $72CB update_counters_countdown
 B $72CB,1,1
-b $72CC Data block at 72CC
+b $72CC Flag at 72CC
+@ $72CC label=flag_at_72CC
 B $72CC,1,1
-b $72CD Data block at 72CD
+b $72CD Counter for drawing center enemies
+D $72CD Counts from $00 up to $24. Updated each frame.
+@ $72CD label=center_enemy_processed
 B $72CD,1,1
-b $72CE Data block at 72CE
+b $72CE Byte at 72CE
 B $72CE,1,1
-b $72CF Data block at 72CF
+b $72CF First name used for center enemies
+@ $72CF label=center_enemies_name
 B $72CF,1,1
-w $72D0 Data block at 72D0
+w $72D0 Pattern table address of center enemies
+@ $72D0 label=center_enemies_pattern
 W $72D0,2,2
-b $72D2 Data block at 72D2
+b $72D2 Y counter direction
+@ $72D2 label=y_counter_direction
 B $72D2,1,1
-b $72D3 Data block at 72D3
+b $72D3 Y counter
+D $72D3 Goes -1, 0, 1, 0, -1, 0, 1, 0, ...
+@ $72D3 label=y_counter
 B $72D3,1,1
-b $72D4 Data block at 72D4
+b $72D4 X counter
+D $72D4 Counter $00 - $3F
+@ $72D4 label=x_counter
 B $72D4,1,1
 b $72D5 Sprite type processed
 D $72D5 Sprite type processed by #R$AE94
@@ -420,7 +450,6 @@ C $8144,2 ...
 C $8146,3 READ_REGISTER
 C $8149,3 Update sprite types $0F - $11
 C $814C,3 Explosion
-@ $814F label=label_at_814F
 C $815F,3 Display stars
 C $8162,3 Process sprites
 C $8168,3 Display center enemies
@@ -500,6 +529,8 @@ C $8215,3 ...
 C $8218,3 ...
 C $821B,2 ...
 C $821D,2 ...
+C $821F,2 Set sprite countdown to 1
+C $8221,3 ...
 C $8224,3 Clear died flag
 C $8227,2 ...
 N $8229 Calculate stage data index
@@ -507,6 +538,7 @@ C $8229,3 Get completed stages
 C $822C,1 Test if zero
 C $822D,2 If not, skip ahead to set max value
 C $822F,3 Stage
+C $8232,2 Compare stage to 4
 C $8234,2 Jump if stage >= 4, to set value = stage / 4 + 1
 C $8236,1 B = stage 1-3
 C $8237,1 A = 0
@@ -628,7 +660,7 @@ C $830B,2 Set main loop flag
 c $830E Display player message
 D $830E Used by the routines at #R$8170 and #R$82BF.
 @ $830E label=display_player
-C $830E,3 Status
+C $830E,3 Status flags
 C $8311,2 Check bit for 2 players
 C $8313,1 Return if not set
 C $8314,3 PLAYER 1 message
@@ -646,7 +678,8 @@ D $832A Used by the routine at #R$80E8.
 @ $832A label=stage_completed
 C $832A,2 Set counter for later
 C $832C,3 ...
-C $8332,2 Clear main loop flag
+C $832F,3 Clear main loop flag
+C $8332,2 ...
 C $8334,3 READ_REGISTER
 C $8337,2 If bit 3 is set
 C $8339,3 Then it was a chance stage
@@ -888,7 +921,7 @@ t $853C STAGE message
 @ $853C label=stage_msg
 T $853C,5,5
 b $8541 Stage data (8 bytes per stage)
-D $8541 #TABLE(default, default) { =h Byte offset | =h Purpose } { $00 | Unknown } { $01 | Unknown } { $02 | Unknown } { $03 | Unknown } { $04 | Unknown } { $05 | Unknown } { $06 | Unknown } { $07 | Unknown } TABLE#
+D $8541 #TABLE(default, default) { =h Byte offset | =h Purpose } { $00 | Speed? } { $01 | Unknown } { $02 | Unknown } { $03 | Unknown } { $04 | Unknown } { $05 | Unknown } { $06 | Unknown } { $07 | Unknown } TABLE#
 @ $8541 label=stage_data
 B $8541,64,8
 t $8581 PLAYER message
@@ -924,9 +957,9 @@ T $85DD,9,4:n1:4
 c $85E6 Process sprites
 D $85E6 Used by the routines at #R$8024, #R$8139, #R$832A, #R$832A, #R$846B and #R$A3E1.
 @ $85E6 label=process_sprites
-C $85E6,3 Decrement counter
+C $85E6,3 Decrement counter 1
 C $85E9,1 ...
-C $85EA,3 Decrement counter
+C $85EA,3 Decrement counter 2
 C $85ED,1 ...
 C $85EE,3 Decrement counter stopping at 0
 C $85F1,1 ...
@@ -1006,11 +1039,11 @@ c $8673 Routine at 8673
 D $8673 Used by the routine at #R$865A.
 c $867D Routine at 867D
 D $867D Used by the routine at #R$865A.
-C $867D,2 Is sprite type < 4 (ship1, ship2, shot)
+C $867D,2 Is sprite type < $04
 C $867F,2 Then jump
 C $8681,2 Is it >= $0D
 C $8683,2 Then jump
-N $8685 Sprite types $04 - $0C (TODO)
+N $8685 Sprite types $04 - $0C (dots, dotted circle, numbers)
 C $869A,3 Set type
 C $86A5,4 Set color
 C $86AD,1 Load sprite pattern
@@ -1028,36 +1061,64 @@ c $86DE Routine at 86DE
 D $86DE Used by the routine at #R$867D.
 C $86DE,2 Is sprite type $014
 C $86E0,2 If not, jump ahead
-N $86E2 Sprite type $14 (TODO)
+N $86E2 Sprite type $14 (meteor)
 C $86E5,3 Decrement polar y
 C $86E8,1 Return to #R$8A41
 c $86E9 Routine at 86E9
 D $86E9 Used by the routine at #R$86DE.
 C $86E9,2 Is sprite type < $012
-C $86EB,2 If so, move ahead
+C $86EB,2 If so, jump ahead
 C $86ED,2 Is sprite type >= $014
-C $86EF,2 If so, move ahead
-N $86F1 Sprite types $12 - $13 (TODO)
+C $86EF,2 If so, jump ahead
+N $86F1 Sprite types $12 - $13 (laser fence)
 C $86F1,3 Frame counter
 c $870C Routine at 870C
 D $870C Used by the routine at #R$86E9.
 C $870C,2 Is sprite type $03?
 C $870E,2 If not, jump ahead
-N $8710 Sprite type $03 (TODO)
+N $8710 Sprite type $03 (circle)
 c $873E Routine at 873E
 D $873E Used by the routine at #R$870C.
+C $873E,2 Is sprite type < $15
+C $8740,2 If so, jump ahead
+C $8742,2 Is sprite type >= $18
+C $8744,2 If so, jump ahead
+N $8746 sprite types $15 - $17 (bombs, parallel lines)
 c $8790 Routine at 8790
 D $8790 Used by the routine at #R$873E.
+C $8790,2 Is sprite type < $0E
+C $8792,3 If so, jump ahead
+C $8795,2 Is sprite type >= $12
+C $8797,3 If so, jump ahead
+N $879A Sprite type $0E - $11 (enemies)
 c $87D5 Routine at 87D5
 D $87D5 Used by the routine at #R$8790.
+C $87D5,3 Return if countdown
+C $87D8,1 is not zero
+C $87D9,1 ...
 C $87DD,3 Get pattern
+C $87E0,2 Set bit 7
+C $87E2,2 Length of map
+C $87E4,3 Address of map
+C $87E7,1 Check entry
+C $87E8,2 Break out if found
+C $87EA,1 Next map address
+C $87EB,2 Loop up to 36 times
 C $87ED,3 Get pattern
-c $87F5 Routine at 87F5
-D $87F5 Used by the routine at #R$87D5.
-c $8801 Routine at 8801
-D $8801 Used by the routine at #R$87F5.
-c $8811 Routine at 8811
-D $8811 Used by the routine at #R$8801.
+C $87F0,2 Set bit 7
+C $87F2,3 Add pattern to map. Return to #R$8A41
+C $87F5,3 Now DE contains polar y,x
+C $87F8,1 Get x
+C $87F9,3 Compare with polar x
+C $87FC,2 If same, skip ahead
+C $87FE,3 Else jump out to #R$8AC0
+C $8801,4 Change sprite type to enemy
+C $8805,3 Get polar y
+C $8808,1 Compare with polar y
+C $8809,2 If same, jump ahead
+C $880B,2 If less than, skip jump to increment polar y
+C $880D,3 Decrement polar y
+C $8811,3 Increment polar y
 c $8815 Routine at 8815
 D $8815 Used by the routine at #R$8801.
 C $8815,3 Get color
@@ -1103,6 +1164,12 @@ c $8999 Routine at 8999
 D $8999 Used by the routine at #R$88FE.
 c $899E Routine at 899E
 D $899E Used by the routine at #R$8790.
+C $899E,2 Is sprite type < $18
+C $89A0,1 Then return
+C $89A1,2 Is sprite type >= $1A
+C $89A3,2 If so, jump ahead
+N $89A5 Sprite types $18 - $19 (three spheres, star shape)
+N $89B8 Other sprite types
 c $8A2D Routine at 8A2D
 D $8A2D Used by the routine at #R$899E.
 c $8A3C Routine at 8A3C
@@ -1118,9 +1185,25 @@ N $8A4E This entry point is used by the routine at #R$867D.
 C $8A4E,1 Restore sprite allocation table address
 C $8A4F,1 Increment address
 C $8A50,3 Jump back into loop at #R$8600
-c $8A53 Routine at 8A53
+c $8A53 When all sprites have been processed
 D $8A53 Used by the routine at #R$85E6.
+@ $8A53 label=all_sprites_processed
 C $8A53,3 Get stage data address in IY
+C $8A56,3 Get sprite countdown
+C $8A59,1 Is it zero
+C $8A5A,2 No, skip ahead
+C $8A5C,3 Reset to first byte of stage data (speed?)
+C $8A5F,3 ...
+C $8A62,3 Get sprite countdown 2
+C $8A65,1 Return is not zero
+C $8A66,1 ...
+C $8A67,3 Get stage data index
+C $8A6A,2 Compare to 2
+C $8A6C,3 Get first byte of stage data (speed?)
+C $8A6F,2 If stage index >= 2, then skip ahead
+C $8A71,1 Else multiply by 2
+C $8A72,3 Save sprite countdown 2
+C $8A75,1 Return from sprite processing
 c $8A76 Routine at 8A76
 D $8A76 Used by the routines at #R$8790, #R$885F and #R$88FE.
 C $8A87,3 Get stage data address in IY
@@ -1579,11 +1662,9 @@ C $92A3,1 Advance 9 patterns, HL = $0448
 C $92A4,1 DE = $1400
 C $92A7,1 DE = $1448
 C $92A9,2 Loop 15 times = 135 patterns
-b $92AC Data block at 92AC
+t $92AC Parker Brothers copyright message
 @ $92AC label=copyright_msg
-B $92AC,1,1
-t $92AD Message at 92AD
-T $92AD,22,22
+T $92AC,23,n1:22
 b $92C3 Colors
 @ $92C3 label=colors
 B $92C3,19,8*2,3
@@ -1674,6 +1755,7 @@ N $986E This entry point is used by the routine at #R$98B5.
 c $98B5 Routine at 98B5
 D $98B5 Used by the routine at #R$9861.
 N $98BB This entry point is used by the routine at #R$9861.
+C $98D5,3 Now DE contains polar y,x
 c $9924 Routine at 9924
 D $9924 Used by the routines at #R$9861 and #R$98B5.
 c $9934 Routine at 9934
@@ -2296,7 +2378,7 @@ b $A87D Ship background patterns
 D $A87D 16 frames of 4 patterns, organised as 16x16 sprite patterns #UDGTABLE(no-border, no-border) { #UDGARRAY32,,4($A87D-$AA75-16)(graphics-A87D.png) } { #UDGARRAY32,,4($A885-$AA7D-16)(graphics-A885.png) } TABLE#
 @ $A87D label=ship_patterns
 B $A87D,512,8
-c $AA7D Routine at AA7D
+c $AA7D Init game variables
 D $AA7D Used by the routine at #R$8024.
 @ $AA7D label=init_game_variables
 C $AA7D,3 Set 36 bytes at #R$7207 to $FF
@@ -2304,22 +2386,62 @@ C $AA80,3 ...
 C $AA83,3 ...
 C $AA86,2 ...
 C $AA88,2 ...
-c $AAA6 Routine at AAA6
+C $AA8A,1 A = 0
+C $AA97,1 A = 1
+c $AAA6 Allocate map entry
 D $AAA6 Used by the routines at #R$87D5 and #R$8D21.
-c $AAC3 Routine at AAC3
-D $AAC3 Used by the routine at #R$AAA6.
-c $AAC6 Routine at AAC6
-D $AAC6 Used by the routine at #R$AAA6.
-c $AAD1 Routine at AAD1
-D $AAD1 Used by the routines at #R$AAC3 and #R$AAC6.
-c $AADE Routine at AADE
-D $AADE Used by the routine at #R$AAA6.
-N $AADF This entry point is used by the routine at #R$AAD1.
-c $AAE3 Routine at AAE3
+R $AAA6 I: A value to place in #R$7207 at an unused spot
+@ $AAA6 label=allocate_map_entry
+C $AAA9,1 Save value to write
+C $AAAA,3 Get number of entries
+C $AAAD,2 If map is full
+C $AAAF,2 Then return
+C $AAB1,3 If half stage flag is set
+C $AAB4,2 The search backwards
+C $AAB6,2 Else search forwards
+C $AAB8,3 Start at end of #R$7207
+C $AABB,2 Byte to search for
+C $AABD,1 Check byte
+C $AABE,2 Break out if not $FF
+C $AAC0,1 Previous address
+C $AAC1,2 Loop forever
+C $AAC3,1 HL now points to group of $FF at the end of buffer
+C $AAC4,2 Skip next loop
+C $AAC6,3 Start at beginning of #R$7207
+C $AAC9,2 Byte to search for
+C $AACB,1 Check byte
+C $AACC,2 Break out if found HL now points to first $FF in buffer
+C $AACE,1 Next address
+C $AACF,2 Loop forever
+C $AAD1,1 Restore value to write
+C $AAD2,1 Set byte to A
+C $AAD3,3 Increment number of entries
+C $AAD6,1 ...
+C $AAD7,3 Set flag
+C $AADA,2 ...
+C $AADC,2 Skip popping AF
+c $AAE3 Deallocate map entry
 D $AAE3 Used by the routines at #R$99A0, #R$AB17 and #R$AB6C.
+R $AAE3 I:HL Address in #R$7207
+@ $AAE3 label=deallocate_map_entry
+C $AAE6,3 Set flag
+C $AAE9,2 ...
+C $AAEB,3 Decrement number of entries
+C $AAEE,1 ...
 c $AAF1 Routine at AAF1
 D $AAF1 Used by the routine at #R$8024.
+C $AAF1,3 Is half stage flag set?
+C $AAF4,2 ...
+C $AAF6,1 Return if not
+C $AAF7,2 Is died flag set?
+C $AAF9,1 Return if so
 C $AAFA,3 Get stage data address in IY
+C $AAFD,3 Get number of ?
+C $AB00,3 Compare with byte 4 of stage data
+C $AB03,1 Return if >=
+C $AB04,3 Get number of map entires
+C $AB07,1 Return is zero
+C $AB08,1 ...
 C $AB09,3 End of #R$7207
 C $AB0C,2 36 bytes
 C $AB0E,2 Value to compare with
@@ -2329,11 +2451,42 @@ C $AB13,1 Previous byte
 C $AB14,2 Loop 36 times
 c $AB17 Routine at AB17
 D $AB17 Used by the routine at #R$AAF1.
+C $AB17,1 Get value from map
+C $AB18,1 Save it
+C $AB19,3 Deallocate map entry
+C $AB1C,3 Now DE contains polar y,x
 C $AB1F,1 Allocate sprite
-C $AB2B,3 Set color
+C $AB20,3 Set polar x
+C $AB23,3 Set polar x
+C $AB26,4 Set sprite type
+C $AB2A,1 Restore value from map
+C $AB2B,3 Use it as color
+C $AB2E,4 Set flag
 C $AB32,1 Load sprite pattern
-c $AB38 Routine at AB38
-D $AB38 Used by the routines at #R$87F5, #R$98B5, #R$AB17 and #R$AB72.
+C $AB33,3 Increment number of ?
+C $AB36,1 ...
+c $AB38 Get sprite coordinates
+D $AB38 Returns sprite coordinates when a center enemy turns into a sprite? Used by the routines at #R$87F5, #R$98B5, #R$AB17 and #R$AB72.
+R $AB38 I:HL Map address
+R $AB38 O:D Polar y
+R $AB38 O:E Polar x
+@ $AB38 label=get_sprite_coordinates
+C $AB38,1 Save map address
+C $AB39,3 Base address of map
+C $AB3C,1 Clear carry
+C $AB3D,2 Map address - map base (offset 0 - 35)
+C $AB3F,1 x2 = offset
+C $AB40,3 Table address
+C $AB43,1 Add offset
+C $AB44,3 Get x counter
+C $AB47,1 Add table value
+C $AB48,2 Mod 64
+C $AB4A,1 Store in E
+C $AB4B,1 Next table address
+C $AB4C,3 Get y counter
+C $AB4F,1 Add table value
+C $AB50,1 Store in D
+C $AB51,1 Restore map address
 c $AB53 Routine at AB53
 D $AB53 Used by the routines at #R$9934 and #R$9A49.
 C $AB5F,3 Get pattern
@@ -2343,17 +2496,138 @@ N $AB6F This entry point is used by the routine at #R$AB53.
 c $AB72 Display tiny enemies at the center of the screen
 D $AB72 Used by the routines at #R$8024, #R$8139, #R$832A, #R$846B, #R$A33B and #R$A3E1.
 @ $AB72 label=display_center_enemies
+C $AB72,3 Countdown for when to update counters
+C $AB75,1 -1
+C $AB76,3 If > 0, then don't update other counters
+C $AB79,2 Reset to 15
+C $AB7B,3 Y counter
+C $AB7E,3 Add direction 1 or -1
+C $AB81,1 ...
+C $AB82,3 Store y counter
+C $AB85,3 If y counter > 0 then skip ahead
+C $AB88,2 Else make positive
+C $AB8A,2 If not 1
+C $AB8C,2 Then skip ahead
+C $AB8E,1 IF 1, get direction
+C $AB8F,2 Reverse direction
+C $AB91,1 Store direction
+C $AB92,3 x counter
+C $AB95,1 +1
+C $AB96,2 Mod 64
+C $AB98,3 Store x counter
+C $AB9B,3 Set flag
+C $AB9E,2 ...
+C $ABA0,3 Get enemy to process
+C $ABA3,2 If 36,
+C $ABA5,3 Then jump ahead
+C $ABA8,1 If 0 then erase all enemies
+C $ABA9,2 Else jump ahead
+C $ABAB,3 Get first name used for center enemies
+C $ABAE,2 Set MSB to 0
+C $ABB0,1 Multiplay by 8
+C $ABB1,1 ...
+C $ABB2,1 ...
+C $ABB3,3 Add pattern table address
+C $ABB6,1 ...
+C $ABB7,3 Save VDP address
+C $ABBA,3 Clear 16 patterns
+C $ABBD,1 ...
 C $ABBE,3 FILL_VRAM
+C $ABC1,3 Get enemy to process
+C $ABC4,1 BC = enemy to process
+C $ABC5,2 ...
+C $ABC7,3 Add map address
+C $ABCA,1 ...
+C $ABCB,2 If unallocated
+C $ABCD,3 Then update counter and return
+C $ABD0,3 Now DE contains polar y,x
+C $ABD3,3 Convert polar to screen
+C $ABD6,1 Save screen coordinates
+C $ABD7,1 Get map value
+C $ABD8,1 Isolate 3 bits
+C $ABD9,1 ...
+C $ABDA,2 ...
+C $ABDC,1 And load into BC
+C $ABDD,2 ...
+C $ABDF,3 Add table base address
+C $ABE2,1 ...
+C $ABE3,3 Plot pixel
+C $ABE6,1 Get x offset
+C $ABE7,1 If zero
+C $ABE8,2 Then skip ahead
+C $ABEA,1 Add to screen x
+C $ABEB,1 ...
+C $ABEC,3 Plot pixel
+C $ABEF,1 Next table address
+C $ABF0,1 Restore screen coordinates
+C $ABF1,1 Get y offset
+C $ABF2,1 If zero
+C $ABF3,2 Then skip ahead
+C $ABF5,1 Add to screen x
+C $ABF6,1 ...
+C $ABF7,3 Plot pixel
+C $ABFA,3 Update counter
+C $ABFD,1 ...
 c $ABFF Routine at ABFF
 D $ABFF Used by the routine at #R$AB72.
 C $AC17,1 Write VDP byte
+C $AC2D,1 Reset center enemy to process
+C $AC2E,3 ...
 c $AC32 Routine at AC32
 D $AC32 Used by the routine at #R$ABFF.
 C $AC3A,1 Write VDP byte
 c $AC47 Routine at AC47
 D $AC47 Used by the routine at #R$AB72.
-b $AC87 Data block at AC87
-B $AC87,88,8
+R $AC47 D: Screen y
+R $AC47 E: Screen x
+R $AC47 I: HL Address in #R$ACCF
+@ $AC47 label=plot_pixel
+C $AC48,1 Screen y
+C $AC49,2 - 80
+C $AC4B,2 / 2
+C $AC4D,2 Y offset (byte offset * 4)
+C $AC4F,1 Store in C
+C $AC50,1 Screen x
+C $AC51,2 - 112
+C $AC53,2 If < 0
+C $AC55,1 Then set to 0
+C $AC56,2 If < 32
+C $AC58,2 Then skip ahead
+C $AC5A,2 ELse set to 15
+C $AC5C,2 / 8
+C $AC5E,2 ...
+C $AC60,2 ...
+C $AC62,1 Add y offset
+C $AC63,1 * 8
+C $AC64,1 ...
+C $AC65,1 ...
+C $AC66,1 Store in C
+C $AC67,1 Screen y
+C $AC68,2 Pixel offset within pattern
+C $AC6A,1 Add to offset
+C $AC6B,1 Store in C
+C $AC6C,2 B = 0
+C $AC6E,3 Get VDP address of centre enemy patterns
+C $AC71,1 VDP address
+C $AC72,1 Screen x
+C $AC73,2 Pixel x offset within pattern
+C $AC75,2 Leftmost pixel
+C $AC77,2 Skip ahead if zero offset
+C $AC79,2 Shift right 0-7 times
+C $AC7B,1 ...
+C $AC7C,2 ...
+C $AC7E,1 DE = VDP address, HL = coordinates
+C $AC7F,3 Read VDP byte
+C $AC82,1 Apply pixel
+C $AC83,1 Write VDP byte
+C $AC84,1 DE = coordinates
+b $AC87 Start coordinates for sprites
+D $AC87 Polar x, polar y
+@ $AC87 label=start_coordinates_table
+B $AC87,72,12
+b $ACCF Table of pixel offsets for drawing center enemies
+@ $ACCF label=pixel_offsets_table
+B $ACCF,16,8
 c $ACDF Init sprite data
 D $ACDF Used by the routines at #R$82BF, #R$90D6 and #R$A33B.
 @ $ACDF label=init_sprite_data

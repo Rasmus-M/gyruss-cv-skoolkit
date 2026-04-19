@@ -39,25 +39,25 @@ Used by the routine at <a href="43761.html">LAAF1</a>.
 <td class="asm-label">LAB17</td>
 <td class="address-2"><span id="43799"></span>AB17</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get value from map</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43800"></span>AB18</td>
 <td class="instruction">PUSH AF</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save it</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43801"></span>AB19</td>
-<td class="instruction">CALL <a href="43747.html">LAAE3</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL <a href="43747.html">deallocate_map_entry</a></td>
+<td class="comment-1" rowspan="1">Deallocate map entry</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43804"></span>AB1C</td>
-<td class="instruction">CALL <a href="43832.html">LAB38</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL <a href="43832.html">get_sprite_coordinates</a></td>
+<td class="comment-1" rowspan="1">Now DE contains polar y,x</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -69,37 +69,37 @@ Used by the routine at <a href="43761.html">LAAF1</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="43808"></span>AB20</td>
 <td class="instruction">LD (IX+$02),E</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set polar x</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43811"></span>AB23</td>
 <td class="instruction">LD (IX+$01),D</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set polar x</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43814"></span>AB26</td>
 <td class="instruction">LD (IX+$00),$10</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set sprite type</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43818"></span>AB2A</td>
 <td class="instruction">POP AF</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore value from map</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43819"></span>AB2B</td>
 <td class="instruction">LD (IX+$0B),A</td>
-<td class="comment-1" rowspan="1">Set color</td>
+<td class="comment-1" rowspan="1">Use it as color</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43822"></span>AB2E</td>
 <td class="instruction">SET 0,(IX+$07)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set flag</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -110,14 +110,14 @@ Used by the routine at <a href="43761.html">LAAF1</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43827"></span>AB33</td>
-<td class="instruction">LD HL,<a href="29228.html">L722C</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD HL,<a href="29228.html">byte_at_722C</a></td>
+<td class="comment-1" rowspan="1">Increment number of ?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43830"></span>AB36</td>
 <td class="instruction">INC (HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

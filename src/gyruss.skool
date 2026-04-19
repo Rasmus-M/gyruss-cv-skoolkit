@@ -20,7 +20,7 @@ w$7000 DEFW $0000
 ; { $04 | Polar x + 2 of pattern loaded in #R$AD8B }
 ; { $05 | Close to polar x ($02) }
 ; { $06 | Unknown }
-; { $07 | Unknown }
+; { $07 | Unknown flags }
 ; { $08 | Screen y }
 ; { $09 | Screen x }
 ; { $0A | Pattern }
@@ -32,7 +32,7 @@ w$7000 DEFW $0000
 ; { $00 | #UDG$B9E6 | Ship body }
 ; { $01 | #UDG$BA66 | Ship exhaust }
 ; { $02 | #UDG$BAE6 | Shot }
-; { $03 | #UDG$BB06 | Circle }
+; { $03 | #UDG$BB06 | Circle or O }
 ; { $04 | #UDG$BB0E | Dots }
 ; { $05 | #UDG$BB2E | Dotted circle }
 ; { $06 | #UDG$BB4E | Number 5 }
@@ -111,22 +111,19 @@ b$7183 DEFB $00,$00,$00,$00,$00,$00,$00,$00
 b$71A3 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $71AB DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $71B3 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $71BB DEFB $00,$00,$00,$00,$00,$00,$00
-
-; Data block at 71C2
-b$71C2 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $71CA DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $71D2 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $71DA DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $71E2 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $71EA DEFB $00
+ $71BB DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $71C3 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $71CB DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $71D3 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $71DB DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $71E3 DEFB $00,$00,$00,$00,$00,$00,$00,$00
 
 ; Status flags
 ;
 ; #TABLE(default, default)
 ; { =h Bit | =h Purpose }
 ; { $00 | Set during warp }
-; { $01 | Set when the mines appear }
+; { $01 | Half stage (set when the mines appear) }
 ; { $02 | You died }
 ; { $03 | Set during chance stage }
 ; { $04 | Set during stage init }
@@ -141,16 +138,26 @@ b$71EB DEFB $00
 @label=stars_countdown
 b$71EC DEFB $00
 
-; Byte at 71ED
+; Unused byte at 71ED
 b$71ED DEFB $00
 
-; Byte at 71EE
+; Sprite countdown
+;
+; Decremented when #R$85E6 is called, and it reset to first byte of level data
+; by #R$8A53. 4 sprite handler actions are only executed when counter is zero.
+@label=sprite_countdown
 b$71EE DEFB $00
 
-; Byte at 71EF
+; Countdown at 71EF
+;
+; Reset to 2nd byte of stage data
+@countdown_at_71EF
 b$71EF DEFB $00
 
-; Byte at 71F0
+; Countdown at 71F0
+;
+; Reset to 6th byte of stage data
+@countdown_at_71F0
 b$71F0 DEFB $00
 
 ; Current player (0 or 1)
@@ -169,7 +176,8 @@ b$71F3 DEFB $00,$00,$00
 @label=score_extra_life_1
 b$71F6 DEFB $00,$00
 
-; Byte at 71F8 (initially set to 6)
+; Score for getting extra life player 1 MSB
+@label=score_extra_life_1_MSB
 b$71F8 DEFB $00
 
 ; Score player 2
@@ -180,7 +188,8 @@ b$71F9 DEFB $00,$00,$00
 @label=score_extra_life_2
 b$71FC DEFB $00,$00
 
-; Byte at 71FE (initially set to 6)
+; Score for getting extra life player 2 (MSB)
+@label=score_extra_life_2_MSB
 b$71FE DEFB $00
 
 ; Lives
@@ -217,24 +226,32 @@ b$7205 DEFB $00
 @label=active_enemies
 b$7206 DEFB $00
 
-; Data block at 7207
-@label=buffer_at_7207
-b$7207 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $720F DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7217 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $721F DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7227 DEFB $00,$00,$00,$00
+; Map at 7207
+;
+; Initialized to $FF meaning unused
+@label=map_at_7207
+b$7207 DEFB $00,$00,$00,$00,$00,$00
+ $720D DEFB $00,$00,$00,$00,$00,$00
+ $7213 DEFB $00,$00,$00,$00,$00,$00
+ $7219 DEFB $00,$00,$00,$00,$00,$00
+ $721F DEFB $00,$00,$00,$00,$00,$00
+ $7225 DEFB $00,$00,$00,$00,$00,$00
 
-; Byte at 722B
+; Number of map entries
+;
+; Number of map entries in #R$7207
+@label=map_entries
 b$722B DEFB $00
 
-; Byte at 722C
+; Number of something
+@label=byte_at_722C
 b$722C DEFB $00
 
 ; Byte at 722D
 b$722D DEFB $00
 
-; Data block at 722E
+; Buffer at 722E
+@label=buffer_at_722E
 b$722E DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $7236 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $723E DEFB $00,$00,$00,$00,$00,$00,$00,$00
@@ -296,7 +313,11 @@ w$725D DEFW $0000
 ; Byte at 725F
 b$725F DEFB $00
 
-; Byte at 7260
+; Sprite countdown 2
+;
+; Decremented when #R$85E6 is called, and it reset to first byte of level data
+; (x2) by #R$8A53. One action at #R$87C1 is only executed when counter is zero.
+@label=sprite_countdown_2
 b$7260 DEFB $00
 
 ; Byte at 7261
@@ -379,22 +400,31 @@ b$7291 DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 ; Sound channel 4
 b$729B DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 
-; Data block at 72A5
+; Buffer at 72A5
+;
+; Used by sound routines.
+@label=sound_buffer
 b$72A5 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $72AD DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $72B5 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $72BD DEFB $00
 
 ; Word at 72BE
+;
+; Used by sound routines.
 w$72BE DEFW $0000
 
 ; Word at 72C0
+;
+; Used by sound routines.
 w$72C0 DEFW $0000
 
-; Byte at 72C2
+; Byte at 72C2 (unused?)
 b$72C2 DEFB $00
 
 ; Word at 72C3
+;
+; Used by sound routines.
 w$72C3 DEFW $0000
 
 ; Temporary center of projection
@@ -410,31 +440,47 @@ b$72C7 DEFB $00
 @label=points_to_add
 b$72C8 DEFB $00,$00,$00
 
-; Byte at 72CB
+; Update counters countdown
+;
+; Counter from $0F to $00. Other counters are updated when 0.
+@update_counters_countdown
 b$72CB DEFB $00
 
-; Data block at 72CC
+; Flag at 72CC
+@label=flag_at_72CC
 b$72CC DEFB $00
 
-; Data block at 72CD
+; Counter for drawing center enemies
+;
+; Counts from $00 up to $24. Updated each frame.
+@label=center_enemy_processed
 b$72CD DEFB $00
 
-; Data block at 72CE
+; Byte at 72CE
 b$72CE DEFB $00
 
-; Data block at 72CF
+; First name used for center enemies
+@label=center_enemies_name
 b$72CF DEFB $00
 
-; Data block at 72D0
+; Pattern table address of center enemies
+@label=center_enemies_pattern
 w$72D0 DEFW $0000
 
-; Data block at 72D2
+; Y counter direction
+@label=y_counter_direction
 b$72D2 DEFB $00
 
-; Data block at 72D3
+; Y counter
+;
+; Goes -1, 0, 1, 0, -1, 0, 1, 0, ...
+@label=y_counter
 b$72D3 DEFB $00
 
-; Data block at 72D4
+; X counter
+;
+; Counter $00 - $3F
+@label=x_counter
 b$72D4 DEFB $00
 
 ; Sprite type processed
@@ -463,7 +509,8 @@ w$72D8 DEFW $0000
 
 ; Graphics pointer address
 ;
-; Pointer to first entry in R#$B8FA for the current sprite type processed by #R$AE94
+; Pointer to first entry in R#$B8FA for the current sprite type processed by
+; #R$AE94
 @label=graphics_pointer_address
 w$72DA DEFW $0000
 
@@ -733,7 +780,6 @@ c$8139 CALL $9B87    ; Set variables
  $8146 CALL $1FDC    ; READ_REGISTER
  $8149 CALL $8AE6    ; Update sprite types $0F - $11
  $814C CALL $A3E1    ; Explosion
-@label=label_at_814F
 *$814F LD A,($722C)  ;
  $8152 OR A          ;
  $8153 JR NZ,$815E   ;
@@ -843,8 +889,8 @@ c$8212 LD HL,$722E   ; Clear $28 bytes from $722E
  $8218 LD BC,$0028   ; ...
  $821B LD (HL),$00   ; ...
  $821D LDIR          ; ...
- $821F LD A,$01      ;
- $8221 LD ($71EE),A  ;
+ $821F LD A,$01      ; Set sprite countdown to 1
+ $8221 LD ($71EE),A  ; ...
  $8224 LD HL,$71EB   ; Clear died flag
  $8227 RES 2,(HL)    ; ...
 ; Calculate stage data index
@@ -852,7 +898,7 @@ c$8212 LD HL,$722E   ; Clear $28 bytes from $722E
  $822C OR A          ; Test if zero
  $822D JR NZ,$823E   ; If not, skip ahead to set max value
  $822F LD A,($7200)  ; Stage
- $8232 CP $04        ;
+ $8232 CP $04        ; Compare stage to 4
  $8234 JR NC,$8240   ; Jump if stage >= 4, to set value = stage / 4 + 1
  $8236 LD B,A        ; B = stage 1-3
  $8237 XOR A         ; A = 0
@@ -979,7 +1025,7 @@ c$8212 LD HL,$722E   ; Clear $28 bytes from $722E
 ;
 ; Used by the routines at #R$8170 and #R$82BF.
 @label=display_player
-c$830E LD A,($71EB)  ; Status
+c$830E LD A,($71EB)  ; Status flags
  $8311 BIT 7,A       ; Check bit for 2 players
  $8313 RET Z         ; Return if not set
  $8314 LD HL,$8581   ; PLAYER 1 message
@@ -1000,8 +1046,8 @@ c$830E LD A,($71EB)  ; Status
 @label=stage_completed
 c$832A LD A,$08        ; Set counter for later
  $832C LD ($7259),A    ; ...
- $832F LD HL,$71EB     ;
- $8332 RES 6,(HL)      ; Clear main loop flag
+ $832F LD HL,$71EB     ; Clear main loop flag
+ $8332 RES 6,(HL)      ; ...
  $8334 CALL $1FDC      ; READ_REGISTER
  $8337 BIT 3,(HL)      ; If bit 3 is set
  $8339 JP NZ,$8429     ; Then it was a chance stage
@@ -1311,7 +1357,7 @@ t$853C DEFM "STAGE"
 ;
 ; #TABLE(default, default)
 ; { =h Byte offset | =h Purpose }
-; { $00 | Unknown }
+; { $00 | Speed? }
 ; { $01 | Unknown }
 ; { $02 | Unknown }
 ; { $03 | Unknown }
@@ -1375,9 +1421,9 @@ t$85DD DEFM "GAME",$00,"OVER"
 ; Used by the routines at #R$8024, #R$8139, #R$832A, #R$832A, #R$846B and
 ; #R$A3E1.
 @label=process_sprites
-c$85E6 LD HL,$71EE     ; Decrement counter
+c$85E6 LD HL,$71EE     ; Decrement counter 1
  $85E9 DEC (HL)        ; ...
- $85EA LD HL,$7260     ; Decrement counter
+ $85EA LD HL,$7260     ; Decrement counter 2
  $85ED DEC (HL)        ; ...
  $85EE LD A,($71EF)    ; Decrement counter stopping at 0
  $85F1 DEC A           ; ...
@@ -1477,11 +1523,11 @@ c$8673 CP $2B        ;
 ; Routine at 867D
 ;
 ; Used by the routine at #R$865A.
-c$867D CP $04          ; Is sprite type < 4 (ship1, ship2, shot)
+c$867D CP $04          ; Is sprite type < $04
  $867F JR C,$86DE      ; Then jump
  $8681 CP $0D          ; Is it >= $0D
  $8683 JR NC,$86DE     ; Then jump
-; Sprite types $04 - $0C (TODO)
+; Sprite types $04 - $0C (dots, dotted circle, numbers)
  $8685 DEC (IX+$03)    ;
  $8688 RET NZ          ;
  $8689 INC (IX+$00)    ;
@@ -1520,7 +1566,7 @@ c$867D CP $04          ; Is sprite type < 4 (ship1, ship2, shot)
 ; Used by the routine at #R$867D.
 c$86DE CP $14        ; Is sprite type $014
  $86E0 JR NZ,$86E9   ; If not, jump ahead
-; Sprite type $14 (TODO)
+; Sprite type $14 (meteor)
  $86E2 INC (IX+$05)  ;
  $86E5 DEC (IX+$01)  ; Decrement polar y
  $86E8 RET           ; Return to #R$8A41
@@ -1529,10 +1575,10 @@ c$86DE CP $14        ; Is sprite type $014
 ;
 ; Used by the routine at #R$86DE.
 c$86E9 CP $12        ; Is sprite type < $012
- $86EB JR C,$870C    ; If so, move ahead
+ $86EB JR C,$870C    ; If so, jump ahead
  $86ED CP $14        ; Is sprite type >= $014
- $86EF JR NC,$870C   ; If so, move ahead
-; Sprite types $12 - $13 (TODO)
+ $86EF JR NC,$870C   ; If so, jump ahead
+; Sprite types $12 - $13 (laser fence)
  $86F1 LD A,($71F2)  ; Frame counter
  $86F4 LD B,A        ;
  $86F5 AND $01       ;
@@ -1552,7 +1598,7 @@ c$86E9 CP $12        ; Is sprite type < $012
 ; Used by the routine at #R$86E9.
 c$870C CP $03         ; Is sprite type $03?
  $870E JR NZ,$873E    ; If not, jump ahead
-; Sprite type $03 (TODO)
+; Sprite type $03 (circle)
  $8710 LD A,($71EB)   ;
  $8713 BIT 2,A        ;
  $8715 JP NZ,$8654    ;
@@ -1575,10 +1621,11 @@ c$870C CP $03         ; Is sprite type $03?
 ; Routine at 873E
 ;
 ; Used by the routine at #R$870C.
-c$873E CP $15         ;
- $8740 JR C,$8790     ;
- $8742 CP $18         ;
- $8744 JR NC,$8790    ;
+c$873E CP $15         ; Is sprite type < $15
+ $8740 JR C,$8790     ; If so, jump ahead
+ $8742 CP $18         ; Is sprite type >= $18
+ $8744 JR NC,$8790    ; If so, jump ahead
+; sprite types $15 - $17 (bombs, parallel lines)
  $8746 LD B,$07       ;
  $8748 LD A,($71EB)   ;
  $874B BIT 2,A        ;
@@ -1616,10 +1663,11 @@ c$873E CP $15         ;
 ; Routine at 8790
 ;
 ; Used by the routine at #R$873E.
-c$8790 CP $0E          ;
- $8792 JP C,$899E      ;
- $8795 CP $12          ;
- $8797 JP NC,$899E     ;
+c$8790 CP $0E          ; Is sprite type < $0E
+ $8792 JP C,$899E      ; If so, jump ahead
+ $8795 CP $12          ; Is sprite type >= $12
+ $8797 JP NC,$899E     ; If so, jump ahead
+; Sprite type $0E - $11 (enemies)
  $879A BIT 7,(IX+$07)  ;
  $879E JP NZ,$88FE     ;
  $87A1 BIT 7,(IX+$01)  ;
@@ -1644,47 +1692,35 @@ c$8790 CP $0E          ;
 ; Routine at 87D5
 ;
 ; Used by the routine at #R$8790.
-c$87D5 LD A,($71EE)  ;
- $87D8 OR A          ;
- $87D9 RET NZ        ;
- $87DA INC (IX+$05)  ;
- $87DD LD A,(IX+$0A) ; Get pattern
- $87E0 OR $80        ;
- $87E2 LD B,$24      ;
- $87E4 LD HL,$7207   ;
-*$87E7 CP (HL)       ;
- $87E8 JR Z,$87F5    ;
- $87EA INC HL        ;
- $87EB DJNZ $87E7    ;
- $87ED LD A,(IX+$0A) ; Get pattern
- $87F0 OR $80        ;
- $87F2 JP $AAA6      ;
-
-; Routine at 87F5
-;
-; Used by the routine at #R$87D5.
-c$87F5 CALL $AB38    ;
- $87F8 LD A,E        ;
- $87F9 CP (IX+$02)   ;
- $87FC JR Z,$8801    ;
- $87FE JP $8AC0      ;
-
-; Routine at 8801
-;
-; Used by the routine at #R$87F5.
-c$8801 LD (IX+$00),$0E ;
- $8805 LD A,(IX+$01)   ;
- $8808 CP D            ;
- $8809 JR Z,$8815      ;
- $880B JR C,$8811      ;
- $880D DEC (IX+$01)    ;
+c$87D5 LD A,($71EE)    ; Return if countdown
+ $87D8 OR A            ; is not zero
+ $87D9 RET NZ          ; ...
+ $87DA INC (IX+$05)    ;
+ $87DD LD A,(IX+$0A)   ; Get pattern
+ $87E0 OR $80          ; Set bit 7
+ $87E2 LD B,$24        ; Length of map
+ $87E4 LD HL,$7207     ; Address of map
+*$87E7 CP (HL)         ; Check entry
+ $87E8 JR Z,$87F5      ; Break out if found
+ $87EA INC HL          ; Next map address
+ $87EB DJNZ $87E7      ; Loop up to 36 times
+ $87ED LD A,(IX+$0A)   ; Get pattern
+ $87F0 OR $80          ; Set bit 7
+ $87F2 JP $AAA6        ; Add pattern to map. Return to #R$8A41
+*$87F5 CALL $AB38      ; Now DE contains polar y,x
+ $87F8 LD A,E          ; Get x
+ $87F9 CP (IX+$02)     ; Compare with polar x
+ $87FC JR Z,$8801      ; If same, skip ahead
+ $87FE JP $8AC0        ; Else jump out to #R$8AC0
+*$8801 LD (IX+$00),$0E ; Change sprite type to enemy
+ $8805 LD A,(IX+$01)   ; Get polar y
+ $8808 CP D            ; Compare with polar y
+ $8809 JR Z,$8815      ; If same, jump ahead
+ $880B JR C,$8811      ; If less than, skip jump to increment polar y
+ $880D DEC (IX+$01)    ; Decrement polar y
  $8810 RET             ;
-
-; Routine at 8811
-;
-; Used by the routine at #R$8801.
-c$8811 INC (IX+$01)  ;
- $8814 RET           ;
+*$8811 INC (IX+$01)    ; Increment polar y
+ $8814 RET             ;
 
 ; Routine at 8815
 ;
@@ -1929,10 +1965,11 @@ c$8999 LD (IX+$07),$40 ;
 ; Routine at 899E
 ;
 ; Used by the routine at #R$8790.
-c$899E CP $18         ;
- $89A0 RET C          ;
- $89A1 CP $1A         ;
- $89A3 JR C,$89B8     ;
+c$899E CP $18         ; Is sprite type < $18
+ $89A0 RET C          ; Then return
+ $89A1 CP $1A         ; Is sprite type >= $1A
+ $89A3 JR C,$89B8     ; If so, jump ahead
+; Sprite types $18 - $19 (three spheres, star shape)
  $89A5 LD B,A         ;
  $89A6 LD A,($71F2)   ;
  $89A9 AND $03        ;
@@ -1943,6 +1980,7 @@ c$899E CP $18         ;
  $89B1 JR C,$89B5     ;
  $89B3 LD A,$1A       ;
 *$89B5 LD (IX+$00),A  ;
+; Other sprite types
 *$89B8 BIT 7,(IX+$07) ;
  $89BC JR Z,$8A2D     ;
  $89BE LD A,($71EE)   ;
@@ -2030,25 +2068,26 @@ c$8A41 LD A,(IX+$00)   ; Get sprite type
  $8A4F INC HL          ; Increment address
  $8A50 JP $8600        ; Jump back into loop at #R$8600
 
-; Routine at 8A53
+; When all sprites have been processed
 ;
 ; Used by the routine at #R$85E6.
+@label=all_sprites_processed
 c$8A53 CALL $84DB    ; Get stage data address in IY
- $8A56 LD A,($71EE)  ;
- $8A59 OR A          ;
- $8A5A JR NZ,$8A62   ;
- $8A5C LD A,(IY+$00) ;
- $8A5F LD ($71EE),A  ;
-*$8A62 LD A,($7260)  ;
- $8A65 OR A          ;
- $8A66 RET NZ        ;
- $8A67 LD A,($7203)  ;
- $8A6A CP $02        ;
- $8A6C LD A,(IY+$00) ;
- $8A6F JR NC,$8A72   ;
- $8A71 ADD A,A       ;
-*$8A72 LD ($7260),A  ;
- $8A75 RET           ;
+ $8A56 LD A,($71EE)  ; Get sprite countdown
+ $8A59 OR A          ; Is it zero
+ $8A5A JR NZ,$8A62   ; No, skip ahead
+ $8A5C LD A,(IY+$00) ; Reset to first byte of stage data (speed?)
+ $8A5F LD ($71EE),A  ; ...
+*$8A62 LD A,($7260)  ; Get sprite countdown 2
+ $8A65 OR A          ; Return is not zero
+ $8A66 RET NZ        ; ...
+ $8A67 LD A,($7203)  ; Get stage data index
+ $8A6A CP $02        ; Compare to 2
+ $8A6C LD A,(IY+$00) ; Get first byte of stage data (speed?)
+ $8A6F JR NC,$8A72   ; If stage index >= 2, then skip ahead
+ $8A71 ADD A,A       ; Else multiply by 2
+*$8A72 LD ($7260),A  ; Save sprite countdown 2
+ $8A75 RET           ; Return from sprite processing
 
 ; Routine at 8A76
 ;
@@ -3168,12 +3207,9 @@ c$9285 LD DE,$1400   ;
  $92A9 DJNZ $928A    ; Loop 15 times = 135 patterns
  $92AB RET           ;
 
-; Data block at 92AC
+; Parker Brothers copyright message
 @label=copyright_msg
-b$92AC DEFB $1D
-
-; Message at 92AD
-t$92AD DEFM " 1984  Parker Brothers"
+t$92AC DEFM $1D," 1984  Parker Brothers"
 
 ; Colors
 @label=colors
@@ -3597,7 +3633,7 @@ c$98B5 CP (IX+$02)   ;
  $98CF LD B,$24      ;
 *$98D1 BIT 7,(HL)    ;
  $98D3 JR NZ,$98EB   ;
- $98D5 CALL $AB38    ;
+ $98D5 CALL $AB38    ; Now DE contains polar y,x
  $98D8 LD A,D        ;
  $98D9 SUB (IX+$01)  ;
  $98DC JR NC,$98E0   ;
@@ -5358,7 +5394,7 @@ b$A87D DEFB $00,$01,$07,$07,$0F,$1F,$3F,$78
  $AA6D DEFB $00,$00,$00,$00,$C0,$F8,$FE,$BE
  $AA75 DEFB $00,$00,$00,$80,$80,$00,$00,$00
 
-; Routine at AA7D
+; Init game variables
 ;
 ; Used by the routine at #R$8024.
 @label=init_game_variables
@@ -5367,12 +5403,12 @@ c$AA7D LD HL,$7207   ; Set 36 bytes at #R$7207 to $FF
  $AA83 LD BC,$0023   ; ...
  $AA86 LD (HL),$FF   ; ...
  $AA88 LDIR          ; ...
- $AA8A XOR A         ;
+ $AA8A XOR A         ; A = 0
  $AA8B LD ($722B),A  ;
  $AA8E LD ($72CD),A  ;
  $AA91 LD ($72D3),A  ;
  $AA94 LD ($72D4),A  ;
- $AA97 INC A         ;
+ $AA97 INC A         ; A = 1
  $AA98 LD ($72D2),A  ;
  $AA9B LD A,$E0      ;
  $AA9D LD ($72CE),A  ;
@@ -5380,90 +5416,79 @@ c$AA7D LD HL,$7207   ; Set 36 bytes at #R$7207 to $FF
  $AAA2 LD ($72CF),A  ;
  $AAA5 RET           ;
 
-; Routine at AAA6
+; Allocate map entry
 ;
 ; Used by the routines at #R$87D5 and #R$8D21.
+;
+; I: A value to place in #R$7207 at an unused spot
+@label=allocate_map_entry
 c$AAA6 PUSH HL       ;
  $AAA7 PUSH DE       ;
  $AAA8 PUSH BC       ;
- $AAA9 PUSH AF       ;
- $AAAA LD A,($722B)  ;
- $AAAD CP $24        ;
- $AAAF JR Z,$AADE    ;
- $AAB1 LD A,($71EB)  ;
- $AAB4 BIT 1,A       ;
- $AAB6 JR NZ,$AAC6   ;
- $AAB8 LD HL,$722A   ;
- $AABB LD A,$FF      ;
-*$AABD CP (HL)       ;
- $AABE JR NZ,$AAC3   ;
- $AAC0 DEC HL        ;
- $AAC1 JR $AABD      ;
-
-; Routine at AAC3
-;
-; Used by the routine at #R$AAA6.
-c$AAC3 INC HL        ;
- $AAC4 JR $AAD1      ;
-
-; Routine at AAC6
-;
-; Used by the routine at #R$AAA6.
-c$AAC6 LD HL,$7207   ;
- $AAC9 LD A,$FF      ;
-*$AACB CP (HL)       ;
- $AACC JR Z,$AAD1    ;
- $AACE INC HL        ;
- $AACF JR $AACB      ;
-
-; Routine at AAD1
-;
-; Used by the routines at #R$AAC3 and #R$AAC6.
-c$AAD1 POP AF        ;
- $AAD2 LD (HL),A     ;
- $AAD3 LD HL,$722B   ;
- $AAD6 INC (HL)      ;
- $AAD7 LD HL,$72CC   ;
- $AADA SET 0,(HL)    ;
- $AADC JR $AADF      ;
-
-; Routine at AADE
-;
-; Used by the routine at #R$AAA6.
-c$AADE POP AF        ;
-; This entry point is used by the routine at #R$AAD1.
+ $AAA9 PUSH AF       ; Save value to write
+ $AAAA LD A,($722B)  ; Get number of entries
+ $AAAD CP $24        ; If map is full
+ $AAAF JR Z,$AADE    ; Then return
+ $AAB1 LD A,($71EB)  ; If half stage flag is set
+ $AAB4 BIT 1,A       ; The search backwards
+ $AAB6 JR NZ,$AAC6   ; Else search forwards
+ $AAB8 LD HL,$722A   ; Start at end of #R$7207
+ $AABB LD A,$FF      ; Byte to search for
+*$AABD CP (HL)       ; Check byte
+ $AABE JR NZ,$AAC3   ; Break out if not $FF
+ $AAC0 DEC HL        ; Previous address
+ $AAC1 JR $AABD      ; Loop forever
+*$AAC3 INC HL        ; HL now points to group of $FF at the end of buffer
+ $AAC4 JR $AAD1      ; Skip next loop
+*$AAC6 LD HL,$7207   ; Start at beginning of #R$7207
+ $AAC9 LD A,$FF      ; Byte to search for
+*$AACB CP (HL)       ; Check byte
+ $AACC JR Z,$AAD1    ; Break out if found HL now points to first $FF in buffer
+ $AACE INC HL        ; Next address
+ $AACF JR $AACB      ; Loop forever
+*$AAD1 POP AF        ; Restore value to write
+ $AAD2 LD (HL),A     ; Set byte to A
+ $AAD3 LD HL,$722B   ; Increment number of entries
+ $AAD6 INC (HL)      ; ...
+ $AAD7 LD HL,$72CC   ; Set flag
+ $AADA SET 0,(HL)    ; ...
+ $AADC JR $AADF      ; Skip popping AF
+*$AADE POP AF        ;
 *$AADF POP BC        ;
  $AAE0 POP DE        ;
  $AAE1 POP HL        ;
  $AAE2 RET           ;
 
-; Routine at AAE3
+; Deallocate map entry
 ;
 ; Used by the routines at #R$99A0, #R$AB17 and #R$AB6C.
+;
+; I:HL Address in #R$7207
+@label=deallocate_map_entry
 c$AAE3 PUSH HL       ;
  $AAE4 LD (HL),$FF   ;
- $AAE6 LD HL,$72CC   ;
- $AAE9 SET 0,(HL)    ;
- $AAEB LD HL,$722B   ;
- $AAEE DEC (HL)      ;
+ $AAE6 LD HL,$72CC   ; Set flag
+ $AAE9 SET 0,(HL)    ; ...
+ $AAEB LD HL,$722B   ; Decrement number of entries
+ $AAEE DEC (HL)      ; ...
  $AAEF POP HL        ;
  $AAF0 RET           ;
 
 ; Routine at AAF1
 ;
 ; Used by the routine at #R$8024.
-c$AAF1 LD A,($71EB)  ;
- $AAF4 BIT 1,A       ;
- $AAF6 RET Z         ;
- $AAF7 BIT 2,A       ;
- $AAF9 RET NZ        ;
+c$AAF1 LD A,($71EB)  ; Is half stage flag set?
+ $AAF4 BIT 1,A       ; ...
+ $AAF6 RET Z         ; Return if not
+ $AAF7 BIT 2,A       ; Is died flag set?
+ $AAF9 RET NZ        ; Return if so
  $AAFA CALL $84DB    ; Get stage data address in IY
- $AAFD LD A,($722C)  ;
- $AB00 CP (IY+$04)   ;
- $AB03 RET NC        ;
- $AB04 LD A,($722B)  ;
- $AB07 OR A          ;
- $AB08 RET Z         ;
+ $AAFD LD A,($722C)  ; Get number of ?
+ $AB00 CP (IY+$04)   ; Compare with byte 4 of stage data
+ $AB03 RET NC        ; Return if >=
+ $AB04 LD A,($722B)  ; Get number of map entires
+ $AB07 OR A          ; Return is zero
+ $AB08 RET Z         ; ...
  $AB09 LD HL,$722A   ; End of #R$7207
  $AB0C LD B,$24      ; 36 bytes
  $AB0E LD A,$80      ; Value to compare with
@@ -5476,41 +5501,47 @@ c$AAF1 LD A,($71EB)  ;
 ; Routine at AB17
 ;
 ; Used by the routine at #R$AAF1.
-c$AB17 LD A,(HL)       ;
- $AB18 PUSH AF         ;
- $AB19 CALL $AAE3      ;
- $AB1C CALL $AB38      ;
+c$AB17 LD A,(HL)       ; Get value from map
+ $AB18 PUSH AF         ; Save it
+ $AB19 CALL $AAE3      ; Deallocate map entry
+ $AB1C CALL $AB38      ; Now DE contains polar y,x
  $AB1F RST $28         ; Allocate sprite
- $AB20 LD (IX+$02),E   ;
- $AB23 LD (IX+$01),D   ;
- $AB26 LD (IX+$00),$10 ;
- $AB2A POP AF          ;
- $AB2B LD (IX+$0B),A   ; Set color
- $AB2E SET 0,(IX+$07)  ;
+ $AB20 LD (IX+$02),E   ; Set polar x
+ $AB23 LD (IX+$01),D   ; Set polar x
+ $AB26 LD (IX+$00),$10 ; Set sprite type
+ $AB2A POP AF          ; Restore value from map
+ $AB2B LD (IX+$0B),A   ; Use it as color
+ $AB2E SET 0,(IX+$07)  ; Set flag
  $AB32 RST $30         ; Load sprite pattern
- $AB33 LD HL,$722C     ;
- $AB36 INC (HL)        ;
+ $AB33 LD HL,$722C     ; Increment number of ?
+ $AB36 INC (HL)        ; ...
  $AB37 RET             ;
 
-; Routine at AB38
+; Get sprite coordinates
 ;
-; Used by the routines at #R$87F5, #R$98B5, #R$AB17 and #R$AB72.
-c$AB38 PUSH HL       ;
- $AB39 LD DE,$7207   ;
- $AB3C OR A          ;
- $AB3D SBC HL,DE     ;
- $AB3F ADD HL,HL     ;
- $AB40 LD DE,$AC87   ;
- $AB43 ADD HL,DE     ;
- $AB44 LD A,($72D4)  ;
- $AB47 ADD A,(HL)    ;
- $AB48 AND $3F       ;
- $AB4A LD E,A        ;
- $AB4B INC HL        ;
- $AB4C LD A,($72D3)  ;
- $AB4F ADD A,(HL)    ;
- $AB50 LD D,A        ;
- $AB51 POP HL        ;
+; Returns sprite coordinates when a center enemy turns into a sprite? Used by
+; the routines at #R$87F5, #R$98B5, #R$AB17 and #R$AB72.
+;
+; I:HL Map address
+; O:D Polar y
+; O:E Polar x
+@label=get_sprite_coordinates
+c$AB38 PUSH HL       ; Save map address
+ $AB39 LD DE,$7207   ; Base address of map
+ $AB3C OR A          ; Clear carry
+ $AB3D SBC HL,DE     ; Map address - map base (offset 0 - 35)
+ $AB3F ADD HL,HL     ; x2 = offset
+ $AB40 LD DE,$AC87   ; Table address
+ $AB43 ADD HL,DE     ; Add offset
+ $AB44 LD A,($72D4)  ; Get x counter
+ $AB47 ADD A,(HL)    ; Add table value
+ $AB48 AND $3F       ; Mod 64
+ $AB4A LD E,A        ; Store in E
+ $AB4B INC HL        ; Next table address
+ $AB4C LD A,($72D3)  ; Get y counter
+ $AB4F ADD A,(HL)    ; Add table value
+ $AB50 LD D,A        ; Store in D
+ $AB51 POP HL        ; Restore map address
  $AB52 RET           ;
 
 ; Routine at AB53
@@ -5544,78 +5575,78 @@ c$AB6C CALL $AAE3    ;
 ; Used by the routines at #R$8024, #R$8139, #R$832A, #R$846B, #R$A33B and
 ; #R$A3E1.
 @label=display_center_enemies
-c$AB72 LD HL,$72CB   ;
- $AB75 DEC (HL)      ;
- $AB76 JP P,$ABA0    ;
- $AB79 LD (HL),$0F   ;
- $AB7B LD A,($72D3)  ;
- $AB7E LD HL,$72D2   ;
- $AB81 ADD A,(HL)    ;
- $AB82 LD ($72D3),A  ;
- $AB85 JP P,$AB8A    ;
- $AB88 NEG           ;
-*$AB8A CP $01        ;
- $AB8C JR NZ,$AB9B   ;
- $AB8E LD A,(HL)     ;
- $AB8F NEG           ;
- $AB91 LD (HL),A     ;
- $AB92 LD A,($72D4)  ;
- $AB95 INC A         ;
- $AB96 AND $3F       ;
- $AB98 LD ($72D4),A  ;
-*$AB9B LD HL,$72CC   ;
- $AB9E SET 0,(HL)    ;
-*$ABA0 LD A,($72CD)  ;
- $ABA3 CP $24        ;
- $ABA5 JP Z,$ABFF    ;
- $ABA8 OR A          ;
- $ABA9 JR NZ,$ABC4   ;
- $ABAB LD HL,($72CF) ;
- $ABAE LD H,$00      ;
- $ABB0 ADD HL,HL     ;
- $ABB1 ADD HL,HL     ;
- $ABB2 ADD HL,HL     ;
- $ABB3 LD DE,$0000   ;
- $ABB6 ADD HL,DE     ;
- $ABB7 LD ($72D0),HL ;
- $ABBA LD DE,$0080   ;
- $ABBD XOR A         ;
+c$AB72 LD HL,$72CB   ; Countdown for when to update counters
+ $AB75 DEC (HL)      ; -1
+ $AB76 JP P,$ABA0    ; If > 0, then don't update other counters
+ $AB79 LD (HL),$0F   ; Reset to 15
+ $AB7B LD A,($72D3)  ; Y counter
+ $AB7E LD HL,$72D2   ; Add direction 1 or -1
+ $AB81 ADD A,(HL)    ; ...
+ $AB82 LD ($72D3),A  ; Store y counter
+ $AB85 JP P,$AB8A    ; If y counter > 0 then skip ahead
+ $AB88 NEG           ; Else make positive
+*$AB8A CP $01        ; If not 1
+ $AB8C JR NZ,$AB9B   ; Then skip ahead
+ $AB8E LD A,(HL)     ; IF 1, get direction
+ $AB8F NEG           ; Reverse direction
+ $AB91 LD (HL),A     ; Store direction
+ $AB92 LD A,($72D4)  ; x counter
+ $AB95 INC A         ; +1
+ $AB96 AND $3F       ; Mod 64
+ $AB98 LD ($72D4),A  ; Store x counter
+*$AB9B LD HL,$72CC   ; Set flag
+ $AB9E SET 0,(HL)    ; ...
+*$ABA0 LD A,($72CD)  ; Get enemy to process
+ $ABA3 CP $24        ; If 36,
+ $ABA5 JP Z,$ABFF    ; Then jump ahead
+ $ABA8 OR A          ; If 0 then erase all enemies
+ $ABA9 JR NZ,$ABC4   ; Else jump ahead
+ $ABAB LD HL,($72CF) ; Get first name used for center enemies
+ $ABAE LD H,$00      ; Set MSB to 0
+ $ABB0 ADD HL,HL     ; Multiplay by 8
+ $ABB1 ADD HL,HL     ; ...
+ $ABB2 ADD HL,HL     ; ...
+ $ABB3 LD DE,$0000   ; Add pattern table address
+ $ABB6 ADD HL,DE     ; ...
+ $ABB7 LD ($72D0),HL ; Save VDP address
+ $ABBA LD DE,$0080   ; Clear 16 patterns
+ $ABBD XOR A         ; ...
  $ABBE CALL $1F82    ; FILL_VRAM
- $ABC1 LD A,($72CD)  ;
-*$ABC4 LD C,A        ;
- $ABC5 LD B,$00      ;
- $ABC7 LD HL,$7207   ;
- $ABCA ADD HL,BC     ;
- $ABCB BIT 7,(HL)    ;
- $ABCD JP NZ,$ABFA   ;
- $ABD0 CALL $AB38    ;
- $ABD3 CALL $B1C6    ;
- $ABD6 PUSH DE       ;
- $ABD7 LD A,(HL)     ;
- $ABD8 RRA           ;
- $ABD9 RRA           ;
- $ABDA AND $0E       ;
- $ABDC LD C,A        ;
- $ABDD LD B,$00      ;
- $ABDF LD HL,$ACCF   ;
- $ABE2 ADD HL,BC     ;
- $ABE3 CALL $AC47    ;
- $ABE6 LD A,(HL)     ;
- $ABE7 OR A          ;
- $ABE8 JR Z,$ABEF    ;
- $ABEA ADD A,E       ;
- $ABEB LD E,A        ;
- $ABEC CALL $AC47    ;
-*$ABEF INC HL        ;
- $ABF0 POP DE        ;
- $ABF1 LD A,(HL)     ;
- $ABF2 OR A          ;
- $ABF3 JR Z,$ABFA    ;
- $ABF5 ADD A,D       ;
- $ABF6 LD D,A        ;
- $ABF7 CALL $AC47    ;
-*$ABFA LD HL,$72CD   ;
- $ABFD INC (HL)      ;
+ $ABC1 LD A,($72CD)  ; Get enemy to process
+*$ABC4 LD C,A        ; BC = enemy to process
+ $ABC5 LD B,$00      ; ...
+ $ABC7 LD HL,$7207   ; Add map address
+ $ABCA ADD HL,BC     ; ...
+ $ABCB BIT 7,(HL)    ; If unallocated
+ $ABCD JP NZ,$ABFA   ; Then update counter and return
+ $ABD0 CALL $AB38    ; Now DE contains polar y,x
+ $ABD3 CALL $B1C6    ; Convert polar to screen
+ $ABD6 PUSH DE       ; Save screen coordinates
+ $ABD7 LD A,(HL)     ; Get map value
+ $ABD8 RRA           ; Isolate 3 bits
+ $ABD9 RRA           ; ...
+ $ABDA AND $0E       ; ...
+ $ABDC LD C,A        ; And load into BC
+ $ABDD LD B,$00      ; ...
+ $ABDF LD HL,$ACCF   ; Add table base address
+ $ABE2 ADD HL,BC     ; ...
+ $ABE3 CALL $AC47    ; Plot pixel
+ $ABE6 LD A,(HL)     ; Get x offset
+ $ABE7 OR A          ; If zero
+ $ABE8 JR Z,$ABEF    ; Then skip ahead
+ $ABEA ADD A,E       ; Add to screen x
+ $ABEB LD E,A        ; ...
+ $ABEC CALL $AC47    ; Plot pixel
+*$ABEF INC HL        ; Next table address
+ $ABF0 POP DE        ; Restore screen coordinates
+ $ABF1 LD A,(HL)     ; Get y offset
+ $ABF2 OR A          ; If zero
+ $ABF3 JR Z,$ABFA    ; Then skip ahead
+ $ABF5 ADD A,D       ; Add to screen x
+ $ABF6 LD D,A        ; ...
+ $ABF7 CALL $AC47    ; Plot pixel
+*$ABFA LD HL,$72CD   ; Update counter
+ $ABFD INC (HL)      ; ...
  $ABFE RET           ;
 
 ; Routine at ABFF
@@ -5646,8 +5677,8 @@ c$ABFF LD HL,$72CC   ;
  $AC28 LD L,H        ;
  $AC29 LD H,A        ;
  $AC2A LD ($72CE),HL ;
- $AC2D XOR A         ;
- $AC2E LD ($72CD),A  ;
+ $AC2D XOR A         ; Reset center enemy to process
+ $AC2E LD ($72CD),A  ; ...
  $AC31 RET           ;
 
 ; Routine at AC32
@@ -5670,60 +5701,68 @@ c$AC32 LD DE,$194E   ;
 ; Routine at AC47
 ;
 ; Used by the routine at #R$AB72.
+;
+; D: Screen y
+; E: Screen x
+; I: HL Address in #R$ACCF
+@label=plot_pixel
 c$AC47 PUSH HL       ;
- $AC48 LD A,D        ;
- $AC49 SUB $50       ;
- $AC4B SRL A         ;
- $AC4D AND $FC       ;
- $AC4F LD C,A        ;
- $AC50 LD A,E        ;
- $AC51 SUB $70       ;
- $AC53 JR NC,$AC56   ;
- $AC55 XOR A         ;
-*$AC56 CP $20        ;
- $AC58 JR C,$AC5C    ;
- $AC5A LD A,$0F      ;
-*$AC5C SRL A         ;
- $AC5E SRL A         ;
- $AC60 SRL A         ;
- $AC62 ADD A,C       ;
- $AC63 ADD A,A       ;
- $AC64 ADD A,A       ;
- $AC65 ADD A,A       ;
- $AC66 LD C,A        ;
- $AC67 LD A,D        ;
- $AC68 AND $07       ;
- $AC6A ADD A,C       ;
- $AC6B LD C,A        ;
- $AC6C LD B,$00      ;
- $AC6E LD HL,($72D0) ;
- $AC71 ADD HL,BC     ;
- $AC72 LD A,E        ;
- $AC73 AND $07       ;
- $AC75 LD B,$80      ;
- $AC77 JR Z,$AC7E    ;
-*$AC79 SRL B         ;
- $AC7B DEC A         ;
- $AC7C JR NZ,$AC79   ;
-*$AC7E EX DE,HL      ;
- $AC7F CALL $9AD0    ;
- $AC82 OR B          ;
- $AC83 RST $10       ;
- $AC84 EX DE,HL      ;
+ $AC48 LD A,D        ; Screen y
+ $AC49 SUB $50       ; - 80
+ $AC4B SRL A         ; / 2
+ $AC4D AND $FC       ; Y offset (byte offset * 4)
+ $AC4F LD C,A        ; Store in C
+ $AC50 LD A,E        ; Screen x
+ $AC51 SUB $70       ; - 112
+ $AC53 JR NC,$AC56   ; If < 0
+ $AC55 XOR A         ; Then set to 0
+*$AC56 CP $20        ; If < 32
+ $AC58 JR C,$AC5C    ; Then skip ahead
+ $AC5A LD A,$0F      ; ELse set to 15
+*$AC5C SRL A         ; / 8
+ $AC5E SRL A         ; ...
+ $AC60 SRL A         ; ...
+ $AC62 ADD A,C       ; Add y offset
+ $AC63 ADD A,A       ; * 8
+ $AC64 ADD A,A       ; ...
+ $AC65 ADD A,A       ; ...
+ $AC66 LD C,A        ; Store in C
+ $AC67 LD A,D        ; Screen y
+ $AC68 AND $07       ; Pixel offset within pattern
+ $AC6A ADD A,C       ; Add to offset
+ $AC6B LD C,A        ; Store in C
+ $AC6C LD B,$00      ; B = 0
+ $AC6E LD HL,($72D0) ; Get VDP address of centre enemy patterns
+ $AC71 ADD HL,BC     ; VDP address
+ $AC72 LD A,E        ; Screen x
+ $AC73 AND $07       ; Pixel x offset within pattern
+ $AC75 LD B,$80      ; Leftmost pixel
+ $AC77 JR Z,$AC7E    ; Skip ahead if zero offset
+*$AC79 SRL B         ; Shift right 0-7 times
+ $AC7B DEC A         ; ...
+ $AC7C JR NZ,$AC79   ; ...
+*$AC7E EX DE,HL      ; DE = VDP address, HL = coordinates
+ $AC7F CALL $9AD0    ; Read VDP byte
+ $AC82 OR B          ; Apply pixel
+ $AC83 RST $10       ; Write VDP byte
+ $AC84 EX DE,HL      ; DE = coordinates
  $AC85 POP HL        ;
  $AC86 RET           ;
 
-; Data block at AC87
-b$AC87 DEFB $05,$28,$10,$28,$1A,$28,$25,$28
- $AC8F DEFB $30,$28,$3A,$28,$00,$28,$0A,$28
- $AC97 DEFB $15,$28,$20,$28,$2A,$28,$35,$28
- $AC9F DEFB $05,$26,$10,$26,$1A,$26,$25,$26
- $ACA7 DEFB $30,$26,$3A,$26,$00,$26,$0A,$26
- $ACAF DEFB $15,$26,$20,$26,$2A,$26,$35,$26
- $ACB7 DEFB $05,$24,$10,$24,$1A,$24,$25,$24
- $ACBF DEFB $30,$24,$3A,$24,$00,$24,$0A,$24
- $ACC7 DEFB $15,$24,$20,$24,$2A,$24,$35,$24
- $ACCF DEFB $01,$00,$FF,$01,$00,$FF,$01,$01
+; Start coordinates for sprites
+;
+; Polar x, polar y
+@label=start_coordinates_table
+b$AC87 DEFB $05,$28,$10,$28,$1A,$28,$25,$28,$30,$28,$3A,$28
+ $AC93 DEFB $00,$28,$0A,$28,$15,$28,$20,$28,$2A,$28,$35,$28
+ $AC9F DEFB $05,$26,$10,$26,$1A,$26,$25,$26,$30,$26,$3A,$26
+ $ACAB DEFB $00,$26,$0A,$26,$15,$26,$20,$26,$2A,$26,$35,$26
+ $ACB7 DEFB $05,$24,$10,$24,$1A,$24,$25,$24,$30,$24,$3A,$24
+ $ACC3 DEFB $00,$24,$0A,$24,$15,$24,$20,$24,$2A,$24,$35,$24
+
+; Table of pixel offsets for drawing center enemies
+@label=pixel_offsets_table
+b$ACCF DEFB $01,$00,$FF,$01,$00,$FF,$01,$01
  $ACD7 DEFB $01,$00,$FF,$01,$00,$01,$FF,$FF
 
 ; Init sprite data
@@ -5843,8 +5882,8 @@ c$AD64 PUSH HL         ; Save sprite address
 
 ; Load sprite pattern (RST $30)
 ;
-; Ensure sprite pattern is loaded and set screen position
-; Used by the routine at #R$801B.
+; Ensure sprite pattern is loaded and set screen position Used by the routine
+; at #R$801B.
 ;
 ; I:IX Pointer to sprite data
 @label=load_sprite_pattern
@@ -5874,7 +5913,8 @@ c$AD8B PUSH HL       ;
  $ADB4 JR C,$ADB7    ; ...
  $ADB6 INC E         ; Else set E = 3
 *$ADB7 LD A,E        ; A = pattern index
- $ADB8 CP (HL)       ; Compare with control word LSB (number of patterns for sprite type)
+ $ADB8 CP (HL)       ; Compare with control word LSB (number of patterns for
+                     ; sprite type)
  $ADB9 JR C,$ADBD    ; Jump if number of patterns > pattern index (?)
  $ADBB LD A,(HL)     ; Get number of patterns
  $ADBC DEC A         ; Minus 1
@@ -6018,7 +6058,8 @@ c$AE94 LD A,($72D5)   ; Get sprite type
  $AEB0 LD HL,$72D7    ; OR with pattern processed
  $AEB3 OR (HL)        ; ...
  $AEB4 JR NZ,$AEC4    ; If any is non-zero skip ahead
- $AEB6 LD HL,($72DC)  ; HL = #R$72E0 initially. Table for storing VDP addresses.
+ $AEB6 LD HL,($72DC)  ; HL = #R$72E0 initially. Table for storing VDP
+                      ; addresses.
  $AEB9 LD DE,($72D8)  ; DE = $2100 initially. Destination in VDP RAM.
  $AEBD LD (HL),E      ; Write destination address to word pointed to table.
  $AEBE INC HL         ; ...
@@ -6036,7 +6077,8 @@ c$AE94 LD A,($72D5)   ; Get sprite type
  $AED5 LD A,($72D7)   ; Get pattern being processed
  $AED8 INC A          ; Increment
  $AED9 ADD A,A        ; Double
- $AEDA RST $08        ; Add A to HL, so HL not points to a patten pointer in #R$B8FA
+ $AEDA RST $08        ; Add A to HL, so HL not points to a patten pointer in
+                      ; #R$B8FA
  $AEDB LD E,(HL)      ; Set DE = pointer to graphics
  $AEDC INC HL         ; ...
  $AEDD LD D,(HL)      ; ...
@@ -6493,8 +6535,8 @@ b$B8DD DEFB $00      ; Type $00
 ; Graphics pointers
 ;
 ; For each sprite type we start with a word where the LSB is the number of
-; patterns (n) in this sprite type, and the MSB is the transformations.
-; Then follows n pointers to patterns in #R$B9E6.
+; patterns (n) in this sprite type, and the MSB is the transformations. Then
+; follows n pointers to patterns in #R$B9E6.
 @label=graphics_pointers_table
 w$B8FA DEFW $0204    ; $00 type $00
  $B8FC DEFW $B9E6    ; $02
