@@ -20,11 +20,11 @@ Prev: <a href="43747.html">AAE3</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#43761">Map</a></td>
 <td class="next">
-Next: <a href="43799.html">AB17</a>
+Next: <a href="43832.html">AB38</a>
 </td>
 </tr>
 </table>
-<div class="description">AAF1: Create enemy spríte from map entry</div>
+<div class="description">AAF1: Create enemy sprite from map entry</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -99,7 +99,7 @@ Search for value $80 in map and deallocate if found. Then allocate a sprite with
 <td class="asm-label"></td>
 <td class="address-1"><span id="43783"></span>AB07</td>
 <td class="instruction">OR A</td>
-<td class="comment-1" rowspan="1">Return is zero</td>
+<td class="comment-1" rowspan="1">Return if zero</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -134,7 +134,7 @@ Search for value $80 in map and deallocate if found. Then allocate a sprite with
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43793"></span>AB11</td>
-<td class="instruction">JR NC,<a href="43799.html">LAB17</a></td>
+<td class="instruction">JR NC,<a href="43761.html#43799">create_sprite_from_map_entry_1</a></td>
 <td class="comment-1" rowspan="1">If &gt;= $80 then skip ahead</td>
 </tr>
 <tr>
@@ -147,11 +147,111 @@ Search for value $80 in map and deallocate if found. Then allocate a sprite with
 <td class="asm-label"></td>
 <td class="address-1"><span id="43796"></span>AB14</td>
 <td class="instruction">DJNZ <a href="43761.html#43792">create_sprite_from_map_entry_0</a></td>
-<td class="comment-1" rowspan="1">Loop 36 times</td>
+<td class="comment-1" rowspan="1">Loop through whole map</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43798"></span>AB16</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Not found - return</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="43799"></span>
+<div class="comments">
+<div class="paragraph">
+Create sprite
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">create_sprite_from_map_entry_1</td>
+<td class="address-2"><span id="43799"></span>AB17</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Get value from map</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43800"></span>AB18</td>
+<td class="instruction">PUSH AF</td>
+<td class="comment-1" rowspan="1">Save it</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43801"></span>AB19</td>
+<td class="instruction">CALL <a href="43747.html">deallocate_map_entry</a></td>
+<td class="comment-1" rowspan="1">Deallocate map entry</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43804"></span>AB1C</td>
+<td class="instruction">CALL <a href="43832.html">sprite_coordinates_from_map</a></td>
+<td class="comment-1" rowspan="1">Now DE contains polar y,x</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43807"></span>AB1F</td>
+<td class="instruction">RST $28</td>
+<td class="comment-1" rowspan="1">Allocate sprite</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43808"></span>AB20</td>
+<td class="instruction">LD (IX+$02),E</td>
+<td class="comment-1" rowspan="1">Set polar x</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43811"></span>AB23</td>
+<td class="instruction">LD (IX+$01),D</td>
+<td class="comment-1" rowspan="1">Set polar x</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43814"></span>AB26</td>
+<td class="instruction">LD (IX+$00),$10</td>
+<td class="comment-1" rowspan="1">Set sprite type</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43818"></span>AB2A</td>
+<td class="instruction">POP AF</td>
+<td class="comment-1" rowspan="1">Restore value from map</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43819"></span>AB2B</td>
+<td class="instruction">LD (IX+$0B),A</td>
+<td class="comment-1" rowspan="1">Use it as color (may temporary since it's &gt;= $80?)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43822"></span>AB2E</td>
+<td class="instruction">SET 0,(IX+$07)</td>
+<td class="comment-1" rowspan="1">Set flag</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43826"></span>AB32</td>
+<td class="instruction">RST $30</td>
+<td class="comment-1" rowspan="1">Load sprite pattern</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43827"></span>AB33</td>
+<td class="instruction">LD HL,<a href="29228.html">active_enemies</a></td>
+<td class="comment-1" rowspan="1">Increase number of active enemies</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43830"></span>AB36</td>
+<td class="instruction">INC (HL)</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43831"></span>AB37</td>
 <td class="instruction">RET</td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
@@ -163,7 +263,7 @@ Prev: <a href="43747.html">AAE3</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#43761">Map</a></td>
 <td class="next">
-Next: <a href="43799.html">AB17</a>
+Next: <a href="43832.html">AB38</a>
 </td>
 </tr>
 </table>

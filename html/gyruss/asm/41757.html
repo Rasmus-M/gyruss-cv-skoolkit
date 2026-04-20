@@ -24,118 +24,131 @@ Next: <a href="41787.html">A33B</a>
 </td>
 </tr>
 </table>
-<div class="description">A31D: Routine at A31D</div>
+<div class="description">A31D: Send tone frequency bytes to PSG</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="41748.html">output_sound</a>.
+Used by the routine at <a href="41748.html">bytes_to_psg</a>.
 </div>
 </div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register"></td>
+<td class="register-desc">Operation in upper nybble 1XX00000</td>
+</tr>
+<tr>
+<td class="register"></td>
+<td class="register-desc">IX -&gt; B0, B1, B2: frequency LSB, B3: frequency MSB</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
-<td class="asm-label">LA31D</td>
+<td class="asm-label">freq_to_psg</td>
 <td class="address-2"><span id="41757"></span>A31D</td>
 <td class="instruction">CALL <a href="41715.html#41731">LA2F3_0</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41760"></span>A320</td>
 <td class="instruction">LD A,(IX+$03)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Frequency LSB</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41763"></span>A323</td>
 <td class="instruction">AND $0F</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Isolate bits 0-3 of frequency</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41765"></span>A325</td>
 <td class="instruction">OR D</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Apply operation to bits 4-7</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41766"></span>A326</td>
 <td class="instruction">OUT ($FF),A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Send to PSG</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41768"></span>A328</td>
 <td class="instruction">LD A,(IX+$03)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Frequency LSB</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41771"></span>A32B</td>
 <td class="instruction">AND $F0</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Isolate bits 4-7 of frequency</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41773"></span>A32D</td>
 <td class="instruction">LD D,A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41774"></span>A32E</td>
 <td class="instruction">LD A,(IX+$04)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get frequency MSB</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41777"></span>A331</td>
 <td class="instruction">AND $0F</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Isolate lower nybble with bits 8-9 of frequency</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41779"></span>A333</td>
 <td class="instruction">OR D</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Now FFFF00FF in wrong order</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41780"></span>A334</td>
 <td class="instruction">RRCA</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">FFFFF00F</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41781"></span>A335</td>
 <td class="instruction">RRCA</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">FFFFFF00</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41782"></span>A336</td>
 <td class="instruction">RRCA</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">0FFFFFF0</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41783"></span>A337</td>
 <td class="instruction">RRCA</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">00FFFFFF</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41784"></span>A338</td>
 <td class="instruction">OUT ($FF),A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Send to PSG</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41786"></span>A33A</td>
 <td class="instruction">RET</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 </table>
 <table class="asm-navigation">

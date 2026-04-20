@@ -2026,21 +2026,69 @@ B $9EEA,977,8*122,1
 c $A2BB Routine at A2BB
 D $A2BB Used by the routine at #R$9B99.
 C $A2BB,2 Mute channel 1
+C $A2BD,2 Tone 1 attenuation
+C $A2BF,2 Tone 1 frequency
+C $A2C1,4 Data from channel 1?
 C $A2C8,2 Mute channel 2
+C $A2CA,2 Tone 2 attenuation
+C $A2CC,2 Tone 2 frequency
+C $A2CE,4 Data from channel 2?
 C $A2D5,2 Mute channel 3
-C $A2E2,2 Mute channel 4
+C $A2D7,2 Tone 3 attenuation
+C $A2D9,2 Tone 3 frequency
+C $A2DB,4 Data from channel 3?
+C $A2E2,2 Mute noise
+C $A2E4,2 Noise attenuation
+C $A2E6,4 Data from channel 4?
+C $A2EA,3 Get byte 0
+C $A2ED,1 If zero
+C $A2EE,2 Then jump
+C $A2F0,2 Else mute
 c $A2F3 Routine at A2F3
 D $A2F3 Used by the routine at #R$A2BB.
+C $A301,2 Noise control
 N $A303 This entry point is used by the routine at #R$A31D.
-c $A314 Send sound data to PSG
+C $A303,3 Sound byte
+C $A306,2 If bit 4 is 0
+C $A308,2 Then skip shifting
+C $A30A,1 Shift bits 4-7 to 0-3
+C $A30B,1 ...
+C $A30C,1 ...
+C $A30D,1 ...
+C $A30E,2 Isolate bits 0-3
+C $A310,1 Apply operation (attenuation?) to bits 4-7
+C $A311,2 Send to PSG
+c $A314 Send sound bytes to PSG
 D $A314 Used by the routine at #R$A2BB.
-R $A314 I:A
+R $A314 I:A Attenuation or noise byte
 R $A314 I:C
-R $A314 I:D
-R $A314 I:IX
-@ $A314 label=output_sound
-c $A31D Routine at A31D
+R $A314 I:D Operation
+R $A314 I:IX -> B0: $00 for tone, B1, B2: frequency LSB, B3: frequency MSB
+@ $A314 label=bytes_to_psg
+C $A314,3 Get B0
+C $A317,1 If B0 was 0 then this is not 0
+C $A318,2 Tone
+C $A31A,2 Attenuation or noise to PSG
+c $A31D Send tone frequency bytes to PSG
 D $A31D Used by the routine at #R$A314.
+R $A31D D: Operation in upper nybble 1XX00000
+R $A31D I: IX -> B0, B1, B2: frequency LSB, B3: frequency MSB
+@ $A31D label=freq_to_psg
+C $A320,3 Frequency LSB
+C $A323,2 Isolate bits 0-3 of frequency
+C $A325,1 Apply operation to bits 4-7
+C $A326,2 Send to PSG
+C $A328,3 Frequency LSB
+C $A32B,2 Isolate bits 4-7 of frequency
+C $A32D,1 Save
+C $A32E,3 Get frequency MSB
+C $A331,2 Isolate lower nybble with bits 8-9 of frequency
+C $A333,1 Now FFFF00FF in wrong order
+C $A334,1 FFFFF00F
+C $A335,1 FFFFFF00
+C $A336,1 0FFFFFF0
+C $A337,1 00FFFFFF
+C $A338,2 Send to PSG
 c $A33B Initial game loop
 D $A33B Used by the routine at #R$82BF.
 @ $A33B label=initial_game_loop
@@ -2379,8 +2427,9 @@ C $A7C9,3 Shot x = ship x
 C $A7CC,4 Shot type
 C $A7D0,4 Set color
 C $A7D4,1 Return
-c $A7D5 Routine at A7D5
+c $A7D5 Fire double shot
 D $A7D5 Used by the routine at #R$A73C.
+@ $A7D5 label=fire_double_shot
 C $A7D5,1 Allocate sprite
 C $A7D6,3 Ship's polar coordinates
 C $A7D9,1 Save them
@@ -2403,8 +2452,9 @@ C $A7FC,4 Set color (yellow)
 C $A800,3 Increment number of active shots
 C $A803,1 ...
 C $A804,1 Return
-c $A805 Routine at A805
+c $A805 Clear fire pressed
 D $A805 Used by the routine at #R$A73C.
+@ $A805 label=clear_fire_pressed
 C $A805,2 Clear bit for fire pressed
 C $A807,1 Return
 c $A808 Display ship background patterns
@@ -2467,17 +2517,25 @@ b $A87D Ship background patterns
 D $A87D 16 frames of 4 patterns, organised as 16x16 sprite patterns #UDGTABLE(no-border, no-border) { #UDGARRAY32,,4($A87D-$AA75-16)(graphics-A87D.png) } { #UDGARRAY32,,4($A885-$AA7D-16)(graphics-A885.png) } TABLE#
 @ $A87D label=ship_patterns
 B $A87D,512,8
-c $AA7D Init game variables
+c $AA7D Init center enemies
 D $AA7D Used by the routine at #R$8024.
-@ $AA7D label=init_game_variables
-C $AA7D,3 Set 36 bytes at #R$7207 to $FF
+@ $AA7D label=init_center_enemies
+C $AA7D,3 Set whole #R$7207 to $FF
 C $AA80,3 ...
 C $AA83,3 ...
 C $AA86,2 ...
 C $AA88,2 ...
 C $AA8A,1 A = 0
+C $AA8B,3 Clear number of map entries
+C $AA8E,3 Clear center enemy processed
+C $AA91,3 Clear y counter
+C $AA94,3 Clear x counter
 C $AA97,1 A = 1
-C $AAA0,2 First name used for center enemies
+C $AA98,3 Set y counter direction
+C $AA9B,2 Set first name used for center enemies in buffer 1
+C $AA9D,3 ...
+C $AAA0,2 First name used for center enemies in buffer 2
+C $AAA2,3 ...
 c $AAA6 Allocate map entry
 D $AAA6 Used by the routines at #R$87D5 and #R$8D21.
 R $AAA6 I: A value to place in #R$7207 at an unused spot
@@ -2521,7 +2579,7 @@ C $AAE9,2 ...
 C $AAEB,3 Decrement number of entries
 C $AAEE,1 ...
 C $AAEF,1 Restore map address
-c $AAF1 Create enemy spr�te from map entry
+c $AAF1 Create enemy sprite from map entry
 D $AAF1 Search for value $80 in map and deallocate if found. Then allocate a sprite with data from map. Used by the routine at #R$8024.
 @ $AAF1 label=create_sprite_from_map_entry
 C $AAF1,3 Is mine stage flag set?
@@ -2534,7 +2592,7 @@ C $AAFD,3 Get number of active enemies
 C $AB00,3 Compare with byte 4 of stage data
 C $AB03,1 Return if active enemies >= byte 4
 C $AB04,3 Get number of map entries
-C $AB07,1 Return is zero
+C $AB07,1 Return if zero
 C $AB08,1 ...
 C $AB09,3 End of #R$7207
 C $AB0C,2 Size of map
@@ -2542,7 +2600,9 @@ C $AB0E,2 Value to compare with
 C $AB10,1 Test byte
 C $AB11,2 If >= $80 then skip ahead
 C $AB13,1 Previous byte
-C $AB14,2 Loop 36 times
+C $AB14,2 Loop through whole map
+C $AB16,1 Not found - return
+N $AB17 Create sprite
 C $AB17,1 Get value from map
 C $AB18,1 Save it
 C $AB19,3 Deallocate map entry
@@ -2552,7 +2612,7 @@ C $AB20,3 Set polar x
 C $AB23,3 Set polar x
 C $AB26,4 Set sprite type
 C $AB2A,1 Restore value from map
-C $AB2B,3 Use it as color (?)
+C $AB2B,3 Use it as color (may temporary since it's >= $80?)
 C $AB2E,4 Set flag
 C $AB32,1 Load sprite pattern
 C $AB33,3 Increase number of active enemies

@@ -39,56 +39,56 @@ Used by the routine at <a href="41659.html">LA2BB</a>.
 <td class="asm-label">LA2F3</td>
 <td class="address-2"><span id="41715"></span>A2F3</td>
 <td class="instruction">CALL <a href="41715.html#41731">LA2F3_0</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41718"></span>A2F6</td>
 <td class="instruction">LD A,(IX+$04)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41721"></span>A2F9</td>
 <td class="instruction">AND $0F</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41723"></span>A2FB</td>
 <td class="instruction">LD HL,<a href="29304.html">L7278</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41726"></span>A2FE</td>
 <td class="instruction">CP (HL)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41727"></span>A2FF</td>
 <td class="instruction">RET Z</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41728"></span>A300</td>
 <td class="instruction">LD (HL),A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41729"></span>A301</td>
 <td class="instruction">LD C,$E0</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Noise control</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="41731"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="41757.html">LA31D</a>.
+This entry point is used by the routine at <a href="41757.html">freq_to_psg</a>.
 </div>
 </div>
 </td>
@@ -97,67 +97,67 @@ This entry point is used by the routine at <a href="41757.html">LA31D</a>.
 <td class="asm-label">LA2F3_0</td>
 <td class="address-2"><span id="41731"></span>A303</td>
 <td class="instruction">LD A,(IX+$04)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Sound byte</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41734"></span>A306</td>
 <td class="instruction">BIT 4,C</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If bit 4 is 0</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41736"></span>A308</td>
 <td class="instruction">JR Z,<a href="41715.html#41742">LA2F3_1</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Then skip shifting</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41738"></span>A30A</td>
 <td class="instruction">RRCA</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Shift bits 4-7 to 0-3</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41739"></span>A30B</td>
 <td class="instruction">RRCA</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41740"></span>A30C</td>
 <td class="instruction">RRCA</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41741"></span>A30D</td>
 <td class="instruction">RRCA</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label">LA2F3_1</td>
 <td class="address-2"><span id="41742"></span>A30E</td>
 <td class="instruction">AND $0F</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Isolate bits 0-3</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41744"></span>A310</td>
 <td class="instruction">OR C</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Apply operation (attenuation?) to bits 4-7</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41745"></span>A311</td>
 <td class="instruction">OUT ($FF),A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Send to PSG</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41747"></span>A313</td>
 <td class="instruction">RET</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 </table>
 <table class="asm-navigation">

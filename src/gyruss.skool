@@ -4677,27 +4677,27 @@ b$9EEA DEFB $B6,$A2,$2A,$9F,$4E,$9F,$6C,$9F
 ;
 ; Used by the routine at #R$9B99.
 c$A2BB LD A,$9F      ; Mute channel 1
- $A2BD LD C,$90      ;
- $A2BF LD D,$80      ;
- $A2C1 LD IX,($7272) ;
+ $A2BD LD C,$90      ; Tone 1 attenuation
+ $A2BF LD D,$80      ; Tone 1 frequency
+ $A2C1 LD IX,($7272) ; Data from channel 1?
  $A2C5 CALL $A314    ;
  $A2C8 LD A,$BF      ; Mute channel 2
- $A2CA LD C,$B0      ;
- $A2CC LD D,$A0      ;
- $A2CE LD IX,($7274) ;
+ $A2CA LD C,$B0      ; Tone 2 attenuation
+ $A2CC LD D,$A0      ; Tone 2 frequency
+ $A2CE LD IX,($7274) ; Data from channel 2?
  $A2D2 CALL $A314    ;
  $A2D5 LD A,$DF      ; Mute channel 3
- $A2D7 LD C,$D0      ;
- $A2D9 LD D,$C0      ;
- $A2DB LD IX,($7276) ;
+ $A2D7 LD C,$D0      ; Tone 3 attenuation
+ $A2D9 LD D,$C0      ; Tone 3 frequency
+ $A2DB LD IX,($7276) ; Data from channel 3?
  $A2DF CALL $A314    ;
- $A2E2 LD A,$FF      ; Mute channel 4
- $A2E4 LD C,$F0      ;
- $A2E6 LD IX,($7270) ;
- $A2EA LD E,(IX+$00) ;
- $A2ED INC E         ;
- $A2EE JR NZ,$A2F3   ;
- $A2F0 OUT ($FF),A   ;
+ $A2E2 LD A,$FF      ; Mute noise
+ $A2E4 LD C,$F0      ; Noise attenuation
+ $A2E6 LD IX,($7270) ; Data from channel 4?
+ $A2EA LD E,(IX+$00) ; Get byte 0
+ $A2ED INC E         ; If zero
+ $A2EE JR NZ,$A2F3   ; Then jump
+ $A2F0 OUT ($FF),A   ; Else mute
  $A2F2 RET           ;
 
 ; Routine at A2F3
@@ -4710,54 +4710,58 @@ c$A2F3 CALL $A303    ;
  $A2FE CP (HL)       ;
  $A2FF RET Z         ;
  $A300 LD (HL),A     ;
- $A301 LD C,$E0      ;
+ $A301 LD C,$E0      ; Noise control
 ; This entry point is used by the routine at #R$A31D.
-*$A303 LD A,(IX+$04) ;
- $A306 BIT 4,C       ;
- $A308 JR Z,$A30E    ;
- $A30A RRCA          ;
- $A30B RRCA          ;
- $A30C RRCA          ;
- $A30D RRCA          ;
-*$A30E AND $0F       ;
- $A310 OR C          ;
- $A311 OUT ($FF),A   ;
+*$A303 LD A,(IX+$04) ; Sound byte
+ $A306 BIT 4,C       ; If bit 4 is 0
+ $A308 JR Z,$A30E    ; Then skip shifting
+ $A30A RRCA          ; Shift bits 4-7 to 0-3
+ $A30B RRCA          ; ...
+ $A30C RRCA          ; ...
+ $A30D RRCA          ; ...
+*$A30E AND $0F       ; Isolate bits 0-3
+ $A310 OR C          ; Apply operation (attenuation?) to bits 4-7
+ $A311 OUT ($FF),A   ; Send to PSG
  $A313 RET           ;
 
-; Send sound data to PSG
+; Send sound bytes to PSG
 ;
 ; Used by the routine at #R$A2BB.
 ;
-; I:A
+; I:A Attenuation or noise byte
 ; I:C
-; I:D
-; I:IX
-@label=output_sound
-c$A314 LD E,(IX+$00) ;
- $A317 INC E         ;
- $A318 JR NZ,$A31D   ;
- $A31A OUT ($FF),A   ;
+; I:D Operation
+; I:IX -> B0: $00 for tone, B1, B2: frequency LSB, B3: frequency MSB
+@label=bytes_to_psg
+c$A314 LD E,(IX+$00) ; Get B0
+ $A317 INC E         ; If B0 was 0 then this is not 0
+ $A318 JR NZ,$A31D   ; Tone
+ $A31A OUT ($FF),A   ; Attenuation or noise to PSG
  $A31C RET           ;
 
-; Routine at A31D
+; Send tone frequency bytes to PSG
 ;
 ; Used by the routine at #R$A314.
+;
+; D: Operation in upper nybble 1XX00000
+; I: IX -> B0, B1, B2: frequency LSB, B3: frequency MSB
+@label=freq_to_psg
 c$A31D CALL $A303    ;
- $A320 LD A,(IX+$03) ;
- $A323 AND $0F       ;
- $A325 OR D          ;
- $A326 OUT ($FF),A   ;
- $A328 LD A,(IX+$03) ;
- $A32B AND $F0       ;
- $A32D LD D,A        ;
- $A32E LD A,(IX+$04) ;
- $A331 AND $0F       ;
- $A333 OR D          ;
- $A334 RRCA          ;
- $A335 RRCA          ;
- $A336 RRCA          ;
- $A337 RRCA          ;
- $A338 OUT ($FF),A   ;
+ $A320 LD A,(IX+$03) ; Frequency LSB
+ $A323 AND $0F       ; Isolate bits 0-3 of frequency
+ $A325 OR D          ; Apply operation to bits 4-7
+ $A326 OUT ($FF),A   ; Send to PSG
+ $A328 LD A,(IX+$03) ; Frequency LSB
+ $A32B AND $F0       ; Isolate bits 4-7 of frequency
+ $A32D LD D,A        ; Save
+ $A32E LD A,(IX+$04) ; Get frequency MSB
+ $A331 AND $0F       ; Isolate lower nybble with bits 8-9 of frequency
+ $A333 OR D          ; Now FFFF00FF in wrong order
+ $A334 RRCA          ; FFFFF00F
+ $A335 RRCA          ; FFFFFF00
+ $A336 RRCA          ; 0FFFFFF0
+ $A337 RRCA          ; 00FFFFFF
+ $A338 OUT ($FF),A   ; Send to PSG
  $A33A RET           ;
 
 ; Initial game loop
@@ -5208,9 +5212,10 @@ c$A73C LD A,($71F2)    ; Get frame
  $A7D0 LD (IX+$0B),$0A ; Set color
  $A7D4 RET             ; Return
 
-; Routine at A7D5
+; Fire double shot
 ;
 ; Used by the routine at #R$A73C.
+@label=fire_double_shot
 c$A7D5 RST $28         ; Allocate sprite
  $A7D6 LD HL,($7003)   ; Ship's polar coordinates
  $A7D9 PUSH HL         ; Save them
@@ -5234,9 +5239,10 @@ c$A7D5 RST $28         ; Allocate sprite
  $A803 INC (HL)        ; ...
  $A804 RET             ; Return
 
-; Routine at A805
+; Clear fire pressed
 ;
 ; Used by the routine at #R$A73C.
+@label=clear_fire_pressed
 c$A805 RES 0,(HL)    ; Clear bit for fire pressed
  $A807 RET           ; Return
 
@@ -5388,26 +5394,26 @@ b$A87D DEFB $00,$01,$07,$07,$0F,$1F,$3F,$78
  $AA6D DEFB $00,$00,$00,$00,$C0,$F8,$FE,$BE
  $AA75 DEFB $00,$00,$00,$80,$80,$00,$00,$00
 
-; Init game variables
+; Init center enemies
 ;
 ; Used by the routine at #R$8024.
-@label=init_game_variables
-c$AA7D LD HL,$7207   ; Set 36 bytes at #R$7207 to $FF
+@label=init_center_enemies
+c$AA7D LD HL,$7207   ; Set whole #R$7207 to $FF
  $AA80 LD DE,$7208   ; ...
  $AA83 LD BC,$0023   ; ...
  $AA86 LD (HL),$FF   ; ...
  $AA88 LDIR          ; ...
  $AA8A XOR A         ; A = 0
- $AA8B LD ($722B),A  ;
- $AA8E LD ($72CD),A  ;
- $AA91 LD ($72D3),A  ;
- $AA94 LD ($72D4),A  ;
+ $AA8B LD ($722B),A  ; Clear number of map entries
+ $AA8E LD ($72CD),A  ; Clear center enemy processed
+ $AA91 LD ($72D3),A  ; Clear y counter
+ $AA94 LD ($72D4),A  ; Clear x counter
  $AA97 INC A         ; A = 1
- $AA98 LD ($72D2),A  ;
- $AA9B LD A,$E0      ;
- $AA9D LD ($72CE),A  ;
- $AAA0 ADD A,$10     ; First name used for center enemies
- $AAA2 LD ($72CF),A  ;
+ $AA98 LD ($72D2),A  ; Set y counter direction
+ $AA9B LD A,$E0      ; Set first name used for center enemies in buffer 1
+ $AA9D LD ($72CE),A  ; ...
+ $AAA0 ADD A,$10     ; First name used for center enemies in buffer 2
+ $AAA2 LD ($72CF),A  ; ...
  $AAA5 RET           ;
 
 ; Allocate map entry
@@ -5468,37 +5474,33 @@ c$AAE3 PUSH HL       ; Save map address
  $AAEF POP HL        ; Restore map address
  $AAF0 RET           ;
 
-; Create enemy spríte from map entry
+; Create enemy sprite from map entry
 ;
-; Search for value $80 in map and deallocate if found.
-; Then allocate a sprite with data from map.
-; Used by the routine at #R$8024.
+; Search for value $80 in map and deallocate if found. Then allocate a sprite
+; with data from map. Used by the routine at #R$8024.
 @label=create_sprite_from_map_entry
-c$AAF1 LD A,($71EB)  ; Is mine stage flag set?
- $AAF4 BIT 1,A       ; ...
- $AAF6 RET Z         ; Return if not
- $AAF7 BIT 2,A       ; Is died flag set?
- $AAF9 RET NZ        ; Return if so
- $AAFA CALL $84DB    ; Get stage data address in IY
- $AAFD LD A,($722C)  ; Get number of active enemies
- $AB00 CP (IY+$04)   ; Compare with byte 4 of stage data
- $AB03 RET NC        ; Return if active enemies >= byte 4
- $AB04 LD A,($722B)  ; Get number of map entries
- $AB07 OR A          ; Return is zero
- $AB08 RET Z         ; ...
- $AB09 LD HL,$722A   ; End of #R$7207
- $AB0C LD B,$24      ; Size of map
- $AB0E LD A,$80      ; Value to compare with
-*$AB10 CP (HL)       ; Test byte
- $AB11 JR NC,$AB17   ; If >= $80 then skip ahead
- $AB13 DEC HL        ; Previous byte
- $AB14 DJNZ $AB10    ; Loop 36 times
- $AB16 RET           ;
-
-; Routine at AB17
-;
-; Used by the routine at #R$AAF1.
-c$AB17 LD A,(HL)       ; Get value from map
+c$AAF1 LD A,($71EB)    ; Is mine stage flag set?
+ $AAF4 BIT 1,A         ; ...
+ $AAF6 RET Z           ; Return if not
+ $AAF7 BIT 2,A         ; Is died flag set?
+ $AAF9 RET NZ          ; Return if so
+ $AAFA CALL $84DB      ; Get stage data address in IY
+ $AAFD LD A,($722C)    ; Get number of active enemies
+ $AB00 CP (IY+$04)     ; Compare with byte 4 of stage data
+ $AB03 RET NC          ; Return if active enemies >= byte 4
+ $AB04 LD A,($722B)    ; Get number of map entries
+ $AB07 OR A            ; Return if zero
+ $AB08 RET Z           ; ...
+ $AB09 LD HL,$722A     ; End of #R$7207
+ $AB0C LD B,$24        ; Size of map
+ $AB0E LD A,$80        ; Value to compare with
+*$AB10 CP (HL)         ; Test byte
+ $AB11 JR NC,$AB17     ; If >= $80 then skip ahead
+ $AB13 DEC HL          ; Previous byte
+ $AB14 DJNZ $AB10      ; Loop through whole map
+ $AB16 RET             ; Not found - return
+; Create sprite
+*$AB17 LD A,(HL)       ; Get value from map
  $AB18 PUSH AF         ; Save it
  $AB19 CALL $AAE3      ; Deallocate map entry
  $AB1C CALL $AB38      ; Now DE contains polar y,x
@@ -5507,7 +5509,7 @@ c$AB17 LD A,(HL)       ; Get value from map
  $AB23 LD (IX+$01),D   ; Set polar x
  $AB26 LD (IX+$00),$10 ; Set sprite type
  $AB2A POP AF          ; Restore value from map
- $AB2B LD (IX+$0B),A   ; Use it as color (?)
+ $AB2B LD (IX+$0B),A   ; Use it as color (may temporary since it's >= $80?)
  $AB2E SET 0,(IX+$07)  ; Set flag
  $AB32 RST $30         ; Load sprite pattern
  $AB33 LD HL,$722C     ; Increase number of active enemies
@@ -5543,8 +5545,8 @@ c$AB38 PUSH HL       ; Save map address
 
 ; Deallocate sprite from map
 ;
-; Search for sprite pattern in map and deallocate if found.
-; Used by the routines at #R$9934 and #R$9A49.
+; Search for sprite pattern in map and deallocate if found. Used by the
+; routines at #R$9934 and #R$9A49.
 ;
 ; I: IX sprite data
 @deallocate_sprite_from_map

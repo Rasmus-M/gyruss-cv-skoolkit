@@ -24,7 +24,7 @@ Next: <a href="41757.html">A31D</a>
 </td>
 </tr>
 </table>
-<div class="description">A314: Send sound data to PSG</div>
+<div class="description">A314: Send sound bytes to PSG</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -39,7 +39,7 @@ Used by the routine at <a href="41659.html">LA2BB</a>.
 </tr>
 <tr>
 <td class="register">A</td>
-<td class="register-desc"></td>
+<td class="register-desc">Attenuation or noise byte</td>
 </tr>
 <tr>
 <td class="register">C</td>
@@ -47,44 +47,44 @@ Used by the routine at <a href="41659.html">LA2BB</a>.
 </tr>
 <tr>
 <td class="register">D</td>
-<td class="register-desc"></td>
+<td class="register-desc">Operation</td>
 </tr>
 <tr>
 <td class="register">IX</td>
-<td class="register-desc"></td>
+<td class="register-desc">-&gt; B0: $00 for tone, B1, B2: frequency LSB, B3: frequency MSB</td>
 </tr>
 </table>
 </td>
 </tr>
 <tr>
-<td class="asm-label">output_sound</td>
+<td class="asm-label">bytes_to_psg</td>
 <td class="address-2"><span id="41748"></span>A314</td>
 <td class="instruction">LD E,(IX+$00)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get B0</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41751"></span>A317</td>
 <td class="instruction">INC E</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If B0 was 0 then this is not 0</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41752"></span>A318</td>
-<td class="instruction">JR NZ,<a href="41757.html">LA31D</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="41757.html">freq_to_psg</a></td>
+<td class="comment-1" rowspan="1">Tone</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41754"></span>A31A</td>
 <td class="instruction">OUT ($FF),A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Attenuation or noise to PSG</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41756"></span>A31C</td>
 <td class="instruction">RET</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 </table>
 <table class="asm-navigation">
