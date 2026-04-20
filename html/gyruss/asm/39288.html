@@ -39,7 +39,7 @@ Used by the routine at <a href="39220.html">L9934</a>.
 </tr>
 <tr>
 <td class="register">IX</td>
-<td class="register-desc">?</td>
+<td class="register-desc">Sprite data</td>
 </tr>
 <tr>
 <td class="register">DE</td>
@@ -130,19 +130,19 @@ Used by the routine at <a href="39220.html">L9934</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="39315"></span>9993</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Next address in table</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39316"></span>9994</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1">Get ?</td>
+<td class="comment-1" rowspan="1">Get ? ($06 - $0B)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39317"></span>9995</td>
 <td class="instruction">LD (IX+$06),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save in sprite data</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

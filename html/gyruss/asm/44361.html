@@ -20,7 +20,7 @@ Prev: <a href="44281.html">ACF9</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#44361">Map</a></td>
 <td class="next">
-Next: <a href="44388.html">AD64</a>
+Next: <a href="44427.html">AD8B</a>
 </td>
 </tr>
 </table>
@@ -95,7 +95,7 @@ Used by the routine at <a href="32792.html">L8018</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44376"></span>AD58</td>
-<td class="instruction">JR C,<a href="44388.html">available_sprite_found</a></td>
+<td class="instruction">JR C,<a href="44361.html#44388">allocate_sprite_1</a></td>
 <td class="comment-1" rowspan="1">If &gt;= $7F ($FF from init), sprite is available</td>
 </tr>
 <tr>
@@ -125,8 +125,128 @@ Used by the routine at <a href="32792.html">L8018</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44386"></span>AD62</td>
-<td class="instruction">JR <a href="44388.html#44423">available_sprite_found_2</a></td>
+<td class="instruction">JR <a href="44361.html#44423">allocate_sprite_4</a></td>
 <td class="comment-1" rowspan="1">And return</td>
+</tr>
+<tr>
+<td class="asm-label">allocate_sprite_1</td>
+<td class="address-2"><span id="44388"></span>AD64</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Save sprite address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44389"></span>AD65</td>
+<td class="instruction">BIT 7,(HL)</td>
+<td class="comment-1" rowspan="1">Is bit 7 set, i.e. $FF?</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44391"></span>AD67</td>
+<td class="instruction">JR Z,<a href="44361.html#44405">allocate_sprite_3</a></td>
+<td class="comment-1" rowspan="1">If not, skip recoding in allocation table</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44393"></span>AD69</td>
+<td class="instruction">LD HL,<a href="29058.html">allocated_sprites</a></td>
+<td class="comment-1" rowspan="1">Allocated sprites</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44396"></span>AD6C</td>
+<td class="instruction">INC (HL)</td>
+<td class="comment-1" rowspan="1">Record one more</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44397"></span>AD6D</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Read number back</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44398"></span>AD6E</td>
+<td class="instruction">ADD A,L</td>
+<td class="comment-1" rowspan="1">Add number to HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44399"></span>AD6F</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44400"></span>AD70</td>
+<td class="instruction">JP NC,<a href="44361.html#44404">allocate_sprite_2</a></td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44403"></span>AD73</td>
+<td class="instruction">INC H</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label">allocate_sprite_2</td>
+<td class="address-2"><span id="44404"></span>AD74</td>
+<td class="instruction">LD (HL),C</td>
+<td class="comment-1" rowspan="1">Record sprite index in table</td>
+</tr>
+<tr>
+<td class="asm-label">allocate_sprite_3</td>
+<td class="address-2"><span id="44405"></span>AD75</td>
+<td class="instruction">POP IX</td>
+<td class="comment-1" rowspan="1">IX now holds sprite address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44407"></span>AD77</td>
+<td class="instruction">LD (IX+$07),$00</td>
+<td class="comment-1" rowspan="1">Init sprite</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44411"></span>AD7B</td>
+<td class="instruction">LD (IX+$03),$00</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44415"></span>AD7F</td>
+<td class="instruction">LD (IX+$04),$FF</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44419"></span>AD83</td>
+<td class="instruction">LD (IX+$08),$F8</td>
+<td class="comment-1" rowspan="1">Set y</td>
+</tr>
+<tr>
+<td class="asm-label">allocate_sprite_4</td>
+<td class="address-2"><span id="44423"></span>AD87</td>
+<td class="instruction">POP BC</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44424"></span>AD88</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44425"></span>AD89</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44426"></span>AD8A</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 </table>
 <table class="asm-navigation">
@@ -136,7 +256,7 @@ Prev: <a href="44281.html">ACF9</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#44361">Map</a></td>
 <td class="next">
-Next: <a href="44388.html">AD64</a>
+Next: <a href="44427.html">AD8B</a>
 </td>
 </tr>
 </table>

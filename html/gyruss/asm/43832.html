@@ -24,13 +24,13 @@ Next: <a href="43859.html">AB53</a>
 </td>
 </tr>
 </table>
-<div class="description">AB38: Get sprite coordinates</div>
+<div class="description">AB38: Sprite coordinates from map</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Returns sprite coordinates when a center enemy turns into a sprite? Used by the routines at <a href="34773.html#34805">L87D5_1</a>, <a href="39093.html">L98B5</a>, <a href="43799.html">LAB17</a> and <a href="43890.html">display_center_enemies</a>.
+Returns polar sprite coordinates from an entry in the map. Used by the routines at <a href="34773.html#34805">L87D5_1</a>, <a href="39093.html">L98B5</a>, <a href="43799.html">LAB17</a> and <a href="43890.html">display_center_enemies</a>.
 </div>
 </div>
 <table class="input">
@@ -58,7 +58,7 @@ Returns sprite coordinates when a center enemy turns into a sprite? Used by the 
 </td>
 </tr>
 <tr>
-<td class="asm-label">get_sprite_coordinates</td>
+<td class="asm-label">sprite_coordinates_from_map</td>
 <td class="address-2"><span id="43832"></span>AB38</td>
 <td class="instruction">PUSH HL</td>
 <td class="comment-1" rowspan="1">Save map address</td>
@@ -66,7 +66,7 @@ Returns sprite coordinates when a center enemy turns into a sprite? Used by the 
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43833"></span>AB39</td>
-<td class="instruction">LD DE,<a href="29191.html">map_at_7207</a></td>
+<td class="instruction">LD DE,<a href="29191.html">center_enemy_map</a></td>
 <td class="comment-1" rowspan="1">Base address of map</td>
 </tr>
 <tr>

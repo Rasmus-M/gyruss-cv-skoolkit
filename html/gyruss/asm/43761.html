@@ -24,22 +24,22 @@ Next: <a href="43799.html">AB17</a>
 </td>
 </tr>
 </table>
-<div class="description">AAF1: Routine at AAF1</div>
+<div class="description">AAF1: Create enemy spríte from map entry</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="32804.html">entry</a>.
+Search for value $80 in map and deallocate if found. Then allocate a sprite with data from map. Used by the routine at <a href="32804.html">entry</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">LAAF1</td>
+<td class="asm-label">create_sprite_from_map_entry</td>
 <td class="address-2"><span id="43761"></span>AAF1</td>
 <td class="instruction">LD A,(<a href="29163.html">status_flags</a>)</td>
-<td class="comment-1" rowspan="1">Is half stage flag set?</td>
+<td class="comment-1" rowspan="1">Is mine stage flag set?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -87,7 +87,7 @@ Used by the routine at <a href="32804.html">entry</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="43779"></span>AB03</td>
 <td class="instruction">RET NC</td>
-<td class="comment-1" rowspan="1">Return if &gt;=</td>
+<td class="comment-1" rowspan="1">Return if active enemies &gt;= byte 4</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -111,13 +111,13 @@ Used by the routine at <a href="32804.html">entry</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="43785"></span>AB09</td>
 <td class="instruction">LD HL,$722A</td>
-<td class="comment-1" rowspan="1">End of <a href="29191.html">map_at_7207</a></td>
+<td class="comment-1" rowspan="1">End of <a href="29191.html">center_enemy_map</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43788"></span>AB0C</td>
 <td class="instruction">LD B,$24</td>
-<td class="comment-1" rowspan="1">36 bytes</td>
+<td class="comment-1" rowspan="1">Size of map</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -126,7 +126,7 @@ Used by the routine at <a href="32804.html">entry</a>.
 <td class="comment-1" rowspan="1">Value to compare with</td>
 </tr>
 <tr>
-<td class="asm-label">LAAF1_0</td>
+<td class="asm-label">create_sprite_from_map_entry_0</td>
 <td class="address-2"><span id="43792"></span>AB10</td>
 <td class="instruction">CP (HL)</td>
 <td class="comment-1" rowspan="1">Test byte</td>
@@ -135,7 +135,7 @@ Used by the routine at <a href="32804.html">entry</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="43793"></span>AB11</td>
 <td class="instruction">JR NC,<a href="43799.html">LAB17</a></td>
-<td class="comment-1" rowspan="1">If &gt; $80 then skip ahead</td>
+<td class="comment-1" rowspan="1">If &gt;= $80 then skip ahead</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -146,7 +146,7 @@ Used by the routine at <a href="32804.html">entry</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43796"></span>AB14</td>
-<td class="instruction">DJNZ <a href="43761.html#43792">LAAF1_0</a></td>
+<td class="instruction">DJNZ <a href="43761.html#43792">create_sprite_from_map_entry_0</a></td>
 <td class="comment-1" rowspan="1">Loop 36 times</td>
 </tr>
 <tr>

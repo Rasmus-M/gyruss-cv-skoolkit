@@ -75,12 +75,12 @@ Used by the routine at <a href="34704.html">handle_sprite_types_0E_11</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="34786"></span>87E2</td>
 <td class="instruction">LD B,$24</td>
-<td class="comment-1" rowspan="1">Length of map</td>
+<td class="comment-1" rowspan="1">Size of map</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34788"></span>87E4</td>
-<td class="instruction">LD HL,<a href="29191.html">map_at_7207</a></td>
+<td class="instruction">LD HL,<a href="29191.html">center_enemy_map</a></td>
 <td class="comment-1" rowspan="1">Address of map</td>
 </tr>
 <tr>
@@ -128,7 +128,7 @@ Used by the routine at <a href="34704.html">handle_sprite_types_0E_11</a>.
 <tr>
 <td class="asm-label">L87D5_1</td>
 <td class="address-2"><span id="34805"></span>87F5</td>
-<td class="instruction">CALL <a href="43832.html">get_sprite_coordinates</a></td>
+<td class="instruction">CALL <a href="43832.html">sprite_coordinates_from_map</a></td>
 <td class="comment-1" rowspan="1">Now DE contains polar y,x</td>
 </tr>
 <tr>

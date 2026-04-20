@@ -69,13 +69,13 @@ Used by the routine at <a href="39345.html">L99B1</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="39389"></span>99DD</td>
 <td class="instruction">ADD A,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">x2</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39390"></span>99DE</td>
 <td class="instruction">LD HL,<a href="39591.html">L9AA7</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Score table</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -87,25 +87,25 @@ Used by the routine at <a href="39345.html">L99B1</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="39394"></span>99E2</td>
 <td class="instruction">LD D,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get points (hundreds)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39395"></span>99E3</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Next address in table</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39396"></span>99E4</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get ? ($06 - $0B)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39397"></span>99E5</td>
 <td class="instruction">LD (IX+$06),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save in sprite data</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -127,7 +127,7 @@ This entry point is used by the routine at <a href="39345.html">L99B1</a>.
 <td class="asm-label">L99D3_0</td>
 <td class="address-2"><span id="39402"></span>99EA</td>
 <td class="instruction">PUSH DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save score</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -156,20 +156,20 @@ This entry point is used by the routine at <a href="39345.html">L99B1</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39416"></span>99F8</td>
-<td class="instruction">LD HL,<a href="29229.html">L722D</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD HL,<a href="29229.html">mines_left</a></td>
+<td class="comment-1" rowspan="1">Decrease mines left</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39419"></span>99FB</td>
 <td class="instruction">DEC (HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39420"></span>99FC</td>
 <td class="instruction">JR NZ,<a href="39379.html#39427">L99D3_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Skip ahead if any left</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -193,13 +193,13 @@ This entry point is used by the routine at <a href="39345.html">L99B1</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="39429"></span>9A05</td>
 <td class="instruction">POP DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore score</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39430"></span>9A06</td>
 <td class="instruction">JR <a href="39288.html#39321">add_score_from_enemy_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add score</td>
 </tr>
 </table>
 <table class="asm-navigation">

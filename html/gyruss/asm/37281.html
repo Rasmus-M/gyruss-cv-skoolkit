@@ -24,7 +24,7 @@ Next: <a href="37324.html">91CC</a>
 </td>
 </tr>
 </table>
-<div class="description">91A1: Routine at 91A1</div>
+<div class="description">91A1: Erase planet</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -36,7 +36,7 @@ Used by the routine at <a href="37237.html">display_planet</a>.
 </td>
 </tr>
 <tr>
-<td class="asm-label">L91A1</td>
+<td class="asm-label">erase_planet</td>
 <td class="address-2"><span id="37281"></span>91A1</td>
 <td class="instruction">CALL <a href="37389.html">clear_row_7</a></td>
 <td class="comment-1" rowspan="1">Clear row 7</td>
@@ -51,25 +51,25 @@ Used by the routine at <a href="37237.html">display_planet</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="37287"></span>91A7</td>
 <td class="instruction">LD DE,$71A4</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37290"></span>91AA</td>
 <td class="instruction">LD BC,$000F</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37293"></span>91AD</td>
 <td class="instruction">LD (HL),$00</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37295"></span>91AF</td>
 <td class="instruction">LDIR</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -100,13 +100,13 @@ This entry point is used by the routine at <a href="37237.html">display_planet</
 <td class="comment-1" rowspan="1">4 rows</td>
 </tr>
 <tr>
-<td class="asm-label">L91A1_0</td>
+<td class="asm-label">erase_planet_0</td>
 <td class="address-2"><span id="37305"></span>91B9</td>
 <td class="instruction">LD B,$04</td>
 <td class="comment-1" rowspan="1">4 columns</td>
 </tr>
 <tr>
-<td class="asm-label">L91A1_1</td>
+<td class="asm-label">erase_planet_1</td>
 <td class="address-2"><span id="37307"></span>91BB</td>
 <td class="instruction">LD A,(HL)</td>
 <td class="comment-1" rowspan="1">Get name to write</td>
@@ -132,7 +132,7 @@ This entry point is used by the routine at <a href="37237.html">display_planet</
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37311"></span>91BF</td>
-<td class="instruction">DJNZ <a href="37281.html#37307">L91A1_1</a></td>
+<td class="instruction">DJNZ <a href="37281.html#37307">erase_planet_1</a></td>
 <td class="comment-1" rowspan="1">Loop for 4 columns</td>
 </tr>
 <tr>
@@ -174,7 +174,7 @@ This entry point is used by the routine at <a href="37237.html">display_planet</
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37321"></span>91C9</td>
-<td class="instruction">JR NZ,<a href="37281.html#37305">L91A1_0</a></td>
+<td class="instruction">JR NZ,<a href="37281.html#37305">erase_planet_0</a></td>
 <td class="comment-1" rowspan="1">Loop for 4 rows</td>
 </tr>
 <tr>

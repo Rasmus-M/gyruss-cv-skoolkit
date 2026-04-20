@@ -16,7 +16,7 @@
 <table class="asm-navigation">
 <tr>
 <td class="prev">
-Prev: <a href="43884.html">AB6C</a>
+Prev: <a href="43859.html">AB53</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#43890">Map</a></td>
 <td class="next">
@@ -24,7 +24,7 @@ Next: <a href="44031.html">ABFF</a>
 </td>
 </tr>
 </table>
-<div class="description">AB72: Display tiny enemies at the center of the screen</div>
+<div class="description">AB72: Display distant enemies at the center of the screen</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -207,7 +207,7 @@ Used by the routines at <a href="32804.html">entry</a>, <a href="33081.html">die
 <td class="asm-label"></td>
 <td class="address-1"><span id="43952"></span>ABB0</td>
 <td class="instruction">ADD HL,HL</td>
-<td class="comment-1" rowspan="1">Multiplay by 8</td>
+<td class="comment-1" rowspan="1">Multiply by 8</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -278,7 +278,7 @@ Used by the routines at <a href="32804.html">entry</a>, <a href="33081.html">die
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43975"></span>ABC7</td>
-<td class="instruction">LD HL,<a href="29191.html">map_at_7207</a></td>
+<td class="instruction">LD HL,<a href="29191.html">center_enemy_map</a></td>
 <td class="comment-1" rowspan="1">Add map address</td>
 </tr>
 <tr>
@@ -302,7 +302,7 @@ Used by the routines at <a href="32804.html">entry</a>, <a href="33081.html">die
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43984"></span>ABD0</td>
-<td class="instruction">CALL <a href="43832.html">get_sprite_coordinates</a></td>
+<td class="instruction">CALL <a href="43832.html">sprite_coordinates_from_map</a></td>
 <td class="comment-1" rowspan="1">Now DE contains polar y,x</td>
 </tr>
 <tr>
@@ -477,7 +477,7 @@ Used by the routines at <a href="32804.html">entry</a>, <a href="33081.html">die
 <table class="asm-navigation">
 <tr>
 <td class="prev">
-Prev: <a href="43884.html">AB6C</a>
+Prev: <a href="43859.html">AB53</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#43890">Map</a></td>
 <td class="next">

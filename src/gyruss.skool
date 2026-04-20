@@ -19,8 +19,8 @@ w$7000 DEFW $0000
 ; { $03 | Close to polar y ($01) }
 ; { $04 | Polar x + 2 of pattern loaded in #R$AD8B }
 ; { $05 | Close to polar x ($02) }
-; { $06 | Unknown }
-; { $07 | Unknown flags }
+; { $06 | Unknown, or LSB of path? address }
+; { $07 | Unknown flags, or MSB of path? address }
 ; { $08 | Screen y }
 ; { $09 | Screen x }
 ; { $0A | Pattern }
@@ -123,7 +123,7 @@ b$71A3 DEFB $00,$00,$00,$00,$00,$00,$00,$00
 ; #TABLE(default, default)
 ; { =h Bit | =h Purpose }
 ; { $00 | Set during warp }
-; { $01 | Half stage (set when the mines appear) }
+; { $01 | Set during mine sub-stage }
 ; { $02 | You died }
 ; { $03 | Set during chance stage }
 ; { $04 | Set during stage init }
@@ -228,10 +228,10 @@ b$7205 DEFB $00
 @label=total_enemies
 b$7206 DEFB $00
 
-; Map at 7207
+; Map of center enemies
 ;
 ; Initialized to $FF meaning unused
-@label=map_at_7207
+@label=center_enemy_map
 b$7207 DEFB $00,$00,$00,$00,$00,$00
  $720D DEFB $00,$00,$00,$00,$00,$00
  $7213 DEFB $00,$00,$00,$00,$00,$00
@@ -251,7 +251,10 @@ b$722B DEFB $00
 @label=active_enemies
 b$722C DEFB $00
 
-; Byte at 722D
+; Number of 3-spheres/mines left
+;
+; 3 - 0 during mines sub-stage.
+@label=mines_left
 b$722D DEFB $00
 
 ; Buffer at 722E
@@ -1706,7 +1709,7 @@ c$87D5 LD A,($71EE)    ; Return if countdown
  $87DA INC (IX+$05)    ;
  $87DD LD A,(IX+$0A)   ; Get pattern
  $87E0 OR $80          ; Set bit 7
- $87E2 LD B,$24        ; Length of map
+ $87E2 LD B,$24        ; Size of map
  $87E4 LD HL,$7207     ; Address of map
 *$87E7 CP (HL)         ; Check entry
  $87E8 JR Z,$87F5      ; Break out if found
@@ -2436,7 +2439,7 @@ c$8C68 LD HL,$725B    ;
  $8CD8 AND $1F        ;
  $8CDA ADD A,A        ;
  $8CDB LD C,A         ;
- $8CDC LD HL,$A581    ;
+ $8CDC LD HL,$A581    ; #R$A57E+2
  $8CDF ADD HL,BC      ;
  $8CE0 LD A,(HL)      ;
  $8CE1 INC HL         ;
@@ -2607,7 +2610,7 @@ b$8E25 DEFB $42,$41,$40,$00,$42,$42,$40,$42
 ;
 ; Used by the routines at #R$80E8, #R$8139 and #R$A3E1.
 c$8E2D LD A,($71EB)  ; Get flags
- $8E30 BIT 1,A       ; If half stage bit is not set
+ $8E30 BIT 1,A       ; If mine stage bit is not set
  $8E32 JR Z,$8E89    ; Then init variables
  $8E34 LD A,($7264)  ;
  $8E37 CP $01        ;
@@ -2652,10 +2655,10 @@ c$8E2D LD A,($71EB)  ; Get flags
  $8E85 LD ($7264),A  ;
  $8E88 RET           ;
 
-; Init half stage variables
+; Init mine stage variables
 ;
 ; Used by the routine at #R$8E2D.
-@label=init_half_stage_variables
+@label=init_mine_stage_variables
 c$8E89 XOR A         ;
  $8E8A LD ($7266),A  ;
 ; This entry point is used by the routines at #R$82BF and #R$8FED.
@@ -2708,7 +2711,7 @@ c$8E9D LD IY,$722E   ;
  $8EE4 LD A,$02      ;
  $8EE6 LD ($7264),A  ;
  $8EE9 INC A         ;
- $8EEA LD ($722D),A  ;
+ $8EEA LD ($722D),A  ; Set mines left
  $8EED LD HL,$7206   ; Total enemies
  $8EF0 ADD A,(HL)    ;
  $8EF1 LD (HL),A     ;
@@ -2845,8 +2848,8 @@ c$8FED DEC (IY+$07)    ;
  $8FF6 LD (IY+$05),$00 ;
  $8FFA LD HL,$7206     ; Decrease total enemies
  $8FFD DEC (HL)        ; ...
- $8FFE LD HL,$722D     ;
- $9001 DEC (HL)        ;
+ $8FFE LD HL,$722D     ; Decrease mines left
+ $9001 DEC (HL)        ; ...
  $9002 JR NZ,$8FAE     ;
  $9004 LD HL,$7256     ; Clear died flag
  $9007 RES 2,(HL)      ; ...
@@ -2884,7 +2887,7 @@ c$900E LD HL,$7269     ;
 b$9046 DEFB $01,$FF,$01,$FF,$01,$01,$01,$01
  $904E DEFB $FF,$01,$FF,$01,$FF,$FF,$FF,$FF
 
-; Graphics
+; 3 spheres/mine background graphics
 ;
 ; #UDGTABLE(no-border, no-border)
 ; { #UDGARRAY8,,4($9056-$90C7-16)(graphics-9056.png) }
@@ -3012,15 +3015,16 @@ c$9175 ADD A,A       ; a *= 2
  $919F RST $38       ; WRITE_VRAM
  $91A0 RET           ;
 
-; Routine at 91A1
+; Erase planet
 ;
 ; Used by the routine at #R$9175.
+@label=erase_planet
 c$91A1 CALL $920D    ; Clear row 7
  $91A4 LD HL,$71A3   ; Clear 16 bytes in RAM
- $91A7 LD DE,$71A4   ;
- $91AA LD BC,$000F   ;
- $91AD LD (HL),$00   ;
- $91AF LDIR          ;
+ $91A7 LD DE,$71A4   ; ...
+ $91AA LD BC,$000F   ; ...
+ $91AD LD (HL),$00   ; ...
+ $91AF LDIR          ; ...
  $91B1 LD HL,$71A3   ; Use cleared bytes as planet data
 ; This entry point is used by the routine at #R$9175.
 @label=display_planet_name_table
@@ -3526,9 +3530,9 @@ c$9796 LD A,($7182)    ; Return if only the ship sprites are allocated
  $97F4 POP HL          ;
  $97F5 INC HL          ;
  $97F6 DJNZ $97A4      ;
- $97F8 LD A,($722D)    ;
- $97FB OR A            ;
- $97FC JR Z,$982E      ;
+ $97F8 LD A,($722D)    ; Are there any mines left?
+ $97FB OR A            ; ...
+ $97FC JR Z,$982E      ; Skip ahead if not
  $97FE LD IY,$7237     ;
  $9802 LD DE,$0009     ;
  $9805 LD B,$03        ;
@@ -3628,8 +3632,8 @@ c$98B5 CP (IX+$02)   ;
  $98C6 LD A,($722B)  ;
  $98C9 OR A          ;
  $98CA JR Z,$98EE    ;
- $98CC LD HL,$7207   ;
- $98CF LD B,$24      ;
+ $98CC LD HL,$7207   ; Map address
+ $98CF LD B,$24      ; Size of map
 *$98D1 BIT 7,(HL)    ;
  $98D3 JR NZ,$98EB   ;
  $98D5 CALL $AB38    ; Now DE contains polar y,x
@@ -3715,7 +3719,7 @@ c$9934 LD A,$04        ;
 ;
 ; Used by the routine at #R$9934.
 ;
-; I:IX ?
+; I:IX Sprite data
 ; I:DE Points to add
 @label=add_score_from_enemy
 c$9978 LD A,($7256)  ; Flags
@@ -3731,9 +3735,9 @@ c$9978 LD A,($7256)  ; Flags
  $998E LD HL,$9AA7   ; Score table
  $9991 RST $08       ; Add A to HL
  $9992 LD D,(HL)     ; Get points (hundreds)
- $9993 INC HL        ;
- $9994 LD A,(HL)     ; Get ?
- $9995 LD (IX+$06),A ;
+ $9993 INC HL        ; Next address in table
+ $9994 LD A,(HL)     ; Get ? ($06 - $0B)
+ $9995 LD (IX+$06),A ; Save in sprite data
  $9998 INC D         ; 100 more
 ; This entry point is used by the routines at #R$9934, #R$99A0, #R$99D3 and
 ; #R$9A08.
@@ -3778,28 +3782,28 @@ c$99D3 LD A,$04        ;
  $99D8 LD HL,$7254     ;
  $99DB LD A,(HL)       ;
  $99DC INC (HL)        ;
- $99DD ADD A,A         ;
- $99DE LD HL,$9AA7     ;
+ $99DD ADD A,A         ; x2
+ $99DE LD HL,$9AA7     ; Score table
  $99E1 RST $08         ; Add A to HL
- $99E2 LD D,(HL)       ;
- $99E3 INC HL          ;
- $99E4 LD A,(HL)       ;
- $99E5 LD (IX+$06),A   ;
+ $99E2 LD D,(HL)       ; Get points (hundreds)
+ $99E3 INC HL          ; Next address in table
+ $99E4 LD A,(HL)       ; Get ? ($06 - $0B)
+ $99E5 LD (IX+$06),A   ; Save in sprite data
  $99E8 LD E,$00        ;
 ; This entry point is used by the routine at #R$99B1.
-*$99EA PUSH DE         ;
+*$99EA PUSH DE         ; Save score
  $99EB LD (IY+$04),$00 ;
  $99EF LD (IY+$05),$00 ;
  $99F3 PUSH IX         ;
  $99F5 CALL $8B12      ; Display background patterns
- $99F8 LD HL,$722D     ;
- $99FB DEC (HL)        ;
- $99FC JR NZ,$9A03     ;
+ $99F8 LD HL,$722D     ; Decrease mines left
+ $99FB DEC (HL)        ; ...
+ $99FC JR NZ,$9A03     ; Skip ahead if any left
  $99FE LD HL,$7256     ; Clear died flag
  $9A01 RES 2,(HL)      ; ...
 *$9A03 POP IX          ;
- $9A05 POP DE          ;
- $9A06 JR $9999        ;
+ $9A05 POP DE          ; Restore score
+ $9A06 JR $9999        ; Add score
 
 ; Routine at 9A08
 ;
@@ -3867,8 +3871,8 @@ c$9A49 CP $0E          ;
 c$9A75 LD (IY+$04),$00 ;
  $9A79 LD (IY+$05),$00 ;
  $9A7D CALL $8B12      ; Display background patterns
- $9A80 LD HL,$722D     ;
- $9A83 DEC (HL)        ;
+ $9A80 LD HL,$722D     ; Decrease mines left
+ $9A83 DEC (HL)        ; ...
  $9A84 JR $9A69        ;
 
 ; Routine at 9A86
@@ -4936,7 +4940,7 @@ b$A4B2 DEFB $10,$16,$1C,$24,$2A,$30
 ; Sprite init data (polar x)
 b$A4B8 DEFB $F0,$EA,$E4,$1C,$16,$10
 
-; Data block at A4BE
+; Sprite path data 1
 b$A4BE DEFB $A8,$18,$80,$50,$A0,$10,$80,$E0
  $A4C6 DEFB $B0,$20,$80,$A0,$88,$38,$80,$80
  $A4CE DEFB $12,$14,$63,$51,$AE,$AC,$63,$E1
@@ -4949,7 +4953,9 @@ b$A4BE DEFB $A8,$18,$80,$50,$A0,$10,$80,$E0
  $A506 DEFB $01,$01,$6B,$A0,$81,$81,$6B,$80
  $A50E DEFB $10,$B0,$6E,$51,$10,$B0,$6E,$E1
  $A516 DEFB $90,$30,$6E,$A1,$90,$30,$6E,$81
- $A51E DEFB $10,$B0,$41,$21,$0E,$0E,$A2,$51
+
+; Sprite path data 2
+b$A51E DEFB $10,$B0,$41,$21,$0E,$0E,$A2,$51
  $A526 DEFB $B0,$10,$41,$21,$B2,$B2,$A2,$81
  $A52E DEFB $98,$38,$24,$A1,$9D,$06,$61,$51
  $A536 DEFB $88,$28,$24,$A1,$BC,$23,$61,$81
@@ -4961,7 +4967,9 @@ b$A4BE DEFB $A8,$18,$80,$50,$A0,$10,$80,$E0
  $A566 DEFB $84,$1C,$2C,$51,$00,$80,$2D,$81
  $A56E DEFB $15,$AB,$2F,$D1,$04,$9C,$30,$51
  $A576 DEFB $95,$2B,$2F,$D1,$BC,$23,$30,$81
- $A57E DEFB $2A,$F7,$FB,$A3,$A5,$0D,$A6,$18
+
+; Sprite path data 3
+b$A57E DEFB $2A,$F7,$FB,$A3,$A5,$0D,$A6,$18
  $A586 DEFB $A6,$AE,$A5,$23,$A6,$C0,$A5,$2E
  $A58E DEFB $A6,$38,$A6,$CC,$A5,$42,$A6,$51
  $A596 DEFB $A6,$E3,$A5,$5D,$A6,$6C,$A6,$F8
@@ -5065,7 +5073,7 @@ c$A6D2 LD HL,$1AE2   ; VDP address of 'lives'
 ;
 ; Used by the routines at #R$846B and #R$9978.
 ;
-; I: HL Points to add (BCD)
+; I: HL Points to add (BCD, hundreds)
 @label=add_score
 c$A6EC PUSH DE       ;
  $A6ED PUSH BC       ;
@@ -5415,7 +5423,7 @@ c$AAA6 PUSH HL       ;
  $AAAA LD A,($722B)  ; Get number of entries
  $AAAD CP $24        ; If map is full
  $AAAF JR Z,$AADE    ; Then return
- $AAB1 LD A,($71EB)  ; If half stage flag is set
+ $AAB1 LD A,($71EB)  ; If mine stage flag is set
  $AAB4 BIT 1,A       ; The search backwards
  $AAB6 JR NZ,$AAC6   ; Else search forwards
  $AAB8 LD HL,$722A   ; Start at end of #R$7207
@@ -5447,7 +5455,7 @@ c$AAA6 PUSH HL       ;
 
 ; Deallocate map entry
 ;
-; Used by the routines at #R$99A0, #R$AB17 and #R$AB6C.
+; Used by the routines at #R$99A0, #R$AB17 and #R$AB53.
 ;
 ; I:HL Address in #R$7207
 @label=deallocate_map_entry
@@ -5460,10 +5468,13 @@ c$AAE3 PUSH HL       ; Save map address
  $AAEF POP HL        ; Restore map address
  $AAF0 RET           ;
 
-; Routine at AAF1
+; Create enemy spríte from map entry
 ;
+; Search for value $80 in map and deallocate if found.
+; Then allocate a sprite with data from map.
 ; Used by the routine at #R$8024.
-c$AAF1 LD A,($71EB)  ; Is half stage flag set?
+@label=create_sprite_from_map_entry
+c$AAF1 LD A,($71EB)  ; Is mine stage flag set?
  $AAF4 BIT 1,A       ; ...
  $AAF6 RET Z         ; Return if not
  $AAF7 BIT 2,A       ; Is died flag set?
@@ -5471,15 +5482,15 @@ c$AAF1 LD A,($71EB)  ; Is half stage flag set?
  $AAFA CALL $84DB    ; Get stage data address in IY
  $AAFD LD A,($722C)  ; Get number of active enemies
  $AB00 CP (IY+$04)   ; Compare with byte 4 of stage data
- $AB03 RET NC        ; Return if >=
+ $AB03 RET NC        ; Return if active enemies >= byte 4
  $AB04 LD A,($722B)  ; Get number of map entries
  $AB07 OR A          ; Return is zero
  $AB08 RET Z         ; ...
  $AB09 LD HL,$722A   ; End of #R$7207
- $AB0C LD B,$24      ; 36 bytes
+ $AB0C LD B,$24      ; Size of map
  $AB0E LD A,$80      ; Value to compare with
 *$AB10 CP (HL)       ; Test byte
- $AB11 JR NC,$AB17   ; If > $80 then skip ahead
+ $AB11 JR NC,$AB17   ; If >= $80 then skip ahead
  $AB13 DEC HL        ; Previous byte
  $AB14 DJNZ $AB10    ; Loop 36 times
  $AB16 RET           ;
@@ -5496,22 +5507,22 @@ c$AB17 LD A,(HL)       ; Get value from map
  $AB23 LD (IX+$01),D   ; Set polar x
  $AB26 LD (IX+$00),$10 ; Set sprite type
  $AB2A POP AF          ; Restore value from map
- $AB2B LD (IX+$0B),A   ; Use it as color
+ $AB2B LD (IX+$0B),A   ; Use it as color (?)
  $AB2E SET 0,(IX+$07)  ; Set flag
  $AB32 RST $30         ; Load sprite pattern
  $AB33 LD HL,$722C     ; Increase number of active enemies
  $AB36 INC (HL)        ; ...
  $AB37 RET             ;
 
-; Get sprite coordinates
+; Sprite coordinates from map
 ;
-; Returns sprite coordinates when a center enemy turns into a sprite? Used by
-; the routines at #R$87F5, #R$98B5, #R$AB17 and #R$AB72.
+; Returns polar sprite coordinates from an entry in the map. Used by the
+; routines at #R$87F5, #R$98B5, #R$AB17 and #R$AB72.
 ;
 ; I:HL Map address
 ; O:D Polar y
 ; O:E Polar x
-@label=get_sprite_coordinates
+@label=sprite_coordinates_from_map
 c$AB38 PUSH HL       ; Save map address
  $AB39 LD DE,$7207   ; Base address of map
  $AB3C OR A          ; Clear carry
@@ -5530,33 +5541,32 @@ c$AB38 PUSH HL       ; Save map address
  $AB51 POP HL        ; Restore map address
  $AB52 RET           ;
 
-; Routine at AB53
+; Deallocate sprite from map
 ;
+; Search for sprite pattern in map and deallocate if found.
 ; Used by the routines at #R$9934 and #R$9A49.
-c$AB53 BIT 6,(IX+$07) ;
- $AB57 RET Z          ;
+;
+; I: IX sprite data
+@deallocate_sprite_from_map
+c$AB53 BIT 6,(IX+$07) ; Test bit
+ $AB57 RET Z          ; Return if not set
  $AB58 PUSH HL        ;
  $AB59 PUSH BC        ;
- $AB5A LD HL,$7207    ;
- $AB5D LD B,$24       ;
- $AB5F LD A,(IX+$0A)  ; Get pattern
- $AB62 OR $80         ;
-*$AB64 CP (HL)        ;
- $AB65 JR Z,$AB6C     ;
- $AB67 INC HL         ;
- $AB68 DJNZ $AB64     ;
- $AB6A JR $AB6F       ;
+ $AB5A LD HL,$7207    ; Map address
+ $AB5D LD B,$24       ; Size of map
+ $AB5F LD A,(IX+$0A)  ; Get sprite pattern
+ $AB62 OR $80         ; Set bit 7
+*$AB64 CP (HL)        ; Compare with map entry
+ $AB65 JR Z,$AB6C     ; Break out if found
+ $AB67 INC HL         ; Next map address
+ $AB68 DJNZ $AB64     ; Loop through whole map
+ $AB6A JR $AB6F       ; Not found - return
+*$AB6C CALL $AAE3     ;
+*$AB6F POP BC         ;
+ $AB70 POP HL         ;
+ $AB71 RET            ;
 
-; Routine at AB6C
-;
-; Used by the routine at #R$AB53.
-c$AB6C CALL $AAE3    ;
-; This entry point is used by the routine at #R$AB53.
-*$AB6F POP BC        ;
- $AB70 POP HL        ;
- $AB71 RET           ;
-
-; Display tiny enemies at the center of the screen
+; Display distant enemies at the center of the screen
 ;
 ; Used by the routines at #R$8024, #R$8139, #R$832A, #R$846B, #R$A33B and
 ; #R$A3E1.
@@ -5589,7 +5599,7 @@ c$AB72 LD HL,$72CB   ; Countdown for when to update counters
  $ABA9 JR NZ,$ABC4   ; Else jump ahead
  $ABAB LD HL,($72CF) ; Get first name used for center enemies
  $ABAE LD H,$00      ; Set MSB to 0
- $ABB0 ADD HL,HL     ; Multiplay by 8
+ $ABB0 ADD HL,HL     ; Multiply by 8
  $ABB1 ADD HL,HL     ; ...
  $ABB2 ADD HL,HL     ; ...
  $ABB3 LD DE,$0000   ; Add pattern table address
@@ -5827,26 +5837,21 @@ c$ACF9 LD DE,($73F2) ; VDP address of sprite allocation table?
 ;
 ; O:IX holds sprite address
 @label=allocate_sprite
-c$AD49 PUSH HL       ;
- $AD4A PUSH DE       ;
- $AD4B PUSH BC       ;
- $AD4C LD HL,$7002   ; Address of sprite data
- $AD4F LD DE,$000C   ; Size of each sprite
- $AD52 LD BC,$2000   ; Number of sprites and sprite index
- $AD55 LD A,$7E      ;
-*$AD57 CP (HL)       ;
- $AD58 JR C,$AD64    ; If >= $7F ($FF from init), sprite is available
- $AD5A INC C         ; Sprite index++
- $AD5B ADD HL,DE     ; Advance to next sprite
- $AD5C DJNZ $AD57    ; Loop for up to 32 sprites
- $AD5E LD IX,$03E8   ; Not found, set to address in ROM (?)
- $AD62 JR $AD87      ; And return
-
-; Routine at AD64
-;
-; Used by the routine at #R$AD49.
-@label=available_sprite_found
-c$AD64 PUSH HL         ; Save sprite address
+c$AD49 PUSH HL         ;
+ $AD4A PUSH DE         ;
+ $AD4B PUSH BC         ;
+ $AD4C LD HL,$7002     ; Address of sprite data
+ $AD4F LD DE,$000C     ; Size of each sprite
+ $AD52 LD BC,$2000     ; Number of sprites and sprite index
+ $AD55 LD A,$7E        ;
+*$AD57 CP (HL)         ;
+ $AD58 JR C,$AD64      ; If >= $7F ($FF from init), sprite is available
+ $AD5A INC C           ; Sprite index++
+ $AD5B ADD HL,DE       ; Advance to next sprite
+ $AD5C DJNZ $AD57      ; Loop for up to 32 sprites
+ $AD5E LD IX,$03E8     ; Not found, set to address in ROM (?)
+ $AD62 JR $AD87        ; And return
+*$AD64 PUSH HL         ; Save sprite address
  $AD65 BIT 7,(HL)      ; Is bit 7 set, i.e. $FF?
  $AD67 JR Z,$AD75      ; If not, skip recoding in allocation table
  $AD69 LD HL,$7182     ; Allocated sprites
@@ -5862,7 +5867,6 @@ c$AD64 PUSH HL         ; Save sprite address
  $AD7B LD (IX+$03),$00 ;
  $AD7F LD (IX+$04),$FF ;
  $AD83 LD (IX+$08),$F8 ; Set y
-; This entry point is used by the routine at #R$AD49.
 *$AD87 POP BC          ;
  $AD88 POP DE          ;
  $AD89 POP HL          ;
@@ -5988,38 +5992,34 @@ c$AD8B PUSH HL       ;
  $AE52 POP HL        ;
  $AE53 RET           ;
 
-; Sprite outside visible screen
+; Handle sprite outside visible screen
 ;
 ; Used by the routine at #R$ADD1.
-c$AE54 LD A,(IX+$00) ; Get sprite type
- $AE57 CP $0C        ; Jump if < 12
- $AE59 JR C,$AE86    ; ...
- $AE5B CP $0E        ; Jump if < 14
- $AE5D JR C,$AE67    ; ...
- $AE5F CP $12        ; Jump if < 18
- $AE61 JR C,$AE4E    ; ...
- $AE63 CP $18        ; Jump if >= 24
- $AE65 JR NC,$AE4E   ; ...
-*$AE67 CP $12        ; Jump if < 18
- $AE69 JR C,$AE75    ; ...
- $AE6B CP $14        ; Jump if >= 20
- $AE6D JR NC,$AE75   ; ...
- $AE6F LD HL,$7252   ;
- $AE72 DEC (HL)      ;
- $AE73 JR $AE86      ; Set off-screen values and return
-
-; Routine at AE75
-;
-; Used by the routine at #R$AE54.
-c$AE75 LD HL,$7206     ; Decrease total enemies
+@label=handle_off_screen_sprite
+c$AE54 LD A,(IX+$00)   ; Get sprite type
+ $AE57 CP $0C          ; If < $0C
+ $AE59 JR C,$AE86      ; Then set off-screen values and return
+ $AE5B CP $0E          ; If >= $0C and < $0E
+ $AE5D JR C,$AE67      ; Then jump ahead
+ $AE5F CP $12          ; If >= $0E and < $12
+ $AE61 JR C,$AE4E      ; Then just return
+ $AE63 CP $18          ; If >= $18
+ $AE65 JR NC,$AE4E     ; Then just return
+*$AE67 CP $12          ; If >= $12 and < $12 (not possible)
+ $AE69 JR C,$AE75      ; Then decrease total enemies
+ $AE6B CP $14          ; If >= $14 and < $18
+ $AE6D JR NC,$AE75     ; Then decrease total enemies
+ $AE6F LD HL,$7252     ; Decrease active enemy shots
+ $AE72 DEC (HL)        ; ...
+ $AE73 JR $AE86        ; Set off-screen values and return
+*$AE75 LD HL,$7206     ; Decrease total enemies
  $AE78 DEC (HL)        ; ...
- $AE79 CP $15          ;
- $AE7B JR C,$AE86      ;
- $AE7D CP $18          ;
- $AE7F JR NC,$AE86     ;
- $AE81 LD HL,$7256     ;
- $AE84 RES 3,(HL)      ;
-; This entry point is used by the routine at #R$AE54.
+ $AE79 CP $15          ; If < $15
+ $AE7B JR C,$AE86      ; Then set off-screen values and return
+ $AE7D CP $18          ; If >= $18
+ $AE7F JR NC,$AE86     ; Then set off-screen values and return
+ $AE81 LD HL,$7256     ; $15 - $17 Reset chance stage flag
+ $AE84 RES 3,(HL)      ; ...
 *$AE86 LD (IX+$00),$7F ; Set as not allocated
  $AE8A LD (IX+$09),$00 ; Set x
  $AE8E LD (IX+$08),$F8 ; Set y
