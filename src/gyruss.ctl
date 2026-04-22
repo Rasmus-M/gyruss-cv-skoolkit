@@ -8,7 +8,7 @@ W $7000,2,2
 b $7002 Sprite data
 D $7002 Contains data for 32 sprites, or actually entities, since only those entities with entries in the #R$7183 are rendered as sprites. Other entities have entries in the #R$7207 and are rendered in a bitmap at the center of the screen.
 D $7002 #TABLE(default, default) { =h Byte offset | =h Purpose } { $00 | Sprite type, or $FF if not allocated } { $01 | Polar y (depth, 0 is closest (normal ship position), 116 is furthest away) } { $02 | Polar x (angle, 0 at bottom center, moving clockwise to 16 at the left side, 32 at the top, and 48 at the right side) } { $03 | Close to polar y ($01) } { $04 | Polar x + 2 of pattern loaded in #R$AD8B } { $05 | Close to polar x ($02) } { $06 | Unknown, or LSB of path? address } { $07 | Unknown flags, or MSB of path? address } { $08 | Screen y } { $09 | Screen x } { $0A | Pattern } { $0B | Color } TABLE#
-D $7002 #TABLE(default, default) { =h Sprite type | =h Pattern example | =h Description } { $00 | #UDG$B9E6 | Ship body } { $01 | #UDG$BA66 | Ship exhaust } { $02 | #UDG$BAE6 | Shot } { $03 | #UDG$BB06 | Circle or O } { $04 | #UDG$BB0E | Dots } { $05 | #UDG$BB2E | Dotted circle } { $06 | #UDG$BB4E | Number 5 } { $07 | #UDG$BB56 | Number 10 } { $08 | #UDG$BB5E | Number 15 } { $09 | #UDG$BB66 | Number 20 } { $0A | #UDG$BB6E | Number 25 } { $0B | #UDG$BB76 | Number 30 } { $0C | #UDG$BB7E | Number 00 } { $0D | #UDG$BDE6 | Explosion dot } { $0E | #UDG$BB86 | Enemy } { $0F | #UDG$BC06 | Enemy } { $10 | #UDG$BC86 | Enemy } { $11 | #UDG$BD06 | Enemy } { $12 | #UDG$BD86 | Diagonal dots } { $13 | #UDG$BDA6 | Laser fence } { $14 | #UDG$BDC6 | Meteor } { $15 | #UDG$BDEE | Bomb facing left } { $16 | #UDG$BE4E | Bomb facing right } { $17 | #UDG$BEAE | Parallel lines, maybe enemy? } { $18 | #UDG$BF0E | Star shape } { $19 | #UDG$BF2E | Three spheres } { $1A | #UDG$BF4E | Dotted circle 1 } { $1B | #UDG$BF6E | Dotted circle 2 } { $1C | #UDG$BF8E | Dotted circle 3 } TABLE#
+D $7002 #TABLE(default, default) { =h Sprite type | =h Pattern example | =h Description } { $00 | #UDG$B9E6 | Ship body } { $01 | #UDG$BA66 | Ship exhaust } { $02 | #UDG$BAE6 | Shot } { $03 | #UDG$BB06 | Double shot circle } { $04 | #UDG$BB0E | Dots (another explosion) } { $05 | #UDG$BB2E | Destroyed enemy  } { $06 | #UDG$BB4E | Number 5 } { $07 | #UDG$BB56 | Number 10 } { $08 | #UDG$BB5E | Number 15 } { $09 | #UDG$BB66 | Number 20 } { $0A | #UDG$BB6E | Number 25 } { $0B | #UDG$BB76 | Number 30 } { $0C | #UDG$BB7E | Number 00 } { $0D | #UDG$BDE6 | Explosion dot } { $0E | #UDG$BB86 | Enemy } { $0F | #UDG$BC06 | Enemy } { $10 | #UDG$BC86 | Enemy } { $11 | #UDG$BD06 | Enemy } { $12 | #UDG$BD86 | Enemy missile 1 } { $13 | #UDG$BDA6 | Enemy missile 2 } { $14 | #UDG$BDC6 | Meteor } { $15 | #UDG$BDEE | Laser fence end 1 } { $16 | #UDG$BE4E | Laser fence end 2 } { $17 | #UDG$BEAE | Laser fence center } { $18 | #UDG$BF0E | Star shaped enemy } { $19 | #UDG$BF2E | Three spheres } { $1A | #UDG$BF4E | Enemy (chance stage) 1 } { $1B | #UDG$BF6E | Enemy (chance stage) 2 } { $1C | #UDG$BF8E | Enemy (chance stage) 3 } TABLE#
 @ $7002 label=sprite_data
 B $7002,384,12
 b $7182 Number of allocated sprites
@@ -22,7 +22,7 @@ b $71A3 Temporary storage (72 bytes)
 @ $71A3 label=buffer
 B $71A3,72,8
 b $71EB Status flags
-D $71EB #TABLE(default, default) { =h Bit | =h Purpose } { $00 | Set during warp } { $01 | Set during mine sub-stage } { $02 | You died } { $03 | Set during chance stage } { $04 | Set during stage init } { $05 | Set for two-player game when one is game over } { $06 | Set during main loop } { $07 | Two-player game } TABLE#
+D $71EB #TABLE(default, default) { =h Bit | =h Purpose } { $00 | Set during warp } { $01 | Set when all waves are completed } { $02 | Set when you die } { $03 | Set during chance stage } { $04 | Set during stage init } { $05 | Set for two-player game when one is game over } { $06 | Set during main loop } { $07 | Two-player game } TABLE#
 @ $71EB label=status_flags
 B $71EB,1,1
 b $71EC Stars move countdown
@@ -442,6 +442,7 @@ C $80FA,3 Process sprites
 C $80FD,3 READ_REGISTER
 C $8106,3 READ_REGISTER
 C $8109,3 Manage waves
+C $810C,3 Create sprite from map entry
 C $810F,3 READ_REGISTER
 C $8115,3 Upload sprites
 C $8118,3 Display center enemies
@@ -1409,7 +1410,7 @@ C $8BD6,2 Outer loop for 3 bytes
 c $8BD9 Manage waves
 D $8BD9 Used by the routine at #R$80E8.
 @ $8BD9 label=manage_waves
-C $8BD9,3 Check bit for mine sub-stage
+C $8BD9,3 Check bit for all waves completed
 C $8BDC,2 ...
 C $8BDE,1 Return if set
 C $8BDF,3 Outcoming enemies
@@ -1435,7 +1436,7 @@ D $8C07 Used by the routine at #R$8BD9.
 @ $8C07 label=manage_wave_eq_4
 C $8C07,3 Test for chance stage
 C $8C0A,2 ...
-C $8C0C,2 If set, init mine sub-stage (?)
+C $8C0C,2 If set, set bit for all waves completed
 C $8C0E,3 Number of center enemies
 C $8C11,2 If >= 6,
 C $8C13,2 Then init mine sub-stage
@@ -1450,7 +1451,7 @@ D $8C1E Used by the routines at #R$8BD9 and #R$8C07. Init mine sub-stage when wa
 C $8C1E,1 A = 0
 C $8C1F,3 Reset outcoming enemies
 C $8C22,3 Reset counter
-C $8C25,3 Set mine flag
+C $8C25,3 Set all waves completed flag
 C $8C28,2 ...
 C $8C2A,3 Reset other flag
 C $8C2D,2 ...
@@ -1626,14 +1627,14 @@ B $8E25,8,8
 c $8E2D Routine at 8E2D
 D $8E2D Used by the routines at #R$80E8, #R$8139 and #R$A3E1.
 C $8E2D,3 Get flags
-C $8E30,2 If mine stage bit is not set
+C $8E30,2 If all waves completed bit is not set
 C $8E32,2 Then init variables
 C $8E4B,3 Frame counter
 C $8E5C,3 Stage
 C $8E81,2 Set died flag
-c $8E89 Init mine stage variables
+c $8E89 Init variables when all waves completed
 D $8E89 Used by the routine at #R$8E2D.
-@ $8E89 label=init_mine_stage_variables
+@ $8E89 label=init_variables_after_waves
 N $8E8D This entry point is used by the routines at #R$82BF and #R$8FED.
 C $8E8D,1 Random number
 C $8E8E,2 0 - 15
@@ -2795,7 +2796,7 @@ C $AAA9,1 Save value to write
 C $AAAA,3 Get number of entries
 C $AAAD,2 If map is full
 C $AAAF,2 Then return
-C $AAB1,3 If mine stage flag is set
+C $AAB1,3 If all waves completed flag is set
 C $AAB4,2 The search backwards
 C $AAB6,2 Else search forwards
 C $AAB8,3 Start at end of #R$7207
@@ -2831,9 +2832,9 @@ C $AAEB,3 Decrement number of entries
 C $AAEE,1 ...
 C $AAEF,1 Restore map address
 c $AAF1 Create enemy sprite from map entry
-D $AAF1 Search for value >= $80 in map and deallocate if found. Then allocate a sprite with data from map. Used by the routine at #R$8024.
+D $AAF1 Search for value >= $80 in map and deallocate if found. Then allocate a sprite with data from map. Used by the routine at #R$80E8.
 @ $AAF1 label=create_sprite_from_map_entry
-C $AAF1,3 Is mine stage flag set?
+C $AAF1,3 Is all waves completed flag set?
 C $AAF4,2 ...
 C $AAF6,1 Return if not
 C $AAF7,2 Is died flag set?

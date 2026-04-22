@@ -37,9 +37,9 @@ w$7000 DEFW $0000
 ; { $00 | #UDG$B9E6 | Ship body }
 ; { $01 | #UDG$BA66 | Ship exhaust }
 ; { $02 | #UDG$BAE6 | Shot }
-; { $03 | #UDG$BB06 | Circle or O }
-; { $04 | #UDG$BB0E | Dots }
-; { $05 | #UDG$BB2E | Dotted circle }
+; { $03 | #UDG$BB06 | Double shot circle }
+; { $04 | #UDG$BB0E | Dots (another explosion) }
+; { $05 | #UDG$BB2E | Destroyed enemy  }
 ; { $06 | #UDG$BB4E | Number 5 }
 ; { $07 | #UDG$BB56 | Number 10 }
 ; { $08 | #UDG$BB5E | Number 15 }
@@ -52,17 +52,17 @@ w$7000 DEFW $0000
 ; { $0F | #UDG$BC06 | Enemy }
 ; { $10 | #UDG$BC86 | Enemy }
 ; { $11 | #UDG$BD06 | Enemy }
-; { $12 | #UDG$BD86 | Diagonal dots }
-; { $13 | #UDG$BDA6 | Laser fence }
+; { $12 | #UDG$BD86 | Enemy missile 1 }
+; { $13 | #UDG$BDA6 | Enemy missile 2 }
 ; { $14 | #UDG$BDC6 | Meteor }
-; { $15 | #UDG$BDEE | Bomb facing left }
-; { $16 | #UDG$BE4E | Bomb facing right }
-; { $17 | #UDG$BEAE | Parallel lines, maybe enemy? }
-; { $18 | #UDG$BF0E | Star shape }
+; { $15 | #UDG$BDEE | Laser fence end 1 }
+; { $16 | #UDG$BE4E | Laser fence end 2 }
+; { $17 | #UDG$BEAE | Laser fence center }
+; { $18 | #UDG$BF0E | Star shaped enemy }
 ; { $19 | #UDG$BF2E | Three spheres }
-; { $1A | #UDG$BF4E | Dotted circle 1 }
-; { $1B | #UDG$BF6E | Dotted circle 2 }
-; { $1C | #UDG$BF8E | Dotted circle 3 }
+; { $1A | #UDG$BF4E | Enemy (chance stage) 1 }
+; { $1B | #UDG$BF6E | Enemy (chance stage) 2 }
+; { $1C | #UDG$BF8E | Enemy (chance stage) 3 }
 ; TABLE#
 @label=sprite_data
 b$7002 DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
@@ -128,8 +128,8 @@ b$71A3 DEFB $00,$00,$00,$00,$00,$00,$00,$00
 ; #TABLE(default, default)
 ; { =h Bit | =h Purpose }
 ; { $00 | Set during warp }
-; { $01 | Set during mine sub-stage }
-; { $02 | You died }
+; { $01 | Set when all waves are completed }
+; { $02 | Set when you die }
 ; { $03 | Set during chance stage }
 ; { $04 | Set during stage init }
 ; { $05 | Set for two-player game when one is game over }
@@ -777,7 +777,7 @@ c$80E8 LD HL,$725A   ; Flag set by interrupt routine
  $8103 CALL $8E2D    ;
  $8106 CALL $1FDC    ; READ_REGISTER
  $8109 CALL $8BD9    ; Manage waves
- $810C CALL $AAF1    ;
+ $810C CALL $AAF1    ; Create sprite from map entry
  $810F CALL $1FDC    ; READ_REGISTER
  $8112 CALL $8D50    ;
  $8115 CALL $84B1    ; Upload sprites
@@ -2322,7 +2322,7 @@ c$8B12 LD L,(IY+$02)   ; Get name table address of 3 x 3 area to clear
 ;
 ; Used by the routine at #R$80E8.
 @label=manage_waves
-c$8BD9 LD A,($71EB)  ; Check bit for mine sub-stage
+c$8BD9 LD A,($71EB)  ; Check bit for all waves completed
  $8BDC BIT 1,A       ; ...
  $8BDE RET NZ        ; Return if set
  $8BDF LD A,($725C)  ; Outcoming enemies
@@ -2350,7 +2350,7 @@ c$8BD9 LD A,($71EB)  ; Check bit for mine sub-stage
 @label=manage_wave_eq_4
 c$8C07 LD A,($71EB)  ; Test for chance stage
  $8C0A BIT 3,A       ; ...
- $8C0C JR NZ,$8C1E   ; If set, init mine sub-stage (?)
+ $8C0C JR NZ,$8C1E   ; If set, set bit for all waves completed
  $8C0E LD A,($722B)  ; Number of center enemies
  $8C11 CP $06        ; If >= 6,
  $8C13 JR NC,$8C1E   ; Then init mine sub-stage
@@ -2368,7 +2368,7 @@ c$8C07 LD A,($71EB)  ; Test for chance stage
 c$8C1E XOR A         ; A = 0
  $8C1F LD ($725C),A  ; Reset outcoming enemies
  $8C22 LD ($71F0),A  ; Reset counter
- $8C25 LD HL,$71EB   ; Set mine flag
+ $8C25 LD HL,$71EB   ; Set all waves completed flag
  $8C28 SET 1,(HL)    ; ...
  $8C2A LD HL,$7256   ; Reset other flag
  $8C2D RES 5,(HL)    ; ...
@@ -2648,7 +2648,7 @@ b$8E25 DEFB $42,$41,$40,$00,$42,$42,$40,$42
 ;
 ; Used by the routines at #R$80E8, #R$8139 and #R$A3E1.
 c$8E2D LD A,($71EB)  ; Get flags
- $8E30 BIT 1,A       ; If mine stage bit is not set
+ $8E30 BIT 1,A       ; If all waves completed bit is not set
  $8E32 JR Z,$8E89    ; Then init variables
  $8E34 LD A,($7264)  ;
  $8E37 CP $01        ;
@@ -2693,10 +2693,10 @@ c$8E2D LD A,($71EB)  ; Get flags
  $8E85 LD ($7264),A  ;
  $8E88 RET           ;
 
-; Init mine stage variables
+; Init variables when all waves completed
 ;
 ; Used by the routine at #R$8E2D.
-@label=init_mine_stage_variables
+@label=init_variables_after_waves
 c$8E89 XOR A         ;
  $8E8A LD ($7266),A  ;
 ; This entry point is used by the routines at #R$82BF and #R$8FED.
@@ -5576,7 +5576,7 @@ c$AAA6 PUSH HL       ;
  $AAAA LD A,($722B)  ; Get number of entries
  $AAAD CP $24        ; If map is full
  $AAAF JR Z,$AADE    ; Then return
- $AAB1 LD A,($71EB)  ; If mine stage flag is set
+ $AAB1 LD A,($71EB)  ; If all waves completed flag is set
  $AAB4 BIT 1,A       ; The search backwards
  $AAB6 JR NZ,$AAC6   ; Else search forwards
  $AAB8 LD HL,$722A   ; Start at end of #R$7207
@@ -5624,9 +5624,9 @@ c$AAE3 PUSH HL       ; Save map address
 ; Create enemy sprite from map entry
 ;
 ; Search for value >= $80 in map and deallocate if found. Then allocate a
-; sprite with data from map. Used by the routine at #R$8024.
+; sprite with data from map. Used by the routine at #R$80E8.
 @label=create_sprite_from_map_entry
-c$AAF1 LD A,($71EB)    ; Is mine stage flag set?
+c$AAF1 LD A,($71EB)    ; Is all waves completed flag set?
  $AAF4 BIT 1,A         ; ...
  $AAF6 RET Z           ; Return if not
  $AAF7 BIT 2,A         ; Is died flag set?
