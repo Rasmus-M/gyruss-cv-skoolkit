@@ -7,8 +7,13 @@ s$4000 DEFS $3000
 @label=center_of_projection
 w$7000 DEFW $0000
 
-; Sprite data (32 sprites)
+; Sprite data
 ;
+; Contains data for 32 sprites, or actually entities, since only those entities
+; with entries in the #R$7183 are rendered as sprites. Other entities have
+; entries in the #R$7207 and are rendered in a bitmap at the center of the
+; screen.
+; .
 ; #TABLE(default, default)
 ; { =h Byte offset | =h Purpose }
 ; { $00 | Sprite type, or $FF if not allocated }
@@ -100,7 +105,7 @@ b$7182 DEFB $00
 ; Sprite allocation table
 ;
 ; Contains #R$7182 indexes into #R$7002
-@label=sprite_alloc_table
+@label=sprite_allocation_table
 b$7183 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $718B DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $7193 DEFB $00,$00,$00,$00,$00,$00,$00,$00
@@ -154,10 +159,10 @@ b$71EE DEFB $00
 @countdown_at_71EF
 b$71EF DEFB $00
 
-; Countdown at 71F0
+; Time to next wave
 ;
 ; Reset to 6th byte of stage data
-@countdown_at_71F0
+@countdown_to_wave
 b$71F0 DEFB $00
 
 ; Current player (0 or 1)
@@ -239,10 +244,10 @@ b$7207 DEFB $00,$00,$00,$00,$00,$00
  $721F DEFB $00,$00,$00,$00,$00,$00
  $7225 DEFB $00,$00,$00,$00,$00,$00
 
-; Number of map entries
+; Number of center enemies
 ;
 ; Number of map entries in #R$7207
-@label=map_entries
+@label=center_map_entries
 b$722B DEFB $00
 
 ; Number of active enemies
@@ -289,8 +294,8 @@ b$7255 DEFB $00
 ; { $02 | Unknown }
 ; { $03 | Unknown }
 ; { $04 | Unknown }
-; { $05 | Unknown }
-; { $06 | Unknown }
+; { $05 | Reset when wave starts }
+; { $06 | Set when wave starts }
 ; { $07 | Unknown }
 ; TABLE#
 @label=other_flags
@@ -308,16 +313,23 @@ b$7259 DEFB $00
 @label=interrupt_flag
 b$725A DEFB $00
 
-; Byte at 725B
+; Counter at 725B
+@label=wave_spedd_counter
 b$725B DEFB $00
 
-; Byte at 725C
+; Number of enemies left center
+;
+; Number of enemies that have left center in the current wave. Set to zero when
+; all enemies are out.
+@label=outcoming_enemies
 b$725C DEFB $00
 
-; Word at 725D
+; Wave data address
+@label=wave_data_address
 w$725D DEFW $0000
 
-; Byte at 725F
+; Countdown at 725F
+@label=countdown_at_725F
 b$725F DEFB $00
 
 ; Sprite countdown 2
@@ -596,16 +608,23 @@ b$731D DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $739D DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $73A5 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $73AD DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $73B5 DEFB $00,$00,$00,$00,$00,$00
+ $73B5 DEFB $00,$00,$00,$00,$00
 
-; Unused
-s$73BB DEFS $3B
+; OS RAM
+s$73BA DEFS $38
 
-; Stars VDP address
-@label=stars_vdp_address
+; Sprite allocation table VDP address
+@label=sat_vdp_address
+w$73F2 DEFW $0000
+
+; Sprite pattern table VDP address
+w$73F4 DEFW $0000
+
+; Name table VDP address
+@label=name_table_vdp_address
 w$73F6 DEFW $0000
 
-; Unused
+; OS RAM
 s$73F8 DEFS $08
 
 ; Unused
@@ -757,7 +776,7 @@ c$80E8 LD HL,$725A   ; Flag set by interrupt routine
  $8100 CALL $9796    ;
  $8103 CALL $8E2D    ;
  $8106 CALL $1FDC    ; READ_REGISTER
- $8109 CALL $8BD9    ;
+ $8109 CALL $8BD9    ; Manage waves
  $810C CALL $AAF1    ;
  $810F CALL $1FDC    ; READ_REGISTER
  $8112 CALL $8D50    ;
@@ -1365,13 +1384,13 @@ t$853C DEFM "STAGE"
 ;
 ; #TABLE(default, default)
 ; { =h Byte offset | =h Purpose }
-; { $00 | Speed? }
+; { $00 | Speed }
 ; { $01 | Unknown }
 ; { $02 | Unknown }
 ; { $03 | Unknown }
 ; { $04 | Unknown }
 ; { $05 | Unknown }
-; { $06 | Unknown }
+; { $06 | Time between waves }
 ; { $07 | Unknown }
 ; TABLE#
 @label=stage_data
@@ -1641,7 +1660,7 @@ c$873E CP $15         ; Is sprite type < $15
  $874B BIT 2,A        ;
  $874D JR Z,$8751     ;
  $874F LD B,$03       ;
-*$8751 LD A,($71F2)   ;
+*$8751 LD A,($71F2)   ; Frame counter
  $8754 AND B          ;
  $8755 JR NZ,$875D    ;
  $8757 DEC (IX+$01)   ;
@@ -1700,9 +1719,14 @@ c$8790 CP $0E          ; Is sprite type < $0E
  $87D1 INC (IX+$05)    ;
  $87D4 RET             ;
 
-; Routine at 87D5
+; Create map entry for enemy sprite
 ;
-; Used by the routine at #R$8790.
+; Search for a value (pattern OR $80) in map. If not found, allocate an entry.
+; If found, calculate coordinates and move towards them. Used by the routine at
+; #R$8790.
+;
+; I: IX Sprite data
+@label=create_map_entry_for_sprite
 c$87D5 LD A,($71EE)    ; Return if countdown
  $87D8 OR A            ; is not zero
  $87D9 RET NZ          ; ...
@@ -1724,6 +1748,7 @@ c$87D5 LD A,($71EE)    ; Return if countdown
  $87FC JR Z,$8801      ; If same, skip ahead
  $87FE JP $8AC0        ; Else jump out to #R$8AC0
 *$8801 LD (IX+$00),$0E ; Change sprite type to enemy
+; Move towards y
  $8805 LD A,(IX+$01)   ; Get polar y
  $8808 CP D            ; Compare with polar y
  $8809 JR Z,$8815      ; If same, jump ahead
@@ -2133,23 +2158,27 @@ c$8A76 LD A,($71EF)    ;
 ; Routine at 8AC0
 ;
 ; Used by the routines at #R$8790, #R$87F5, #R$8878 and #R$88D4.
-c$8AC0 LD B,$01       ;
- $8AC2 SUB (IX+$02)   ;
- $8AC5 RET Z          ;
- $8AC6 JR NC,$8ACC    ;
- $8AC8 LD B,$FF       ;
- $8ACA NEG            ;
-*$8ACC CP $21         ;
- $8ACE LD A,B         ;
- $8ACF JR C,$8AD3     ;
- $8AD1 NEG            ;
-*$8AD3 LD B,A         ;
- $8AD4 ADD A,(IX+$02) ;
- $8AD7 AND $3F        ;
- $8AD9 LD (IX+$02),A  ;
- $8ADC LD A,$10       ;
- $8ADE ADD A,B        ;
- $8ADF LD (IX+$00),A  ;
+;
+; I:IX Sprite data
+; I:A Polar x to move towards
+@label=move_towards_x
+c$8AC0 LD B,$01       ; Direction = 1
+ $8AC2 SUB (IX+$02)   ; Desired x - x
+ $8AC5 RET Z          ; Return if same
+ $8AC6 JR NC,$8ACC    ; Jump if desired >= x
+ $8AC8 LD B,$FF       ; Direction = -1
+ $8ACA NEG            ; x = -x
+*$8ACC CP $21         ; Compare with top center
+ $8ACE LD A,B         ; A = direction
+ $8ACF JR C,$8AD3     ; Jump if left half
+ $8AD1 NEG            ; Invert direction in right half
+*$8AD3 LD B,A         ; B = direction
+ $8AD4 ADD A,(IX+$02) ; Direction + x
+ $8AD7 AND $3F        ; Mod 64
+ $8AD9 LD (IX+$02),A  ; Save new x
+ $8ADC LD A,$10       ; $10
+ $8ADE ADD A,B        ; $10 + direction, i.e. $0F or $11
+ $8ADF LD (IX+$00),A  ; Change sprite type?
  $8AE2 INC (IX+$05)   ;
  $8AE5 RET            ;
 
@@ -2289,191 +2318,199 @@ c$8B12 LD L,(IY+$02)   ; Get name table address of 3 x 3 area to clear
  $8BD6 JR NZ,$8BC6     ; Outer loop for 3 bytes
  $8BD8 RET             ;
 
-; Routine at 8BD9
+; Manage waves
 ;
-; Used by the routine at #R$8024.
-c$8BD9 LD A,($71EB)  ;
- $8BDC BIT 1,A       ;
- $8BDE RET NZ        ;
- $8BDF LD A,($725C)  ;
- $8BE2 OR A          ;
- $8BE3 JP NZ,$8C68   ;
+; Used by the routine at #R$80E8.
+@label=manage_waves
+c$8BD9 LD A,($71EB)  ; Check bit for mine sub-stage
+ $8BDC BIT 1,A       ; ...
+ $8BDE RET NZ        ; Return if set
+ $8BDF LD A,($725C)  ; Outcoming enemies
+ $8BE2 OR A          ; Is it zero?
+ $8BE3 JP NZ,$8C68   ; If not, jump ahead to add enemy
  $8BE6 LD A,($722C)  ; Get active enemies
  $8BE9 OR A          ; Return if not zero
  $8BEA RET NZ        ; ...
- $8BEB LD A,($71F2)  ;
- $8BEE AND $03       ;
- $8BF0 JR NZ,$8BFC   ;
- $8BF2 LD A,($71F0)  ;
- $8BF5 DEC A         ;
- $8BF6 JP M,$8BFC    ;
- $8BF9 LD ($71F0),A  ;
-*$8BFC LD A,($7201)  ;
- $8BFF CP $04        ;
- $8C01 JR C,$8C30    ;
- $8C03 JR Z,$8C07    ;
- $8C05 JR $8C1E      ;
+ $8BEB LD A,($71F2)  ; Frame counter
+ $8BEE AND $03       ; 3 of 4 times,
+ $8BF0 JR NZ,$8BFC   ; skip ahead
+ $8BF2 LD A,($71F0)  ; Get counter value
+ $8BF5 DEC A         ; Decrement value
+ $8BF6 JP M,$8BFC    ; If negative, skip ahead
+ $8BF9 LD ($71F0),A  ; Save counter again
+*$8BFC LD A,($7201)  ; Get wave
+ $8BFF CP $04        ; Compare to 4
+ $8C01 JR C,$8C30    ; If < 4, jump ahead
+ $8C03 JR Z,$8C07    ; If = 4, jump ahead
+ $8C05 JR $8C1E      ; If > 4, jump ahead
 
-; Routine at 8C07
+; Manage wave = 4
 ;
 ; Used by the routine at #R$8BD9.
-c$8C07 LD A,($71EB)  ;
- $8C0A BIT 3,A       ;
- $8C0C JR NZ,$8C1E   ;
- $8C0E LD A,($722B)  ;
- $8C11 CP $06        ;
- $8C13 JR NC,$8C1E   ;
+@label=manage_wave_eq_4
+c$8C07 LD A,($71EB)  ; Test for chance stage
+ $8C0A BIT 3,A       ; ...
+ $8C0C JR NZ,$8C1E   ; If set, init mine sub-stage (?)
+ $8C0E LD A,($722B)  ; Number of center enemies
+ $8C11 CP $06        ; If >= 6,
+ $8C13 JR NC,$8C1E   ; Then init mine sub-stage
  $8C15 RST $20       ; Random number
-*$8C16 CP $14        ;
- $8C18 JR C,$8C3E    ;
- $8C1A SUB $14       ;
- $8C1C JR $8C16      ;
+*$8C16 CP $14        ; If < 20,
+ $8C18 JR C,$8C3E    ; Then skip ahead
+ $8C1A SUB $14       ; - 20
+ $8C1C JR $8C16      ; Loop until small enough
 
-; Routine at 8C1E
+; Init mine sub-stage
 ;
-; Used by the routines at #R$8BD9 and #R$8C07.
-c$8C1E XOR A         ;
- $8C1F LD ($725C),A  ;
- $8C22 LD ($71F0),A  ;
- $8C25 LD HL,$71EB   ;
- $8C28 SET 1,(HL)    ;
- $8C2A LD HL,$7256   ;
- $8C2D RES 5,(HL)    ;
+; Used by the routines at #R$8BD9 and #R$8C07. Init mine sub-stage when wave >
+; 4 or wave = 4 and not chance stage.
+@label=init_mine_sub_stage
+c$8C1E XOR A         ; A = 0
+ $8C1F LD ($725C),A  ; Reset outcoming enemies
+ $8C22 LD ($71F0),A  ; Reset counter
+ $8C25 LD HL,$71EB   ; Set mine flag
+ $8C28 SET 1,(HL)    ; ...
+ $8C2A LD HL,$7256   ; Reset other flag
+ $8C2D RES 5,(HL)    ; ...
  $8C2F RET           ;
 
-; Routine at 8C30
+; Manage wave < 4
 ;
 ; Used by the routine at #R$8BD9.
-c$8C30 LD A,($71F0)  ;
- $8C33 OR A          ;
- $8C34 RET NZ        ;
- $8C35 LD A,($7200)  ; Stage
- $8C38 AND $FC       ;
- $8C3A LD HL,$7201   ;
- $8C3D ADD A,(HL)    ;
+@label=manage_wave_lt_4
+c$8C30 LD A,($71F0)  ; Get counter
+ $8C33 OR A          ; Is it zero?
+ $8C34 RET NZ        ; Then return
+ $8C35 LD A,($7200)  ; Get stage
+ $8C38 AND $FC       ; Isolate planet index bits
+ $8C3A LD HL,$7201   ; Add wave
+ $8C3D ADD A,(HL)    ; ...
 ; This entry point is used by the routine at #R$8C07.
-*$8C3E ADD A,A       ;
- $8C3F ADD A,A       ;
- $8C40 LD C,A        ;
- $8C41 LD B,$00      ;
- $8C43 LD HL,$A4BE   ;
- $8C46 LD A,($71EB)  ;
- $8C49 BIT 3,A       ;
- $8C4B JR Z,$8C52    ;
- $8C4D LD HL,$A51E   ;
- $8C50 JR $8C57      ;
+*$8C3E ADD A,A       ; Multiply by 4
+ $8C3F ADD A,A       ; ...
+ $8C40 LD C,A        ; BC = offset into table
+ $8C41 LD B,$00      ; ...
+ $8C43 LD HL,$A4BE   ; Table base address
+ $8C46 LD A,($71EB)  ; Is it chance stage?
+ $8C49 BIT 3,A       ; ...
+ $8C4B JR Z,$8C52    ; If not, jump ahead
+ $8C4D LD HL,$A51E   ; Else load other table
+ $8C50 JR $8C57      ; And jump ahead
 
-; Routine at 8C52
+; Start new wave
 ;
 ; Used by the routine at #R$8C30.
-c$8C52 LD A,$02      ;
- $8C54 CALL $9EA3    ;
+@label=start_new_wave
+c$8C52 LD A,$02      ; Play a sound
+ $8C54 CALL $9EA3    ; ...
 ; This entry point is used by the routine at #R$8C30.
-*$8C57 ADD HL,BC     ;
- $8C58 LD ($725D),HL ;
- $8C5B LD HL,$7201   ;
- $8C5E INC (HL)      ;
- $8C5F LD HL,$7256   ;
- $8C62 RES 5,(HL)    ;
- $8C64 SET 6,(HL)    ;
+*$8C57 ADD HL,BC     ; Add offset to table base
+ $8C58 LD ($725D),HL ; Save table address
+ $8C5B LD HL,$7201   ; Next wave
+ $8C5E INC (HL)      ; ...
+ $8C5F LD HL,$7256   ; Flags
+ $8C62 RES 5,(HL)    ; Reset flag
+ $8C64 SET 6,(HL)    ; Set flag
  $8C66 JR $8C6D      ;
 
-; Routine at 8C68
+; When wave is initiating
 ;
-; Used by the routine at #R$8BD9.
-c$8C68 LD HL,$725B    ;
- $8C6B DEC (HL)       ;
- $8C6C RET P          ;
+; Called when there's still more outcoming enemies. Used by the routine at
+; #R$8BD9.
+@label=handle_wave_outcoming
+c$8C68 LD HL,$725B    ; Decrement wave speed counter
+ $8C6B DEC (HL)       ; ...
+ $8C6C RET P          ; Return if > 0
 ; This entry point is used by the routine at #R$8C52.
-*$8C6D LD IY,($725D)  ;
- $8C71 PUSH IY        ;
- $8C73 LD A,(IY+$02)  ;
- $8C76 RLCA           ;
- $8C77 RLCA           ;
- $8C78 RLCA           ;
- $8C79 AND $07        ;
+*$8C6D LD IY,($725D)  ; Get wave data address
+ $8C71 PUSH IY        ; Save pointer
+ $8C73 LD A,(IY+$02)  ; Get byte 3
+ $8C76 RLCA           ; Shift bit 5-7 into 0-2
+ $8C77 RLCA           ; ...
+ $8C78 RLCA           ; ...
+ $8C79 AND $07        ; And isolate them
  $8C7B PUSH AF        ;
  $8C7C CALL $84DB     ; Get stage data address in IY
  $8C7F POP AF         ;
- $8C80 ADD A,(IY+$00) ;
- $8C83 ADD A,(IY+$00) ;
- $8C86 LD ($725B),A   ;
- $8C89 POP IY         ;
- $8C8B LD B,$0E       ;
- $8C8D LD A,($71EB)   ;
- $8C90 BIT 3,A        ;
- $8C92 JR Z,$8CA2     ;
- $8C94 LD A,($7200)   ; Stage
- $8C97 AND $FC        ;
- $8C99 LD HL,$7201    ;
- $8C9C ADD A,(HL)     ;
- $8C9D LD HL,$8E0C    ;
- $8CA0 RST $08        ; Add A to HL
- $8CA1 LD B,(HL)      ;
+ $8C80 ADD A,(IY+$00) ; Add 2 times stage speed
+ $8C83 ADD A,(IY+$00) ; ...
+ $8C86 LD ($725B),A   ; Store as new speed counter value
+ $8C89 POP IY         ; Restore wave data address
+ $8C8B LD B,$0E       ; Default sprite type (enemy)
+ $8C8D LD A,($71EB)   ; Is it chance stage?
+ $8C90 BIT 3,A        ; ...
+ $8C92 JR Z,$8CA2     ; If not, skip ahead
+ $8C94 LD A,($7200)   ; Get stage
+ $8C97 AND $FC        ; Isolate planet index bits
+ $8C99 LD HL,$7201    ; Add wave
+ $8C9C ADD A,(HL)     ; ...
+ $8C9D LD HL,$8E0C    ; Table at #R$8E0D - 1
+ $8CA0 RST $08        ; Add A (1-24) to HL
+ $8CA1 LD B,(HL)      ; Get table value
 *$8CA2 RST $28        ; Allocate sprite
- $8CA3 LD (IX+$00),B  ;
- $8CA6 LD A,(IY+$03)  ;
- $8CA9 RRA            ;
- $8CAA RRA            ;
- $8CAB RRA            ;
- $8CAC RRA            ;
- $8CAD AND $0F        ;
+ $8CA3 LD (IX+$00),B  ; Set sprite type
+ $8CA6 LD A,(IY+$03)  ; Get wave data byte 3
+ $8CA9 RRA            ; Shift bits 4-7 to 0-3
+ $8CAA RRA            ; ...
+ $8CAB RRA            ; ...
+ $8CAC RRA            ; ...
+ $8CAD AND $0F        ; Isolate bits 0-3
  $8CAF LD (IX+$0B),A  ; Set color
- $8CB2 LD A,(IY+$03)  ;
- $8CB5 AND $0F        ;
- $8CB7 LD C,A         ;
- $8CB8 LD B,$00       ;
- $8CBA LD HL,$A57E    ;
- $8CBD ADD HL,BC      ;
- $8CBE LD A,(HL)      ;
- $8CBF LD (IX+$01),A  ;
- $8CC2 LD A,($725C)   ;
- $8CC5 LD C,(IY+$00)  ;
- $8CC8 BIT 0,A        ;
- $8CCA JR Z,$8CCF     ;
- $8CCC LD C,(IY+$01)  ;
-*$8CCF LD A,C         ;
- $8CD0 AND $7F        ;
- $8CD2 LD (IX+$02),A  ;
- $8CD5 LD A,(IY+$02)  ;
- $8CD8 AND $1F        ;
- $8CDA ADD A,A        ;
- $8CDB LD C,A         ;
- $8CDC LD HL,$A581    ; #R$A57E+2
- $8CDF ADD HL,BC      ;
- $8CE0 LD A,(HL)      ;
- $8CE1 INC HL         ;
- $8CE2 LD H,(HL)      ;
- $8CE3 LD L,A         ;
- $8CE4 LD (IX+$06),L  ;
- $8CE7 LD (IX+$07),H  ;
- $8CEA LD A,(HL)      ;
- $8CEB AND $F0        ;
- $8CED LD B,A         ;
- $8CEE LD A,($725C)   ;
- $8CF1 OR B           ;
- $8CF2 LD (IX+$03),A  ;
+ $8CB2 LD A,(IY+$03)  ; Get wave data byte 3
+ $8CB5 AND $0F        ; Isolate bits 0-3
+ $8CB7 LD C,A         ; BC = A = table offset (actually only 0 or 1)
+ $8CB8 LD B,$00       ; ...
+ $8CBA LD HL,$A57E    ; Table base address
+ $8CBD ADD HL,BC      ; Table address
+ $8CBE LD A,(HL)      ; Get table byte
+ $8CBF LD (IX+$01),A  ; Save as polar y
+ $8CC2 LD A,($725C)   ; Outcoming enemies
+ $8CC5 LD C,(IY+$00)  ; Get wave data byte 0
+ $8CC8 BIT 0,A        ; Even number of outcoming enemies?
+ $8CCA JR Z,$8CCF     ; Skip ahead if so
+ $8CCC LD C,(IY+$01)  ; Get wave data byte 1
+*$8CCF LD A,C         ; A = wave data byte
+ $8CD0 AND $7F        ; Clear bit 7
+ $8CD2 LD (IX+$02),A  ; Save as polar x
+ $8CD5 LD A,(IY+$02)  ; Get wave data byte 2
+ $8CD8 AND $1F        ; Isolate bits 0-4
+ $8CDA ADD A,A        ; x2
+ $8CDB LD C,A         ; BC = offset
+ $8CDC LD HL,$A581    ; Table base address
+ $8CDF ADD HL,BC      ; Table address
+ $8CE0 LD A,(HL)      ; Get LSB
+ $8CE1 INC HL         ; Next table address
+ $8CE2 LD H,(HL)      ; Get MSB
+ $8CE3 LD L,A         ; L = LSB
+ $8CE4 LD (IX+$06),L  ; Store in sprite data (pointer to path data?)
+ $8CE7 LD (IX+$07),H  ; ...
+ $8CEA LD A,(HL)      ; Get first byte
+ $8CEB AND $F0        ; Isolate bits 4-7
+ $8CED LD B,A         ; Store in B
+ $8CEE LD A,($725C)   ; Outcoming enemies
+ $8CF1 OR B           ; OR bits 4-7
+ $8CF2 LD (IX+$03),A  ; Store in sprite data
  $8CF5 RST $30        ; Load sprite pattern
  $8CF6 LD HL,$722C    ; Increase active enemies
  $8CF9 INC (HL)       ; ...
  $8CFA LD HL,$7206    ; Increase total enemies
  $8CFD INC (HL)       ; ...
- $8CFE LD HL,$725C    ;
- $8D01 INC (HL)       ;
- $8D02 LD B,$09       ;
- $8D04 LD A,($71EB)   ;
- $8D07 BIT 3,A        ;
- $8D09 JR Z,$8D0D     ;
- $8D0B LD B,$0A       ;
-*$8D0D LD A,(HL)      ;
- $8D0E CP B           ;
- $8D0F RET NZ         ;
- $8D10 LD (HL),$00    ;
- $8D12 LD HL,$7256    ;
- $8D15 RES 6,(HL)     ;
+ $8CFE LD HL,$725C    ; Increase outcoming enemies
+ $8D01 INC (HL)       ; ...
+ $8D02 LD B,$09       ; B = 9 enemies
+ $8D04 LD A,($71EB)   ; Is it chance stage?
+ $8D07 BIT 3,A        ; ...
+ $8D09 JR Z,$8D0D     ; If not, skip ahead
+ $8D0B LD B,$0A       ; Else B = 10 enemies
+*$8D0D LD A,(HL)      ; Increased outcoming enemies
+ $8D0E CP B           ; Compare with 9 or 10
+ $8D0F RET NZ         ; Return if all are not out
+ $8D10 LD (HL),$00    ; Set outcoming enemies to 0
+ $8D12 LD HL,$7256    ; Clear flag that was set
+ $8D15 RES 6,(HL)     ; when the wave started
  $8D17 CALL $84DB     ; Get stage data address in IY
- $8D1A LD A,(IY+$06)  ;
- $8D1D LD ($71F0),A   ;
+ $8D1A LD A,(IY+$06)  ; Set countdown
+ $8D1D LD ($71F0),A   ; ...
  $8D20 RET            ;
 
 ; Routine at 8D21
@@ -2482,7 +2519,7 @@ c$8C68 LD HL,$725B    ;
 c$8D21 LD A,($71EB)  ;
  $8D24 BIT 1,A       ;
  $8D26 RET NZ        ;
- $8D27 LD A,($725C)  ;
+ $8D27 LD A,($725C)  ; Outcoming enemies
  $8D2A OR A          ;
  $8D2B RET Z         ;
  $8D2C LD B,A        ;
@@ -2501,15 +2538,15 @@ c$8D21 LD A,($71EB)  ;
  $8D41 AND $0F       ;
 *$8D43 CALL $AAA6    ;
  $8D46 DJNZ $8D43    ;
- $8D48 XOR A         ;
- $8D49 LD ($725C),A  ;
+ $8D48 XOR A         ; Reset outcoming enemies
+ $8D49 LD ($725C),A  ; ...
  $8D4C LD ($71F0),A  ;
  $8D4F RET           ;
 
 ; Routine at 8D50
 ;
-; Used by the routine at #R$8024.
-c$8D50 LD A,($71F2)    ;
+; Used by the routine at #R$80E8.
+c$8D50 LD A,($71F2)    ; Frame counter
  $8D53 AND $03         ;
  $8D55 RET NZ          ;
  $8D56 LD A,($71EB)    ;
@@ -2593,17 +2630,18 @@ c$8DD7 BIT 1,(IY+$07)  ;
  $8E03 INC (HL)        ; ...
 ; This entry point is used by the routine at #R$8D50.
 *$8E04 RST $20         ; Random number
- $8E05 AND $3F         ;
- $8E07 ADD A,$10       ;
- $8E09 LD ($725F),A    ;
+ $8E05 AND $3F         ; $00 - $3F
+ $8E07 ADD A,$10       ; $10 - $4F
+ $8E09 LD ($725F),A    ; Store countdown
  $8E0C RET             ;
 
-; Data block at 8E0D
+; Enemy types in different waves (chance stage)
+@labe=enemies_by_wave_table
 b$8E0D DEFB $18,$0E,$18,$0E,$19,$0E,$19,$0E
  $8E15 DEFB $1A,$0E,$1A,$0E,$1A,$0E,$1A,$0E
  $8E1D DEFB $19,$0E,$19,$0E,$1A,$0E,$1A,$0E
 
-; Data block at 8E25
+; Table at 8E25
 b$8E25 DEFB $42,$41,$40,$00,$42,$42,$40,$42
 
 ; Routine at 8E2D
@@ -2622,7 +2660,7 @@ c$8E2D LD A,($71EB)  ; Get flags
  $8E45 LD A,($7256)  ;
  $8E48 BIT 2,A       ;
  $8E4A RET NZ        ;
- $8E4B LD A,($71F2)  ;
+ $8E4B LD A,($71F2)  ; Frame counter
  $8E4E AND $0F       ;
  $8E50 RET NZ        ;
  $8E51 LD HL,$7263   ;
@@ -2782,7 +2820,7 @@ c$8F55 CALL $900E     ;
  $8F70 LD A,($7265)   ;
  $8F73 BIT 0,A        ;
  $8F75 JR NZ,$8FED    ;
- $8F77 LD A,($71F2)   ;
+ $8F77 LD A,($71F2)   ; Frame counter
  $8F7A AND $07        ;
  $8F7C JR NZ,$8FC6    ;
  $8F7E LD A,($7267)   ;
@@ -2823,7 +2861,7 @@ c$8F55 CALL $900E     ;
  $8FC9 ADD IY,BC      ;
  $8FCB POP BC         ;
  $8FCC DJNZ $8F5E     ;
- $8FCE LD A,($71F2)   ;
+ $8FCE LD A,($71F2)   ; Frame counter
  $8FD1 AND $07        ;
  $8FD3 RET NZ         ;
  $8FD4 LD HL,$7263    ;
@@ -3481,7 +3519,7 @@ b$96FE DEFB $00,$00,$50,$02,$04,$02,$56,$00
 
 ; Routine at 9796
 ;
-; Used by the routine at #R$8024.
+; Used by the routine at #R$80E8.
 c$9796 LD A,($7182)    ; Return if only the ship sprites are allocated
  $9799 SUB $02         ; ...
  $979B RET Z           ; ...
@@ -4944,71 +4982,180 @@ b$A4B2 DEFB $10,$16,$1C,$24,$2A,$30
 ; Sprite init data (polar x)
 b$A4B8 DEFB $F0,$EA,$E4,$1C,$16,$10
 
-; Sprite path data 1
-b$A4BE DEFB $A8,$18,$80,$50,$A0,$10,$80,$E0
- $A4C6 DEFB $B0,$20,$80,$A0,$88,$38,$80,$80
- $A4CE DEFB $12,$14,$63,$51,$AE,$AC,$63,$E1
- $A4D6 DEFB $22,$24,$63,$A1,$9E,$9C,$63,$81
- $A4DE DEFB $1E,$1E,$65,$51,$A2,$A2,$65,$E1
- $A4E6 DEFB $84,$84,$65,$A1,$3C,$3C,$65,$81
- $A4EE DEFB $20,$20,$68,$50,$B0,$B0,$68,$E0
- $A4F6 DEFB $00,$00,$68,$A0,$3F,$3F,$68,$80
- $A4FE DEFB $30,$30,$6B,$50,$8F,$8F,$6B,$E0
- $A506 DEFB $01,$01,$6B,$A0,$81,$81,$6B,$80
- $A50E DEFB $10,$B0,$6E,$51,$10,$B0,$6E,$E1
- $A516 DEFB $90,$30,$6E,$A1,$90,$30,$6E,$81
+; Init data for wave sprites
+;
+; Data for 24 waves, 4 bytes each
+@label=wave_init_data
+b$A4BE DEFB $A8,$18,$80,$50
+ $A4C2 DEFB $A0,$10,$80,$E0
+ $A4C6 DEFB $B0,$20,$80,$A0
+ $A4CA DEFB $88,$38,$80,$80
+ $A4CE DEFB $12,$14,$63,$51
+ $A4D2 DEFB $AE,$AC,$63,$E1
+ $A4D6 DEFB $22,$24,$63,$A1
+ $A4DA DEFB $9E,$9C,$63,$81
+ $A4DE DEFB $1E,$1E,$65,$51
+ $A4E2 DEFB $A2,$A2,$65,$E1
+ $A4E6 DEFB $84,$84,$65,$A1
+ $A4EA DEFB $3C,$3C,$65,$81
+ $A4EE DEFB $20,$20,$68,$50
+ $A4F2 DEFB $B0,$B0,$68,$E0
+ $A4F6 DEFB $00,$00,$68,$A0
+ $A4FA DEFB $3F,$3F,$68,$80
+ $A4FE DEFB $30,$30,$6B,$50
+ $A502 DEFB $8F,$8F,$6B,$E0
+ $A506 DEFB $01,$01,$6B,$A0
+ $A50A DEFB $81,$81,$6B,$80
+ $A50E DEFB $10,$B0,$6E,$51
+ $A512 DEFB $10,$B0,$6E,$E1
+ $A516 DEFB $90,$30,$6E,$A1
+ $A51A DEFB $90,$30,$6E,$81
 
-; Sprite path data 2
-b$A51E DEFB $10,$B0,$41,$21,$0E,$0E,$A2,$51
- $A526 DEFB $B0,$10,$41,$21,$B2,$B2,$A2,$81
- $A52E DEFB $98,$38,$24,$A1,$9D,$06,$61,$51
- $A536 DEFB $88,$28,$24,$A1,$BC,$23,$61,$81
- $A53E DEFB $1C,$94,$46,$D0,$0C,$B4,$47,$51
- $A546 DEFB $3C,$B4,$46,$D0,$94,$2C,$47,$61
- $A54E DEFB $08,$B8,$89,$D1,$0E,$B2,$8A,$52
- $A556 DEFB $98,$28,$89,$D1,$92,$2E,$8A,$82
- $A55E DEFB $3C,$A4,$2C,$51,$20,$A0,$2D,$A1
- $A566 DEFB $84,$1C,$2C,$51,$00,$80,$2D,$81
- $A56E DEFB $15,$AB,$2F,$D1,$04,$9C,$30,$51
- $A576 DEFB $95,$2B,$2F,$D1,$BC,$23,$30,$81
+; Init data for wave sprites (chance stage)
+;
+; Data for 24 waves, 4 bytes each
+@label=chance_wave_init_data
+b$A51E DEFB $10,$B0,$41,$21
+ $A522 DEFB $0E,$0E,$A2,$51
+ $A526 DEFB $B0,$10,$41,$21
+ $A52A DEFB $B2,$B2,$A2,$81
+ $A52E DEFB $98,$38,$24,$A1
+ $A532 DEFB $9D,$06,$61,$51
+ $A536 DEFB $88,$28,$24,$A1
+ $A53A DEFB $BC,$23,$61,$81
+ $A53E DEFB $1C,$94,$46,$D0
+ $A542 DEFB $0C,$B4,$47,$51
+ $A546 DEFB $3C,$B4,$46,$D0
+ $A54A DEFB $94,$2C,$47,$61
+ $A54E DEFB $08,$B8,$89,$D1
+ $A552 DEFB $0E,$B2,$8A,$52
+ $A556 DEFB $98,$28,$89,$D1
+ $A55A DEFB $92,$2E,$8A,$82
+ $A55E DEFB $3C,$A4,$2C,$51
+ $A562 DEFB $20,$A0,$2D,$A1
+ $A566 DEFB $84,$1C,$2C,$51
+ $A56A DEFB $00,$80,$2D,$81
+ $A56E DEFB $15,$AB,$2F,$D1
+ $A572 DEFB $04,$9C,$30,$51
+ $A576 DEFB $95,$2B,$2F,$D1
+ $A57A DEFB $BC,$23,$30,$81
 
-; Sprite path data 3
-b$A57E DEFB $2A,$F7,$FB,$A3,$A5,$0D,$A6,$18
- $A586 DEFB $A6,$AE,$A5,$23,$A6,$C0,$A5,$2E
- $A58E DEFB $A6,$38,$A6,$CC,$A5,$42,$A6,$51
- $A596 DEFB $A6,$E3,$A5,$5D,$A6,$6C,$A6,$F8
- $A59E DEFB $A5,$76,$A6,$8A,$A6,$D4,$26,$F2
- $A5A6 DEFB $62,$16,$F4,$F8,$78,$F1,$A1,$02
- $A5AE DEFB $F3,$73,$52,$51,$29,$28,$2C,$54
+; Polar y for wave sprites
+@label=wave_init_polar_y
+b$A57E DEFB $2A,$F7,$FB
+
+; Wave data address table
+;
+; Bits 0-3 of wave init byte 2 determines entry.
+; Stored in sprite data bytes 6 and 7.
+@label=wave_address_table
+w$A581 DEFW $A5A3
+ $A583 DEFW $A60D
+ $A585 DEFW $A618
+ $A587 DEFW $A5AE
+ $A589 DEFW $A623
+ $A58B DEFW $A5C0
+ $A58D DEFW $A62E
+ $A58F DEFW $A638
+ $A591 DEFW $A5CC
+ $A593 DEFW $A642
+ $A595 DEFW $A651
+ $A597 DEFW $A5E3
+ $A599 DEFW $A65D
+ $A59B DEFW $A66C
+ $A59D DEFW $A5F8
+ $A59F DEFW $A676
+ $A5A1 DEFW $A68A
+
+; Wave path 0
+@label=wave_path_0
+b$A5A3 DEFB $D4,$26,$F2,$62,$16,$F4,$F8,$78
+ $A5AB DEFB $F1,$A1,$02
+
+; Wave path 1
+@label=wave_path_1
+b$A5AE DEFB $F3,$73,$52,$51,$29,$28,$2C,$54
  $A5B6 DEFB $53,$00,$02,$00,$06,$00,$07,$D3
- $A5BE DEFB $A1,$02,$F3,$83,$A2,$43,$00,$01
- $A5C6 DEFB $00,$05,$00,$07,$E3,$02,$F6,$72
- $A5CE DEFB $56,$54,$3C,$F8,$00,$02,$00,$06
- $A5D6 DEFB $00,$07,$00,$08,$F8,$89,$E2,$89
- $A5DE DEFB $F8,$48,$69,$C2,$02,$F6,$36,$F2
- $A5E6 DEFB $F2,$82,$00,$01,$00,$03,$00,$05
- $A5EE DEFB $00,$07,$82,$2C,$24,$26,$C2,$83
- $A5F6 DEFB $81,$02,$D3,$81,$68,$64,$62,$91
- $A5FE DEFB $98,$00,$03,$94,$92,$A1,$00,$05
- $A606 DEFB $00,$07,$00,$08,$F1,$51,$02,$F3
- $A60E DEFB $33,$F2,$F2,$F2,$F2,$F2,$F2,$F6
- $A616 DEFB $46,$01,$F3,$33,$D2,$13,$21,$19
- $A61E DEFB $18,$A8,$FC,$5C,$01,$E9,$61,$F2
- $A626 DEFB $92,$49,$48,$3C,$88,$FC,$BC,$01
- $A62E DEFB $AC,$E8,$2C,$34,$26,$F2,$A2,$F6
- $A636 DEFB $A6,$01,$F3,$51,$C9,$F8,$58,$8C
- $A63E DEFB $54,$F6,$56,$01,$89,$21,$18,$21
- $A646 DEFB $18,$21,$F2,$F2,$33,$22,$2C,$14
- $A64E DEFB $D8,$EC,$01,$B9,$28,$31,$F2,$52
- $A656 DEFB $61,$68,$64,$A2,$F6,$26,$01,$E3
- $A65E DEFB $F2,$32,$53,$41,$38,$BC,$C8,$14
- $A666 DEFB $3C,$14,$3C,$14,$3C,$01,$E9,$18
- $A66E DEFB $29,$23,$F2,$F2,$D2,$F6,$56,$01
- $A676 DEFB $F3,$F3,$63,$F2,$F2,$F2,$F6,$36
+ $A5BE DEFB $A1,$02
+
+; Wave path 2
+@label=wave_path_2
+b$A5C0 DEFB $F3,$83,$A2,$43,$00,$01,$00,$05
+ $A5C8 DEFB $00,$07,$E3,$02
+
+; Wave path 3
+@label=wave_path_3
+b$A5CC DEFB $F6,$72,$56,$54,$3C,$F8,$00,$02
+ $A5D4 DEFB $00,$06,$00,$07,$00,$08,$F8,$89
+ $A5DC DEFB $E2,$89,$F8,$48,$69,$C2,$02
+
+; Wave path 4
+@label=wave_path_4
+b$A5E3 DEFB $F6,$36,$F2,$F2,$82,$00,$01,$00
+ $A5EB DEFB $03,$00,$05,$00,$07,$82,$2C,$24
+ $A5F3 DEFB $26,$C2,$83,$81,$02
+
+; Wave path 5
+@label=wave_path_5
+b$A5F8 DEFB $D3,$81,$68,$64,$62,$91,$98,$00
+ $A600 DEFB $03,$94,$92,$A1,$00,$05,$00,$07
+ $A608 DEFB $00,$08,$F1,$51,$02
+
+; Wave path 6
+@label=wave_path_6
+b$A60D DEFB $F3,$33,$F2,$F2,$F2,$F2,$F2,$F2
+ $A615 DEFB $F6,$46,$01
+
+; Wave path 7
+@label=wave_path_7
+b$A618 DEFB $F3,$33,$D2,$13,$21,$19,$18,$A8
+ $A620 DEFB $FC,$5C,$01
+
+; Wave path 8
+@label=wave_path_8
+b$A623 DEFB $E9,$61,$F2,$92,$49,$48,$3C,$88
+ $A62B DEFB $FC,$BC,$01
+
+; Wave path 9
+@label=wave_path_9
+b$A62E DEFB $AC,$E8,$2C,$34,$26,$F2,$A2,$F6
+ $A636 DEFB $A6,$01
+
+; Wave path 10
+@label=wave_path_10
+b$A638 DEFB $F3,$51,$C9,$F8,$58,$8C,$54,$F6
+ $A640 DEFB $56,$01
+
+; Wave path 11
+@label=wave_path_11
+b$A642 DEFB $89,$21,$18,$21,$18,$21,$F2,$F2
+ $A64A DEFB $33,$22,$2C,$14,$D8,$EC,$01
+
+; Wave path 12
+@label=wave_path_12
+b$A651 DEFB $B9,$28,$31,$F2,$52,$61,$68,$64
+ $A659 DEFB $A2,$F6,$26,$01
+
+; Wave path 13
+@label=wave_path_13
+b$A65D DEFB $E3,$F2,$32,$53,$41,$38,$BC,$C8
+ $A665 DEFB $14,$3C,$14,$3C,$14,$3C,$01
+
+; Wave path 14
+@label=wave_path_14
+b$A66C DEFB $E9,$18,$29,$23,$F2,$F2,$D2,$F6
+ $A674 DEFB $56,$01
+
+; Wave path 15
+@label=wave_path_15
+b$A676 DEFB $F3,$F3,$63,$F2,$F2,$F2,$F6,$36
  $A67E DEFB $F2,$14,$36,$14,$36,$14,$36,$14
- $A686 DEFB $36,$14,$36,$01,$F9,$59,$A8,$61
- $A68E DEFB $82,$3C,$64,$E8,$2C,$24,$26,$F2
- $A696 DEFB $C2,$E6,$01
+ $A686 DEFB $36,$14,$36,$01
+
+; Wave path 16
+@label=wave_path_16
+b$A68A DEFB $F9,$59,$A8,$61,$82,$3C,$64,$E8
+ $A692 DEFB $2C,$24,$26,$F2,$C2,$E6,$01
 
 ; Display score
 ;
@@ -5135,7 +5282,7 @@ c$A6EC PUSH DE       ;
 ; Control ship movement and fire using controllers Used by the routines at
 ; #R$8024, #R$832A, #R$832A, #R$846B and #R$A33B.
 @label=control_ship
-c$A73C LD A,($71F2)    ; Get frame
+c$A73C LD A,($71F2)    ; Get frame counter
  $A73F AND $01         ; Test bit 0
  $A741 RET NZ          ; Return every 2nd frame
  $A742 LD HL,($71F0)   ; Controller: #R$71F1
@@ -5209,7 +5356,7 @@ c$A73C LD A,($71F2)    ; Get frame
  $A7C6 LD (IX+$01),L   ; Shot y = ship y
  $A7C9 LD (IX+$02),H   ; Shot x = ship x
  $A7CC LD (IX+$00),$02 ; Shot type
- $A7D0 LD (IX+$0B),$0A ; Set color
+ $A7D0 LD (IX+$0B),$0A ; Set color (yellow)
  $A7D4 RET             ; Return
 
 ; Fire double shot
@@ -5476,8 +5623,8 @@ c$AAE3 PUSH HL       ; Save map address
 
 ; Create enemy sprite from map entry
 ;
-; Search for value $80 in map and deallocate if found. Then allocate a sprite
-; with data from map. Used by the routine at #R$8024.
+; Search for value >= $80 in map and deallocate if found. Then allocate a
+; sprite with data from map. Used by the routine at #R$8024.
 @label=create_sprite_from_map_entry
 c$AAF1 LD A,($71EB)    ; Is mine stage flag set?
  $AAF4 BIT 1,A         ; ...
@@ -5786,11 +5933,11 @@ c$ACDF LD IX,$7002     ; Address of sprite data
 ;
 ; Used by the routines at #R$832A, #R$84B1, #R$90D6, #R$A33B and #R$A3E1.
 @label=upload_sprite_data
-c$ACF9 LD DE,($73F2) ; VDP address of sprite allocation table?
- $ACFD LD HL,$7182   ; Number of allocated sprites
- $AD00 LD A,(HL)     ; Get
+c$ACF9 LD DE,($73F2) ; VDP address of sprite allocation table
+ $ACFD LD HL,$7182   ; Get number of allocated sprites
+ $AD00 LD A,(HL)     ; ...
  $AD01 LD B,A        ; Store in B
-*$AD02 PUSH BC       ;
+*$AD02 PUSH BC       ; Save counter
  $AD03 INC HL        ; Next allocation
  $AD04 LD A,(HL)     ; Get sprite index
  $AD05 ADD A,A       ; * 2
@@ -5798,18 +5945,18 @@ c$ACF9 LD DE,($73F2) ; VDP address of sprite allocation table?
  $AD07 LD C,A        ;
  $AD08 ADD A,A       ; * 8
  $AD09 ADD A,C       ; * 12 (may overflow?)
- $AD0A PUSH HL       ;
+ $AD0A PUSH HL       ; Save sprite allocation table address
  $AD0B LD HL,$700A   ; First y address in sprite data table
  $AD0E RST $08       ; Add A to HL
  $AD0F LD BC,$0004   ; Write 4 bytes for each sprite
- $AD12 PUSH DE       ;
+ $AD12 PUSH DE       ; Save destination
  $AD13 CALL $1FDF    ; WRITE_VRAM
- $AD16 POP HL        ;
+ $AD16 POP HL        ; Restore destination
  $AD17 LD BC,$0004   ; Add 4 to destination
- $AD1A ADD HL,BC     ;
- $AD1B EX DE,HL      ;
- $AD1C POP HL        ;
- $AD1D POP BC        ;
+ $AD1A ADD HL,BC     ; ...
+ $AD1B EX DE,HL      ; ...
+ $AD1C POP HL        ; Restore sprite allocation table address
+ $AD1D POP BC        ; Restore counter
  $AD1E DJNZ $AD02    ; Loop for each sprite
  $AD20 LD A,$D0      ; End marker byte
  $AD22 RST $10       ; Write VDP byte

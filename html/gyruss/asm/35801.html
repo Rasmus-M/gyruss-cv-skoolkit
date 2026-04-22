@@ -24,52 +24,52 @@ Next: <a href="35847.html">8C07</a>
 </td>
 </tr>
 </table>
-<div class="description">8BD9: Routine at 8BD9</div>
+<div class="description">8BD9: Manage waves</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="32804.html">entry</a>.
+Used by the routine at <a href="33000.html">main_loop</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L8BD9</td>
+<td class="asm-label">manage_waves</td>
 <td class="address-2"><span id="35801"></span>8BD9</td>
 <td class="instruction">LD A,(<a href="29163.html">status_flags</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Check bit for mine sub-stage</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35804"></span>8BDC</td>
 <td class="instruction">BIT 1,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35806"></span>8BDE</td>
 <td class="instruction">RET NZ</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return if set</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35807"></span>8BDF</td>
-<td class="instruction">LD A,(<a href="29276.html">L725C</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD A,(<a href="29276.html">outcoming_enemies</a>)</td>
+<td class="comment-1" rowspan="1">Outcoming enemies</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35810"></span>8BE2</td>
 <td class="instruction">OR A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Is it zero?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35811"></span>8BE3</td>
-<td class="instruction">JP NZ,<a href="35944.html">L8C68</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JP NZ,<a href="35944.html">handle_wave_outcoming</a></td>
+<td class="comment-1" rowspan="1">If not, jump ahead to add enemy</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -93,73 +93,73 @@ Used by the routine at <a href="32804.html">entry</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="35819"></span>8BEB</td>
 <td class="instruction">LD A,(<a href="29170.html">frame_counter</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Frame counter</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35822"></span>8BEE</td>
 <td class="instruction">AND $03</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">3 of 4 times,</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35824"></span>8BF0</td>
-<td class="instruction">JR NZ,<a href="35801.html#35836">L8BD9_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="35801.html#35836">manage_waves_0</a></td>
+<td class="comment-1" rowspan="1">skip ahead</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35826"></span>8BF2</td>
 <td class="instruction">LD A,(<a href="29168.html">L71F0</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get counter value</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35829"></span>8BF5</td>
 <td class="instruction">DEC A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Decrement value</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35830"></span>8BF6</td>
-<td class="instruction">JP M,<a href="35801.html#35836">L8BD9_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JP M,<a href="35801.html#35836">manage_waves_0</a></td>
+<td class="comment-1" rowspan="1">If negative, skip ahead</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35833"></span>8BF9</td>
 <td class="instruction">LD (<a href="29168.html">L71F0</a>),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save counter again</td>
 </tr>
 <tr>
-<td class="asm-label">L8BD9_0</td>
+<td class="asm-label">manage_waves_0</td>
 <td class="address-2"><span id="35836"></span>8BFC</td>
 <td class="instruction">LD A,(<a href="29185.html">wave</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get wave</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35839"></span>8BFF</td>
 <td class="instruction">CP $04</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Compare to 4</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35841"></span>8C01</td>
-<td class="instruction">JR C,<a href="35888.html">L8C30</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR C,<a href="35888.html">manage_wave_lt_4</a></td>
+<td class="comment-1" rowspan="1">If &lt; 4, jump ahead</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35843"></span>8C03</td>
-<td class="instruction">JR Z,<a href="35847.html">L8C07</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="35847.html">manage_wave_eq_4</a></td>
+<td class="comment-1" rowspan="1">If = 4, jump ahead</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35845"></span>8C05</td>
-<td class="instruction">JR <a href="35870.html">L8C1E</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR <a href="35870.html">init_mine_sub_stage</a></td>
+<td class="comment-1" rowspan="1">If &gt; 4, jump ahead</td>
 </tr>
 </table>
 <table class="asm-navigation">

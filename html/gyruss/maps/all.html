@@ -42,7 +42,7 @@
 <td class="map-byte">2</td>
 <td class="map-b"><span id="28674"></span><a href="../asm/28674.html">7002</a></td>
 <td class="map-b-desc">
-<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/28674.html">Sprite data (32 sprites)</a></div>
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/28674.html">Sprite data</a></div>
 </td>
 </tr>
 <tr>
@@ -114,7 +114,7 @@
 <td class="map-byte">240</td>
 <td class="map-b"><span id="29168"></span><a href="../asm/29168.html">71F0</a></td>
 <td class="map-b-desc">
-<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/29168.html">Countdown at 71F0</a></div>
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/29168.html">Time to next wave</a></div>
 </td>
 </tr>
 <tr>
@@ -258,7 +258,7 @@
 <td class="map-byte">43</td>
 <td class="map-b"><span id="29227"></span><a href="../asm/29227.html">722B</a></td>
 <td class="map-b-desc">
-<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/29227.html">Number of map entries</a></div>
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/29227.html">Number of center enemies</a></div>
 </td>
 </tr>
 <tr>
@@ -354,7 +354,7 @@
 <td class="map-byte">91</td>
 <td class="map-b"><span id="29275"></span><a href="../asm/29275.html">725B</a></td>
 <td class="map-b-desc">
-<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/29275.html">Byte at 725B</a></div>
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/29275.html">Counter at 725B</a></div>
 </td>
 </tr>
 <tr>
@@ -362,7 +362,7 @@
 <td class="map-byte">92</td>
 <td class="map-b"><span id="29276"></span><a href="../asm/29276.html">725C</a></td>
 <td class="map-b-desc">
-<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/29276.html">Byte at 725C</a></div>
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/29276.html">Number of enemies left center</a></div>
 </td>
 </tr>
 <tr>
@@ -370,7 +370,7 @@
 <td class="map-byte">93</td>
 <td class="map-w"><span id="29277"></span><a href="../asm/29277.html">725D</a></td>
 <td class="map-w-desc">
-<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/29277.html">Word at 725D</a></div>
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/29277.html">Wave data address</a></div>
 </td>
 </tr>
 <tr>
@@ -378,7 +378,7 @@
 <td class="map-byte">95</td>
 <td class="map-b"><span id="29279"></span><a href="../asm/29279.html">725F</a></td>
 <td class="map-b-desc">
-<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/29279.html">Byte at 725F</a></div>
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/29279.html">Countdown at 725F</a></div>
 </td>
 </tr>
 <tr>
@@ -823,10 +823,26 @@
 </tr>
 <tr>
 <td class="map-page">115</td>
-<td class="map-byte">187</td>
-<td class="map-s"><span id="29627"></span><a href="../asm/29627.html">73BB</a></td>
+<td class="map-byte">186</td>
+<td class="map-s"><span id="29626"></span><a href="../asm/29626.html">73BA</a></td>
 <td class="map-s-desc">
-<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/29627.html">Unused</a></div>
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/29626.html">OS RAM</a></div>
+</td>
+</tr>
+<tr>
+<td class="map-page">115</td>
+<td class="map-byte">242</td>
+<td class="map-w"><span id="29682"></span><a href="../asm/29682.html">73F2</a></td>
+<td class="map-w-desc">
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/29682.html">Sprite allocation table VDP address</a></div>
+</td>
+</tr>
+<tr>
+<td class="map-page">115</td>
+<td class="map-byte">244</td>
+<td class="map-w"><span id="29684"></span><a href="../asm/29684.html">73F4</a></td>
+<td class="map-w-desc">
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/29684.html">Sprite pattern table VDP address</a></div>
 </td>
 </tr>
 <tr>
@@ -834,7 +850,7 @@
 <td class="map-byte">246</td>
 <td class="map-w"><span id="29686"></span><a href="../asm/29686.html">73F6</a></td>
 <td class="map-w-desc">
-<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/29686.html">Stars VDP address</a></div>
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/29686.html">Name table VDP address</a></div>
 </td>
 </tr>
 <tr>
@@ -842,7 +858,7 @@
 <td class="map-byte">248</td>
 <td class="map-s"><span id="29688"></span><a href="../asm/29688.html">73F8</a></td>
 <td class="map-s-desc">
-<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/29688.html">Unused</a></div>
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/29688.html">OS RAM</a></div>
 </td>
 </tr>
 <tr>
@@ -1282,7 +1298,7 @@
 <td class="map-byte">213</td>
 <td class="map-c"><span id="34773"></span><a href="../asm/34773.html">87D5</a></td>
 <td class="map-c-desc">
-<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/34773.html">Routine at 87D5</a></div>
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/34773.html">Create map entry for enemy sprite</a></div>
 </td>
 </tr>
 <tr>
@@ -1466,7 +1482,7 @@
 <td class="map-byte">217</td>
 <td class="map-c"><span id="35801"></span><a href="../asm/35801.html">8BD9</a></td>
 <td class="map-c-desc">
-<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/35801.html">Routine at 8BD9</a></div>
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/35801.html">Manage waves</a></div>
 </td>
 </tr>
 <tr>
@@ -1474,7 +1490,7 @@
 <td class="map-byte">7</td>
 <td class="map-c"><span id="35847"></span><a href="../asm/35847.html">8C07</a></td>
 <td class="map-c-desc">
-<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/35847.html">Routine at 8C07</a></div>
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/35847.html">Manage wave = 4</a></div>
 </td>
 </tr>
 <tr>
@@ -1482,7 +1498,7 @@
 <td class="map-byte">30</td>
 <td class="map-c"><span id="35870"></span><a href="../asm/35870.html">8C1E</a></td>
 <td class="map-c-desc">
-<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/35870.html">Routine at 8C1E</a></div>
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/35870.html">Init mine sub-stage</a></div>
 </td>
 </tr>
 <tr>
@@ -1490,7 +1506,7 @@
 <td class="map-byte">48</td>
 <td class="map-c"><span id="35888"></span><a href="../asm/35888.html">8C30</a></td>
 <td class="map-c-desc">
-<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/35888.html">Routine at 8C30</a></div>
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/35888.html">Manage wave &lt; 4</a></div>
 </td>
 </tr>
 <tr>
@@ -1498,7 +1514,7 @@
 <td class="map-byte">82</td>
 <td class="map-c"><span id="35922"></span><a href="../asm/35922.html">8C52</a></td>
 <td class="map-c-desc">
-<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/35922.html">Routine at 8C52</a></div>
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/35922.html">Start new wave</a></div>
 </td>
 </tr>
 <tr>
@@ -1506,7 +1522,7 @@
 <td class="map-byte">104</td>
 <td class="map-c"><span id="35944"></span><a href="../asm/35944.html">8C68</a></td>
 <td class="map-c-desc">
-<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/35944.html">Routine at 8C68</a></div>
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/35944.html">When wave is initiating</a></div>
 </td>
 </tr>
 <tr>
@@ -1538,7 +1554,7 @@
 <td class="map-byte">13</td>
 <td class="map-b"><span id="36365"></span><a href="../asm/36365.html">8E0D</a></td>
 <td class="map-b-desc">
-<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/36365.html">Data block at 8E0D</a></div>
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/36365.html">Enemy types in different waves (chance stage)</a></div>
 </td>
 </tr>
 <tr>
@@ -1546,7 +1562,7 @@
 <td class="map-byte">37</td>
 <td class="map-b"><span id="36389"></span><a href="../asm/36389.html">8E25</a></td>
 <td class="map-b-desc">
-<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/36389.html">Data block at 8E25</a></div>
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/36389.html">Table at 8E25</a></div>
 </td>
 </tr>
 <tr>
@@ -2418,7 +2434,7 @@
 <td class="map-byte">190</td>
 <td class="map-b"><span id="42174"></span><a href="../asm/42174.html">A4BE</a></td>
 <td class="map-b-desc">
-<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/42174.html">Sprite path data 1</a></div>
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/42174.html">Init data for wave sprites</a></div>
 </td>
 </tr>
 <tr>
@@ -2426,7 +2442,7 @@
 <td class="map-byte">30</td>
 <td class="map-b"><span id="42270"></span><a href="../asm/42270.html">A51E</a></td>
 <td class="map-b-desc">
-<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/42270.html">Sprite path data 2</a></div>
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/42270.html">Init data for wave sprites (chance stage)</a></div>
 </td>
 </tr>
 <tr>
@@ -2434,7 +2450,151 @@
 <td class="map-byte">126</td>
 <td class="map-b"><span id="42366"></span><a href="../asm/42366.html">A57E</a></td>
 <td class="map-b-desc">
-<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/42366.html">Sprite path data 3</a></div>
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/42366.html">Polar y for wave sprites</a></div>
+</td>
+</tr>
+<tr>
+<td class="map-page">165</td>
+<td class="map-byte">129</td>
+<td class="map-w"><span id="42369"></span><a href="../asm/42369.html">A581</a></td>
+<td class="map-w-desc">
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/42369.html">Wave data address table</a></div>
+</td>
+</tr>
+<tr>
+<td class="map-page">165</td>
+<td class="map-byte">163</td>
+<td class="map-b"><span id="42403"></span><a href="../asm/42403.html">A5A3</a></td>
+<td class="map-b-desc">
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/42403.html">Wave path 0</a></div>
+</td>
+</tr>
+<tr>
+<td class="map-page">165</td>
+<td class="map-byte">174</td>
+<td class="map-b"><span id="42414"></span><a href="../asm/42414.html">A5AE</a></td>
+<td class="map-b-desc">
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/42414.html">Wave path 1</a></div>
+</td>
+</tr>
+<tr>
+<td class="map-page">165</td>
+<td class="map-byte">192</td>
+<td class="map-b"><span id="42432"></span><a href="../asm/42432.html">A5C0</a></td>
+<td class="map-b-desc">
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/42432.html">Wave path 2</a></div>
+</td>
+</tr>
+<tr>
+<td class="map-page">165</td>
+<td class="map-byte">204</td>
+<td class="map-b"><span id="42444"></span><a href="../asm/42444.html">A5CC</a></td>
+<td class="map-b-desc">
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/42444.html">Wave path 3</a></div>
+</td>
+</tr>
+<tr>
+<td class="map-page">165</td>
+<td class="map-byte">227</td>
+<td class="map-b"><span id="42467"></span><a href="../asm/42467.html">A5E3</a></td>
+<td class="map-b-desc">
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/42467.html">Wave path 4</a></div>
+</td>
+</tr>
+<tr>
+<td class="map-page">165</td>
+<td class="map-byte">248</td>
+<td class="map-b"><span id="42488"></span><a href="../asm/42488.html">A5F8</a></td>
+<td class="map-b-desc">
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/42488.html">Wave path 5</a></div>
+</td>
+</tr>
+<tr>
+<td class="map-page">166</td>
+<td class="map-byte">13</td>
+<td class="map-b"><span id="42509"></span><a href="../asm/42509.html">A60D</a></td>
+<td class="map-b-desc">
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/42509.html">Wave path 6</a></div>
+</td>
+</tr>
+<tr>
+<td class="map-page">166</td>
+<td class="map-byte">24</td>
+<td class="map-b"><span id="42520"></span><a href="../asm/42520.html">A618</a></td>
+<td class="map-b-desc">
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/42520.html">Wave path 7</a></div>
+</td>
+</tr>
+<tr>
+<td class="map-page">166</td>
+<td class="map-byte">35</td>
+<td class="map-b"><span id="42531"></span><a href="../asm/42531.html">A623</a></td>
+<td class="map-b-desc">
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/42531.html">Wave path 8</a></div>
+</td>
+</tr>
+<tr>
+<td class="map-page">166</td>
+<td class="map-byte">46</td>
+<td class="map-b"><span id="42542"></span><a href="../asm/42542.html">A62E</a></td>
+<td class="map-b-desc">
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/42542.html">Wave path 9</a></div>
+</td>
+</tr>
+<tr>
+<td class="map-page">166</td>
+<td class="map-byte">56</td>
+<td class="map-b"><span id="42552"></span><a href="../asm/42552.html">A638</a></td>
+<td class="map-b-desc">
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/42552.html">Wave path 10</a></div>
+</td>
+</tr>
+<tr>
+<td class="map-page">166</td>
+<td class="map-byte">66</td>
+<td class="map-b"><span id="42562"></span><a href="../asm/42562.html">A642</a></td>
+<td class="map-b-desc">
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/42562.html">Wave path 11</a></div>
+</td>
+</tr>
+<tr>
+<td class="map-page">166</td>
+<td class="map-byte">81</td>
+<td class="map-b"><span id="42577"></span><a href="../asm/42577.html">A651</a></td>
+<td class="map-b-desc">
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/42577.html">Wave path 12</a></div>
+</td>
+</tr>
+<tr>
+<td class="map-page">166</td>
+<td class="map-byte">93</td>
+<td class="map-b"><span id="42589"></span><a href="../asm/42589.html">A65D</a></td>
+<td class="map-b-desc">
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/42589.html">Wave path 13</a></div>
+</td>
+</tr>
+<tr>
+<td class="map-page">166</td>
+<td class="map-byte">108</td>
+<td class="map-b"><span id="42604"></span><a href="../asm/42604.html">A66C</a></td>
+<td class="map-b-desc">
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/42604.html">Wave path 14</a></div>
+</td>
+</tr>
+<tr>
+<td class="map-page">166</td>
+<td class="map-byte">118</td>
+<td class="map-b"><span id="42614"></span><a href="../asm/42614.html">A676</a></td>
+<td class="map-b-desc">
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/42614.html">Wave path 15</a></div>
+</td>
+</tr>
+<tr>
+<td class="map-page">166</td>
+<td class="map-byte">138</td>
+<td class="map-b"><span id="42634"></span><a href="../asm/42634.html">A68A</a></td>
+<td class="map-b-desc">
+<div class="map-entry-title-10"><a class="map-entry-title" href="../asm/42634.html">Wave path 16</a></div>
 </td>
 </tr>
 <tr>

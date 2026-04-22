@@ -38,20 +38,20 @@ Used by the routines at <a href="33578.html">stage_completed</a>, <a href="33969
 <tr>
 <td class="asm-label">upload_sprite_data</td>
 <td class="address-2"><span id="44281"></span>ACF9</td>
-<td class="instruction">LD DE,($73F2)</td>
-<td class="comment-1" rowspan="1">VDP address of sprite allocation table?</td>
+<td class="instruction">LD DE,(<a href="29682.html">sat_vdp_address</a>)</td>
+<td class="comment-1" rowspan="1">VDP address of sprite allocation table</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44285"></span>ACFD</td>
 <td class="instruction">LD HL,<a href="29058.html">allocated_sprites</a></td>
-<td class="comment-1" rowspan="1">Number of allocated sprites</td>
+<td class="comment-1" rowspan="1">Get number of allocated sprites</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44288"></span>AD00</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1">Get</td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -63,7 +63,7 @@ Used by the routines at <a href="33578.html">stage_completed</a>, <a href="33969
 <td class="asm-label">upload_sprite_data_0</td>
 <td class="address-2"><span id="44290"></span>AD02</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save counter</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -111,7 +111,7 @@ Used by the routines at <a href="33578.html">stage_completed</a>, <a href="33969
 <td class="asm-label"></td>
 <td class="address-1"><span id="44298"></span>AD0A</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save sprite allocation table address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -135,7 +135,7 @@ Used by the routines at <a href="33578.html">stage_completed</a>, <a href="33969
 <td class="asm-label"></td>
 <td class="address-1"><span id="44306"></span>AD12</td>
 <td class="instruction">PUSH DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save destination</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -147,7 +147,7 @@ Used by the routines at <a href="33578.html">stage_completed</a>, <a href="33969
 <td class="asm-label"></td>
 <td class="address-1"><span id="44310"></span>AD16</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore destination</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -159,25 +159,25 @@ Used by the routines at <a href="33578.html">stage_completed</a>, <a href="33969
 <td class="asm-label"></td>
 <td class="address-1"><span id="44314"></span>AD1A</td>
 <td class="instruction">ADD HL,BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44315"></span>AD1B</td>
 <td class="instruction">EX DE,HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44316"></span>AD1C</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore sprite allocation table address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44317"></span>AD1D</td>
 <td class="instruction">POP BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore counter</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

@@ -5,7 +5,8 @@ S $4000,12288,$3000
 w $7000 Center of projection
 @ $7000 label=center_of_projection
 W $7000,2,2
-b $7002 Sprite data (32 sprites)
+b $7002 Sprite data
+D $7002 Contains data for 32 sprites, or actually entities, since only those entities with entries in the #R$7183 are rendered as sprites. Other entities have entries in the #R$7207 and are rendered in a bitmap at the center of the screen.
 D $7002 #TABLE(default, default) { =h Byte offset | =h Purpose } { $00 | Sprite type, or $FF if not allocated } { $01 | Polar y (depth, 0 is closest (normal ship position), 116 is furthest away) } { $02 | Polar x (angle, 0 at bottom center, moving clockwise to 16 at the left side, 32 at the top, and 48 at the right side) } { $03 | Close to polar y ($01) } { $04 | Polar x + 2 of pattern loaded in #R$AD8B } { $05 | Close to polar x ($02) } { $06 | Unknown, or LSB of path? address } { $07 | Unknown flags, or MSB of path? address } { $08 | Screen y } { $09 | Screen x } { $0A | Pattern } { $0B | Color } TABLE#
 D $7002 #TABLE(default, default) { =h Sprite type | =h Pattern example | =h Description } { $00 | #UDG$B9E6 | Ship body } { $01 | #UDG$BA66 | Ship exhaust } { $02 | #UDG$BAE6 | Shot } { $03 | #UDG$BB06 | Circle or O } { $04 | #UDG$BB0E | Dots } { $05 | #UDG$BB2E | Dotted circle } { $06 | #UDG$BB4E | Number 5 } { $07 | #UDG$BB56 | Number 10 } { $08 | #UDG$BB5E | Number 15 } { $09 | #UDG$BB66 | Number 20 } { $0A | #UDG$BB6E | Number 25 } { $0B | #UDG$BB76 | Number 30 } { $0C | #UDG$BB7E | Number 00 } { $0D | #UDG$BDE6 | Explosion dot } { $0E | #UDG$BB86 | Enemy } { $0F | #UDG$BC06 | Enemy } { $10 | #UDG$BC86 | Enemy } { $11 | #UDG$BD06 | Enemy } { $12 | #UDG$BD86 | Diagonal dots } { $13 | #UDG$BDA6 | Laser fence } { $14 | #UDG$BDC6 | Meteor } { $15 | #UDG$BDEE | Bomb facing left } { $16 | #UDG$BE4E | Bomb facing right } { $17 | #UDG$BEAE | Parallel lines, maybe enemy? } { $18 | #UDG$BF0E | Star shape } { $19 | #UDG$BF2E | Three spheres } { $1A | #UDG$BF4E | Dotted circle 1 } { $1B | #UDG$BF6E | Dotted circle 2 } { $1C | #UDG$BF8E | Dotted circle 3 } TABLE#
 @ $7002 label=sprite_data
@@ -15,7 +16,7 @@ b $7182 Number of allocated sprites
 B $7182,1,1
 b $7183 Sprite allocation table
 D $7183 Contains #R$7182 indexes into #R$7002
-@ $7183 label=sprite_alloc_table
+@ $7183 label=sprite_allocation_table
 B $7183,32,8
 b $71A3 Temporary storage (72 bytes)
 @ $71A3 label=buffer
@@ -37,9 +38,9 @@ b $71EF Countdown at 71EF
 D $71EF Reset to 2nd byte of stage data
 @ $71EF countdown_at_71EF
 B $71EF,1,1
-b $71F0 Countdown at 71F0
+b $71F0 Time to next wave
 D $71F0 Reset to 6th byte of stage data
-@ $71F0 countdown_at_71F0
+@ $71F0 countdown_to_wave
 B $71F0,1,1
 b $71F1 Current player (0 or 1)
 @ $71F1 label=current_player
@@ -95,9 +96,9 @@ b $7207 Map of center enemies
 D $7207 Initialized to $FF meaning unused
 @ $7207 label=center_enemy_map
 B $7207,36,6
-b $722B Number of map entries
+b $722B Number of center enemies
 D $722B Number of map entries in #R$7207
-@ $722B label=map_entries
+@ $722B label=center_map_entries
 B $722B,1,1
 b $722C Number of active enemies
 D $722C Excluding enemies at the center of the screen.
@@ -122,7 +123,7 @@ b $7255 Enemies destroyed in chance stage
 @ $7255 label=bonus_enemies_hit
 B $7255,1,1
 b $7256 Other flags
-D $7256 #TABLE(default, default) { =h Bit | =h Purpose } { $00 | Fire pressed last time } { $01 | Double shot } { $02 | Unknown } { $03 | Unknown } { $04 | Unknown } { $05 | Unknown } { $06 | Unknown } { $07 | Unknown } TABLE#
+D $7256 #TABLE(default, default) { =h Bit | =h Purpose } { $00 | Fire pressed last time } { $01 | Double shot } { $02 | Unknown } { $03 | Unknown } { $04 | Unknown } { $05 | Reset when wave starts } { $06 | Set when wave starts } { $07 | Unknown } TABLE#
 @ $7256 label=other_flags
 B $7256,1,1
 w $7257 Countdown to screen off
@@ -134,13 +135,18 @@ B $7259,1,1
 b $725A Interrupt flag
 @ $725A label=interrupt_flag
 B $725A,1,1
-b $725B Byte at 725B
+b $725B Counter at 725B
+@ $725B label=wave_spedd_counter
 B $725B,1,1
-b $725C Byte at 725C
+b $725C Number of enemies left center
+D $725C Number of enemies that have left center in the current wave. Set to zero when all enemies are out.
+@ $725C label=outcoming_enemies
 B $725C,1,1
-w $725D Word at 725D
+w $725D Wave data address
+@ $725D label=wave_data_address
 W $725D,2,2
-b $725F Byte at 725F
+b $725F Countdown at 725F
+@ $725F label=countdown_at_725F
 B $725F,1,1
 b $7260 Sprite countdown 2
 D $7260 Decremented when #R$85E6 is called, and it reset to first byte of level data (x2) by #R$8A53. One action at #R$87C1 is only executed when counter is zero.
@@ -294,13 +300,18 @@ b $731B Random number
 @ $731B label=random_number
 B $731B,2,2
 b $731D Stack
-B $731D,158,8*19,6
-s $73BB Unused
-S $73BB,59,$3B
-w $73F6 Stars VDP address
-@ $73F6 label=stars_vdp_address
+B $731D,157,8*19,5
+s $73BA OS RAM
+S $73BA,56,$38
+w $73F2 Sprite allocation table VDP address
+@ $73F2 label=sat_vdp_address
+W $73F2,2,2
+w $73F4 Sprite pattern table VDP address
+W $73F4,2,2
+w $73F6 Name table VDP address
+@ $73F6 label=name_table_vdp_address
 W $73F6,2,2
-s $73F8 Unused
+s $73F8 OS RAM
 S $73F8,8,$08
 s $7400 Unused
 S $7400,3072,$0C00
@@ -430,6 +441,7 @@ C $80F7,3 Control ship
 C $80FA,3 Process sprites
 C $80FD,3 READ_REGISTER
 C $8106,3 READ_REGISTER
+C $8109,3 Manage waves
 C $810F,3 READ_REGISTER
 C $8115,3 Upload sprites
 C $8118,3 Display center enemies
@@ -929,7 +941,7 @@ t $853C STAGE message
 @ $853C label=stage_msg
 T $853C,5,5
 b $8541 Stage data (8 bytes per stage)
-D $8541 #TABLE(default, default) { =h Byte offset | =h Purpose } { $00 | Speed? } { $01 | Unknown } { $02 | Unknown } { $03 | Unknown } { $04 | Unknown } { $05 | Unknown } { $06 | Unknown } { $07 | Unknown } TABLE#
+D $8541 #TABLE(default, default) { =h Byte offset | =h Purpose } { $00 | Speed } { $01 | Unknown } { $02 | Unknown } { $03 | Unknown } { $04 | Unknown } { $05 | Unknown } { $06 | Time between waves } { $07 | Unknown } TABLE#
 @ $8541 label=stage_data
 B $8541,64,8
 t $8581 PLAYER message
@@ -1104,6 +1116,7 @@ C $8740,2 If so, jump ahead
 C $8742,2 Is sprite type >= $18
 C $8744,2 If so, jump ahead
 N $8746 sprite types $15 - $17 (bombs, parallel lines)
+C $8751,3 Frame counter
 c $8790 Handle sprite types $0E - $11
 D $8790 Used by the routine at #R$873E.
 @ $8790 label=handle_sprite_types_0E_11
@@ -1112,8 +1125,10 @@ C $8792,3 If so, jump ahead
 C $8795,2 Is sprite type >= $12
 C $8797,3 If so, jump ahead
 N $879A Sprite type $0E - $11 (enemies)
-c $87D5 Routine at 87D5
-D $87D5 Used by the routine at #R$8790.
+c $87D5 Create map entry for enemy sprite
+D $87D5 Search for a value (pattern OR $80) in map. If not found, allocate an entry. If found, calculate coordinates and move towards them. Used by the routine at #R$8790.
+R $87D5 I: IX Sprite data
+@ $87D5 label=create_map_entry_for_sprite
 C $87D5,3 Return if countdown
 C $87D8,1 is not zero
 C $87D9,1 ...
@@ -1134,6 +1149,7 @@ C $87F9,3 Compare with polar x
 C $87FC,2 If same, skip ahead
 C $87FE,3 Else jump out to #R$8AC0
 C $8801,4 Change sprite type to enemy
+N $8805 Move towards y
 C $8805,3 Get polar y
 C $8808,1 Compare with polar y
 C $8809,2 If same, jump ahead
@@ -1243,6 +1259,26 @@ C $8AA4,1 Allocate sprite
 C $8AB9,4 Set color
 c $8AC0 Routine at 8AC0
 D $8AC0 Used by the routines at #R$8790, #R$87F5, #R$8878 and #R$88D4.
+R $8AC0 I:IX Sprite data
+R $8AC0 I:A Polar x to move towards
+@ $8AC0 label=move_towards_x
+C $8AC0,2 Direction = 1
+C $8AC2,3 Desired x - x
+C $8AC5,1 Return if same
+C $8AC6,2 Jump if desired >= x
+C $8AC8,2 Direction = -1
+C $8ACA,2 x = -x
+C $8ACC,2 Compare with top center
+C $8ACE,1 A = direction
+C $8ACF,2 Jump if left half
+C $8AD1,2 Invert direction in right half
+C $8AD3,1 B = direction
+C $8AD4,3 Direction + x
+C $8AD7,2 Mod 64
+C $8AD9,3 Save new x
+C $8ADC,2 $10
+C $8ADE,1 $10 + direction, i.e. $0F or $11
+C $8ADF,3 Change sprite type?
 c $8AE6 Update sprite types $0E - $11
 D $8AE6 Used by the routine at #R$8139.
 @ $8AE6 label=update_enemy_sprite_types
@@ -1370,43 +1406,191 @@ C $8BD1,3 One row down and 3 columns back
 C $8BD4,1 ...
 C $8BD5,1 Row counter
 C $8BD6,2 Outer loop for 3 bytes
-c $8BD9 Routine at 8BD9
-D $8BD9 Used by the routine at #R$8024.
+c $8BD9 Manage waves
+D $8BD9 Used by the routine at #R$80E8.
+@ $8BD9 label=manage_waves
+C $8BD9,3 Check bit for mine sub-stage
+C $8BDC,2 ...
+C $8BDE,1 Return if set
+C $8BDF,3 Outcoming enemies
+C $8BE2,1 Is it zero?
+C $8BE3,3 If not, jump ahead to add enemy
 C $8BE6,3 Get active enemies
 C $8BE9,1 Return if not zero
 C $8BEA,1 ...
-c $8C07 Routine at 8C07
+C $8BEB,3 Frame counter
+C $8BEE,2 3 of 4 times,
+C $8BF0,2 skip ahead
+C $8BF2,3 Get counter value
+C $8BF5,1 Decrement value
+C $8BF6,3 If negative, skip ahead
+C $8BF9,3 Save counter again
+C $8BFC,3 Get wave
+C $8BFF,2 Compare to 4
+C $8C01,2 If < 4, jump ahead
+C $8C03,2 If = 4, jump ahead
+C $8C05,2 If > 4, jump ahead
+c $8C07 Manage wave = 4
 D $8C07 Used by the routine at #R$8BD9.
+@ $8C07 label=manage_wave_eq_4
+C $8C07,3 Test for chance stage
+C $8C0A,2 ...
+C $8C0C,2 If set, init mine sub-stage (?)
+C $8C0E,3 Number of center enemies
+C $8C11,2 If >= 6,
+C $8C13,2 Then init mine sub-stage
 C $8C15,1 Random number
-c $8C1E Routine at 8C1E
-D $8C1E Used by the routines at #R$8BD9 and #R$8C07.
-c $8C30 Routine at 8C30
+C $8C16,2 If < 20,
+C $8C18,2 Then skip ahead
+C $8C1A,2 - 20
+C $8C1C,2 Loop until small enough
+c $8C1E Init mine sub-stage
+D $8C1E Used by the routines at #R$8BD9 and #R$8C07. Init mine sub-stage when wave > 4 or wave = 4 and not chance stage.
+@ $8C1E label=init_mine_sub_stage
+C $8C1E,1 A = 0
+C $8C1F,3 Reset outcoming enemies
+C $8C22,3 Reset counter
+C $8C25,3 Set mine flag
+C $8C28,2 ...
+C $8C2A,3 Reset other flag
+C $8C2D,2 ...
+c $8C30 Manage wave < 4
 D $8C30 Used by the routine at #R$8BD9.
-C $8C35,3 Stage
+@ $8C30 label=manage_wave_lt_4
+C $8C30,3 Get counter
+C $8C33,1 Is it zero?
+C $8C34,1 Then return
+C $8C35,3 Get stage
+C $8C38,2 Isolate planet index bits
+C $8C3A,3 Add wave
+C $8C3D,1 ...
 N $8C3E This entry point is used by the routine at #R$8C07.
-c $8C52 Routine at 8C52
+C $8C3E,1 Multiply by 4
+C $8C3F,1 ...
+C $8C40,1 BC = offset into table
+C $8C41,2 ...
+C $8C43,3 Table base address
+C $8C46,3 Is it chance stage?
+C $8C49,2 ...
+C $8C4B,2 If not, jump ahead
+C $8C4D,3 Else load other table
+C $8C50,2 And jump ahead
+c $8C52 Start new wave
 D $8C52 Used by the routine at #R$8C30.
+@ $8C52 label=start_new_wave
+C $8C52,2 Play a sound
+C $8C54,3 ...
 N $8C57 This entry point is used by the routine at #R$8C30.
-c $8C68 Routine at 8C68
-D $8C68 Used by the routine at #R$8BD9.
+C $8C57,1 Add offset to table base
+C $8C58,3 Save table address
+C $8C5B,3 Next wave
+C $8C5E,1 ...
+C $8C5F,3 Flags
+C $8C62,2 Reset flag
+C $8C64,2 Set flag
+c $8C68 When wave is initiating
+D $8C68 Called when there's still more outcoming enemies. Used by the routine at #R$8BD9.
+@ $8C68 label=handle_wave_outcoming
+C $8C68,3 Decrement wave speed counter
+C $8C6B,1 ...
+C $8C6C,1 Return if > 0
 N $8C6D This entry point is used by the routine at #R$8C52.
+C $8C6D,4 Get wave data address
+C $8C71,2 Save pointer
+C $8C73,3 Get byte 3
+C $8C76,1 Shift bit 5-7 into 0-2
+C $8C77,1 ...
+C $8C78,1 ...
+C $8C79,2 And isolate them
 C $8C7C,3 Get stage data address in IY
-C $8C94,3 Stage
-C $8CA0,1 Add A to HL
+C $8C80,3 Add 2 times stage speed
+C $8C83,3 ...
+C $8C86,3 Store as new speed counter value
+C $8C89,2 Restore wave data address
+C $8C8B,2 Default sprite type (enemy)
+C $8C8D,3 Is it chance stage?
+C $8C90,2 ...
+C $8C92,2 If not, skip ahead
+C $8C94,3 Get stage
+C $8C97,2 Isolate planet index bits
+C $8C99,3 Add wave
+C $8C9C,1 ...
+C $8C9D,3 Table at #R$8E0D - 1
+C $8CA0,1 Add A (1-24) to HL
+C $8CA1,1 Get table value
 C $8CA2,1 Allocate sprite
+C $8CA3,3 Set sprite type
+C $8CA6,3 Get wave data byte 3
+C $8CA9,1 Shift bits 4-7 to 0-3
+C $8CAA,1 ...
+C $8CAB,1 ...
+C $8CAC,1 ...
+C $8CAD,2 Isolate bits 0-3
 C $8CAF,3 Set color
-C $8CDC,3 #R$A57E+2
+C $8CB2,3 Get wave data byte 3
+C $8CB5,2 Isolate bits 0-3
+C $8CB7,1 BC = A = table offset (actually only 0 or 1)
+C $8CB8,2 ...
+C $8CBA,3 Table base address
+C $8CBD,1 Table address
+C $8CBE,1 Get table byte
+C $8CBF,3 Save as polar y
+C $8CC2,3 Outcoming enemies
+C $8CC5,3 Get wave data byte 0
+C $8CC8,2 Even number of outcoming enemies?
+C $8CCA,2 Skip ahead if so
+C $8CCC,3 Get wave data byte 1
+C $8CCF,1 A = wave data byte
+C $8CD0,2 Clear bit 7
+C $8CD2,3 Save as polar x
+C $8CD5,3 Get wave data byte 2
+C $8CD8,2 Isolate bits 0-4
+C $8CDA,1 x2
+C $8CDB,1 BC = offset
+C $8CDC,3 Table base address
+C $8CDF,1 Table address
+C $8CE0,1 Get LSB
+C $8CE1,1 Next table address
+C $8CE2,1 Get MSB
+C $8CE3,1 L = LSB
+C $8CE4,3 Store in sprite data (pointer to path data?)
+C $8CE7,3 ...
+C $8CEA,1 Get first byte
+C $8CEB,2 Isolate bits 4-7
+C $8CED,1 Store in B
+C $8CEE,3 Outcoming enemies
+C $8CF1,1 OR bits 4-7
+C $8CF2,3 Store in sprite data
 C $8CF5,1 Load sprite pattern
 C $8CF6,3 Increase active enemies
 C $8CF9,1 ...
 C $8CFA,3 Increase total enemies
 C $8CFD,1 ...
+C $8CFE,3 Increase outcoming enemies
+C $8D01,1 ...
+C $8D02,2 B = 9 enemies
+C $8D04,3 Is it chance stage?
+C $8D07,2 ...
+C $8D09,2 If not, skip ahead
+C $8D0B,2 Else B = 10 enemies
+C $8D0D,1 Increased outcoming enemies
+C $8D0E,1 Compare with 9 or 10
+C $8D0F,1 Return if all are not out
+C $8D10,2 Set outcoming enemies to 0
+C $8D12,3 Clear flag that was set
+C $8D15,2 when the wave started
 C $8D17,3 Get stage data address in IY
+C $8D1A,3 Set countdown
+C $8D1D,3 ...
 c $8D21 Routine at 8D21
 D $8D21 Used by the routine at #R$8170.
+C $8D27,3 Outcoming enemies
 C $8D31,3 Total enemies
+C $8D48,1 Reset outcoming enemies
+C $8D49,3 ...
 c $8D50 Routine at 8D50
-D $8D50 Used by the routine at #R$8024.
+D $8D50 Used by the routine at #R$80E8.
+C $8D50,3 Frame counter
 C $8D68,3 Get stage data address in IY
 C $8D6B,1 Random number
 C $8D81,1 Allocate sprite
@@ -1431,15 +1615,20 @@ C $8E00,3 Increase total enemies
 C $8E03,1 ...
 N $8E04 This entry point is used by the routine at #R$8D50.
 C $8E04,1 Random number
-b $8E0D Data block at 8E0D
+C $8E05,2 $00 - $3F
+C $8E07,2 $10 - $4F
+C $8E09,3 Store countdown
+b $8E0D Enemy types in different waves (chance stage)
+@ $8E0D labe=enemies_by_wave_table
 B $8E0D,24,8
-b $8E25 Data block at 8E25
+b $8E25 Table at 8E25
 B $8E25,8,8
 c $8E2D Routine at 8E2D
 D $8E2D Used by the routines at #R$80E8, #R$8139 and #R$A3E1.
 C $8E2D,3 Get flags
 C $8E30,2 If mine stage bit is not set
 C $8E32,2 Then init variables
+C $8E4B,3 Frame counter
 C $8E5C,3 Stage
 C $8E81,2 Set died flag
 c $8E89 Init mine stage variables
@@ -1464,10 +1653,12 @@ C $8F44,3 FILL_VRAM
 C $8F52,3 Display background patterns
 c $8F55 Routine at 8F55
 D $8F55 Used by the routine at #R$8E2D.
+C $8F77,3 Frame counter
 N $8FAE This entry point is used by the routine at #R$8FED.
 C $8FAE,3 Polar y
 C $8FB1,3 Polar x
 C $8FC3,3 Display background patterns
+C $8FCE,3 Frame counter
 c $8FED Routine at 8FED
 D $8FED Used by the routine at #R$8F55.
 C $8FFA,3 Decrease total enemies
@@ -1798,7 +1989,7 @@ D $96FE #UDGTABLE { #UDGARRAY19,,4($96FE-$9795-8)(graphics-96FE.png) } TABLE#
 @ $96FE label=planet_sprite_patterns
 B $96FE,152,8
 c $9796 Routine at 9796
-D $9796 Used by the routine at #R$8024.
+D $9796 Used by the routine at #R$80E8.
 C $9796,3 Return if only the ship sprites are allocated
 C $9799,2 ...
 C $979B,1 ...
@@ -2247,12 +2438,72 @@ b $A4B2 Init data for implosion
 B $A4B2,6,6
 b $A4B8 Sprite init data (polar x)
 B $A4B8,6,6
-b $A4BE Sprite path data 1
-B $A4BE,96,8
-b $A51E Sprite path data 2
-B $A51E,96,8
-b $A57E Sprite path data 3
-B $A57E,283,8*35,3
+b $A4BE Init data for wave sprites
+D $A4BE Data for 24 waves, 4 bytes each
+@ $A4BE label=wave_init_data
+B $A4BE,96,4
+b $A51E Init data for wave sprites (chance stage)
+D $A51E Data for 24 waves, 4 bytes each
+@ $A51E label=chance_wave_init_data
+B $A51E,96,4
+b $A57E Polar y for wave sprites
+@ $A57E label=wave_init_polar_y
+B $A57E,3,3
+w $A581 Wave data address table
+D $A581 Bits 0-3 of wave init byte 2 determines entry. Stored in sprite data bytes 6 and 7.
+@ $A581 label=wave_address_table
+W $A581,34,2
+b $A5A3 Wave path 0
+@ $A5A3 label=wave_path_0
+B $A5A3,11,8,3
+b $A5AE Wave path 1
+@ $A5AE label=wave_path_1
+B $A5AE,18,8*2,2
+b $A5C0 Wave path 2
+@ $A5C0 label=wave_path_2
+B $A5C0,12,8,4
+b $A5CC Wave path 3
+@ $A5CC label=wave_path_3
+B $A5CC,23,8*2,7
+b $A5E3 Wave path 4
+@ $A5E3 label=wave_path_4
+B $A5E3,21,8*2,5
+b $A5F8 Wave path 5
+@ $A5F8 label=wave_path_5
+B $A5F8,21,8*2,5
+b $A60D Wave path 6
+@ $A60D label=wave_path_6
+B $A60D,11,8,3
+b $A618 Wave path 7
+@ $A618 label=wave_path_7
+B $A618,11,8,3
+b $A623 Wave path 8
+@ $A623 label=wave_path_8
+B $A623,11,8,3
+b $A62E Wave path 9
+@ $A62E label=wave_path_9
+B $A62E,10,8,2
+b $A638 Wave path 10
+@ $A638 label=wave_path_10
+B $A638,10,8,2
+b $A642 Wave path 11
+@ $A642 label=wave_path_11
+B $A642,15,8,7
+b $A651 Wave path 12
+@ $A651 label=wave_path_12
+B $A651,12,8,4
+b $A65D Wave path 13
+@ $A65D label=wave_path_13
+B $A65D,15,8,7
+b $A66C Wave path 14
+@ $A66C label=wave_path_14
+B $A66C,10,8,2
+b $A676 Wave path 15
+@ $A676 label=wave_path_15
+B $A676,20,8*2,4
+b $A68A Wave path 16
+@ $A68A label=wave_path_16
+B $A68A,15,8,7
 c $A699 Display score
 D $A699 Used by the routines at #R$8024, #R$80E8 and #R$846B.
 R $A699 I:A Player 0 or 1
@@ -2356,7 +2607,7 @@ C $A736,3 ...
 c $A73C Control ship
 D $A73C Control ship movement and fire using controllers Used by the routines at #R$8024, #R$832A, #R$832A, #R$846B and #R$A33B.
 @ $A73C label=control_ship
-C $A73C,3 Get frame
+C $A73C,3 Get frame counter
 C $A73F,2 Test bit 0
 C $A741,1 Return every 2nd frame
 C $A742,3 Controller: #R$71F1
@@ -2425,7 +2676,7 @@ C $A7C3,3 Ship's polar coordinates
 C $A7C6,3 Shot y = ship y
 C $A7C9,3 Shot x = ship x
 C $A7CC,4 Shot type
-C $A7D0,4 Set color
+C $A7D0,4 Set color (yellow)
 C $A7D4,1 Return
 c $A7D5 Fire double shot
 D $A7D5 Used by the routine at #R$A73C.
@@ -2580,7 +2831,7 @@ C $AAEB,3 Decrement number of entries
 C $AAEE,1 ...
 C $AAEF,1 Restore map address
 c $AAF1 Create enemy sprite from map entry
-D $AAF1 Search for value $80 in map and deallocate if found. Then allocate a sprite with data from map. Used by the routine at #R$8024.
+D $AAF1 Search for value >= $80 in map and deallocate if found. Then allocate a sprite with data from map. Used by the routine at #R$8024.
 @ $AAF1 label=create_sprite_from_map_entry
 C $AAF1,3 Is mine stage flag set?
 C $AAF4,2 ...
@@ -2841,21 +3092,29 @@ C $ACF6,2 Loop for 32 sprites
 c $ACF9 Upload sprite data to VDP
 D $ACF9 Used by the routines at #R$832A, #R$84B1, #R$90D6, #R$A33B and #R$A3E1.
 @ $ACF9 label=upload_sprite_data
-C $ACF9,4 VDP address of sprite allocation table?
-C $ACFD,3 Number of allocated sprites
-C $AD00,1 Get
+C $ACF9,4 VDP address of sprite allocation table
+C $ACFD,3 Get number of allocated sprites
+C $AD00,1 ...
 C $AD01,1 Store in B
+C $AD02,1 Save counter
 C $AD03,1 Next allocation
 C $AD04,1 Get sprite index
 C $AD05,1 * 2
 C $AD06,1 * 4
 C $AD08,1 * 8
 C $AD09,1 * 12 (may overflow?)
+C $AD0A,1 Save sprite allocation table address
 C $AD0B,3 First y address in sprite data table
 C $AD0E,1 Add A to HL
 C $AD0F,3 Write 4 bytes for each sprite
+C $AD12,1 Save destination
 C $AD13,3 WRITE_VRAM
+C $AD16,1 Restore destination
 C $AD17,3 Add 4 to destination
+C $AD1A,1 ...
+C $AD1B,1 ...
+C $AD1C,1 Restore sprite allocation table address
+C $AD1D,1 Restore counter
 C $AD1E,2 Loop for each sprite
 C $AD20,2 End marker byte
 C $AD22,1 Write VDP byte
