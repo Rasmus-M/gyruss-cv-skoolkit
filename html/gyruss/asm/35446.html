@@ -24,7 +24,7 @@ Next: <a href="35520.html">8AC0</a>
 </td>
 </tr>
 </table>
-<div class="description">8A76: Routine at 8A76</div>
+<div class="description">8A76: Create enemy shot</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -36,58 +36,58 @@ Used by the routines at <a href="34704.html">handle_sprite_types_0E_11</a>, <a h
 </td>
 </tr>
 <tr>
-<td class="asm-label">L8A76</td>
+<td class="asm-label">create_enemy_shot</td>
 <td class="address-2"><span id="35446"></span>8A76</td>
 <td class="instruction">LD A,(<a href="29167.html">L71EF</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Is countdown zero?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35449"></span>8A79</td>
 <td class="instruction">OR A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35450"></span>8A7A</td>
 <td class="instruction">RET NZ</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return if not</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35451"></span>8A7B</td>
 <td class="instruction">LD A,(<a href="29266.html">active_enemy_shots</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get enemy shots</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35454"></span>8A7E</td>
 <td class="instruction">CP $07</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return if &gt;= 7</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35456"></span>8A80</td>
 <td class="instruction">RET NC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35457"></span>8A81</td>
 <td class="instruction">LD A,(<a href="29163.html">status_flags</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Flags</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35460"></span>8A84</td>
 <td class="instruction">AND $0C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Is chance stage or died?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35462"></span>8A86</td>
 <td class="instruction">RET NZ</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Then return</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -99,67 +99,67 @@ Used by the routines at <a href="34704.html">handle_sprite_types_0E_11</a>, <a h
 <td class="asm-label"></td>
 <td class="address-1"><span id="35466"></span>8A8A</td>
 <td class="instruction">LD A,(<a href="29266.html">active_enemy_shots</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get enemy shots</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35469"></span>8A8D</td>
 <td class="instruction">CP (IY+$01)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Compare with stage data byte 1</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35472"></span>8A90</td>
 <td class="instruction">RET NC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return if shots &gt;= max shots</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35473"></span>8A91</td>
 <td class="instruction">LD A,($7004)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Ship polar x</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35476"></span>8A94</td>
 <td class="instruction">CP (IX+$02)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Compare with sprite polar x</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35479"></span>8A97</td>
 <td class="instruction">RET NZ</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return if not equal</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35480"></span>8A98</td>
 <td class="instruction">LD A,(IY+$02)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Reset countdown</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35483"></span>8A9B</td>
 <td class="instruction">LD (<a href="29167.html">L71EF</a>),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35486"></span>8A9E</td>
 <td class="instruction">LD HL,<a href="29266.html">active_enemy_shots</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Increase enemy shots</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35489"></span>8AA1</td>
 <td class="instruction">INC (HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35490"></span>8AA2</td>
 <td class="instruction">PUSH IX</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save enemy sprite address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -171,43 +171,43 @@ Used by the routines at <a href="34704.html">handle_sprite_types_0E_11</a>, <a h
 <td class="asm-label"></td>
 <td class="address-1"><span id="35493"></span>8AA5</td>
 <td class="instruction">POP IY</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Now IY = enemy sprite and IX = shot</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35495"></span>8AA7</td>
 <td class="instruction">PUSH IY</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save enemy sprite</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35497"></span>8AA9</td>
 <td class="instruction">LD A,(IY+$01)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set polar y of shot to polar x of enemy</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35500"></span>8AAC</td>
 <td class="instruction">LD (IX+$01),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35503"></span>8AAF</td>
 <td class="instruction">LD A,(IY+$02)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set polar x of shot to polar x of enemy</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35506"></span>8AB2</td>
 <td class="instruction">LD (IX+$02),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35509"></span>8AB5</td>
 <td class="instruction">LD (IX+$00),$12</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set sprite type</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -219,7 +219,7 @@ Used by the routines at <a href="34704.html">handle_sprite_types_0E_11</a>, <a h
 <td class="asm-label"></td>
 <td class="address-1"><span id="35517"></span>8ABD</td>
 <td class="instruction">POP IX</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore enemy sprite</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

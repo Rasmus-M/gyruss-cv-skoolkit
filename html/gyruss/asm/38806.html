@@ -24,7 +24,7 @@ Next: <a href="38981.html">9845</a>
 </td>
 </tr>
 </table>
-<div class="description">9796: Routine at 9796</div>
+<div class="description">9796: Handle collisions</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -36,16 +36,16 @@ Used by the routine at <a href="33000.html">main_loop</a>.
 </td>
 </tr>
 <tr>
-<td class="asm-label">L9796</td>
+<td class="asm-label">handle_collisions</td>
 <td class="address-2"><span id="38806"></span>9796</td>
 <td class="instruction">LD A,(<a href="29058.html">allocated_sprites</a>)</td>
-<td class="comment-1" rowspan="1">Return if only the ship sprites are allocated</td>
+<td class="comment-1" rowspan="1">Allocated sprites</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38809"></span>9799</td>
 <td class="instruction">SUB $02</td>
-<td class="comment-1" rowspan="1">...</td>
+<td class="comment-1" rowspan="1">Return if only the ship sprites are allocated</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -57,241 +57,241 @@ Used by the routine at <a href="33000.html">main_loop</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="38812"></span>979C</td>
 <td class="instruction">LD B,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Loop counter for allocated sprites - 2</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38813"></span>979D</td>
 <td class="instruction">LD HL,$7185</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Table address <a href="29059.html">sprite_allocation_table</a>+2 (skip ship sprites)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38816"></span>97A0</td>
 <td class="instruction">XOR A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Reset a flag</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38817"></span>97A1</td>
-<td class="instruction">LD (<a href="29294.html">L726E</a>),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD (<a href="29294.html">offset_double_shot_flag</a>),A</td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
-<td class="asm-label">L9796_0</td>
+<td class="asm-label">handle_collisions_0</td>
 <td class="address-2"><span id="38820"></span>97A4</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Loop start; Save table address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38821"></span>97A5</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save counter</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38822"></span>97A6</td>
 <td class="instruction">LD L,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get sprites allocation table byte</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38823"></span>97A7</td>
 <td class="instruction">LD H,$00</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">MSB = 0</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38825"></span>97A9</td>
 <td class="instruction">ADD HL,HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">x4</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38826"></span>97AA</td>
 <td class="instruction">ADD HL,HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38827"></span>97AB</td>
 <td class="instruction">LD D,H</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">DE = x4</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38828"></span>97AC</td>
 <td class="instruction">LD E,L</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38829"></span>97AD</td>
 <td class="instruction">ADD HL,HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">x8</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38830"></span>97AE</td>
 <td class="instruction">ADD HL,DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">x12</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38831"></span>97AF</td>
 <td class="instruction">EX DE,HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">DE = x12</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38832"></span>97B0</td>
 <td class="instruction">LD IX,<a href="28674.html">sprite_data</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Sprite data table base</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38836"></span>97B4</td>
 <td class="instruction">ADD IX,DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add offset so that IX = current sprite data</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38838"></span>97B6</td>
 <td class="instruction">LD A,(IX+$00)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get sprite type</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38841"></span>97B9</td>
 <td class="instruction">CP $7F</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If deallocated value</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38843"></span>97BB</td>
-<td class="instruction">JR Z,<a href="38806.html#38899">L9796_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="38806.html#38899">handle_collisions_1</a></td>
+<td class="comment-1" rowspan="1">Then move to next sprite</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38845"></span>97BD</td>
 <td class="instruction">BIT 7,(IX+$01)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If bit 7 of polar y is set</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38849"></span>97C1</td>
-<td class="instruction">JR NZ,<a href="38806.html#38899">L9796_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="38806.html#38899">handle_collisions_1</a></td>
+<td class="comment-1" rowspan="1">Then move to next sprite</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38851"></span>97C3</td>
 <td class="instruction">CP $02</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Is it a shot?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38853"></span>97C5</td>
 <td class="instruction">JP Z,<a href="39009.html">L9861</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Then jump to handler</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38856"></span>97C8</td>
 <td class="instruction">CP $0D</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Is it &lt; $0D (numbers or enemy remains)?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38858"></span>97CA</td>
-<td class="instruction">JR C,<a href="38806.html#38899">L9796_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR C,<a href="38806.html#38899">handle_collisions_1</a></td>
+<td class="comment-1" rowspan="1">Then jump ahead</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38860"></span>97CC</td>
 <td class="instruction">LD A,(<a href="29163.html">status_flags</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Is it chance stage?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38863"></span>97CF</td>
 <td class="instruction">BIT 3,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38865"></span>97D1</td>
-<td class="instruction">JR NZ,<a href="38806.html#38899">L9796_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="38806.html#38899">handle_collisions_1</a></td>
+<td class="comment-1" rowspan="1">Then move to next sprite</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38867"></span>97D3</td>
 <td class="instruction">BIT 7,(IX+$07)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If the flag for ? set in sprite data?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38871"></span>97D7</td>
-<td class="instruction">JR NZ,<a href="38806.html#38899">L9796_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="38806.html#38899">handle_collisions_1</a></td>
+<td class="comment-1" rowspan="1">Then move to next sprite</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38873"></span>97D9</td>
 <td class="instruction">LD IY,<a href="28674.html">sprite_data</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Ship sprite data</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38877"></span>97DD</td>
 <td class="instruction">LD A,(IX+$01)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Is polar x = ship x?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38880"></span>97E0</td>
 <td class="instruction">CP (IY+$01)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38883"></span>97E3</td>
-<td class="instruction">JR NZ,<a href="38806.html#38899">L9796_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="38806.html#38899">handle_collisions_1</a></td>
+<td class="comment-1" rowspan="1">If not, move to next sprite</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38885"></span>97E5</td>
 <td class="instruction">LD A,(IX+$02)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Polar x for sprite</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38888"></span>97E8</td>
 <td class="instruction">LD B,(IY+$02)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Polar x for ship</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38891"></span>97EB</td>
-<td class="instruction">CALL <a href="39558.html">L9A86</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL <a href="39558.html">polar_x_distance</a></td>
+<td class="comment-1" rowspan="1">Polar x distance</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38894"></span>97EE</td>
 <td class="instruction">CP $02</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Is distance &lt; 2</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38896"></span>97F0</td>
-<td class="instruction">JP C,<a href="39480.html">L9A38</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JP C,<a href="39480.html">collision_with_sprite</a></td>
+<td class="comment-1" rowspan="1">Then jump to collision handler</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -304,28 +304,28 @@ This entry point is used by the routines at <a href="39093.html">L98B5</a>, <a h
 </td>
 </tr>
 <tr>
-<td class="asm-label">L9796_1</td>
+<td class="asm-label">handle_collisions_1</td>
 <td class="address-2"><span id="38899"></span>97F3</td>
 <td class="instruction">POP BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore counter</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38900"></span>97F4</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore table address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38901"></span>97F5</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Next table address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38902"></span>97F6</td>
-<td class="instruction">DJNZ <a href="38806.html#38820">L9796_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">DJNZ <a href="38806.html#38820">handle_collisions_0</a></td>
+<td class="comment-1" rowspan="1">Loop for each allocated sprites (except ship)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -342,152 +342,152 @@ This entry point is used by the routines at <a href="39093.html">L98B5</a>, <a h
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38908"></span>97FC</td>
-<td class="instruction">JR Z,<a href="38806.html#38958">L9796_4</a></td>
+<td class="instruction">JR Z,<a href="38806.html#38958">handle_collisions_4</a></td>
 <td class="comment-1" rowspan="1">Skip ahead if not</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38910"></span>97FE</td>
-<td class="instruction">LD IY,$7237</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD IY,<a href="29239.html">mines_background_data</a></td>
+<td class="comment-1" rowspan="1">Buffer address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38914"></span>9802</td>
 <td class="instruction">LD DE,$0009</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Size of each mine structure</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38917"></span>9805</td>
 <td class="instruction">LD B,$03</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">3 mines</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38919"></span>9807</td>
 <td class="instruction">LD IX,<a href="28674.html">sprite_data</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Ship sprite data</td>
 </tr>
 <tr>
-<td class="asm-label">L9796_2</td>
+<td class="asm-label">handle_collisions_2</td>
 <td class="address-2"><span id="38923"></span>980B</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save counter</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38924"></span>980C</td>
 <td class="instruction">LD A,(IY+$04)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If mine is gone</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38927"></span>980F</td>
 <td class="instruction">OR (IY+$05)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38930"></span>9812</td>
-<td class="instruction">JR Z,<a href="38806.html#38953">L9796_3</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="38806.html#38953">handle_collisions_3</a></td>
+<td class="comment-1" rowspan="1">Then move to next mine</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38932"></span>9814</td>
 <td class="instruction">LD A,(IY+$07)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get mine polar y?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38935"></span>9817</td>
 <td class="instruction">CP $06</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If &gt;= 6</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38937"></span>9819</td>
-<td class="instruction">JR NC,<a href="38806.html#38953">L9796_3</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NC,<a href="38806.html#38953">handle_collisions_3</a></td>
+<td class="comment-1" rowspan="1">Then move to next mine</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38939"></span>981B</td>
 <td class="instruction">LD A,(IX+$02)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get ship polar x</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38942"></span>981E</td>
 <td class="instruction">LD B,(IY+$08)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get mine polar x</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38945"></span>9821</td>
-<td class="instruction">CALL <a href="39558.html">L9A86</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL <a href="39558.html">polar_x_distance</a></td>
+<td class="comment-1" rowspan="1">Polar x distance</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38948"></span>9824</td>
 <td class="instruction">CP $07</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If &lt; 7</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38950"></span>9826</td>
-<td class="instruction">CALL C,<a href="39541.html">L9A75</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL C,<a href="39541.html">collision_with_mine</a></td>
+<td class="comment-1" rowspan="1">Then call collision routine</td>
 </tr>
 <tr>
-<td class="asm-label">L9796_3</td>
+<td class="asm-label">handle_collisions_3</td>
 <td class="address-2"><span id="38953"></span>9829</td>
 <td class="instruction">ADD IY,DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Next mine</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38955"></span>982B</td>
 <td class="instruction">POP BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore counter</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38956"></span>982C</td>
-<td class="instruction">DJNZ <a href="38806.html#38923">L9796_2</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">DJNZ <a href="38806.html#38923">handle_collisions_2</a></td>
+<td class="comment-1" rowspan="1">Loop for 3 mines</td>
 </tr>
 <tr>
-<td class="asm-label">L9796_4</td>
+<td class="asm-label">handle_collisions_4</td>
 <td class="address-2"><span id="38958"></span>982E</td>
-<td class="instruction">LD A,(<a href="29294.html">L726E</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD A,(<a href="29294.html">offset_double_shot_flag</a>)</td>
+<td class="comment-1" rowspan="1">Check a flag</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38961"></span>9831</td>
 <td class="instruction">BIT 0,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38963"></span>9833</td>
 <td class="instruction">RET Z</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return if not</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38964"></span>9834</td>
-<td class="instruction">CALL <a href="38981.html">L9845</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL <a href="38981.html">create_double_shot_sprite</a></td>
+<td class="comment-1" rowspan="1">Create double shot sprite</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38967"></span>9837</td>
 <td class="instruction">LD (IX+$07),$02</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Polar x velocity</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -498,14 +498,14 @@ This entry point is used by the routines at <a href="39093.html">L98B5</a>, <a h
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38972"></span>983C</td>
-<td class="instruction">CALL <a href="38981.html">L9845</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL <a href="38981.html">create_double_shot_sprite</a></td>
+<td class="comment-1" rowspan="1">Create double shot sprite</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38975"></span>983F</td>
 <td class="instruction">LD (IX+$07),$FE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Polar x velocity</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

@@ -24,13 +24,13 @@ Next: <a href="39541.html">9A75</a>
 </td>
 </tr>
 </table>
-<div class="description">9A49: Routine at 9A49</div>
+<div class="description">9A49: Collision with enemy</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="39480.html">L9A38</a>.
+Used by the routine at <a href="39480.html">collision_with_sprite</a>.
 </div>
 </div>
 </td>
@@ -39,25 +39,25 @@ Used by the routine at <a href="39480.html">L9A38</a>.
 <td class="asm-label">L9A49</td>
 <td class="address-2"><span id="39497"></span>9A49</td>
 <td class="instruction">CP $0E</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If &lt; $0E</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39499"></span>9A4B</td>
 <td class="instruction">JR C,<a href="39497.html#39533">L9A49_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Then</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39501"></span>9A4D</td>
 <td class="instruction">CP $12</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If &gt;= $12</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39503"></span>9A4F</td>
 <td class="instruction">JR NC,<a href="39497.html#39533">L9A49_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Then</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -75,7 +75,7 @@ Used by the routine at <a href="39480.html">L9A38</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="39509"></span>9A55</td>
 <td class="instruction">CALL <a href="43859.html">LAB53</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Deallocate from map</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -112,7 +112,7 @@ Used by the routine at <a href="39480.html">L9A38</a>.
 <span id="39529"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="39541.html">L9A75</a>.
+This entry point is used by the routine at <a href="39541.html">collision_with_mine</a>.
 </div>
 </div>
 </td>
@@ -134,7 +134,7 @@ This entry point is used by the routine at <a href="39541.html">L9A75</a>.
 <span id="39533"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="39480.html">L9A38</a>.
+This entry point is used by the routine at <a href="39480.html">collision_with_sprite</a>.
 </div>
 </div>
 </td>
@@ -154,8 +154,8 @@ This entry point is used by the routine at <a href="39480.html">L9A38</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39538"></span>9A72</td>
-<td class="instruction">JP <a href="38806.html#38899">L9796_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JP <a href="38806.html#38899">handle_collisions_1</a></td>
+<td class="comment-1" rowspan="1">Jump back into collisions loop</td>
 </tr>
 </table>
 <table class="asm-navigation">

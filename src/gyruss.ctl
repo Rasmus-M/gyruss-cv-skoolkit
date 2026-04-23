@@ -108,9 +108,12 @@ b $722D Number of 3-spheres/mines left
 D $722D 3 - 0 during mines sub-stage.
 @ $722D label=mines_left
 B $722D,1,1
-b $722E Buffer at 722E
-@ $722E label=buffer_at_722E
-B $722E,36,8*4,4
+b $722E Ship background data
+@ $722E label=ship_background_data
+B $722E,9,8,1
+b $7237 Mines background data (3x9 bytes)
+@ $7237 label=mines_background_data
+B $7237,27,8*3,3
 b $7252 Active enemy shots, set to $FF during explosion
 @ $7252 label=active_enemy_shots
 B $7252,1,1
@@ -178,9 +181,11 @@ b $726C Byte at 726C
 B $726C,1,1
 b $726D Byte at 726D
 B $726D,1,1
-b $726E Byte at 726E
+b $726E Flag for showing double shot circles
+@ $726E label=offset_double_shot_flag
 B $726E,1,1
-b $726F Byte at 726F
+b $726F Temporary polar x
+@ $726F label=temp_polar_x
 B $726F,1,1
 w $7270 Word at 7270 (sound)
 W $7270,2,2
@@ -942,7 +947,7 @@ t $853C STAGE message
 @ $853C label=stage_msg
 T $853C,5,5
 b $8541 Stage data (8 bytes per stage)
-D $8541 #TABLE(default, default) { =h Byte offset | =h Purpose } { $00 | Speed } { $01 | Unknown } { $02 | Unknown } { $03 | Unknown } { $04 | Unknown } { $05 | Unknown } { $06 | Time between waves } { $07 | Unknown } TABLE#
+D $8541 #TABLE(default, default) { =h Byte offset | =h Purpose } { $00 | Speed } { $01 | Max enemy shots } { $02 | Enemy shooting speed } { $03 | Unknown } { $04 | Unknown } { $05 | Unknown } { $06 | Time between waves } { $07 | Unknown } TABLE#
 @ $8541 label=stage_data
 B $8541,64,8
 t $8581 PLAYER message
@@ -1108,7 +1113,25 @@ D $870C Used by the routine at #R$86E9.
 @ $870C label=handle_sprite_type_03
 C $870C,2 Is sprite type $03?
 C $870E,2 If not, jump ahead
-N $8710 Sprite type $03 (circle)
+N $8710 Sprite type $03 (double shot circle)
+C $8710,3 Check if you have died
+C $8713,2 ...
+C $8715,3 If so, deallocate and return
+C $8718,3 Not initialised?
+C $871B,3 X velocity, set to $02 or $FE when created
+C $871E,3 Add to polar x
+C $8721,2 Mod 64
+C $8723,3 Save again
+C $8726,3 Countdown, set to $10 when created
+C $8729,1 Return if > 0
+C $872A,3 Get ship polar x
+C $872D,3 Get polar x
+C $8730,3 Polar x distance
+C $8733,2 Is it >= 4
+C $8735,1 Then return
+C $8736,3 Set double shot flag
+C $8739,2 ...
+C $873B,3 Deallocate and return
 c $873E Handle sprite types $15 - $17
 D $873E Used by the routine at #R$870C.
 @ $873E label=handle_sprite_types_15_17
@@ -1253,11 +1276,40 @@ C $8A6F,2 If stage index >= 2, then skip ahead
 C $8A71,1 Else multiply by 2
 C $8A72,3 Save sprite countdown 2
 C $8A75,1 Return from sprite processing
-c $8A76 Routine at 8A76
+c $8A76 Create enemy shot
 D $8A76 Used by the routines at #R$8790, #R$885F and #R$88FE.
+@ $8A76 label=create_enemy_shot
+C $8A76,3 Is countdown zero?
+C $8A79,1 ...
+C $8A7A,1 Return if not
+C $8A7B,3 Get enemy shots
+C $8A7E,2 Return if >= 7
+C $8A80,1 ...
+C $8A81,3 Flags
+C $8A84,2 Is chance stage or died?
+C $8A86,1 Then return
 C $8A87,3 Get stage data address in IY
+C $8A8A,3 Get enemy shots
+C $8A8D,3 Compare with stage data byte 1
+C $8A90,1 Return if shots >= max shots
+C $8A91,3 Ship polar x
+C $8A94,3 Compare with sprite polar x
+C $8A97,1 Return if not equal
+C $8A98,3 Reset countdown
+C $8A9B,3 ...
+C $8A9E,3 Increase enemy shots
+C $8AA1,1 ...
+C $8AA2,2 Save enemy sprite address
 C $8AA4,1 Allocate sprite
+C $8AA5,2 Now IY = enemy sprite and IX = shot
+C $8AA7,2 Save enemy sprite
+C $8AA9,3 Set polar y of shot to polar x of enemy
+C $8AAC,3 ...
+C $8AAF,3 Set polar x of shot to polar x of enemy
+C $8AB2,3 ...
+C $8AB5,4 Set sprite type
 C $8AB9,4 Set color
+C $8ABD,2 Restore enemy sprite
 c $8AC0 Routine at 8AC0
 D $8AC0 Used by the routines at #R$8790, #R$87F5, #R$8878 and #R$88D4.
 R $8AC0 I:IX Sprite data
@@ -1670,6 +1722,8 @@ C $9004,3 Clear died flag
 C $9007,2 ...
 c $900E Routine at 900E
 D $900E Used by the routines at #R$8E9D and #R$8F55.
+C $901F,3 Increase enemy shots
+C $9022,1 ...
 C $9023,1 Allocate sprite
 C $9028,4 Set color
 C $9038,1 Load sprite pattern
@@ -1989,33 +2043,112 @@ b $96FE Planet sprite patterns
 D $96FE #UDGTABLE { #UDGARRAY19,,4($96FE-$9795-8)(graphics-96FE.png) } TABLE#
 @ $96FE label=planet_sprite_patterns
 B $96FE,152,8
-c $9796 Routine at 9796
+c $9796 Handle collisions
 D $9796 Used by the routine at #R$80E8.
-C $9796,3 Return if only the ship sprites are allocated
-C $9799,2 ...
+@ $9796 label=handle_collisions
+C $9796,3 Allocated sprites
+C $9799,2 Return if only the ship sprites are allocated
 C $979B,1 ...
+C $979C,1 Loop counter for allocated sprites - 2
+C $979D,3 Table address #R$7183+2 (skip ship sprites)
+C $97A0,1 Reset a flag
+C $97A1,3 ...
+C $97A4,1 Loop start; Save table address
+C $97A5,1 Save counter
+C $97A6,1 Get sprites allocation table byte
+C $97A7,2 MSB = 0
+C $97A9,1 x4
+C $97AA,1 ...
+C $97AB,1 DE = x4
+C $97AC,1 ...
+C $97AD,1 x8
+C $97AE,1 x12
+C $97AF,1 DE = x12
+C $97B0,4 Sprite data table base
+C $97B4,2 Add offset so that IX = current sprite data
+C $97B6,3 Get sprite type
+C $97B9,2 If deallocated value
+C $97BB,2 Then move to next sprite
+C $97BD,4 If bit 7 of polar y is set
+C $97C1,2 Then move to next sprite
+C $97C3,2 Is it a shot?
+C $97C5,3 Then jump to handler
+C $97C8,2 Is it < $0D (numbers or enemy remains)?
+C $97CA,2 Then jump ahead
+C $97CC,3 Is it chance stage?
+C $97CF,2 ...
+C $97D1,2 Then move to next sprite
+C $97D3,4 If the flag for ? set in sprite data?
+C $97D7,2 Then move to next sprite
+C $97D9,4 Ship sprite data
+C $97DD,3 Is polar x = ship x?
+C $97E0,3 ...
+C $97E3,2 If not, move to next sprite
+C $97E5,3 Polar x for sprite
+C $97E8,3 Polar x for ship
+C $97EB,3 Polar x distance
+C $97EE,2 Is distance < 2
+C $97F0,3 Then jump to collision handler
 N $97F3 This entry point is used by the routines at #R$98B5, #R$9978 and #R$9A49.
+C $97F3,1 Restore counter
+C $97F4,1 Restore table address
+C $97F5,1 Next table address
+C $97F6,2 Loop for each allocated sprites (except ship)
 C $97F8,3 Are there any mines left?
 C $97FB,1 ...
 C $97FC,2 Skip ahead if not
+C $97FE,4 Buffer address
+C $9802,3 Size of each mine structure
+C $9805,2 3 mines
+C $9807,4 Ship sprite data
+C $980B,1 Save counter
+C $980C,3 If mine is gone
+C $980F,3 ...
+C $9812,2 Then move to next mine
+C $9814,3 Get mine polar y?
+C $9817,2 If >= 6
+C $9819,2 Then move to next mine
+C $981B,3 Get ship polar x
+C $981E,3 Get mine polar x
+C $9821,3 Polar x distance
+C $9824,2 If < 7
+C $9826,3 Then call collision routine
+C $9829,2 Next mine
+C $982B,1 Restore counter
+C $982C,2 Loop for 3 mines
+C $982E,3 Check a flag
+C $9831,2 ...
+C $9833,1 Return if not
+C $9834,3 Create double shot sprite
+C $9837,4 Polar x velocity
 C $983B,1 Load sprite pattern
+C $983C,3 Create double shot sprite
+C $983F,4 Polar x velocity
 C $9843,1 Load sprite pattern
-c $9845 Routine at 9845
+c $9845 Create double shot sprite
 D $9845 Used by the routine at #R$9796.
+@ $9845 label=create_double_shot_sprite
 C $9845,1 Allocate sprite
+C $9846,4 Double shot circle
+C $984A,4 Polar y
+C $984E,3 Get ship polar x
+C $9851,3 Set as sprite polar x
 C $9858,4 Set color
 C $985C,3 Increase total enemies
 C $985F,1 ...
-c $9861 Routine at 9861
+c $9861 Handle shot
 D $9861 Used by the routine at #R$9796.
 C $986B,3 Size of each sprite
 N $986E This entry point is used by the routine at #R$98B5.
+C $98AA,3 Polar x distance
 c $98B5 Routine at 98B5
 D $98B5 Used by the routine at #R$9861.
 N $98BB This entry point is used by the routine at #R$9861.
 C $98CC,3 Map address
 C $98CF,2 Size of map
 C $98D5,3 Now DE contains polar y,x
+C $9914,3 Polar x distance
+C $9921,3 Jump back into collisions loop
 c $9924 Routine at 9924
 D $9924 Used by the routines at #R$9861 and #R$98B5.
 c $9934 Routine at 9934
@@ -2050,10 +2183,13 @@ C $9998,1 100 more
 N $9999 This entry point is used by the routines at #R$9934, #R$99A0, #R$99D3 and #R$9A08.
 C $9999,1 HL = points
 C $999A,3 Add score
+C $999D,3 Jump back into collisions loop
 c $99A0 Routine at 99A0
 D $99A0 Used by the routine at #R$98B5.
 c $99B1 Routine at 99B1
 D $99B1 Used by the routine at #R$98B5.
+C $99C9,3 Set flag for offering double shot
+C $99CC,2 ...
 c $99D3 Routine at 99D3
 D $99D3 Used by the routine at #R$99B1.
 C $99DD,1 x2
@@ -2078,14 +2214,23 @@ D $9A08 Used by the routine at #R$9924.
 c $9A1C Routine at 9A1C
 D $9A1C Used by the routines at #R$9934, #R$99A0, #R$99B1 and #R$9A08.
 C $9A20,3 Set color
-C $9A33,3 Decrease toral enemies
+C $9A33,3 Decrease total enemies
 C $9A36,1 ...
-c $9A38 Routine at 9A38
+c $9A38 Collision with sprite
 D $9A38 Used by the routine at #R$9796.
-c $9A49 Routine at 9A49
+@ $9A38 label=collision_with_sprite
+C $9A43,3 Decrease enemy shots
+C $9A46,1 ...
+c $9A49 Collision with enemy
 D $9A49 Used by the routine at #R$9A38.
+@ $9A49 collision_with_enemy
+C $9A49,2 If < $0E
+C $9A4B,2 Then
+C $9A4D,2 If >= $12
+C $9A4F,2 Then
 C $9A51,3 Decrease active enemies
 C $9A54,1 ...
+C $9A55,3 Deallocate from map
 C $9A68,1 Load sprite pattern
 N $9A69 This entry point is used by the routine at #R$9A75.
 C $9A69,3 Decrease total enemies
@@ -2093,13 +2238,40 @@ C $9A6C,1 ...
 N $9A6D This entry point is used by the routine at #R$9A38.
 C $9A6D,3 Set died flag
 C $9A70,2 ...
-c $9A75 Routine at 9A75
+C $9A72,3 Jump back into collisions loop
+c $9A75 Collision with mine
 D $9A75 Used by the routine at #R$9796.
+@ $9A75 label=collision_with_mine
+C $9A75,4 Remove mine
+C $9A79,4 ...
 C $9A7D,3 Display background patterns
 C $9A80,3 Decrease mines left
 C $9A83,1 ...
-c $9A86 Routine at 9A86
+C $9A84,2 Die and return to loop
+c $9A86 Polar x distance
 D $9A86 Used by the routines at #R$870C, #R$9796, #R$9861 and #R$98B5.
+R $9A86 I: A Polar x1
+R $9A86 I: B Polar x2
+@ $9A86 label=polar_x_distance
+C $9A86,3 Store polar x1
+C $9A89,1 Polar x1 - polar x2
+C $9A8A,2 Jump ahead of >= 0
+C $9A8C,2 Else make positive
+C $9A8E,2 Is it < 32?
+C $9A90,1 Then return
+C $9A91,3 Restore polar x1
+C $9A94,2 Is it >= 32?
+C $9A96,2 Then skip ahead
+C $9A98,2 Else add 64
+C $9A9A,1 Store in C
+C $9A9B,1 Get polar x2
+C $9A9C,2 Is it >= 32?
+C $9A9E,2 Then skip ahead
+C $9AA0,2 Else add 64
+C $9AA2,1 Subtract the modified polar x1
+C $9AA3,1 Return if >= 0
+C $9AA4,2 Else make positive
+C $9AA6,1 And return
 b $9AA7 Data block at 9AA7
 B $9AA7,12,2
 c $9AB3 Add A to HL (RST $08)

@@ -24,28 +24,28 @@ Next: <a href="39558.html">9A86</a>
 </td>
 </tr>
 </table>
-<div class="description">9A75: Routine at 9A75</div>
+<div class="description">9A75: Collision with mine</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="38806.html">L9796</a>.
+Used by the routine at <a href="38806.html">handle_collisions</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L9A75</td>
+<td class="asm-label">collision_with_mine</td>
 <td class="address-2"><span id="39541"></span>9A75</td>
 <td class="instruction">LD (IY+$04),$00</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Remove mine</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39545"></span>9A79</td>
 <td class="instruction">LD (IY+$05),$00</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -69,7 +69,7 @@ Used by the routine at <a href="38806.html">L9796</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="39556"></span>9A84</td>
 <td class="instruction">JR <a href="39497.html#39529">L9A49_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Die and return to loop</td>
 </tr>
 </table>
 <table class="asm-navigation">

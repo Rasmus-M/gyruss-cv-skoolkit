@@ -24,19 +24,19 @@ Next: <a href="39009.html">9861</a>
 </td>
 </tr>
 </table>
-<div class="description">9845: Routine at 9845</div>
+<div class="description">9845: Create double shot sprite</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="38806.html">L9796</a>.
+Used by the routine at <a href="38806.html">handle_collisions</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L9845</td>
+<td class="asm-label">create_double_shot_sprite</td>
 <td class="address-2"><span id="38981"></span>9845</td>
 <td class="instruction">RST $28</td>
 <td class="comment-1" rowspan="1">Allocate sprite</td>
@@ -45,25 +45,25 @@ Used by the routine at <a href="38806.html">L9796</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="38982"></span>9846</td>
 <td class="instruction">LD (IX+$00),$03</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Double shot circle</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38986"></span>984A</td>
 <td class="instruction">LD (IX+$01),$00</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Polar y</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38990"></span>984E</td>
 <td class="instruction">LD A,($7004)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get ship polar x</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38993"></span>9851</td>
 <td class="instruction">LD (IX+$02),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set as sprite polar x</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

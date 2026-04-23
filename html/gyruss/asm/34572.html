@@ -52,7 +52,7 @@ Used by the routine at <a href="34537.html">handle_sprite_types_12_13</a>.
 <span id="34576"></span>
 <div class="comments">
 <div class="paragraph">
-Sprite type $03 (circle)
+Sprite type $03 (double shot circle)
 </div>
 </div>
 </td>
@@ -61,109 +61,109 @@ Sprite type $03 (circle)
 <td class="asm-label"></td>
 <td class="address-1"><span id="34576"></span>8710</td>
 <td class="instruction">LD A,(<a href="29163.html">status_flags</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Check if you have died</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34579"></span>8713</td>
 <td class="instruction">BIT 2,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34581"></span>8715</td>
 <td class="instruction">JP NZ,<a href="34388.html">deallocate_enemy</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If so, deallocate and return</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34584"></span>8718</td>
 <td class="instruction">INC (IX+$05)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Not initialised?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34587"></span>871B</td>
 <td class="instruction">LD A,(IX+$07)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">X velocity, set to $02 or $FE when created</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34590"></span>871E</td>
 <td class="instruction">ADD A,(IX+$02)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add to polar x</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34593"></span>8721</td>
 <td class="instruction">AND $3F</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Mod 64</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34595"></span>8723</td>
 <td class="instruction">LD (IX+$02),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save again</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34598"></span>8726</td>
 <td class="instruction">DEC (IX+$03)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Countdown, set to $10 when created</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34601"></span>8729</td>
 <td class="instruction">RET P</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return if &gt; 0</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34602"></span>872A</td>
 <td class="instruction">LD A,($7004)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get ship polar x</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34605"></span>872D</td>
 <td class="instruction">LD B,(IX+$02)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get polar x</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34608"></span>8730</td>
-<td class="instruction">CALL <a href="39558.html">L9A86</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL <a href="39558.html">polar_x_distance</a></td>
+<td class="comment-1" rowspan="1">Polar x distance</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34611"></span>8733</td>
 <td class="instruction">CP $04</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Is it &gt;= 4</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34613"></span>8735</td>
 <td class="instruction">RET NC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Then return</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34614"></span>8736</td>
 <td class="instruction">LD HL,<a href="29270.html">other_flags</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set double shot flag</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34617"></span>8739</td>
 <td class="instruction">SET 1,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34619"></span>873B</td>
 <td class="instruction">JP <a href="34388.html">deallocate_enemy</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Deallocate and return</td>
 </tr>
 </table>
 <table class="asm-navigation">

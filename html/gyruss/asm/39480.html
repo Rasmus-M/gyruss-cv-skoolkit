@@ -24,64 +24,64 @@ Next: <a href="39497.html">9A49</a>
 </td>
 </tr>
 </table>
-<div class="description">9A38: Routine at 9A38</div>
+<div class="description">9A38: Collision with sprite</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="38806.html">L9796</a>.
+Used by the routine at <a href="38806.html">handle_collisions</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L9A38</td>
+<td class="asm-label">collision_with_sprite</td>
 <td class="address-2"><span id="39480"></span>9A38</td>
 <td class="instruction">LD A,(IX+$00)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39483"></span>9A3B</td>
 <td class="instruction">CP $12</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39485"></span>9A3D</td>
 <td class="instruction">JR C,<a href="39497.html">L9A49</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39487"></span>9A3F</td>
 <td class="instruction">CP $14</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39489"></span>9A41</td>
 <td class="instruction">JR NC,<a href="39497.html">L9A49</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39491"></span>9A43</td>
 <td class="instruction">LD HL,<a href="29266.html">active_enemy_shots</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Decrease enemy shots</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39494"></span>9A46</td>
 <td class="instruction">DEC (HL)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39495"></span>9A47</td>
 <td class="instruction">JR <a href="39497.html#39533">L9A49_1</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 </table>
 <table class="asm-navigation">
