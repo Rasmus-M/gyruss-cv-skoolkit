@@ -30,7 +30,7 @@ Next: <a href="39432.html">9A08</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="39345.html">L99B1</a>.
+Used by the routine at <a href="39345.html">shot_hit_mine</a>.
 </div>
 </div>
 </td>
@@ -39,31 +39,31 @@ Used by the routine at <a href="39345.html">L99B1</a>.
 <td class="asm-label">L99D3</td>
 <td class="address-2"><span id="39379"></span>99D3</td>
 <td class="instruction">LD A,$04</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Play sound</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39381"></span>99D5</td>
 <td class="instruction">CALL <a href="40611.html">call_play_sound</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39384"></span>99D8</td>
-<td class="instruction">LD HL,<a href="29268.html">L7254</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD HL,<a href="29268.html">mines_destroyed</a></td>
+<td class="comment-1" rowspan="1">Get mines destroyed</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39387"></span>99DB</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39388"></span>99DC</td>
 <td class="instruction">INC (HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Increment mines destroyed</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -99,7 +99,7 @@ Used by the routine at <a href="39345.html">L99B1</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="39396"></span>99E4</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1">Get ? ($06 - $0B)</td>
+<td class="comment-1" rowspan="1">Get points sprite type ($06 - $0B)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -111,14 +111,14 @@ Used by the routine at <a href="39345.html">L99B1</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="39400"></span>99E8</td>
 <td class="instruction">LD E,$00</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">LSB of points</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="39402"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="39345.html">L99B1</a>.
+This entry point is used by the routine at <a href="39345.html">shot_hit_mine</a>.
 </div>
 </div>
 </td>
@@ -133,13 +133,13 @@ This entry point is used by the routine at <a href="39345.html">L99B1</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="39403"></span>99EB</td>
 <td class="instruction">LD (IY+$04),$00</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Remove mine</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39407"></span>99EF</td>
 <td class="instruction">LD (IY+$05),$00</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -157,7 +157,7 @@ This entry point is used by the routine at <a href="39345.html">L99B1</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="39416"></span>99F8</td>
 <td class="instruction">LD HL,<a href="29229.html">mines_left</a></td>
-<td class="comment-1" rowspan="1">Decrease mines left</td>
+<td class="comment-1" rowspan="1">Decrement mines left</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -198,8 +198,8 @@ This entry point is used by the routine at <a href="39345.html">L99B1</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39430"></span>9A06</td>
-<td class="instruction">JR <a href="39288.html#39321">add_score_from_enemy_1</a></td>
-<td class="comment-1" rowspan="1">Add score</td>
+<td class="instruction">JR <a href="39288.html#39321">add_points_in_de</a></td>
+<td class="comment-1" rowspan="1">Add points to score</td>
 </tr>
 </table>
 <table class="asm-navigation">

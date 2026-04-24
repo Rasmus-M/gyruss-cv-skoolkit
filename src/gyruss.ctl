@@ -112,6 +112,7 @@ b $722E Ship background data
 @ $722E label=ship_background_data
 B $722E,9,8,1
 b $7237 Mines background data (3x9 bytes)
+D $7237 #TABLE(default, default) { =h Byte | =h Purpose } { $00 | Unknown } { $01 | Unknown } { $02 | Unknown } { $03 | Unknown } { $04 | Unknown } { $05 | Unknown } { $06 | Unknown } { $07 | Polar y } { $08 | Polar x } TABLE#
 @ $7237 label=mines_background_data
 B $7237,27,8*3,3
 b $7252 Active enemy shots, set to $FF during explosion
@@ -120,7 +121,8 @@ B $7252,1,1
 b $7253 Number of active shots
 @ $7253 label=active_shots
 B $7253,1,1
-b $7254 Byte at 7254
+b $7254 Mines destroyed
+@ $7254 label=mines_destroyed
 B $7254,1,1
 b $7255 Enemies destroyed in chance stage
 @ $7255 label=bonus_enemies_hit
@@ -181,7 +183,7 @@ b $726C Byte at 726C
 B $726C,1,1
 b $726D Byte at 726D
 B $726D,1,1
-b $726E Flag for showing double shot circles
+b $726E Flag for showing double shot pickup
 @ $726E label=offset_double_shot_flag
 B $726E,1,1
 b $726F Temporary polar x
@@ -1297,7 +1299,7 @@ C $8A94,3 Compare with sprite polar x
 C $8A97,1 Return if not equal
 C $8A98,3 Reset countdown
 C $8A9B,3 ...
-C $8A9E,3 Increase enemy shots
+C $8A9E,3 Increment enemy shots
 C $8AA1,1 ...
 C $8AA2,2 Save enemy sprite address
 C $8AA4,1 Allocate sprite
@@ -1615,11 +1617,11 @@ C $8CEE,3 Outcoming enemies
 C $8CF1,1 OR bits 4-7
 C $8CF2,3 Store in sprite data
 C $8CF5,1 Load sprite pattern
-C $8CF6,3 Increase active enemies
+C $8CF6,3 Increment active enemies
 C $8CF9,1 ...
-C $8CFA,3 Increase total enemies
+C $8CFA,3 Increment total enemies
 C $8CFD,1 ...
-C $8CFE,3 Increase outcoming enemies
+C $8CFE,3 Increment outcoming enemies
 C $8D01,1 ...
 C $8D02,2 B = 9 enemies
 C $8D04,3 Is it chance stage?
@@ -1641,8 +1643,9 @@ C $8D27,3 Outcoming enemies
 C $8D31,3 Total enemies
 C $8D48,1 Reset outcoming enemies
 C $8D49,3 ...
-c $8D50 Routine at 8D50
+c $8D50 Create "laser fence"
 D $8D50 Used by the routine at #R$80E8.
+@ $8D50 label=create_laser_fence
 C $8D50,3 Frame counter
 C $8D68,3 Get stage data address in IY
 C $8D6B,1 Random number
@@ -1664,7 +1667,7 @@ D $8DD7 Used by the routine at #R$8D50.
 C $8DDD,1 Allocate sprite
 C $8DE6,1 Random number
 C $8DFC,4 Set color
-C $8E00,3 Increase total enemies
+C $8E00,3 Increment total enemies
 C $8E03,1 ...
 N $8E04 This entry point is used by the routine at #R$8D50.
 C $8E04,1 Random number
@@ -1704,31 +1707,35 @@ c $8F0F Routine at 8F0F
 D $8F0F Used by the routine at #R$8E9D.
 C $8F44,3 FILL_VRAM
 C $8F52,3 Display background patterns
-c $8F55 Routine at 8F55
+c $8F55 Create mines
 D $8F55 Used by the routine at #R$8E2D.
+C $8F58,4 Mine data
+C $8F5C,2 3 mines
 C $8F77,3 Frame counter
 N $8FAE This entry point is used by the routine at #R$8FED.
 C $8FAE,3 Polar y
 C $8FB1,3 Polar x
 C $8FC3,3 Display background patterns
+C $8FCC,2 Loop for 3 mines
 C $8FCE,3 Frame counter
-c $8FED Routine at 8FED
+c $8FED Destroy mine
 D $8FED Used by the routine at #R$8F55.
-C $8FFA,3 Decrease total enemies
+C $8FFA,3 Decrement total enemies
 C $8FFD,1 ...
-C $8FFE,3 Decrease mines left
+C $8FFE,3 Decrement mines left
 C $9001,1 ...
 C $9004,3 Clear died flag
 C $9007,2 ...
-c $900E Routine at 900E
+c $900E Create shot from mine
 D $900E Used by the routines at #R$8E9D and #R$8F55.
-C $901F,3 Increase enemy shots
+C $901F,3 Increment enemy shots
 C $9022,1 ...
 C $9023,1 Allocate sprite
 C $9028,4 Set color
 C $9038,1 Load sprite pattern
 C $9039,3 Get stage data address in IY
 C $903C,1 Random number
+C $903D,2 0-63
 b $9046 Data block at 9046
 B $9046,16,8
 b $9056 3 spheres/mine background graphics
@@ -2089,7 +2096,7 @@ C $97E8,3 Polar x for ship
 C $97EB,3 Polar x distance
 C $97EE,2 Is distance < 2
 C $97F0,3 Then jump to collision handler
-N $97F3 This entry point is used by the routines at #R$98B5, #R$9978 and #R$9A49.
+N $97F3 This entry point is used by the routines at #R$9861, #R$9978 and #R$9A49.
 C $97F3,1 Restore counter
 C $97F4,1 Restore table address
 C $97F5,1 Next table address
@@ -2097,7 +2104,7 @@ C $97F6,2 Loop for each allocated sprites (except ship)
 C $97F8,3 Are there any mines left?
 C $97FB,1 ...
 C $97FC,2 Skip ahead if not
-C $97FE,4 Buffer address
+C $97FE,4 Mine data address
 C $9802,3 Size of each mine structure
 C $9805,2 3 mines
 C $9807,4 Ship sprite data
@@ -2134,35 +2141,147 @@ C $984A,4 Polar y
 C $984E,3 Get ship polar x
 C $9851,3 Set as sprite polar x
 C $9858,4 Set color
-C $985C,3 Increase total enemies
+C $985C,3 Increment total enemies
 C $985F,1 ...
-c $9861 Handle shot
+c $9861 Handle shot collision
 D $9861 Used by the routine at #R$9796.
+@ $9861 label=handle_shot_collision
+C $9861,3 Flags
+C $9864,1 C = flags
+N $9865 Check collision with sprites
+C $9865,4 Data for sprite  2
+C $9869,2 30 sprites
 C $986B,3 Size of each sprite
-N $986E This entry point is used by the routine at #R$98B5.
+C $986E,4 If deallocated
+C $9872,2 Then move to next sprite
+C $9874,4 If polar y is out of range
+C $9878,2 Then move to next sprite
+C $987A,3 Get sprite type
+C $987D,2 If deallocated
+C $987F,2 Then move to next sprite
+C $9881,2 If < $0D (explosion dot, should this have been $0E?)
+C $9883,2 Then move to next sprite
+C $9885,2 If laser fence
+C $9887,2 Then move to next sprite
+C $9889,2 If < $12 (enemy missile)
+C $988B,2 Then do further checks
+C $988D,2 if < $15 (last fence end)
+C $988F,2 Then move to next sprite
+N $9891 $0D <= type <= $11 or type >= $15 except $17
+C $9891,3 Polar y other sprite
+C $9894,3 Minus polar y shot
+C $9897,2 Absolute value
+C $9899,2 ...
+C $989B,2 If >= 2
+C $989D,2 Then move to next sprite
+C $989F,3 Polar x other sprite
+C $98A2,2 Is double shot activated?
+C $98A4,2 If not, we need a precise match on x
+C $98A6,1 Save counter
+C $98A7,3 Polar x other sprite
 C $98AA,3 Polar x distance
-c $98B5 Routine at 98B5
-D $98B5 Used by the routine at #R$9861.
-N $98BB This entry point is used by the routine at #R$9861.
+C $98AD,1 Restore counter
+C $98AE,2 If distance < 3
+C $98B0,3 Then we have a hit
+C $98B3,2 Then move to next sprite
+C $98B5,3 Compare to polar x of shot
+C $98B8,3 If equal we have a hit
+C $98BB,2 Next sprite address
+C $98BD,2 Loop for 30 sprites
+N $98BF Check for collision with center enemies
+C $98BF,3 Get polar y
+C $98C2,2 if < 35
+C $98C4,2 Then skip this step (not in center)
+C $98C6,3 Get number of enemies in map
+C $98C9,1 If zero
+C $98CA,2 Then skip this step
 C $98CC,3 Map address
 C $98CF,2 Size of map
+C $98D1,2 If not allocated
+C $98D3,2 Then move on to next
 C $98D5,3 Now DE contains polar y,x
+C $98D8,1 Polar y
+C $98D9,3 Subtract polar y of shot
+C $98DC,2 Take absolute value
+C $98DE,2 ...
+C $98E0,2 If < 2
+C $98E2,2 Then move on to next
+C $98E4,1 Polar x
+C $98E5,3 Compare to polar x of shot
+C $98E8,3 If equal we have a hit
+C $98EB,1 Next map address
+C $98EC,2 Loop for all map entries
+N $98EE Check for collision with mines
+C $98EE,4 Mine data
+C $98F2,3 Size of each mine structure
+C $98F5,2 3 mines
+C $98F7,3 If mine is gone
+C $98FA,3 ...
+C $98FD,2 Then move to next mine
+C $98FF,3 Get polar y of mine
+C $9902,3 Subtract polar y of shot
+C $9905,2 Absolute value
+C $9907,2 ...
+C $9909,2 >= 2
+C $990B,2 Then move on to next mine
+C $990D,1 Save counter
+C $990E,3 Get polar x of mine
+C $9911,3 Get polar x of shot
 C $9914,3 Polar x distance
+C $9917,1 Restore counter
+C $9918,2 If distance is < 4
+C $991A,3 Then we have a hit
+C $991D,2 Next mine address
+C $991F,2 Loop for 3 mines
 C $9921,3 Jump back into collisions loop
-c $9924 Routine at 9924
-D $9924 Used by the routines at #R$9861 and #R$98B5.
-c $9934 Routine at 9934
+c $9924 Shot hit sprite
+D $9924 Used by the routines at #R$9861.
+@ $9924 label=shot_hit_sprite
+C $9924,3 Get sprite type
+C $9927,2 If >= $18 (uncommon enemies)
+C $9929,2 Then jump to enemy handler
+C $992B,2 If >= $15 and =< $17 (laser fence)
+C $992D,3 Then jump to handler
+C $9930,2 Else set sound to 1
+C $9932,2 And jump to enemy handler
+c $9934 Shot hit sprite enemy
 D $9934 Used by the routine at #R$9924.
+R $9934 I:A Sound to play
+@ $9934 label=shot_hit_sprite_enemy
+C $9934,2 Sound = 4
 N $9936 This entry point is used by the routine at #R$9924.
+C $9936,3 Play sound
+C $9939,2 Save shot address
+C $993B,2 IX = enemy address
+C $993D,2 ...
+C $993F,3 Deallocate from map
+C $9942,2 IX = shot address
+C $9944,4 Set enemy sprite type to unallocated
+C $9948,3 Get color
+C $994B,3 Remove shot
+C $994E,3 Points
 C $9951,3 Record hit
 C $9954,1 ...
-C $9955,3 Decrease active enemies
+C $9955,3 Decrement active enemies
 C $9958,1 ...
+C $9959,2 If still active enemies then add default points
+C $995B,3 Are all waves complete?
+C $995E,2 ...
+C $9960,2 If not add points from enemy
+C $9962,3 Text wave flag
+C $9965,2 ...
+C $9967,2 If not wave then add default points
+C $9969,3 Get center enemies
+C $996C,1 Is it zero?
+C $996D,2 If not, add default points
+C $996F,3 A lot more points
+C $9972,4 Points sprite to show?
+C $9976,2 Add points
 c $9978 Add score when enemy destroyed
 D $9978 Used by the routine at #R$9934.
 R $9978 I:IX Sprite data
 R $9978 I:DE Points to add
-@ $9978 label=add_score_from_enemy
+@ $9978 label=add_points_from_enemy
 C $9978,3 Flags
 C $997B,2 If bit 5 or 6 set?
 C $997D,2 Then just add score
@@ -2181,45 +2300,79 @@ C $9994,1 Get ? ($06 - $0B)
 C $9995,3 Save in sprite data
 C $9998,1 100 more
 N $9999 This entry point is used by the routines at #R$9934, #R$99A0, #R$99D3 and #R$9A08.
+@ $9999 label=add_points_in_de
 C $9999,1 HL = points
 C $999A,3 Add score
 C $999D,3 Jump back into collisions loop
-c $99A0 Routine at 99A0
-D $99A0 Used by the routine at #R$98B5.
-c $99B1 Routine at 99B1
-D $99B1 Used by the routine at #R$98B5.
+c $99A0 Shot hit center enemy
+D $99A0 Used by the routine at #R$9861.
+@ $99A0 label=shot_hit_center_enemy
+C $99A0,1 Get map entry (color)
+C $99A1,3 Deallocate map entry
+C $99A4,3 Remove shot
+C $99A7,2 Play sound
+C $99A9,3 ...
+C $99AC,3 Add points
+C $99AF,2 ...
+c $99B1 Shot hit mine
+D $99B1 Used by the routine at #R$9861.
+@ $99B1 label=shot_hit_mine
+C $99B1,2 Color
+C $99B3,3 Remove shot
+C $99B6,3 Get mine data ?
+C $99B9,2 If not $80
+C $99BB,2 Then jump ahead
+C $99BD,2 Play sound
+C $99BF,3 ...
+C $99C2,3 If double shot is enabled
+C $99C5,2 ...
+C $99C7,2 Then skip offering double shot
 C $99C9,3 Set flag for offering double shot
 C $99CC,2 ...
-c $99D3 Routine at 99D3
-D $99D3 Used by the routine at #R$99B1.
+C $99CE,3 Points
+C $99D1,2 Jump ahead
+C $99D3,2 Play sound
+C $99D5,3 ...
+C $99D8,3 Get mines destroyed
+C $99DB,1 ...
+C $99DC,1 Increment mines destroyed
 C $99DD,1 x2
 C $99DE,3 Score table
 C $99E1,1 Add A to HL
 C $99E2,1 Get points (hundreds)
 C $99E3,1 Next address in table
-C $99E4,1 Get ? ($06 - $0B)
+C $99E4,1 Get points sprite type ($06 - $0B)
 C $99E5,3 Save in sprite data
+C $99E8,2 LSB of points
 N $99EA This entry point is used by the routine at #R$99B1.
 C $99EA,1 Save score
+C $99EB,4 Remove mine
+C $99EF,4 ...
 C $99F5,3 Display background patterns
-C $99F8,3 Decrease mines left
+C $99F8,3 Decrement mines left
 C $99FB,1 ...
 C $99FC,2 Skip ahead if any left
 C $99FE,3 Clear died flag
 C $9A01,2 ...
 C $9A05,1 Restore score
-C $9A06,2 Add score
-c $9A08 Routine at 9A08
+C $9A06,2 Add points to score
+c $9A08 Shot hit laser fence
 D $9A08 Used by the routine at #R$9924.
-c $9A1C Routine at 9A1C
+@ $9A08 label=shot_hit_laser_fence
+c $9A1C Remove shot
 D $9A1C Used by the routines at #R$9934, #R$99A0, #R$99B1 and #R$9A08.
+R $9A1C I:D Color of 'explosion'
+@ $9A1C label=remove_shot
+C $9A1C,4 Set sprite type to
 C $9A20,3 Set color
-C $9A33,3 Decrease total enemies
+C $9A2F,3 Decrement active shots
+C $9A32,1 ...
+C $9A33,3 Decrement total enemies (hmm, why here?)
 C $9A36,1 ...
 c $9A38 Collision with sprite
 D $9A38 Used by the routine at #R$9796.
 @ $9A38 label=collision_with_sprite
-C $9A43,3 Decrease enemy shots
+C $9A43,3 Decrement enemy shots
 C $9A46,1 ...
 c $9A49 Collision with enemy
 D $9A49 Used by the routine at #R$9A38.
@@ -2228,12 +2381,12 @@ C $9A49,2 If < $0E
 C $9A4B,2 Then
 C $9A4D,2 If >= $12
 C $9A4F,2 Then
-C $9A51,3 Decrease active enemies
+C $9A51,3 Decrement active enemies
 C $9A54,1 ...
 C $9A55,3 Deallocate from map
 C $9A68,1 Load sprite pattern
 N $9A69 This entry point is used by the routine at #R$9A75.
-C $9A69,3 Decrease total enemies
+C $9A69,3 Decrement total enemies
 C $9A6C,1 ...
 N $9A6D This entry point is used by the routine at #R$9A38.
 C $9A6D,3 Set died flag
@@ -2245,11 +2398,11 @@ D $9A75 Used by the routine at #R$9796.
 C $9A75,4 Remove mine
 C $9A79,4 ...
 C $9A7D,3 Display background patterns
-C $9A80,3 Decrease mines left
+C $9A80,3 Decrement mines left
 C $9A83,1 ...
 C $9A84,2 Die and return to loop
 c $9A86 Polar x distance
-D $9A86 Used by the routines at #R$870C, #R$9796, #R$9861 and #R$98B5.
+D $9A86 Used by the routines at #R$870C, #R$9796, and #R$9861.
 R $9A86 I: A Polar x1
 R $9A86 I: B Polar x2
 @ $9A86 label=polar_x_distance
@@ -3039,14 +3192,14 @@ C $AB2A,1 Restore value from map
 C $AB2B,3 Use it as color (may temporary since it's >= $80?)
 C $AB2E,4 Set flag
 C $AB32,1 Load sprite pattern
-C $AB33,3 Increase number of active enemies
+C $AB33,3 Increment number of active enemies
 C $AB36,1 ...
 c $AB38 Sprite coordinates from map
-D $AB38 Returns polar sprite coordinates from an entry in the map. Used by the routines at #R$87F5, #R$98B5, #R$AB17 and #R$AB72.
+D $AB38 Returns polar sprite coordinates from an entry in the map. Used by the routines at #R$87F5, #R$9861, #R$AB17 and #R$AB72.
 R $AB38 I:HL Map address
 R $AB38 O:D Polar y
 R $AB38 O:E Polar x
-@ $AB38 label=sprite_coordinates_from_map
+@ $AB38 label=polar_coordinates_from_map
 C $AB38,1 Save map address
 C $AB39,3 Base address of map
 C $AB3C,1 Clear carry
@@ -3066,7 +3219,7 @@ C $AB51,1 Restore map address
 c $AB53 Deallocate sprite from map
 D $AB53 Search for sprite pattern in map and deallocate if found. Used by the routines at #R$9934 and #R$9A49.
 R $AB53 I: IX sprite data
-@ $AB53 deallocate_sprite_from_map
+@ $AB53 label=deallocate_sprite_from_map
 C $AB53,4 Test bit
 C $AB57,1 Return if not set
 C $AB5A,3 Map address
@@ -3447,13 +3600,13 @@ C $AE61,2 Then just return
 C $AE63,2 If >= $18
 C $AE65,2 Then just return
 C $AE67,2 If >= $12 and < $12 (not possible)
-C $AE69,2 Then decrease total enemies
+C $AE69,2 Then decrement total enemies
 C $AE6B,2 If >= $14 and < $18
-C $AE6D,2 Then decrease total enemies
-C $AE6F,3 Decrease active enemy shots
+C $AE6D,2 Then decrement total enemies
+C $AE6F,3 Decrement active enemy shots
 C $AE72,1 ...
 C $AE73,2 Set off-screen values and return
-C $AE75,3 Decrease total enemies
+C $AE75,3 Decrement total enemies
 C $AE78,1 ...
 C $AE79,2 If < $15
 C $AE7B,2 Then set off-screen values and return

@@ -20,80 +20,80 @@ Prev: <a href="39328.html">99A0</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#39345">Map</a></td>
 <td class="next">
-Next: <a href="39379.html">99D3</a>
+Next: <a href="39432.html">9A08</a>
 </td>
 </tr>
 </table>
-<div class="description">99B1: Routine at 99B1</div>
+<div class="description">99B1: Shot hit mine</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="39093.html">L98B5</a>.
+Used by the routine at <a href="39009.html">handle_shot_collision</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L99B1</td>
+<td class="asm-label">shot_hit_mine</td>
 <td class="address-2"><span id="39345"></span>99B1</td>
 <td class="instruction">LD D,$0F</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Color</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39347"></span>99B3</td>
-<td class="instruction">CALL <a href="39452.html">L9A1C</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL <a href="39452.html">remove_shot</a></td>
+<td class="comment-1" rowspan="1">Remove shot</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39350"></span>99B6</td>
 <td class="instruction">LD A,(IY+$06)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get mine data ?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39353"></span>99B9</td>
 <td class="instruction">CP $80</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If not $80</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39355"></span>99BB</td>
-<td class="instruction">JR NZ,<a href="39379.html">L99D3</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="39345.html#39379">shot_hit_mine_0</a></td>
+<td class="comment-1" rowspan="1">Then jump ahead</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39357"></span>99BD</td>
 <td class="instruction">LD A,$08</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Play sound</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39359"></span>99BF</td>
 <td class="instruction">CALL <a href="40611.html">call_play_sound</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39362"></span>99C2</td>
 <td class="instruction">LD A,(<a href="29270.html">other_flags</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If double shot is enabled</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39365"></span>99C5</td>
 <td class="instruction">BIT 1,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39367"></span>99C7</td>
-<td class="instruction">JR NZ,<a href="39379.html">L99D3</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="39345.html#39379">shot_hit_mine_0</a></td>
+<td class="comment-1" rowspan="1">Then skip offering double shot</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -111,13 +111,179 @@ Used by the routine at <a href="39093.html">L98B5</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="39374"></span>99CE</td>
 <td class="instruction">LD DE,$0500</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Points</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39377"></span>99D1</td>
-<td class="instruction">JR <a href="39379.html#39402">L99D3_0</a></td>
+<td class="instruction">JR <a href="39345.html#39402">shot_hit_mine_1</a></td>
+<td class="comment-1" rowspan="1">Jump ahead</td>
+</tr>
+<tr>
+<td class="asm-label">shot_hit_mine_0</td>
+<td class="address-2"><span id="39379"></span>99D3</td>
+<td class="instruction">LD A,$04</td>
+<td class="comment-1" rowspan="1">Play sound</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39381"></span>99D5</td>
+<td class="instruction">CALL <a href="40611.html">call_play_sound</a></td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39384"></span>99D8</td>
+<td class="instruction">LD HL,<a href="29268.html">mines_destroyed</a></td>
+<td class="comment-1" rowspan="1">Get mines destroyed</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39387"></span>99DB</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39388"></span>99DC</td>
+<td class="instruction">INC (HL)</td>
+<td class="comment-1" rowspan="1">Increment mines destroyed</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39389"></span>99DD</td>
+<td class="instruction">ADD A,A</td>
+<td class="comment-1" rowspan="1">x2</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39390"></span>99DE</td>
+<td class="instruction">LD HL,<a href="39591.html">L9AA7</a></td>
+<td class="comment-1" rowspan="1">Score table</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39393"></span>99E1</td>
+<td class="instruction">RST $08</td>
+<td class="comment-1" rowspan="1">Add A to HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39394"></span>99E2</td>
+<td class="instruction">LD D,(HL)</td>
+<td class="comment-1" rowspan="1">Get points (hundreds)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39395"></span>99E3</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Next address in table</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39396"></span>99E4</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Get points sprite type ($06 - $0B)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39397"></span>99E5</td>
+<td class="instruction">LD (IX+$06),A</td>
+<td class="comment-1" rowspan="1">Save in sprite data</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39400"></span>99E8</td>
+<td class="instruction">LD E,$00</td>
+<td class="comment-1" rowspan="1">LSB of points</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="39402"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="39345.html">shot_hit_mine</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">shot_hit_mine_1</td>
+<td class="address-2"><span id="39402"></span>99EA</td>
+<td class="instruction">PUSH DE</td>
+<td class="comment-1" rowspan="1">Save score</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39403"></span>99EB</td>
+<td class="instruction">LD (IY+$04),$00</td>
+<td class="comment-1" rowspan="1">Remove mine</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39407"></span>99EF</td>
+<td class="instruction">LD (IY+$05),$00</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39411"></span>99F3</td>
+<td class="instruction">PUSH IX</td>
 <td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39413"></span>99F5</td>
+<td class="instruction">CALL <a href="35602.html">display_background_patterns</a></td>
+<td class="comment-1" rowspan="1">Display background patterns</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39416"></span>99F8</td>
+<td class="instruction">LD HL,<a href="29229.html">mines_left</a></td>
+<td class="comment-1" rowspan="1">Decrement mines left</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39419"></span>99FB</td>
+<td class="instruction">DEC (HL)</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39420"></span>99FC</td>
+<td class="instruction">JR NZ,<a href="39345.html#39427">shot_hit_mine_2</a></td>
+<td class="comment-1" rowspan="1">Skip ahead if any left</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39422"></span>99FE</td>
+<td class="instruction">LD HL,<a href="29270.html">other_flags</a></td>
+<td class="comment-1" rowspan="1">Clear died flag</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39425"></span>9A01</td>
+<td class="instruction">RES 2,(HL)</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label">shot_hit_mine_2</td>
+<td class="address-2"><span id="39427"></span>9A03</td>
+<td class="instruction">POP IX</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39429"></span>9A05</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="1">Restore score</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39430"></span>9A06</td>
+<td class="instruction">JR <a href="39288.html#39321">add_points_in_de</a></td>
+<td class="comment-1" rowspan="1">Add points to score</td>
 </tr>
 </table>
 <table class="asm-navigation">
@@ -127,7 +293,7 @@ Prev: <a href="39328.html">99A0</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#39345">Map</a></td>
 <td class="next">
-Next: <a href="39379.html">99D3</a>
+Next: <a href="39432.html">9A08</a>
 </td>
 </tr>
 </table>

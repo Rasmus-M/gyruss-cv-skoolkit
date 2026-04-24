@@ -24,58 +24,58 @@ Next: <a href="39345.html">99B1</a>
 </td>
 </tr>
 </table>
-<div class="description">99A0: Routine at 99A0</div>
+<div class="description">99A0: Shot hit center enemy</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="39093.html">L98B5</a>.
+Used by the routine at <a href="39009.html">handle_shot_collision</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L99A0</td>
+<td class="asm-label">shot_hit_center_enemy</td>
 <td class="address-2"><span id="39328"></span>99A0</td>
 <td class="instruction">LD D,(HL)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get map entry (color)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39329"></span>99A1</td>
 <td class="instruction">CALL <a href="43747.html">deallocate_map_entry</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Deallocate map entry</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39332"></span>99A4</td>
-<td class="instruction">CALL <a href="39452.html">L9A1C</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">CALL <a href="39452.html">remove_shot</a></td>
+<td class="comment-1" rowspan="1">Remove shot</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39335"></span>99A7</td>
 <td class="instruction">LD A,$01</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Play sound</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39337"></span>99A9</td>
 <td class="instruction">CALL <a href="40611.html">call_play_sound</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39340"></span>99AC</td>
 <td class="instruction">LD DE,$0100</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add points</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39343"></span>99AF</td>
-<td class="instruction">JR <a href="39288.html#39321">add_score_from_enemy_1</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JR <a href="39288.html#39321">add_points_in_de</a></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 </table>
 <table class="asm-navigation">

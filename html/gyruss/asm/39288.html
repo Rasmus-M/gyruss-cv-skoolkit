@@ -30,7 +30,7 @@ Next: <a href="39328.html">99A0</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="39220.html">L9934</a>.
+Used by the routine at <a href="39220.html">shot_hit_sprite_enemy</a>.
 </div>
 </div>
 <table class="input">
@@ -49,7 +49,7 @@ Used by the routine at <a href="39220.html">L9934</a>.
 </td>
 </tr>
 <tr>
-<td class="asm-label">add_score_from_enemy</td>
+<td class="asm-label">add_points_from_enemy</td>
 <td class="address-2"><span id="39288"></span>9978</td>
 <td class="instruction">LD A,(<a href="29270.html">other_flags</a>)</td>
 <td class="comment-1" rowspan="1">Flags</td>
@@ -63,7 +63,7 @@ Used by the routine at <a href="39220.html">L9934</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39293"></span>997D</td>
-<td class="instruction">JR NZ,<a href="39288.html#39321">add_score_from_enemy_1</a></td>
+<td class="instruction">JR NZ,<a href="39288.html#39321">add_points_in_de</a></td>
 <td class="comment-1" rowspan="1">Then just add score</td>
 </tr>
 <tr>
@@ -93,7 +93,7 @@ Used by the routine at <a href="39220.html">L9934</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39304"></span>9988</td>
-<td class="instruction">JR NZ,<a href="39288.html#39309">add_score_from_enemy_0</a></td>
+<td class="instruction">JR NZ,<a href="39288.html#39309">add_points_from_enemy_0</a></td>
 <td class="comment-1" rowspan="1">Skip ahead if chance stage</td>
 </tr>
 <tr>
@@ -103,7 +103,7 @@ Used by the routine at <a href="39220.html">L9934</a>.
 <td class="comment-1" rowspan="1">Save if not chance stage</td>
 </tr>
 <tr>
-<td class="asm-label">add_score_from_enemy_0</td>
+<td class="asm-label">add_points_from_enemy_0</td>
 <td class="address-2"><span id="39309"></span>998D</td>
 <td class="instruction">ADD A,A</td>
 <td class="comment-1" rowspan="1">x2</td>
@@ -155,13 +155,13 @@ Used by the routine at <a href="39220.html">L9934</a>.
 <span id="39321"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routines at <a href="39220.html">L9934</a>, <a href="39328.html">L99A0</a>, <a href="39379.html">L99D3</a> and <a href="39432.html">L9A08</a>.
+This entry point is used by the routines at <a href="39220.html">shot_hit_sprite_enemy</a>, <a href="39328.html">shot_hit_center_enemy</a>, <a href="39345.html#39379">shot_hit_mine_0</a> and <a href="39432.html">shot_hit_laser_fence</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">add_score_from_enemy_1</td>
+<td class="asm-label">add_points_in_de</td>
 <td class="address-2"><span id="39321"></span>9999</td>
 <td class="instruction">EX DE,HL</td>
 <td class="comment-1" rowspan="1">HL = points</td>

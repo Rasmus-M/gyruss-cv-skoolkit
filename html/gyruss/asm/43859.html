@@ -30,7 +30,7 @@ Next: <a href="43890.html">AB72</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Search for sprite pattern in map and deallocate if found. Used by the routines at <a href="39220.html">L9934</a> and <a href="39497.html">L9A49</a>.
+Search for sprite pattern in map and deallocate if found. Used by the routines at <a href="39220.html">shot_hit_sprite_enemy</a> and <a href="39497.html">L9A49</a>.
 </div>
 </div>
 <table class="input">
@@ -45,7 +45,7 @@ Search for sprite pattern in map and deallocate if found. Used by the routines a
 </td>
 </tr>
 <tr>
-<td class="asm-label">LAB53</td>
+<td class="asm-label">deallocate_sprite_from_map</td>
 <td class="address-2"><span id="43859"></span>AB53</td>
 <td class="instruction">BIT 6,(IX+$07)</td>
 <td class="comment-1" rowspan="1">Test bit</td>
@@ -93,7 +93,7 @@ Search for sprite pattern in map and deallocate if found. Used by the routines a
 <td class="comment-1" rowspan="1">Set bit 7</td>
 </tr>
 <tr>
-<td class="asm-label">LAB53_0</td>
+<td class="asm-label">deallocate_sprite_from_map_0</td>
 <td class="address-2"><span id="43876"></span>AB64</td>
 <td class="instruction">CP (HL)</td>
 <td class="comment-1" rowspan="1">Compare with map entry</td>
@@ -101,7 +101,7 @@ Search for sprite pattern in map and deallocate if found. Used by the routines a
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43877"></span>AB65</td>
-<td class="instruction">JR Z,<a href="43859.html#43884">LAB53_1</a></td>
+<td class="instruction">JR Z,<a href="43859.html#43884">deallocate_sprite_from_map_1</a></td>
 <td class="comment-1" rowspan="1">Break out if found</td>
 </tr>
 <tr>
@@ -113,23 +113,23 @@ Search for sprite pattern in map and deallocate if found. Used by the routines a
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43880"></span>AB68</td>
-<td class="instruction">DJNZ <a href="43859.html#43876">LAB53_0</a></td>
+<td class="instruction">DJNZ <a href="43859.html#43876">deallocate_sprite_from_map_0</a></td>
 <td class="comment-1" rowspan="1">Loop through whole map</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43882"></span>AB6A</td>
-<td class="instruction">JR <a href="43859.html#43887">LAB53_2</a></td>
+<td class="instruction">JR <a href="43859.html#43887">deallocate_sprite_from_map_2</a></td>
 <td class="comment-1" rowspan="1">Not found - return</td>
 </tr>
 <tr>
-<td class="asm-label">LAB53_1</td>
+<td class="asm-label">deallocate_sprite_from_map_1</td>
 <td class="address-2"><span id="43884"></span>AB6C</td>
 <td class="instruction">CALL <a href="43747.html">deallocate_map_entry</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">LAB53_2</td>
+<td class="asm-label">deallocate_sprite_from_map_2</td>
 <td class="address-2"><span id="43887"></span>AB6F</td>
 <td class="instruction">POP BC</td>
 <td class="comment-1" rowspan="1"></td>

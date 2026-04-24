@@ -99,7 +99,7 @@ Used by the routine at <a href="44427.html#44497">load_sprite_pattern_2</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44649"></span>AE69</td>
 <td class="instruction">JR C,<a href="44628.html#44661">handle_off_screen_sprite_1</a></td>
-<td class="comment-1" rowspan="1">Then decrease total enemies</td>
+<td class="comment-1" rowspan="1">Then decrement total enemies</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -111,13 +111,13 @@ Used by the routine at <a href="44427.html#44497">load_sprite_pattern_2</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="44653"></span>AE6D</td>
 <td class="instruction">JR NC,<a href="44628.html#44661">handle_off_screen_sprite_1</a></td>
-<td class="comment-1" rowspan="1">Then decrease total enemies</td>
+<td class="comment-1" rowspan="1">Then decrement total enemies</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44655"></span>AE6F</td>
 <td class="instruction">LD HL,<a href="29266.html">active_enemy_shots</a></td>
-<td class="comment-1" rowspan="1">Decrease active enemy shots</td>
+<td class="comment-1" rowspan="1">Decrement active enemy shots</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -135,7 +135,7 @@ Used by the routine at <a href="44427.html#44497">load_sprite_pattern_2</a>.
 <td class="asm-label">handle_off_screen_sprite_1</td>
 <td class="address-2"><span id="44661"></span>AE75</td>
 <td class="instruction">LD HL,<a href="29190.html">total_enemies</a></td>
-<td class="comment-1" rowspan="1">Decrease total enemies</td>
+<td class="comment-1" rowspan="1">Decrement total enemies</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
