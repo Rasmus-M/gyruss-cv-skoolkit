@@ -24,7 +24,7 @@ Next: <a href="39497.html">9A49</a>
 </td>
 </tr>
 </table>
-<div class="description">9A38: Collision with sprite</div>
+<div class="description">9A38: Collision of ship with sprite</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -33,37 +33,50 @@ Next: <a href="39497.html">9A49</a>
 Used by the routine at <a href="38806.html">handle_collisions</a>.
 </div>
 </div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Sprite data of other sprite</td>
+</tr>
+<tr>
+<td class="register">IY</td>
+<td class="register-desc">Sprite data of ship</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
-<td class="asm-label">collision_with_sprite</td>
+<td class="asm-label">ship_hit_sprite</td>
 <td class="address-2"><span id="39480"></span>9A38</td>
 <td class="instruction">LD A,(IX+$00)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get sprite type</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39483"></span>9A3B</td>
 <td class="instruction">CP $12</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If &lt; $12</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39485"></span>9A3D</td>
-<td class="instruction">JR C,<a href="39497.html">L9A49</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR C,<a href="39497.html">ship_hit_enemy</a></td>
+<td class="comment-1" rowspan="1">Then handle collision with enemy</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39487"></span>9A3F</td>
 <td class="instruction">CP $14</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If &gt;= $14</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39489"></span>9A41</td>
-<td class="instruction">JR NC,<a href="39497.html">L9A49</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NC,<a href="39497.html">ship_hit_enemy</a></td>
+<td class="comment-1" rowspan="1">Then handle collision with enemy</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -80,8 +93,8 @@ Used by the routine at <a href="38806.html">handle_collisions</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39495"></span>9A47</td>
-<td class="instruction">JR <a href="39497.html#39533">L9A49_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR <a href="39497.html#39533">ship_hit_enemy_1</a></td>
+<td class="comment-1" rowspan="1">Set died flag and return</td>
 </tr>
 </table>
 <table class="asm-navigation">

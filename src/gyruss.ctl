@@ -7,7 +7,7 @@ w $7000 Center of projection
 W $7000,2,2
 b $7002 Sprite data
 D $7002 Contains data for 32 sprites, or actually entities, since only those entities with entries in the #R$7183 are rendered as sprites. Other entities have entries in the #R$7207 and are rendered in a bitmap at the center of the screen.
-D $7002 #TABLE(default, default) { =h Byte offset | =h Purpose } { $00 | Sprite type, or $FF if not allocated } { $01 | Polar y (depth, 0 is closest (normal ship position), 116 is furthest away) } { $02 | Polar x (angle, 0 at bottom center, moving clockwise to 16 at the left side, 32 at the top, and 48 at the right side) } { $03 | Close to polar y ($01) } { $04 | Polar x + 2 of pattern loaded in #R$AD8B } { $05 | Close to polar x ($02) } { $06 | Unknown, or LSB of path? address } { $07 | Unknown flags, or MSB of path? address } { $08 | Screen y } { $09 | Screen x } { $0A | Pattern } { $0B | Color } TABLE#
+D $7002 #TABLE(default, default) { =h Byte offset | =h Purpose } { $00 | Sprite type, or $FF if not allocated } { $01 | Polar y (depth, 0 is closest (normal ship position), 116 is furthest away) } { $02 | Polar x (angle, 0 at bottom center, moving clockwise to 16 at the left side, 32 at the top, and 48 at the right side) } { $03 | Close to polar y for ship, counter } { $04 | Polar x + 2 of pattern loaded in #R$AD8B } { $05 | Close to polar x for ship } { $06 | Replacement sprite type, or LSB of path? address } { $07 | Flags, or MSB of path? address } { $08 | Screen y } { $09 | Screen x } { $0A | Pattern } { $0B | Color } TABLE#
 D $7002 #TABLE(default, default) { =h Sprite type | =h Pattern example | =h Description } { $00 | #UDG$B9E6 | Ship body } { $01 | #UDG$BA66 | Ship exhaust } { $02 | #UDG$BAE6 | Shot } { $03 | #UDG$BB06 | Double shot circle } { $04 | #UDG$BB0E | Dots (another explosion) } { $05 | #UDG$BB2E | Destroyed enemy  } { $06 | #UDG$BB4E | Number 5 } { $07 | #UDG$BB56 | Number 10 } { $08 | #UDG$BB5E | Number 15 } { $09 | #UDG$BB66 | Number 20 } { $0A | #UDG$BB6E | Number 25 } { $0B | #UDG$BB76 | Number 30 } { $0C | #UDG$BB7E | Number 00 } { $0D | #UDG$BDE6 | Explosion dot } { $0E | #UDG$BB86 | Enemy } { $0F | #UDG$BC06 | Enemy } { $10 | #UDG$BC86 | Enemy } { $11 | #UDG$BD06 | Enemy } { $12 | #UDG$BD86 | Enemy missile 1 } { $13 | #UDG$BDA6 | Enemy missile 2 } { $14 | #UDG$BDC6 | Meteor } { $15 | #UDG$BDEE | Laser fence end 1 } { $16 | #UDG$BE4E | Laser fence end 2 } { $17 | #UDG$BEAE | Laser fence center } { $18 | #UDG$BF0E | Star shaped enemy } { $19 | #UDG$BF2E | Three spheres } { $1A | #UDG$BF4E | Enemy (chance stage) 1 } { $1B | #UDG$BF6E | Enemy (chance stage) 2 } { $1C | #UDG$BF8E | Enemy (chance stage) 3 } TABLE#
 @ $7002 label=sprite_data
 B $7002,384,12
@@ -112,7 +112,7 @@ b $722E Ship background data
 @ $722E label=ship_background_data
 B $722E,9,8,1
 b $7237 Mines background data (3x9 bytes)
-D $7237 #TABLE(default, default) { =h Byte | =h Purpose } { $00 | Unknown } { $01 | Unknown } { $02 | Unknown } { $03 | Unknown } { $04 | Unknown } { $05 | Unknown } { $06 | Unknown } { $07 | Polar y } { $08 | Polar x } TABLE#
+D $7237 #TABLE(default, default) { =h Byte | =h Purpose } { $00 | Screen x } { $01 | Screen y } { $02 | Name table address of area to clear LSB } { $03 | Name table address of area to clear MSB } { $04 | Patterns address LSB } { $05 | Patterns address MSB } { $06 | Name } { $07 | Polar y } { $08 | Polar x } TABLE#
 @ $7237 label=mines_background_data
 B $7237,27,8*3,3
 b $7252 Active enemy shots, set to $FF during explosion
@@ -157,21 +157,27 @@ b $7260 Sprite countdown 2
 D $7260 Decremented when #R$85E6 is called, and it reset to first byte of level data (x2) by #R$8A53. One action at #R$87C1 is only executed when counter is zero.
 @ $7260 label=sprite_countdown_2
 B $7260,1,1
-b $7261 Byte at 7261
+b $7261 Laser fence end 2 polar x
 B $7261,1,1
-b $7262 Byte at 7262
+b $7262 Laser fence end 1 polar x
 B $7262,1,1
-b $7263 Byte at 7263
+b $7263 Countdown. Mines are destroyed when zero.
+@ $7263 label=mines_time_left
 B $7263,1,1
-b $7264 Byte at 7264
+b $7264 Mines action
+D $7264 1 = create mines 2 = display mines
+@ $7264 label=mines_action
 B $7264,1,1
-b $7265 Byte at 7265
+b $7265 Mines are destroyed if bit 0 is set
+@ $7265 destroy_mines_flag
 B $7265,1,1
-b $7266 Byte at 7266
+b $7266 Related to when mines reappear
 B $7266,1,1
-b $7267 Byte at 7267
+b $7267 Mines movement table offset
+@ $7267 label=mines_movement_table_offset
 B $7267,1,1
-b $7268 Byte at 7268
+b $7268 Mine name/pattern index
+@ $7268 label=mine_name
 B $7268,1,1
 b $7269 Byte at 7269
 B $7269,1,1
@@ -447,10 +453,12 @@ C $80F4,3 Display stars
 C $80F7,3 Control ship
 C $80FA,3 Process sprites
 C $80FD,3 READ_REGISTER
+C $8100,3 Handle collisions
 C $8106,3 READ_REGISTER
 C $8109,3 Manage waves
 C $810C,3 Create sprite from map entry
 C $810F,3 READ_REGISTER
+C $8112,3 Create laser fence
 C $8115,3 Upload sprites
 C $8118,3 Display center enemies
 C $811B,3 Current player
@@ -485,6 +493,9 @@ C $816B,3 Upload sprites
 c $8170 Lose life
 D $8170 Used by the routine at #R$8139.
 @ $8170 label=lose_life
+C $8170,3 Reset outcoming enemies
+C $8173,3 Increase number of times died within stage
+C $8176,1 ...
 C $8177,3 Lives
 C $817A,1 Lose life
 C $817B,2 Jump if lives left
@@ -1079,20 +1090,37 @@ C $867D,2 Is sprite type < $04
 C $867F,2 Then jump
 C $8681,2 Is it >= $0D
 C $8683,2 Then jump
-N $8685 Sprite types $04 - $0C (dots, dotted circle, numbers)
-C $869A,3 Set type
+N $8685 Sprite types $04 - $0C (enemy remains, numbers)
+C $8685,3 Decrement counter
+C $8688,1 Return if not zero
+C $8689,3 Increment sprite type
+C $868C,4 Reset counter
+C $8690,2 Is sprite type destroyed enemy?
+C $8692,1 Then return
+C $8693,3 Else get replacement type (probably number)
+C $8696,1 If zero
+C $8697,3 Then return
+C $869A,3 Set new type
+C $869D,4 Counter
+C $86A1,4 No replacement type
 C $86A5,4 Set color
 C $86AD,1 Load sprite pattern
-C $86B0,1 Allocate sprite
-C $86B3,4 Set type
+C $86AE,2 Save sprite data address
+C $86B0,1 Allocate new sprite for last digits of points
+C $86B1,2 IY = old sprite
+C $86B3,4 Set type if new sprite (number 00)
+C $86B7,4 Counter
 C $86BB,4 Set color
 C $86BF,4 Set polar y
 C $86C3,4 Set polar x
+C $86C7,4 No replacement type
 C $86CB,1 Load sprite pattern
-C $86CF,3 Set y
-C $86D2,3 Get x
+C $86CC,3 Get screen y of old sprite
+C $86CF,3 Set screen y of new sprite
+C $86D2,3 Get screen x of old sprite
 C $86D5,2 Add 8
-C $86D7,3 Set x
+C $86D7,3 Set screen x of new sprite
+C $86DB,3 Jump back into sprite handler loop
 c $86DE Handle sprite type  $14
 D $86DE Used by the routine at #R$867D.
 @ $86DE label=handle_sprite_type_14
@@ -1312,7 +1340,7 @@ C $8AB2,3 ...
 C $8AB5,4 Set sprite type
 C $8AB9,4 Set color
 C $8ABD,2 Restore enemy sprite
-c $8AC0 Routine at 8AC0
+c $8AC0 Move towards x
 D $8AC0 Used by the routines at #R$8790, #R$87F5, #R$8878 and #R$88D4.
 R $8AC0 I:IX Sprite data
 R $8AC0 I:A Polar x to move towards
@@ -1421,7 +1449,7 @@ C $8B89,1 Restore counters
 C $8B8A,1 Repeat 16 times
 C $8B8B,2 Outer loop
 N $8B8D Update pattern table
-C $8B8F,3 VDP pattern index
+C $8B8F,3 VDP pattern index (name)
 C $8B94,1 * 8
 C $8B95,1 ...
 C $8B96,1 ...
@@ -1637,35 +1665,111 @@ C $8D15,2 when the wave started
 C $8D17,3 Get stage data address in IY
 C $8D1A,3 Set countdown
 C $8D1D,3 ...
-c $8D21 Routine at 8D21
+c $8D21 Reset outcoming enemies
 D $8D21 Used by the routine at #R$8170.
+@ $8D21 label=reset_outcoming_enemies
+C $8D21,3 Are all waves completed?
+C $8D24,2 ...
+C $8D26,1 Then return
 C $8D27,3 Outcoming enemies
+C $8D2A,1 If none
+C $8D2B,1 Then return
+C $8D2C,1 B = outcoming enemies
+C $8D2D,2 B = 9 - outcoming enemies
+C $8D2F,1 ...
+C $8D30,1 ...
 C $8D31,3 Total enemies
+C $8D34,1 Add outcoming enemies
+C $8D35,1 Save again
+C $8D36,4 Wave data address
+C $8D3A,3 Get bits 4-7 of byte 3
+C $8D3D,1 ...
+C $8D3E,1 ...
+C $8D3F,1 ...
+C $8D40,1 ...
+C $8D41,2 ...
+C $8D43,3 Return enemies to center
+C $8D46,2 ...
 C $8D48,1 Reset outcoming enemies
 C $8D49,3 ...
-c $8D50 Create "laser fence"
+C $8D4C,3 Reset countdown to wave
+c $8D50 Create "laser fence" or meteor
 D $8D50 Used by the routine at #R$80E8.
-@ $8D50 label=create_laser_fence
+@ $8D50 label=create_laser_fence_or_meteor
 C $8D50,3 Frame counter
+C $8D53,2 If not every 4th frame
+C $8D55,1 Then return
+C $8D56,3 Is it chance stage?
+C $8D59,2 ...
+C $8D5B,1 Then return
+C $8D5C,3 Is countdown zero?
+C $8D5F,1 ...
+C $8D60,3 Then start another countdown
+C $8D63,1 Else decrement it
+C $8D64,3 And save it
+C $8D67,1 If it's still not zero then return
 C $8D68,3 Get stage data address in IY
 C $8D6B,1 Random number
+C $8D6C,2 If any of 3 bits are set
+C $8D6E,2 Then jump to ...
+C $8D70,4 ...
+C $8D74,2 ...
+C $8D76,3 If other flag 4 is set
+C $8D79,2 ...
+C $8D7B,2 Then jump to ...
+N $8D7D Allocate laser fence
 C $8D81,1 Allocate sprite
+C $8D82,4 Set type to laser fence end 1
+C $8D86,4 Set polar y
 C $8D8A,4 Set color
 C $8D8E,1 Random number
+C $8D8F,2 0-63
+C $8D91,3 Set polar x
+C $8D94,3 Store polar x
+C $8D97,1 Save polar x
 C $8D98,1 Load sprite pattern
 C $8D99,1 Allocate sprite
+C $8D9A,4 Set type to laser fence end 2
+C $8D9E,4 Set polar y
 C $8DA2,4 Set color
+C $8DA6,1 Restore polar x
+C $8DA7,1 Save polar x
+C $8DA8,2 Polar x + 8
+C $8DAA,2 Mod 64
+C $8DAC,3 Set polar x
+C $8DAF,3 Store polar x
 C $8DB2,1 Load sprite pattern
 C $8DB3,1 Allocate sprite
+C $8DB4,4 Set type to laser fence center
+C $8DB8,4 Set polar y
 C $8DBC,4 Set color
+C $8DC4,1 Restore polar x
+C $8DC5,2 Polar x + 4
+C $8DC7,2 Mod 64
+C $8DC9,3 Set polar x
 C $8DCC,1 Load sprite pattern
 C $8DCD,3 Total enemies
 C $8DD0,2 Add 3
 C $8DD2,3 Store again
-c $8DD7 Routine at 8DD7
+C $8DD5,2 Jump to return
+c $8DD7 Create meteor
 D $8DD7 Used by the routine at #R$8D50.
+@ $8DD7 label=create_meteor
 C $8DDD,1 Allocate sprite
+C $8DDE,4 Set type to meteor
+C $8DE2,4 Set polar y
 C $8DE6,1 Random number
+C $8DE7,1 Store it in C
+C $8DE8,2 Offset 0-7
+C $8DEA,2 2-9
+C $8DEC,2 If a bit in the random number is set
+C $8DEE,2 ...
+C $8DF0,2 Then make offset negative
+C $8DF2,1 Stor offset
+C $8DF3,3 Get ship polar x
+C $8DF6,1 Add offset
+C $8DF7,2 Mod 64
+C $8DF9,3 Set polar x
 C $8DFC,4 Set color
 C $8E00,3 Increment total enemies
 C $8E03,1 ...
@@ -1679,17 +1783,56 @@ b $8E0D Enemy types in different waves (chance stage)
 B $8E0D,24,8
 b $8E25 Table at 8E25
 B $8E25,8,8
-c $8E2D Routine at 8E2D
+c $8E2D Create or display mines
 D $8E2D Used by the routines at #R$80E8, #R$8139 and #R$A3E1.
+@ $8E2D label=create_or_display_mines
 C $8E2D,3 Get flags
 C $8E30,2 If all waves completed bit is not set
 C $8E32,2 Then init variables
+C $8E34,3 Get mines action (0-2)
+C $8E37,2 If 1
+C $8E39,3 Then create mines
+C $8E3C,3 If 2 then display mines
+C $8E3F,3 If died
+C $8E42,2 ...
+C $8E44,1 Then return
+C $8E45,3 If unknown flag is set
+C $8E48,2 ...
+C $8E4A,1 The return
 C $8E4B,3 Frame counter
+C $8E4E,2 If not every 16th frame
+C $8E50,1 Then return
+C $8E51,3 Get countdown
+C $8E54,1 Decrement it
+C $8E55,1 Return if not zero
+C $8E56,3 Get center enemies
+C $8E59,2 If < 3
+C $8E5B,1 Then return
 C $8E5C,3 Stage
-C $8E81,2 Set died flag
-c $8E89 Init variables when all waves completed
+C $8E5F,2 Shift out stage within planet bits
+C $8E61,2 ...
+C $8E63,1 B = planet
+C $8E64,2 A = 5
+C $8E66,1 5 - planet
+C $8E67,2 If planet > 5 then skip ahead and set to 2
+C $8E69,2 If 5 - planet >= 2 then skip ahead
+C $8E6B,2 ...
+C $8E6D,2 Set to 2
+C $8E6F,3 Number of times died within stage
+C $8E72,1 Return if >= calculated value (2, 3, 4, 5)
+C $8E73,1 ...
+C $8E74,3 If stored value is 2
+C $8E77,2 ...
+C $8E79,1 Then return
+C $8E7A,1 Else increment calculated value
+C $8E7B,3 And store
+C $8E7E,3 Set flag
+C $8E81,2 ...
+C $8E83,2 Set action to create mines
+C $8E85,3 ...
+c $8E89 Init mine variables
 D $8E89 Used by the routine at #R$8E2D.
-@ $8E89 label=init_variables_after_waves
+@ $8E89 label=init_mine_variables
 N $8E8D This entry point is used by the routines at #R$82BF and #R$8FED.
 C $8E8D,1 Random number
 C $8E8E,2 0 - 15
@@ -1697,34 +1840,173 @@ C $8E90,2 5  - 20
 C $8E92,3 Store
 C $8E95,1 A = 0
 C $8E96,3 Set to 0
-C $8E99,3 Set to 0
-c $8E9D Routine at 8E9D
+C $8E99,3 Set action to 0
+c $8E9D Create mines
 D $8E9D Used by the routine at #R$8E2D.
+@ $8E9D label=create_mines
+C $8E9D,4 Ship background data
+C $8EA1,2 Store name
+C $8EA3,3 ...
+C $8EA6,3 Ship polar x
+C $8EA9,2 Polar x + 8
+C $8EAB,2 Mod 64
+C $8EAD,1 E = new polar x
+C $8EAE,2 D = polar y
+C $8EB0,1 Save coordinates
+C $8EB1,3 3 spheres graphics (if double shot on)
+C $8EB4,2 Color
+C $8EB6,3 Test double shot flag
+C $8EB9,2 ...
+C $8EBB,2 If set then skip ahead
+C $8EBD,3 Mine graphics (if double shot off)
+C $8EC2,3 Create mine
+C $8EC5,1 Restore coordinates
+C $8EC6,1 Save coordinates
+C $8EC7,1 Polar x
+C $8EC8,2 Polar x + 8
+C $8ECA,2 Mod 64
+C $8ECC,1 Set new polar x
+C $8ECD,3 3 spheres graphics
+C $8ED0,2 Color
+C $8ED2,3 Create mine
+C $8ED5,1 Restore coordinate
+C $8ED6,1 Polar x
+C $8ED7,2 Polar x - 8
+C $8ED9,2 Mod 64
+C $8EDB,1 Set new polar x
+C $8EDC,3 3 spheres graphics
+C $8EDF,2 Color
+C $8EE1,3 Create mine
+C $8EE4,2 Set action to display mines
+C $8EE6,3 ...
+C $8EE9,1 A = 3
 C $8EEA,3 Set mines left
 C $8EED,3 Total enemies
+C $8EF0,1 Add 3
+C $8EF1,1 Save again
+C $8EF6,3 No mines destroyed
+C $8EFD,3 Create shot from mine
 C $8F00,3 Get stage data address in IY
-c $8F0F Routine at 8F0F
+C $8F09,2 Play sound
+C $8F0B,3 ...
+c $8F0F Create mine
 D $8F0F Used by the routine at #R$8E9D.
+R $8F0F I: IY Points to ship background data
+R $8F0F I: DE Polar coordinates
+R $8F0F I: HL Graphics patterns
+R $8F0F I: C Color
+@ $8F0F label=create_mine
+C $8F0F,1 Save color
+C $8F10,3 Advance IY to mine background data
+C $8F13,2 ...
+C $8F15,3 Patterns address LSB
+C $8F18,3 Patterns address MSB
+C $8F1B,3 Polar y
+C $8F1E,3 Polar x
+C $8F21,3 Polar to screen
+C $8F24,1 Screen y
+C $8F25,2 Screen y - 4
+C $8F27,3 Save in structure
+C $8F2A,1 Screen x
+C $8F2B,2 Screen x - 4
+C $8F2D,3 Save in structure
+C $8F30,3 Get name
+C $8F33,1 Divide by 8
+C $8F34,1 ...
+C $8F35,1 ...
+C $8F36,2 Mod 32
+C $8F38,1 HL = color set
+C $8F39,2 ...
+C $8F3B,3 Color table
+C $8F3E,1 Add color set offset
+C $8F3F,3 Update 2 color sets
+C $8F42,1 Restore color
+C $8F43,1 A = color
 C $8F44,3 FILL_VRAM
+C $8F47,3 Get name
+C $8F4A,3 Save in structure
+C $8F4D,2 Add 16 (when will this be used?)
+C $8F4F,3 Set name
 C $8F52,3 Display background patterns
-c $8F55 Create mines
+c $8F55 Display mines
 D $8F55 Used by the routine at #R$8E2D.
+C $8F55,3 Create shot from mine
 C $8F58,4 Mine data
 C $8F5C,2 3 mines
+C $8F5E,1 Save counter
+C $8F5F,3 Get patterns address LSB
+C $8F62,3 Get patterns address MSB
+C $8F65,1 If zero
+C $8F66,1 ...
+C $8F67,2 Then return
+C $8F69,3 Test died flag
+C $8F6C,2 ...
+C $8F6E,2 If we died then destroy mine
+C $8F70,3 Test flag
+C $8F73,2 If set
+C $8F75,2 Then destroy mine
 C $8F77,3 Frame counter
+C $8F7A,2 If not every 8th frame
+C $8F7C,2 Then skip to next mine
+C $8F7E,3 Get table offset
+C $8F81,1 BC = A
+C $8F82,2 ...
+C $8F84,3 Table base address
+C $8F87,1 Add offset
+C $8F88,1 Get table byte
+C $8F89,3 Add to polar y
+C $8F8C,3 ...
+C $8F8F,1 Next table address
+C $8F90,1 Get table byte
+C $8F91,3 Add to polar x
+C $8F94,3 ...
+C $8F97,3 Get patterns address
+C $8F9A,3 ...
+C $8F9D,3 3 spheres graphics
+C $8FA0,1 Patterns offset
+C $8FA1,2 ...
+C $8FA3,1 Flip bit value 32 (animate)
+C $8FA4,2 ...
+C $8FA6,1 ...
+C $8FA7,1 New patterns address
+C $8FA8,3 Save in structure
+C $8FAB,3 ...
 N $8FAE This entry point is used by the routine at #R$8FED.
 C $8FAE,3 Polar y
 C $8FB1,3 Polar x
+C $8FB4,3 Polar to screen
+C $8FB7,1 Screen y
+C $8FB8,2 Screen y - 4
+C $8FBA,3 Save in structure
+C $8FBD,1 Screen x
+C $8FBE,2 Screen x - 4
+C $8FC0,3 Save in structure
 C $8FC3,3 Display background patterns
+C $8FC6,3 Next mine
+C $8FC9,2 ...
+C $8FCB,1 Restore counter
 C $8FCC,2 Loop for 3 mines
 C $8FCE,3 Frame counter
+C $8FD1,2 If not the 8th frame
+C $8FD3,1 Then return
+C $8FD4,3 Get countdown
+C $8FD7,1 Decrement it
+C $8FD8,2 Return if not zero
+C $8FDA,3 Set flag to destroy mines
+C $8FDD,2 ...
+C $8FDF,3 Offset movement table offset
+C $8FE2,2 Add 2
+C $8FE4,2 If < 16
+C $8FE6,2 Then update
+C $8FE8,1 Else reset
+C $8FE9,3 Save offset
 c $8FED Destroy mine
 D $8FED Used by the routine at #R$8F55.
 C $8FFA,3 Decrement total enemies
 C $8FFD,1 ...
 C $8FFE,3 Decrement mines left
 C $9001,1 ...
-C $9004,3 Clear died flag
+C $9004,3 Clear ... flag
 C $9007,2 ...
 c $900E Create shot from mine
 D $900E Used by the routines at #R$8E9D and #R$8F55.
@@ -1736,11 +2018,17 @@ C $9038,1 Load sprite pattern
 C $9039,3 Get stage data address in IY
 C $903C,1 Random number
 C $903D,2 0-63
-b $9046 Data block at 9046
+b $9046 Mines movement table
+@ $9046 label=mines_movement_table
 B $9046,16,8
-b $9056 3 spheres/mine background graphics
+b $9056 3 spheres background graphics
 D $9056 #UDGTABLE(no-border, no-border) { #UDGARRAY8,,4($9056-$90C7-16)(graphics-9056.png) } { #UDGARRAY8,,4($905E-$90D5-16)(graphics-905E.png) } TABLE#
-B $9056,128,8
+@ $9056 label=3_spheres_graphics
+B $9056,64,8
+b $9096 Mine background graphics
+D $9096 #UDGTABLE(no-border, no-border) { #UDGARRAY8,,4($9056-$90C7-16)(graphics-9056.png) } { #UDGARRAY8,,4($905E-$90D5-16)(graphics-905E.png) } TABLE#
+@ $9096 label=mine_graphics
+B $9096,64,8
 c $90D6 Start screen
 D $90D6 Used by the routine at #R$8024.
 @ $90D6 label=start_screen
@@ -2080,8 +2368,8 @@ C $97BD,4 If bit 7 of polar y is set
 C $97C1,2 Then move to next sprite
 C $97C3,2 Is it a shot?
 C $97C5,3 Then jump to handler
-C $97C8,2 Is it < $0D (numbers or enemy remains)?
-C $97CA,2 Then jump ahead
+C $97C8,2 Is it < $0D (numbers or destroyed enemy)?
+C $97CA,2 Then move on to next sprite
 C $97CC,3 Is it chance stage?
 C $97CF,2 ...
 C $97D1,2 Then move to next sprite
@@ -2143,8 +2431,9 @@ C $9851,3 Set as sprite polar x
 C $9858,4 Set color
 C $985C,3 Increment total enemies
 C $985F,1 ...
-c $9861 Handle shot collision
+c $9861 Handle shot (from ship) collision
 D $9861 Used by the routine at #R$9796.
+R $9861 I:IX Sprite data address of shot
 @ $9861 label=handle_shot_collision
 C $9861,3 Flags
 C $9864,1 C = flags
@@ -2236,6 +2525,8 @@ C $991F,2 Loop for 3 mines
 C $9921,3 Jump back into collisions loop
 c $9924 Shot hit sprite
 D $9924 Used by the routines at #R$9861.
+R $9924 I:IX Sprite data of shot
+R $9924 I:IY Sprite data of other
 @ $9924 label=shot_hit_sprite
 C $9924,3 Get sprite type
 C $9927,2 If >= $18 (uncommon enemies)
@@ -2247,13 +2538,15 @@ C $9932,2 And jump to enemy handler
 c $9934 Shot hit sprite enemy
 D $9934 Used by the routine at #R$9924.
 R $9934 I:A Sound to play
+R $9934 I:IX Sprite data of shot
+R $9934 I:IY Sprite data of enemy
 @ $9934 label=shot_hit_sprite_enemy
 C $9934,2 Sound = 4
 N $9936 This entry point is used by the routine at #R$9924.
 C $9936,3 Play sound
 C $9939,2 Save shot address
-C $993B,2 IX = enemy address
-C $993D,2 ...
+C $993B,2 Save enemy address
+C $993D,2 IX = enemy address
 C $993F,3 Deallocate from map
 C $9942,2 IX = shot address
 C $9944,4 Set enemy sprite type to unallocated
@@ -2279,7 +2572,7 @@ C $9972,4 Points sprite to show?
 C $9976,2 Add points
 c $9978 Add score when enemy destroyed
 D $9978 Used by the routine at #R$9934.
-R $9978 I:IX Sprite data
+R $9978 I:IX Sprite data of shot
 R $9978 I:DE Points to add
 @ $9978 label=add_points_from_enemy
 C $9978,3 Flags
@@ -2296,7 +2589,7 @@ C $998E,3 Score table
 C $9991,1 Add A to HL
 C $9992,1 Get points (hundreds)
 C $9993,1 Next address in table
-C $9994,1 Get ? ($06 - $0B)
+C $9994,1 Get replacement number sprite type ($06 - $0B)
 C $9995,3 Save in sprite data
 C $9998,1 100 more
 N $9999 This entry point is used by the routines at #R$9934, #R$99A0, #R$99D3 and #R$9A08.
@@ -2306,6 +2599,8 @@ C $999A,3 Add score
 C $999D,3 Jump back into collisions loop
 c $99A0 Shot hit center enemy
 D $99A0 Used by the routine at #R$9861.
+R $99A0 I:IX Sprite data of shot
+R $99A0 I:HL Map address of other
 @ $99A0 label=shot_hit_center_enemy
 C $99A0,1 Get map entry (color)
 C $99A1,3 Deallocate map entry
@@ -2316,6 +2611,8 @@ C $99AC,3 Add points
 C $99AF,2 ...
 c $99B1 Shot hit mine
 D $99B1 Used by the routine at #R$9861.
+R $99B1 I:IX Sprite data of shot
+R $99B1 I:IY Mine data
 @ $99B1 label=shot_hit_mine
 C $99B1,2 Color
 C $99B3,3 Remove shot
@@ -2352,38 +2649,61 @@ C $99F5,3 Display background patterns
 C $99F8,3 Decrement mines left
 C $99FB,1 ...
 C $99FC,2 Skip ahead if any left
-C $99FE,3 Clear died flag
+C $99FE,3 Clear ... flag
 C $9A01,2 ...
 C $9A05,1 Restore score
 C $9A06,2 Add points to score
 c $9A08 Shot hit laser fence
 D $9A08 Used by the routine at #R$9924.
+R $9A08 I:IX Sprite data of shot
 @ $9A08 label=shot_hit_laser_fence
+C $9A08,4 Set sprite type to unallocated
+C $9A0C,3 Reset flag
+C $9A0F,2 ...
+C $9A11,2 Color
+C $9A13,3 Remove shot
+C $9A16,3 Points
+C $9A19,3 Add points
 c $9A1C Remove shot
 D $9A1C Used by the routines at #R$9934, #R$99A0, #R$99B1 and #R$9A08.
 R $9A1C I:D Color of 'explosion'
+R $9A1C I:IX Sprite data of shot
 @ $9A1C label=remove_shot
-C $9A1C,4 Set sprite type to
+C $9A1C,4 Set sprite type to destroyed
 C $9A20,3 Set color
+C $9A23,4 Set animation counter
 C $9A2F,3 Decrement active shots
 C $9A32,1 ...
 C $9A33,3 Decrement total enemies (hmm, why here?)
 C $9A36,1 ...
-c $9A38 Collision with sprite
+c $9A38 Collision of ship with sprite
 D $9A38 Used by the routine at #R$9796.
-@ $9A38 label=collision_with_sprite
+R $9A38 I:IX Sprite data of other sprite
+R $9A38 I:IY Sprite data of ship
+@ $9A38 label=ship_hit_sprite
+C $9A38,3 Get sprite type
+C $9A3B,2 If < $12
+C $9A3D,2 Then handle collision with enemy
+C $9A3F,2 If >= $14
+C $9A41,2 Then handle collision with enemy
 C $9A43,3 Decrement enemy shots
 C $9A46,1 ...
-c $9A49 Collision with enemy
+C $9A47,2 Set died flag and return
+c $9A49 Collision of ship with enemy
 D $9A49 Used by the routine at #R$9A38.
-@ $9A49 collision_with_enemy
+R $9A49 I:A enemy type
+R $9A49 I:IX Sprite data of other sprite
+R $9A49 I:IY Sprite data of ship
+@ $9A49 label=ship_hit_enemy
 C $9A49,2 If < $0E
-C $9A4B,2 Then
+C $9A4B,2 Then set died flag and return
 C $9A4D,2 If >= $12
-C $9A4F,2 Then
+C $9A4F,2 Then set died flag and return
 C $9A51,3 Decrement active enemies
 C $9A54,1 ...
 C $9A55,3 Deallocate from map
+C $9A58,4 Set sprite type to destroyed
+C $9A5C,4 Set animation counter
 C $9A68,1 Load sprite pattern
 N $9A69 This entry point is used by the routine at #R$9A75.
 C $9A69,3 Decrement total enemies
@@ -2392,9 +2712,11 @@ N $9A6D This entry point is used by the routine at #R$9A38.
 C $9A6D,3 Set died flag
 C $9A70,2 ...
 C $9A72,3 Jump back into collisions loop
-c $9A75 Collision with mine
+c $9A75 Collision of ship with mine
 D $9A75 Used by the routine at #R$9796.
-@ $9A75 label=collision_with_mine
+R $9A75 I: IX Sprite data of ship
+R $9A75 I: IY Mine data
+@ $9A75 label=ship_hit_mine
 C $9A75,4 Remove mine
 C $9A79,4 ...
 C $9A7D,3 Display background patterns
@@ -2425,7 +2747,8 @@ C $9AA2,1 Subtract the modified polar x1
 C $9AA3,1 Return if >= 0
 C $9AA4,2 Else make positive
 C $9AA6,1 And return
-b $9AA7 Data block at 9AA7
+b $9AA7 Score table
+@ $9AA7 label=score_table
 B $9AA7,12,2
 c $9AB3 Add A to HL (RST $08)
 D $9AB3 Used by the routine at #R$800C.
@@ -3038,8 +3361,8 @@ c $A808 Display ship background patterns
 D $A808 Used by the routines at #R$832A, #R$A33B, #R$A3E1 and #R$A73C.
 @ $A808 label=display_ship_background_patterns
 C $A80F,4 Buffer for generated structure
-C $A817,4 Pattern address LSB
-C $A81B,4 Pattern address MSB
+C $A817,4 Patterns address LSB
+C $A81B,4 Patterns address MSB
 C $A81F,3 Ship's polar y
 C $A824,2 Jump if >= 21
 C $A826,3 Ship's polar x

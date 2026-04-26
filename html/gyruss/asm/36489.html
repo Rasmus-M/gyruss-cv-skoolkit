@@ -24,19 +24,19 @@ Next: <a href="36509.html">8E9D</a>
 </td>
 </tr>
 </table>
-<div class="description">8E89: Init variables when all waves completed</div>
+<div class="description">8E89: Init mine variables</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="36397.html">L8E2D</a>.
+Used by the routine at <a href="36397.html">create_or_display_mines</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">init_variables_after_waves</td>
+<td class="asm-label">init_mine_variables</td>
 <td class="address-2"><span id="36489"></span>8E89</td>
 <td class="instruction">XOR A</td>
 <td class="comment-1" rowspan="1"></td>
@@ -58,7 +58,7 @@ This entry point is used by the routines at <a href="33298.html#33471">init_stag
 </td>
 </tr>
 <tr>
-<td class="asm-label">init_variables_after_waves_0</td>
+<td class="asm-label">init_mine_variables_0</td>
 <td class="address-2"><span id="36493"></span>8E8D</td>
 <td class="instruction">RST $20</td>
 <td class="comment-1" rowspan="1">Random number</td>
@@ -78,7 +78,7 @@ This entry point is used by the routines at <a href="33298.html#33471">init_stag
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36498"></span>8E92</td>
-<td class="instruction">LD (<a href="29283.html">L7263</a>),A</td>
+<td class="instruction">LD (<a href="29283.html">mines_time_left</a>),A</td>
 <td class="comment-1" rowspan="1">Store</td>
 </tr>
 <tr>
@@ -96,8 +96,8 @@ This entry point is used by the routines at <a href="33298.html#33471">init_stag
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36505"></span>8E99</td>
-<td class="instruction">LD (<a href="29284.html">L7264</a>),A</td>
-<td class="comment-1" rowspan="1">Set to 0</td>
+<td class="instruction">LD (<a href="29284.html">mines_action</a>),A</td>
+<td class="comment-1" rowspan="1">Set action to 0</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

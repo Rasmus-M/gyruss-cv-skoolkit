@@ -24,7 +24,7 @@ Next: <a href="39558.html">9A86</a>
 </td>
 </tr>
 </table>
-<div class="description">9A75: Collision with mine</div>
+<div class="description">9A75: Collision of ship with mine</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -33,10 +33,23 @@ Next: <a href="39558.html">9A86</a>
 Used by the routine at <a href="38806.html">handle_collisions</a>.
 </div>
 </div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register"></td>
+<td class="register-desc">IX Sprite data of ship</td>
+</tr>
+<tr>
+<td class="register"></td>
+<td class="register-desc">IY Mine data</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
-<td class="asm-label">collision_with_mine</td>
+<td class="asm-label">ship_hit_mine</td>
 <td class="address-2"><span id="39541"></span>9A75</td>
 <td class="instruction">LD (IY+$04),$00</td>
 <td class="comment-1" rowspan="1">Remove mine</td>
@@ -68,7 +81,7 @@ Used by the routine at <a href="38806.html">handle_collisions</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39556"></span>9A84</td>
-<td class="instruction">JR <a href="39497.html#39529">L9A49_0</a></td>
+<td class="instruction">JR <a href="39497.html#39529">ship_hit_enemy_0</a></td>
 <td class="comment-1" rowspan="1">Die and return to loop</td>
 </tr>
 </table>

@@ -24,7 +24,7 @@ Next: <a href="36176.html">8D50</a>
 </td>
 </tr>
 </table>
-<div class="description">8D21: Routine at 8D21</div>
+<div class="description">8D21: Reset outcoming enemies</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -36,22 +36,22 @@ Used by the routine at <a href="33136.html">lose_life</a>.
 </td>
 </tr>
 <tr>
-<td class="asm-label">L8D21</td>
+<td class="asm-label">reset_outcoming_enemies</td>
 <td class="address-2"><span id="36129"></span>8D21</td>
 <td class="instruction">LD A,(<a href="29163.html">status_flags</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Are all waves completed?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36132"></span>8D24</td>
 <td class="instruction">BIT 1,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36134"></span>8D26</td>
 <td class="instruction">RET NZ</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Then return</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -63,37 +63,37 @@ Used by the routine at <a href="33136.html">lose_life</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="36138"></span>8D2A</td>
 <td class="instruction">OR A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If none</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36139"></span>8D2B</td>
 <td class="instruction">RET Z</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Then return</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36140"></span>8D2C</td>
 <td class="instruction">LD B,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">B = outcoming enemies</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36141"></span>8D2D</td>
 <td class="instruction">LD A,$09</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">B = 9 - outcoming enemies</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36143"></span>8D2F</td>
 <td class="instruction">SUB B</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36144"></span>8D30</td>
 <td class="instruction">LD B,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -105,67 +105,67 @@ Used by the routine at <a href="33136.html">lose_life</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="36148"></span>8D34</td>
 <td class="instruction">ADD A,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add outcoming enemies</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36149"></span>8D35</td>
 <td class="instruction">LD (HL),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save again</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36150"></span>8D36</td>
 <td class="instruction">LD IY,(<a href="29277.html">wave_data_address</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Wave data address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36154"></span>8D3A</td>
 <td class="instruction">LD A,(IY+$03)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get bits 4-7 of byte 3</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36157"></span>8D3D</td>
 <td class="instruction">RRA</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36158"></span>8D3E</td>
 <td class="instruction">RRA</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36159"></span>8D3F</td>
 <td class="instruction">RRA</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36160"></span>8D40</td>
 <td class="instruction">RRA</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36161"></span>8D41</td>
 <td class="instruction">AND $0F</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
-<td class="asm-label">L8D21_0</td>
+<td class="asm-label">reset_outcoming_enemies_0</td>
 <td class="address-2"><span id="36163"></span>8D43</td>
 <td class="instruction">CALL <a href="43686.html">allocate_map_entry</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return enemies to center</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36166"></span>8D46</td>
-<td class="instruction">DJNZ <a href="36129.html#36163">L8D21_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">DJNZ <a href="36129.html#36163">reset_outcoming_enemies_0</a></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -183,7 +183,7 @@ Used by the routine at <a href="33136.html">lose_life</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="36172"></span>8D4C</td>
 <td class="instruction">LD (<a href="29168.html">L71F0</a>),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Reset countdown to wave</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

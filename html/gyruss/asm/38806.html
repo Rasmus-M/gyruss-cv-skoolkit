@@ -201,13 +201,13 @@ Used by the routine at <a href="33000.html">main_loop</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="38856"></span>97C8</td>
 <td class="instruction">CP $0D</td>
-<td class="comment-1" rowspan="1">Is it &lt; $0D (numbers or enemy remains)?</td>
+<td class="comment-1" rowspan="1">Is it &lt; $0D (numbers or destroyed enemy)?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38858"></span>97CA</td>
 <td class="instruction">JR C,<a href="38806.html#38899">handle_collisions_1</a></td>
-<td class="comment-1" rowspan="1">Then jump ahead</td>
+<td class="comment-1" rowspan="1">Then move on to next sprite</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -290,7 +290,7 @@ Used by the routine at <a href="33000.html">main_loop</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38896"></span>97F0</td>
-<td class="instruction">JP C,<a href="39480.html">collision_with_sprite</a></td>
+<td class="instruction">JP C,<a href="39480.html">ship_hit_sprite</a></td>
 <td class="comment-1" rowspan="1">Then jump to collision handler</td>
 </tr>
 <tr>
@@ -298,7 +298,7 @@ Used by the routine at <a href="33000.html">main_loop</a>.
 <span id="38899"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routines at <a href="39009.html">handle_shot_collision</a>, <a href="39288.html">add_points_from_enemy</a> and <a href="39497.html">L9A49</a>.
+This entry point is used by the routines at <a href="39009.html">handle_shot_collision</a>, <a href="39288.html">add_points_from_enemy</a> and <a href="39497.html">ship_hit_enemy</a>.
 </div>
 </div>
 </td>
@@ -438,7 +438,7 @@ This entry point is used by the routines at <a href="39009.html">handle_shot_col
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38950"></span>9826</td>
-<td class="instruction">CALL C,<a href="39541.html">collision_with_mine</a></td>
+<td class="instruction">CALL C,<a href="39541.html">ship_hit_mine</a></td>
 <td class="comment-1" rowspan="1">Then call collision routine</td>
 </tr>
 <tr>

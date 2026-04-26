@@ -39,7 +39,7 @@ Used by the routine at <a href="39220.html">shot_hit_sprite_enemy</a>.
 </tr>
 <tr>
 <td class="register">IX</td>
-<td class="register-desc">Sprite data</td>
+<td class="register-desc">Sprite data of shot</td>
 </tr>
 <tr>
 <td class="register">DE</td>
@@ -111,7 +111,7 @@ Used by the routine at <a href="39220.html">shot_hit_sprite_enemy</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39310"></span>998E</td>
-<td class="instruction">LD HL,<a href="39591.html">L9AA7</a></td>
+<td class="instruction">LD HL,<a href="39591.html">score_table</a></td>
 <td class="comment-1" rowspan="1">Score table</td>
 </tr>
 <tr>
@@ -136,7 +136,7 @@ Used by the routine at <a href="39220.html">shot_hit_sprite_enemy</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="39316"></span>9994</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1">Get ? ($06 - $0B)</td>
+<td class="comment-1" rowspan="1">Get replacement number sprite type ($06 - $0B)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

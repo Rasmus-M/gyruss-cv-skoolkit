@@ -41,6 +41,10 @@ Used by the routines at <a href="39220.html">shot_hit_sprite_enemy</a>, <a href=
 <td class="register">D</td>
 <td class="register-desc">Color of 'explosion'</td>
 </tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Sprite data of shot</td>
+</tr>
 </table>
 </td>
 </tr>
@@ -48,7 +52,7 @@ Used by the routines at <a href="39220.html">shot_hit_sprite_enemy</a>, <a href=
 <td class="asm-label">remove_shot</td>
 <td class="address-2"><span id="39452"></span>9A1C</td>
 <td class="instruction">LD (IX+$00),$04</td>
-<td class="comment-1" rowspan="1">Set sprite type to</td>
+<td class="comment-1" rowspan="1">Set sprite type to destroyed</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -60,7 +64,7 @@ Used by the routines at <a href="39220.html">shot_hit_sprite_enemy</a>, <a href=
 <td class="asm-label"></td>
 <td class="address-1"><span id="39459"></span>9A23</td>
 <td class="instruction">LD (IX+$03),$0F</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set animation counter</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

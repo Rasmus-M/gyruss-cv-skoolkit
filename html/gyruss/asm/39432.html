@@ -33,49 +33,58 @@ Next: <a href="39452.html">9A1C</a>
 Used by the routine at <a href="39204.html">shot_hit_sprite</a>.
 </div>
 </div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Sprite data of shot</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
 <td class="asm-label">shot_hit_laser_fence</td>
 <td class="address-2"><span id="39432"></span>9A08</td>
 <td class="instruction">LD (IY+$00),$7F</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set sprite type to unallocated</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39436"></span>9A0C</td>
 <td class="instruction">LD HL,<a href="29270.html">other_flags</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Reset flag</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39439"></span>9A0F</td>
 <td class="instruction">RES 3,(HL)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39441"></span>9A11</td>
 <td class="instruction">LD D,$0F</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Color</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39443"></span>9A13</td>
 <td class="instruction">CALL <a href="39452.html">remove_shot</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Remove shot</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39446"></span>9A16</td>
 <td class="instruction">LD DE,$0200</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Points</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39449"></span>9A19</td>
 <td class="instruction">JP <a href="39288.html#39321">add_points_in_de</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add points</td>
 </tr>
 </table>
 <table class="asm-navigation">

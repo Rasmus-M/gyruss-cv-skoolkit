@@ -24,19 +24,36 @@ Next: <a href="39541.html">9A75</a>
 </td>
 </tr>
 </table>
-<div class="description">9A49: Collision with enemy</div>
+<div class="description">9A49: Collision of ship with enemy</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="39480.html">collision_with_sprite</a>.
+Used by the routine at <a href="39480.html">ship_hit_sprite</a>.
 </div>
 </div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">A</td>
+<td class="register-desc">enemy type</td>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Sprite data of other sprite</td>
+</tr>
+<tr>
+<td class="register">IY</td>
+<td class="register-desc">Sprite data of ship</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L9A49</td>
+<td class="asm-label">ship_hit_enemy</td>
 <td class="address-2"><span id="39497"></span>9A49</td>
 <td class="instruction">CP $0E</td>
 <td class="comment-1" rowspan="1">If &lt; $0E</td>
@@ -44,8 +61,8 @@ Used by the routine at <a href="39480.html">collision_with_sprite</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39499"></span>9A4B</td>
-<td class="instruction">JR C,<a href="39497.html#39533">L9A49_1</a></td>
-<td class="comment-1" rowspan="1">Then</td>
+<td class="instruction">JR C,<a href="39497.html#39533">ship_hit_enemy_1</a></td>
+<td class="comment-1" rowspan="1">Then set died flag and return</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -56,8 +73,8 @@ Used by the routine at <a href="39480.html">collision_with_sprite</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39503"></span>9A4F</td>
-<td class="instruction">JR NC,<a href="39497.html#39533">L9A49_1</a></td>
-<td class="comment-1" rowspan="1">Then</td>
+<td class="instruction">JR NC,<a href="39497.html#39533">ship_hit_enemy_1</a></td>
+<td class="comment-1" rowspan="1">Then set died flag and return</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -81,13 +98,13 @@ Used by the routine at <a href="39480.html">collision_with_sprite</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="39512"></span>9A58</td>
 <td class="instruction">LD (IX+$00),$04</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set sprite type to destroyed</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39516"></span>9A5C</td>
 <td class="instruction">LD (IX+$03),$0F</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set animation counter</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -112,13 +129,13 @@ Used by the routine at <a href="39480.html">collision_with_sprite</a>.
 <span id="39529"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="39541.html">collision_with_mine</a>.
+This entry point is used by the routine at <a href="39541.html">ship_hit_mine</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L9A49_0</td>
+<td class="asm-label">ship_hit_enemy_0</td>
 <td class="address-2"><span id="39529"></span>9A69</td>
 <td class="instruction">LD HL,<a href="29190.html">total_enemies</a></td>
 <td class="comment-1" rowspan="1">Decrement total enemies</td>
@@ -134,13 +151,13 @@ This entry point is used by the routine at <a href="39541.html">collision_with_m
 <span id="39533"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="39480.html">collision_with_sprite</a>.
+This entry point is used by the routine at <a href="39480.html">ship_hit_sprite</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L9A49_1</td>
+<td class="asm-label">ship_hit_enemy_1</td>
 <td class="address-2"><span id="39533"></span>9A6D</td>
 <td class="instruction">LD HL,<a href="29163.html">status_flags</a></td>
 <td class="comment-1" rowspan="1">Set died flag</td>

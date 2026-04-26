@@ -64,7 +64,7 @@ Used by the routine at <a href="34394.html">handle_sprite_type_02</a>.
 <span id="34437"></span>
 <div class="comments">
 <div class="paragraph">
-Sprite types $04 - $0C (dots, dotted circle, numbers)
+Sprite types $04 - $0C (enemy remains, numbers)
 </div>
 </div>
 </td>
@@ -73,73 +73,73 @@ Sprite types $04 - $0C (dots, dotted circle, numbers)
 <td class="asm-label"></td>
 <td class="address-1"><span id="34437"></span>8685</td>
 <td class="instruction">DEC (IX+$03)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Decrement counter</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34440"></span>8688</td>
 <td class="instruction">RET NZ</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return if not zero</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34441"></span>8689</td>
 <td class="instruction">INC (IX+$00)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Increment sprite type</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34444"></span>868C</td>
 <td class="instruction">LD (IX+$03),$0F</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Reset counter</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34448"></span>8690</td>
 <td class="instruction">CP $04</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Is sprite type destroyed enemy?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34450"></span>8692</td>
 <td class="instruction">RET Z</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Then return</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34451"></span>8693</td>
 <td class="instruction">LD A,(IX+$06)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Else get replacement type (probably number)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34454"></span>8696</td>
 <td class="instruction">OR A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If zero</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34455"></span>8697</td>
 <td class="instruction">JP Z,<a href="34278.html#34351">deallocate_sprite</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Then return</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34458"></span>869A</td>
 <td class="instruction">LD (IX+$00),A</td>
-<td class="comment-1" rowspan="1">Set type</td>
+<td class="comment-1" rowspan="1">Set new type</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34461"></span>869D</td>
 <td class="instruction">LD (IX+$03),$3C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Counter</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34465"></span>86A1</td>
 <td class="instruction">LD (IX+$06),$00</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">No replacement type</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -163,31 +163,31 @@ Sprite types $04 - $0C (dots, dotted circle, numbers)
 <td class="asm-label"></td>
 <td class="address-1"><span id="34478"></span>86AE</td>
 <td class="instruction">PUSH IX</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save sprite data address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34480"></span>86B0</td>
 <td class="instruction">RST $28</td>
-<td class="comment-1" rowspan="1">Allocate sprite</td>
+<td class="comment-1" rowspan="1">Allocate new sprite for last digits of points</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34481"></span>86B1</td>
 <td class="instruction">POP IY</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">IY = old sprite</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34483"></span>86B3</td>
 <td class="instruction">LD (IX+$00),$0C</td>
-<td class="comment-1" rowspan="1">Set type</td>
+<td class="comment-1" rowspan="1">Set type if new sprite (number 00)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34487"></span>86B7</td>
 <td class="instruction">LD (IX+$03),$3C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Counter</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -211,7 +211,7 @@ Sprite types $04 - $0C (dots, dotted circle, numbers)
 <td class="asm-label"></td>
 <td class="address-1"><span id="34503"></span>86C7</td>
 <td class="instruction">LD (IX+$06),$00</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">No replacement type</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -223,19 +223,19 @@ Sprite types $04 - $0C (dots, dotted circle, numbers)
 <td class="asm-label"></td>
 <td class="address-1"><span id="34508"></span>86CC</td>
 <td class="instruction">LD A,(IY+$08)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get screen y of old sprite</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34511"></span>86CF</td>
 <td class="instruction">LD (IX+$08),A</td>
-<td class="comment-1" rowspan="1">Set y</td>
+<td class="comment-1" rowspan="1">Set screen y of new sprite</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34514"></span>86D2</td>
 <td class="instruction">LD A,(IY+$09)</td>
-<td class="comment-1" rowspan="1">Get x</td>
+<td class="comment-1" rowspan="1">Get screen x of old sprite</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -247,7 +247,7 @@ Sprite types $04 - $0C (dots, dotted circle, numbers)
 <td class="asm-label"></td>
 <td class="address-1"><span id="34519"></span>86D7</td>
 <td class="instruction">LD (IX+$09),A</td>
-<td class="comment-1" rowspan="1">Set x</td>
+<td class="comment-1" rowspan="1">Set screen x of new sprite</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -259,7 +259,7 @@ Sprite types $04 - $0C (dots, dotted circle, numbers)
 <td class="asm-label"></td>
 <td class="address-1"><span id="34523"></span>86DB</td>
 <td class="instruction">JP <a href="35393.html#35406">return_from_sprite_handler_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Jump back into sprite handler loop</td>
 </tr>
 </table>
 <table class="asm-navigation">
