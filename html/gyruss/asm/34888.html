@@ -24,28 +24,37 @@ Next: <a href="34911.html">885F</a>
 </td>
 </tr>
 </table>
-<div class="description">8848: Routine at 8848</div>
+<div class="description">8848: Determine action when out of screen</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="34853.html">L8825</a>.
+Used by the routine at <a href="34853.html">move_towards_viewer</a>.
 </div>
 </div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Sprite data of enemy</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
 <td class="asm-label">L8848</td>
 <td class="address-2"><span id="34888"></span>8848</td>
 <td class="instruction">BIT 4,(IX+$07)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Test flag</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34892"></span>884C</td>
 <td class="instruction">JR Z,<a href="34888.html#34899">L8848_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If not set, skip ahead</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -57,19 +66,19 @@ Used by the routine at <a href="34853.html">L8825</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="34895"></span>884F</td>
 <td class="instruction">AND $03</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">0 - 3</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34897"></span>8851</td>
-<td class="instruction">JR NZ,<a href="34853.html#34875">L8825_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="34853.html#34875">move_towards_viewer_1</a></td>
+<td class="comment-1" rowspan="1">If not 0, jump back</td>
 </tr>
 <tr>
 <td class="asm-label">L8848_0</td>
 <td class="address-2"><span id="34899"></span>8853</td>
 <td class="instruction">LD HL,<a href="29228.html">active_enemies</a></td>
-<td class="comment-1" rowspan="1">Decrease active enemies</td>
+<td class="comment-1" rowspan="1">Decrement active enemies</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -81,19 +90,19 @@ Used by the routine at <a href="34853.html">L8825</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="34903"></span>8857</td>
 <td class="instruction">LD HL,<a href="29270.html">other_flags</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set flag</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34906"></span>885A</td>
 <td class="instruction">SET 5,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34908"></span>885C</td>
 <td class="instruction">JP <a href="34388.html">deallocate_enemy</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Deallocate and return</td>
 </tr>
 </table>
 <table class="asm-navigation">

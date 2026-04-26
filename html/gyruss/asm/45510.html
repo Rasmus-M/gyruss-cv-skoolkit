@@ -103,19 +103,19 @@ Used by the routines at <a href="36623.html">create_mine</a>, <a href="36693.htm
 <td class="asm-label"></td>
 <td class="address-1"><span id="45517"></span>B1CD</td>
 <td class="instruction">JP M,<a href="45510.html#45591">polar_to_screen_5</a></td>
-<td class="comment-1" rowspan="1">If this is 128 or more (polar y &gt; 116), then set position outside screen and return</td>
+<td class="comment-1" rowspan="1">If this is 128 or more (polar y &gt; 116 or polar y &lt; -11), then set position outside screen and return</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45520"></span>B1D0</td>
 <td class="instruction">LD L,A</td>
-<td class="comment-1" rowspan="1">Calculate table address, starting with y + 11 (11 first table rows are never used?)</td>
+<td class="comment-1" rowspan="1">Calculate table address, with polar y = -11 corresponding to row 0</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45521"></span>B1D1</td>
 <td class="instruction">LD H,$00</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">and polar y = 0 corresponding to row 11</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

@@ -24,7 +24,7 @@ Next: <a href="35115.html">892B</a>
 </td>
 </tr>
 </table>
-<div class="description">88FE: Routine at 88FE</div>
+<div class="description">88FE: Update sprite path</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -36,46 +36,46 @@ Used by the routine at <a href="34704.html">handle_sprite_types_0E_11</a>.
 </td>
 </tr>
 <tr>
-<td class="asm-label">L88FE</td>
+<td class="asm-label">update_sprite_path</td>
 <td class="address-2"><span id="35070"></span>88FE</td>
 <td class="instruction">LD A,(<a href="29166.html">sprite_countdown</a>)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35073"></span>8901</td>
 <td class="instruction">OR A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35074"></span>8902</td>
 <td class="instruction">RET NZ</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35075"></span>8903</td>
 <td class="instruction">CALL <a href="35446.html">create_enemy_shot</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Create enemy shot</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35078"></span>8906</td>
 <td class="instruction">LD L,(IX+$06)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get path address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35081"></span>8909</td>
 <td class="instruction">LD H,(IX+$07)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35084"></span>890C</td>
 <td class="instruction">LD A,(IX+$03)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get counter</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -88,92 +88,92 @@ This entry point is used by the routine at <a href="35115.html">L892B</a>.
 </td>
 </tr>
 <tr>
-<td class="asm-label">L88FE_0</td>
+<td class="asm-label">update_sprite_path_0</td>
 <td class="address-2"><span id="35087"></span>890F</td>
 <td class="instruction">SUB $10</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Decrement upper nybble</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35089"></span>8911</td>
 <td class="instruction">LD (IX+$03),A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Store again</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35092"></span>8914</td>
-<td class="instruction">JR NC,<a href="35126.html">L8936</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JR NC,<a href="35126.html">move_sprite_along_path</a></td>
+<td class="comment-1" rowspan="1">If upper nybble &gt;= 0, then jump to move sprite</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="35094"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="35206.html">L8986</a>.
+This entry point is used by the routine at <a href="35206.html">set_sprite_flags_to_18_if_match</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L88FE_1</td>
+<td class="asm-label">update_sprite_path_1</td>
 <td class="address-2"><span id="35094"></span>8916</td>
 <td class="instruction">INC HL</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Else increment path address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35095"></span>8917</td>
 <td class="instruction">LD (IX+$06),L</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set path address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35098"></span>891A</td>
 <td class="instruction">LD (IX+$07),H</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35101"></span>891D</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get path byte</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35102"></span>891E</td>
 <td class="instruction">CP $10</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If upper nybble &gt;= 1</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35104"></span>8920</td>
 <td class="instruction">JR NC,<a href="35115.html">L892B</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Then jump ahead</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35106"></span>8922</td>
 <td class="instruction">DEC A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Else decrement lower nybble</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35107"></span>8923</td>
-<td class="instruction">JP M,<a href="35206.html">L8986</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JP M,<a href="35206.html">set_sprite_flags_to_18_if_match</a></td>
+<td class="comment-1" rowspan="1">If negative then ...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35110"></span>8926</td>
-<td class="instruction">JR Z,<a href="35220.html">L8994</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="35220.html">set_sprite_flags_to_04</a></td>
+<td class="comment-1" rowspan="1">If zero then ...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35112"></span>8928</td>
-<td class="instruction">JP <a href="35225.html">L8999</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JP <a href="35225.html">set_sprite_flags_to_40</a></td>
+<td class="comment-1" rowspan="1">If positive then ...</td>
 </tr>
 </table>
 <table class="asm-navigation">

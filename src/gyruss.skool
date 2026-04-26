@@ -21,9 +21,9 @@ w$7000 DEFW $0000
 ; away) }
 ; { $02 | Polar x (angle, 0 at bottom center, moving clockwise to 16 at the
 ; left side, 32 at the top, and 48 at the right side) }
-; { $03 | Close to polar y for ship, counter }
+; { $03 | Close to polar y for ship, counter, upper nybble path data, lower nybble sprite position in wave }
 ; { $04 | Polar x + 2 of pattern loaded in #R$AD8B }
-; { $05 | Close to polar x for ship }
+; { $05 | Close to polar x for ship, counter }
 ; { $06 | Replacement sprite type, or LSB of path? address }
 ; { $07 | Flags, or MSB of path? address }
 ; { $08 | Screen y }
@@ -37,7 +37,7 @@ w$7000 DEFW $0000
 ; { $00 | #UDG$B9E6 | Ship body }
 ; { $01 | #UDG$BA66 | Ship exhaust }
 ; { $02 | #UDG$BAE6 | Shot }
-; { $03 | #UDG$BB06 | Double shot circle }
+; { $03 | #UDG$BB06 | Double shot pickup }
 ; { $04 | #UDG$BB0E | Dots (another explosion) }
 ; { $05 | #UDG$BB2E | Destroyed enemy  }
 ; { $06 | #UDG$BB4E | Number 5 }
@@ -311,7 +311,7 @@ b$7255 DEFB $00
 ; { $01 | Double shot }
 ; { $02 | Unknown }
 ; { $03 | Unknown }
-; { $04 | Unknown }
+; { $04 | Set when laser fence exists }
 ; { $05 | Reset when wave starts }
 ; { $06 | Set when wave starts }
 ; { $07 | Unknown }
@@ -343,6 +343,8 @@ b$725B DEFB $00
 b$725C DEFB $00
 
 ; Wave data address
+;
+; Pointer into #R$A4BE or #R$A51E
 @label=wave_data_address
 w$725D DEFW $0000
 
@@ -1511,7 +1513,7 @@ c$85E6 LD HL,$71EE     ; Decrement counter 1
  $8620 LD HL,$8A41     ; Push return address of routine at #R$8A41
  $8623 PUSH HL         ; ...
  $8624 LD A,(IX+$00)   ; Get sprite type
- $8627 LD (IX+$05),A   ; Copy it to byte 5?
+ $8627 LD (IX+$05),A   ; Copy it to byte 5
  $862A CP $7F          ; Is it to be deallocated?
  $862C JP NZ,$865A     ; If not, jump ahead
 ; This entry point is used by the routines at #R$8654, #R$8673, #R$867D and
@@ -1553,11 +1555,14 @@ c$8654 LD HL,$7206   ; Decrease total enemies
 ; Handle sprite type $02
 ;
 ; Used by the routine at #R$85E6.
+;
+; I:A Sprite type
+; I:IX Sprite data
 @label=handle_sprite_type_02
 c$865A CP $02          ; Is sprite type $02?
  $865C JP NZ,$867D     ; If not proceed to next handler
 ; Sprite type $02 (shot)
- $865F INC (IX+$05)    ;
+ $865F INC (IX+$05)    ; Mark for pattern reload
  $8662 LD A,(IX+$01)   ; Get polar y
  $8665 INC A           ; Move shot
  $8666 INC A           ; ...
@@ -1575,6 +1580,9 @@ c$865A CP $02          ; Is sprite type $02?
 ; Handle sprite type $04 - $0C
 ;
 ; Used by the routine at #R$865A.
+;
+; I:A Sprite type
+; I:IX Sprite data
 @label=handle_sprite_types_04_0C
 c$867D CP $04          ; Is sprite type < $04
  $867F JR C,$86DE      ; Then jump
@@ -1589,7 +1597,7 @@ c$867D CP $04          ; Is sprite type < $04
  $8692 RET Z           ; Then return
  $8693 LD A,(IX+$06)   ; Else get replacement type (probably number)
  $8696 OR A            ; If zero
- $8697 JP Z,$862F      ; Then return
+ $8697 JP Z,$862F      ; Then deallocate sprite
  $869A LD (IX+$00),A   ; Set new type
  $869D LD (IX+$03),$3C ; Counter
  $86A1 LD (IX+$06),$00 ; No replacement type
@@ -1611,54 +1619,63 @@ c$867D CP $04          ; Is sprite type < $04
  $86D2 LD A,(IY+$09)   ; Get screen x of old sprite
  $86D5 ADD A,$08       ; Add 8
  $86D7 LD (IX+$09),A   ; Set screen x of new sprite
- $86DA POP BC          ;
+ $86DA POP BC          ; Pop return address
  $86DB JP $8A4E        ; Jump back into sprite handler loop
 
 ; Handle sprite type  $14
 ;
 ; Used by the routine at #R$867D.
+;
+; I:A Sprite type
+; I:IX Sprite data
 @label=handle_sprite_type_14
 c$86DE CP $14        ; Is sprite type $014
  $86E0 JR NZ,$86E9   ; If not, jump ahead
 ; Sprite type $14 (meteor)
- $86E2 INC (IX+$05)  ;
+ $86E2 INC (IX+$05)  ; Mark for pattern reload
  $86E5 DEC (IX+$01)  ; Decrement polar y
  $86E8 RET           ; Return to #R$8A41
 
 ; Handle sprite types $12 - $13
 ;
 ; Used by the routine at #R$86DE.
+;
+; I:A Sprite type
+; I:IX Sprite data
 @label=handle_sprite_types_12_13
 c$86E9 CP $12        ; Is sprite type < $012
  $86EB JR C,$870C    ; If so, jump ahead
  $86ED CP $14        ; Is sprite type >= $014
  $86EF JR NC,$870C   ; If so, jump ahead
-; Sprite types $12 - $13 (laser fence)
+; Sprite types $12 - $13 (enemy missile)
  $86F1 LD A,($71F2)  ; Frame counter
- $86F4 LD B,A        ;
- $86F5 AND $01       ;
- $86F7 RET NZ        ;
- $86F8 LD A,B        ;
- $86F9 AND $0F       ;
- $86FB JR NZ,$8705   ;
- $86FD LD A,(IX+$00) ;
- $8700 XOR $01       ;
- $8702 LD (IX+$00),A ;
-*$8705 INC (IX+$05)  ;
- $8708 DEC (IX+$01)  ;
- $870B RET           ;
+ $86F4 LD B,A        ; Store in B
+ $86F5 AND $01       ; Every 2nd frame
+ $86F7 RET NZ        ; Return to #R$8A41
+ $86F8 LD A,B        ; Frame counter
+ $86F9 AND $0F       ; Mod 16
+ $86FB JR NZ,$8705   ; If not zero then skip animation
+ $86FD LD A,(IX+$00) ; Get sprite type
+ $8700 XOR $01       ; Flip bit 0 to change between $12 and $13
+ $8702 LD (IX+$00),A ; Save new type
+*$8705 INC (IX+$05)  ; Mark for pattern reload
+ $8708 DEC (IX+$01)  ; Decrement polar y
+ $870B RET           ; Return to #R$8A41
 
 ; Handle sprite type $03
 ;
 ; Used by the routine at #R$86E9.
+;
+; I:A Sprite type
+; I:IX Sprite data
 @label=handle_sprite_type_03
 c$870C CP $03         ; Is sprite type $03?
  $870E JR NZ,$873E    ; If not, jump ahead
-; Sprite type $03 (double shot circle)
+; Sprite type $03 (double shot pickup)
  $8710 LD A,($71EB)   ; Check if you have died
  $8713 BIT 2,A        ; ...
  $8715 JP NZ,$8654    ; If so, deallocate and return
- $8718 INC (IX+$05)   ; Not initialised?
+ $8718 INC (IX+$05)   ; Mark for pattern reload
  $871B LD A,(IX+$07)  ; X velocity, set to $02 or $FE when created
  $871E ADD A,(IX+$02) ; Add to polar x
  $8721 AND $3F        ; Mod 64
@@ -1677,49 +1694,55 @@ c$870C CP $03         ; Is sprite type $03?
 ; Handle sprite types $15 - $17
 ;
 ; Used by the routine at #R$870C.
+;
+; I:A Sprite type
+; I:IX Sprite data
 @label=handle_sprite_types_15_17
 c$873E CP $15         ; Is sprite type < $15
  $8740 JR C,$8790     ; If so, jump ahead
  $8742 CP $18         ; Is sprite type >= $18
  $8744 JR NC,$8790    ; If so, jump ahead
-; sprite types $15 - $17 (bombs, parallel lines)
- $8746 LD B,$07       ;
- $8748 LD A,($71EB)   ;
- $874B BIT 2,A        ;
- $874D JR Z,$8751     ;
- $874F LD B,$03       ;
+; sprite types $15 - $17 (laser fence)
+ $8746 LD B,$07       ; Mask = 7
+ $8748 LD A,($71EB)   ; Check if you have died
+ $874B BIT 2,A        ; ...
+ $874D JR Z,$8751     ; If not, skip next
+ $874F LD B,$03       ; Else set Mask = 3
 *$8751 LD A,($71F2)   ; Frame counter
- $8754 AND B          ;
- $8755 JR NZ,$875D    ;
- $8757 DEC (IX+$01)   ;
- $875A INC (IX+$05)   ;
-*$875D LD HL,$7256    ;
- $8760 SET 4,(HL)     ;
- $8762 LD A,(IX+$00)  ;
- $8765 CP $17         ;
- $8767 RET NZ         ;
- $8768 LD A,($7256)   ;
- $876B BIT 3,A        ;
- $876D JP Z,$8654     ;
- $8770 INC (IX+$05)   ;
- $8773 LD A,(IX+$02)  ;
- $8776 ADD A,(IX+$03) ;
- $8779 AND $3F        ;
- $877B LD (IX+$02),A  ;
- $877E LD HL,$7261    ;
- $8781 CP (HL)        ;
- $8782 JR Z,$8787     ;
- $8784 INC HL         ;
- $8785 CP (HL)        ;
- $8786 RET NZ         ;
-*$8787 LD A,(IX+$03)  ;
- $878A NEG            ;
- $878C LD (IX+$03),A  ;
- $878F RET            ;
+ $8754 AND B          ; AND mask
+ $8755 JR NZ,$875D    ; If not zero, skip next 2
+ $8757 DEC (IX+$01)   ; Decrement polar y
+ $875A INC (IX+$05)   ; Mark for pattern reload
+*$875D LD HL,$7256    ; Flags
+ $8760 SET 4,(HL)     ; Set flag
+ $8762 LD A,(IX+$00)  ; Get sprite type
+ $8765 CP $17         ; If not laser fence center
+ $8767 RET NZ         ; Then return to #R$8A41
+ $8768 LD A,($7256)   ; If bit 2 is reset
+ $876B BIT 3,A        ; ...
+ $876D JP Z,$8654     ; Then deallocate
+ $8770 INC (IX+$05)   ; Mark for pattern reload
+ $8773 LD A,(IX+$02)  ; Get polar x
+ $8776 ADD A,(IX+$03) ; Add velocity
+ $8779 AND $3F        ; Mod 64
+ $877B LD (IX+$02),A  ; Save new polar x
+ $877E LD HL,$7261    ; Did center reach end 2?
+ $8781 CP (HL)        ; ...
+ $8782 JR Z,$8787     ; Then skip ahead
+ $8784 INC HL         ; Did center reach end 1?
+ $8785 CP (HL)        ; ...
+ $8786 RET NZ         ; If not, return to #R$8A41
+*$8787 LD A,(IX+$03)  ; Switch direction
+ $878A NEG            ; ...
+ $878C LD (IX+$03),A  ; ...
+ $878F RET            ; Return to #R$8A41
 
 ; Handle sprite types $0E - $11
 ;
 ; Used by the routine at #R$873E.
+;
+; I:A Sprite type
+; I:IX Sprite data
 @label=handle_sprite_types_0E_11
 c$8790 CP $0E          ; Is sprite type < $0E
  $8792 JP C,$899E      ; If so, jump ahead
@@ -1727,24 +1750,24 @@ c$8790 CP $0E          ; Is sprite type < $0E
  $8797 JP NC,$899E     ; If so, jump ahead
 ; Sprite type $0E - $11 (enemies)
  $879A BIT 7,(IX+$07)  ;
- $879E JP NZ,$88FE     ;
+ $879E JP NZ,$88FE     ; Update sprite path
  $87A1 BIT 7,(IX+$01)  ;
- $87A5 JP NZ,$8825     ;
+ $87A5 JP NZ,$8825     ; Move towards viewer
  $87A8 BIT 6,(IX+$07)  ;
- $87AC JR NZ,$87D5     ;
+ $87AC JR NZ,$87D5     ; Create map entry for enemy sprite
  $87AE BIT 2,(IX+$07)  ;
- $87B2 JP NZ,$8825     ;
+ $87B2 JP NZ,$8825     ; Move towards viewer
  $87B5 BIT 0,(IX+$07)  ;
- $87B9 JP NZ,$885F     ;
- $87BC LD A,($7260)    ;
- $87BF OR A            ;
- $87C0 RET NZ          ;
- $87C1 CALL $8A76      ;
- $87C4 DEC (IX+$01)    ;
- $87C7 LD A,($7004)    ;
- $87CA CALL $8AC0      ;
- $87CD LD (IX+$00),$10 ;
- $87D1 INC (IX+$05)    ;
+ $87B9 JP NZ,$885F     ; Create enemy shot and ...
+ $87BC LD A,($7260)    ; Sprite countdown 2
+ $87BF OR A            ; Return if not zero
+ $87C0 RET NZ          ; ...
+ $87C1 CALL $8A76      ; Create enemy shot
+ $87C4 DEC (IX+$01)    ; Decrement polar y
+ $87C7 LD A,($7004)    ; Ship polar x
+ $87CA CALL $8AC0      ; Move towards x
+ $87CD LD (IX+$00),$10 ; Set sprite type
+ $87D1 INC (IX+$05)    ; Mark for pattern reload
  $87D4 RET             ;
 
 ; Create map entry for enemy sprite
@@ -1753,12 +1776,12 @@ c$8790 CP $0E          ; Is sprite type < $0E
 ; If found, calculate coordinates and move towards them. Used by the routine at
 ; #R$8790.
 ;
-; I: IX Sprite data
+; I: IX Sprite data of enemy
 @label=create_map_entry_for_sprite
 c$87D5 LD A,($71EE)    ; Return if countdown
  $87D8 OR A            ; is not zero
  $87D9 RET NZ          ; ...
- $87DA INC (IX+$05)    ;
+ $87DA INC (IX+$05)    ; Mark for pattern reload
  $87DD LD A,(IX+$0A)   ; Get pattern
  $87E0 OR $80          ; Set bit 7
  $87E2 LD B,$24        ; Size of map
@@ -1771,83 +1794,93 @@ c$87D5 LD A,($71EE)    ; Return if countdown
  $87F0 OR $80          ; Set bit 7
  $87F2 JP $AAA6        ; Add pattern to map. Return to #R$8A41
 *$87F5 CALL $AB38      ; Now DE contains polar y,x
- $87F8 LD A,E          ; Get x
+ $87F8 LD A,E          ; Get x from map
  $87F9 CP (IX+$02)     ; Compare with polar x
  $87FC JR Z,$8801      ; If same, skip ahead
  $87FE JP $8AC0        ; Else jump out to #R$8AC0
 *$8801 LD (IX+$00),$0E ; Change sprite type to enemy
 ; Move towards y
  $8805 LD A,(IX+$01)   ; Get polar y
- $8808 CP D            ; Compare with polar y
+ $8808 CP D            ; Compare with polar y from map
  $8809 JR Z,$8815      ; If same, jump ahead
- $880B JR C,$8811      ; If less than, skip jump to increment polar y
+ $880B JR C,$8811      ; If less than, skip to increment polar y
  $880D DEC (IX+$01)    ; Decrement polar y
  $8810 RET             ;
 *$8811 INC (IX+$01)    ; Increment polar y
  $8814 RET             ;
 
-; Routine at 8815
+; Return enemy to map
 ;
 ; Used by the routine at #R$8801.
-c$8815 LD A,(IX+$0B) ; Get color
- $8818 LD (HL),A     ;
+;
+; I:IX Sprite data of enemy
+@label=return_enemy_to_map
+c$8815 LD A,(IX+$0B) ; Get color (why not pattern?)
+ $8818 LD (HL),A     ; Set in map
  $8819 LD HL,$722C   ; Decrease active enemies
  $881C DEC (HL)      ; ...
- $881D LD HL,$7256   ;
- $8820 SET 5,(HL)    ;
- $8822 JP $862F      ;
+ $881D LD HL,$7256   ; Set a flag
+ $8820 SET 5,(HL)    ; ...
+ $8822 JP $862F      ; Deallocate sprite
 
-; Routine at 8825
+; Move enemy towards viewer
 ;
 ; Used by the routine at #R$8790.
-c$8825 LD (IX+$00),$10 ;
- $8829 INC (IX+$05)    ;
- $882C DEC (IX+$01)    ;
- $882F LD A,(IX+$01)   ;
- $8832 CP $F2          ;
- $8834 RET NZ          ;
+;
+; I:IX Sprite data of enemy
+@label=move_towards_viewer
+c$8825 LD (IX+$00),$10 ; Change sprite type
+ $8829 INC (IX+$05)    ; Mark for pattern reload
+ $882C DEC (IX+$01)    ; Decrement polar y
+ $882F LD A,(IX+$01)   ; Get polar y
+ $8832 CP $F2          ; Return if not $F2 (-14)
+ $8834 RET NZ          ; ...
 ; This entry point is used by the routine at #R$8A2D.
-*$8835 BIT 3,(IX+$07)  ;
- $8839 JR Z,$8848      ;
+*$8835 BIT 3,(IX+$07)  ; If a flag is reset
+ $8839 JR Z,$8848      ; Then skip ahead and determine what to do
 ; This entry point is used by the routine at #R$8848.
-*$883B LD (IX+$01),$2A ;
- $883F LD (IX+$02),$00 ;
- $8843 LD (IX+$07),$40 ;
+*$883B LD (IX+$01),$2A ; Reset polar y back to center
+ $883F LD (IX+$02),$00 ; Reset polar x
+ $8843 LD (IX+$07),$40 ; Set flags
  $8847 RET             ;
 
-; Routine at 8848
+; Determine action when out of screen
 ;
 ; Used by the routine at #R$8825.
-c$8848 BIT 4,(IX+$07) ;
- $884C JR Z,$8853     ;
+;
+; I:IX Sprite data of enemy
+c$8848 BIT 4,(IX+$07) ; Test flag
+ $884C JR Z,$8853     ; If not set, skip ahead
  $884E RST $20        ; Random number
- $884F AND $03        ;
- $8851 JR NZ,$883B    ;
-*$8853 LD HL,$722C    ; Decrease active enemies
+ $884F AND $03        ; 0 - 3
+ $8851 JR NZ,$883B    ; If not 0, jump back
+*$8853 LD HL,$722C    ; Decrement active enemies
  $8856 DEC (HL)       ; ...
- $8857 LD HL,$7256    ;
- $885A SET 5,(HL)     ;
- $885C JP $8654       ;
+ $8857 LD HL,$7256    ; Set flag
+ $885A SET 5,(HL)     ; ...
+ $885C JP $8654       ; Deallocate and return
 
-; Routine at 885F
+; Create enemy shot and move
 ;
 ; Used by the routine at #R$8790.
-c$885F CALL $8A76      ;
- $8862 LD A,(IX+$01)   ;
- $8865 CP $22          ;
- $8867 JR C,$8878      ;
- $8869 DEC (IX+$01)    ;
+;
+; I:IX Sprite data of enemy
+c$885F CALL $8A76      ; Create enemy shot
+ $8862 LD A,(IX+$01)   ; Get polar y
+ $8865 CP $22          ; Is it < $22
+ $8867 JR C,$8878      ; Then jump ahead
+ $8869 DEC (IX+$01)    ; Decrement polar y
  $886C LD (IX+$03),$02 ;
- $8870 LD (IX+$00),$10 ;
- $8874 INC (IX+$05)    ;
+ $8870 LD (IX+$00),$10 ; Set sprite type
+ $8874 INC (IX+$05)    ; Mark for pattern reload
  $8877 RET             ;
 
-; Routine at 8878
+; Polar Y of enemy < $22
 ;
 ; Used by the routine at #R$885F.
-c$8878 LD A,($71EE)  ;
- $887B OR A          ;
- $887C RET NZ        ;
+c$8878 LD A,($71EE)  ; Get sprite countdown
+ $887B OR A          ; Return if not zero
+ $887C RET NZ        ; ...
  $887D LD A,(IX+$03) ;
  $8880 CP $40        ;
  $8882 JR NC,$88D4   ;
@@ -1855,16 +1888,16 @@ c$8878 LD A,($71EE)  ;
  $8887 RST $20       ; Random number
  $8888 AND (IY+$03)  ;
  $888B JR NZ,$88A7   ;
- $888D DEC (IX+$01)  ;
- $8890 LD A,(IX+$01) ;
- $8893 CP $08        ;
- $8895 JR Z,$88CF    ;
+ $888D DEC (IX+$01)  ; Decrement polar y
+ $8890 LD A,(IX+$01) ; Get polar y
+ $8893 CP $08        ; If it's 8
+ $8895 JR Z,$88CF    ; Then jump ahead
  $8897 RST $20       ; Random number
- $8898 AND $0F       ;
+ $8898 AND $0F       ; 0 - 15
  $889A JR NZ,$88BE   ;
 ; This entry point is used by the routine at #R$88BE.
-*$889C LD A,($7004)  ;
- $889F CALL $8AC0    ;
+*$889C LD A,($7004)  ; Ship polar x
+ $889F CALL $8AC0    ; Move towards x
  $88A2 INC B         ;
  $88A3 LD (IX+$03),B ;
  $88A6 RET           ;
@@ -1875,29 +1908,29 @@ c$8878 LD A,($71EE)  ;
 c$88A7 LD A,(IX+$03)  ;
  $88AA DEC A          ;
  $88AB LD B,A         ;
- $88AC ADD A,(IX+$02) ;
- $88AF AND $3F        ;
- $88B1 LD (IX+$02),A  ;
+ $88AC ADD A,(IX+$02) ; Add polar x
+ $88AF AND $3F        ; Mod 64
+ $88B1 LD (IX+$02),A  ; Set polar x
  $88B4 LD A,$10       ;
  $88B6 ADD A,B        ;
- $88B7 LD (IX+$00),A  ;
- $88BA INC (IX+$05)   ;
+ $88B7 LD (IX+$00),A  ; Set sprite type
+ $88BA INC (IX+$05)   ; Mark for pattern reload
  $88BD RET            ;
 
 ; Routine at 88BE
 ;
 ; Used by the routine at #R$8878.
 c$88BE RST $20         ; Random number
- $88BF AND $07         ;
- $88C1 LD HL,$8E25     ;
+ $88BF AND $07         ; 0 - 7
+ $88C1 LD HL,$8E25     ; Table base address
  $88C4 RST $08         ; Add A to HL
- $88C5 LD A,(HL)       ;
+ $88C5 LD A,(HL)       ; Get table value
  $88C6 LD (IX+$03),A   ;
  $88C9 CP $40          ;
  $88CB JR C,$889C      ;
  $88CD JR NZ,$88D4     ;
 ; This entry point is used by the routine at #R$8878.
-*$88CF LD (IX+$07),$10 ;
+*$88CF LD (IX+$07),$10 ; Set flags
  $88D3 RET             ;
 
 ; Routine at 88D4
@@ -1905,125 +1938,142 @@ c$88BE RST $20         ; Random number
 ; Used by the routines at #R$8878 and #R$88BE.
 c$88D4 CP $41          ;
  $88D6 JR Z,$88F3      ;
- $88D8 DEC (IX+$01)    ;
+ $88D8 DEC (IX+$01)    ; Decrement polar y
  $88DB LD A,($7004)    ;
- $88DE CALL $8AC0      ;
+ $88DE CALL $8AC0      ; Move towards x
  $88E1 LD (IX+$00),$10 ;
- $88E5 INC (IX+$05)    ;
- $88E8 LD A,(IX+$01)   ;
- $88EB CP $08          ;
- $88ED RET NZ          ;
+ $88E5 INC (IX+$05)    ; Mark for pattern reload
+ $88E8 LD A,(IX+$01)   ; Get polar y
+ $88EB CP $08          ; Return if not 8
+ $88ED RET NZ          ; ...
  $88EE LD (IX+$03),$41 ;
  $88F2 RET             ;
 
 ; Routine at 88F3
 ;
 ; Used by the routine at #R$88D4.
-c$88F3 INC (IX+$01)    ;
- $88F6 LD (IX+$00),$0E ;
- $88FA INC (IX+$05)    ;
+c$88F3 INC (IX+$01)    ; Increment polar y
+ $88F6 LD (IX+$00),$0E ; Set type to enemy
+ $88FA INC (IX+$05)    ; Mark for pattern reload
  $88FD RET             ;
 
-; Routine at 88FE
+; Update sprite path
 ;
 ; Used by the routine at #R$8790.
+@label=update_sprite_path
 c$88FE LD A,($71EE)  ;
  $8901 OR A          ;
  $8902 RET NZ        ;
- $8903 CALL $8A76    ;
- $8906 LD L,(IX+$06) ;
- $8909 LD H,(IX+$07) ;
- $890C LD A,(IX+$03) ;
+ $8903 CALL $8A76    ; Create enemy shot
+ $8906 LD L,(IX+$06) ; Get path address
+ $8909 LD H,(IX+$07) ; ...
+ $890C LD A,(IX+$03) ; Get counter
 ; This entry point is used by the routine at #R$892B.
-*$890F SUB $10       ;
- $8911 LD (IX+$03),A ;
- $8914 JR NC,$8936   ;
+*$890F SUB $10       ; Decrement upper nybble
+ $8911 LD (IX+$03),A ; Store again
+ $8914 JR NC,$8936   ; If upper nybble >= 0, then jump to move sprite
 ; This entry point is used by the routine at #R$8986.
-*$8916 INC HL        ;
- $8917 LD (IX+$06),L ;
- $891A LD (IX+$07),H ;
- $891D LD A,(HL)     ;
- $891E CP $10        ;
- $8920 JR NC,$892B   ;
- $8922 DEC A         ;
- $8923 JP M,$8986    ;
- $8926 JR Z,$8994    ;
- $8928 JP $8999      ;
+*$8916 INC HL        ; Else increment path address
+ $8917 LD (IX+$06),L ; Set path address
+ $891A LD (IX+$07),H ; ...
+ $891D LD A,(HL)     ; Get path byte
+ $891E CP $10        ; If upper nybble >= 1
+ $8920 JR NC,$892B   ; Then jump ahead
+ $8922 DEC A         ; Else decrement lower nybble
+ $8923 JP M,$8986    ; If negative then ...
+ $8926 JR Z,$8994    ; If zero then ...
+ $8928 JP $8999      ; If positive then ...
 
-; Routine at 892B
+; Upper nybble >= 1
 ;
 ; Used by the routine at #R$88FE.
-c$892B AND $F0       ;
- $892D LD B,A        ;
- $892E LD A,(IX+$03) ;
- $8931 AND $0F       ;
- $8933 OR B          ;
+c$892B AND $F0       ; Isolate upper nybble
+ $892D LD B,A        ; Save it
+ $892E LD A,(IX+$03) ; Get counter
+ $8931 AND $0F       ; And apply upper nybble
+ $8933 OR B          ; ...
  $8934 JR $890F      ;
 
-; Routine at 8936
+; Move sprite along path
 ;
 ; Used by the routine at #R$88FE.
-c$8936 LD A,(HL)      ;
- $8937 LD HL,($725D)  ;
- $893A BIT 0,(IX+$03) ;
- $893E JR Z,$8941     ;
- $8940 INC HL         ;
-*$8941 BIT 7,(HL)     ;
- $8943 JR Z,$8951     ;
- $8945 AND $0F        ;
- $8947 CP $01         ;
- $8949 JR Z,$8951     ;
- $894B CP $04         ;
- $894D JR Z,$8951     ;
- $894F XOR $0A        ;
-*$8951 LD E,(IX+$02)  ;
- $8954 LD D,(IX+$01)  ;
- $8957 LD B,(IX+$00)  ;
- $895A BIT 0,A        ;
- $895C JR Z,$8961     ;
- $895E INC D          ;
- $895F LD B,$0E       ;
-*$8961 BIT 2,A        ;
- $8963 JR Z,$8968     ;
- $8965 DEC D          ;
- $8966 LD B,$10       ;
-*$8968 BIT 1,A        ;
- $896A JR Z,$896F     ;
- $896C DEC E          ;
- $896D LD B,$0F       ;
-*$896F BIT 3,A        ;
- $8971 JR Z,$8976     ;
- $8973 INC E          ;
- $8974 LD B,$11       ;
-*$8976 LD (IX+$00),B  ;
- $8979 LD (IX+$01),D  ;
- $897C LD A,E         ;
- $897D AND $3F        ;
- $897F LD (IX+$02),A  ;
- $8982 INC (IX+$05)   ;
+;
+; I:IX Sprite data
+; I:HL Path address
+@label=move_sprite_along_path
+c$8936 LD A,(HL)      ; Get path byte
+ $8937 LD HL,($725D)  ; Get wave data address
+ $893A BIT 0,(IX+$03) ; If bit 0 of byte 3 is reset
+ $893E JR Z,$8941     ; Then skip moving to next byte
+ $8940 INC HL         ; Else move to next byte
+*$8941 BIT 7,(HL)     ; Is bit 7 reset
+ $8943 JR Z,$8951     ; Then skip ahead
+ $8945 AND $0F        ; Isolate bits 0-3
+ $8947 CP $01         ; If 1 (inc polar y)
+ $8949 JR Z,$8951     ; Then skip ahead
+ $894B CP $04         ; If 4 (dec polar y)
+ $894D JR Z,$8951     ; Then skip ahead
+ $894F XOR $0A        ; Else flip bits 1 and 3
+*$8951 LD E,(IX+$02)  ; Get polar x
+ $8954 LD D,(IX+$01)  ; Get polar y
+ $8957 LD B,(IX+$00)  ; Get sprite type
+ $895A BIT 0,A        ; If bit for incrementing polar y is reset
+ $895C JR Z,$8961     ; Then skip next
+ $895E INC D          ; Increment polar y
+ $895F LD B,$0E       ; Sprite type $0E
+*$8961 BIT 2,A        ; If bit for decrementing polar y is reset
+ $8963 JR Z,$8968     ; Then skip next
+ $8965 DEC D          ; Decrement polar y
+ $8966 LD B,$10       ; Sprite type $10
+*$8968 BIT 1,A        ; If bit for decrementing polar x is reset
+ $896A JR Z,$896F     ; Then skip next
+ $896C DEC E          ; Decrement polar x
+ $896D LD B,$0F       ; Sprite type $0F
+*$896F BIT 3,A        ; If bit for incrementing polar x is reset
+ $8971 JR Z,$8976     ; Then skip next
+ $8973 INC E          ; Increment polar x
+ $8974 LD B,$11       ; Sprite type $11
+*$8976 LD (IX+$00),B  ; Set sprite type
+ $8979 LD (IX+$01),D  ; Set polar y
+ $897C LD A,E         ; Polar x
+ $897D AND $3F        ; Mod 64
+ $897F LD (IX+$02),A  ; Set polar x
+ $8982 INC (IX+$05)   ; Mark for pattern reload
  $8985 RET            ;
 
-; Routine at 8986
+; Set sprite flags to $18 if ...
 ;
 ; Used by the routine at #R$88FE.
-c$8986 INC HL          ;
- $8987 LD A,(IX+$03)   ;
- $898A AND $0F         ;
- $898C CP (HL)         ;
- $898D JR NZ,$8916     ;
- $898F LD (IX+$07),$18 ;
+;
+; I:IX Sprite data
+; I:HL Path address
+@label=set_sprite_flags_to_18_if_match
+c$8986 INC HL          ; Advance path address
+ $8987 LD A,(IX+$03)   ; Get counter
+ $898A AND $0F         ; Isolate sprite position in wave
+ $898C CP (HL)         ; Compare with path byte
+ $898D JR NZ,$8916     ; If different, then back to update sprite path
+ $898F LD (IX+$07),$18 ; Set flags
  $8993 RET             ;
 
-; Routine at 8994
+; Set sprite flags to $04
 ;
 ; Used by the routine at #R$88FE.
-c$8994 LD (IX+$07),$04 ;
+;
+; I:IX Sprite data
+; I:HL Path address
+@label=set_sprite_flags_to_04
+c$8994 LD (IX+$07),$04 ; Set flags
  $8998 RET             ;
 
-; Routine at 8999
+; Set sprite flags to $40
 ;
 ; Used by the routine at #R$88FE.
-c$8999 LD (IX+$07),$40 ;
+;
+; I:IX Sprite data
+; I:HL Path address
+@label=set_sprite_flags_to_40
+c$8999 LD (IX+$07),$40 ; Set flags
  $899D RET             ;
 
 ; Handle sprite types $18 - $1C
@@ -2034,7 +2084,7 @@ c$899E CP $18          ; Is sprite type < $18
  $89A0 RET C           ; Then return
  $89A1 CP $1A          ; Is sprite type < $1A
  $89A3 JR C,$89B8      ; If so, jump ahead
-; Sprite types $1A - $1C
+; Sprite types $1A - $1C (circular enemy)
  $89A5 LD B,A          ; B = sprite type
  $89A6 LD A,($71F2)    ; Frame counter
  $89A9 AND $03         ; Mod 4
@@ -2046,32 +2096,32 @@ c$899E CP $18          ; Is sprite type < $18
  $89B1 JR C,$89B5      ; Then skip next
  $89B3 LD A,$1A        ; Else set sprite type to $1A
 *$89B5 LD (IX+$00),A   ; This means rotate between $1A, $1B, and $1C
-; Sprite types $18 - $19 (three spheres, star shape) plus $1A, $1B, and $1C
+; Sprite types $18 - $19 (three spheres, star shape) plus $1A - 1C
 *$89B8 BIT 7,(IX+$07)  ;
  $89BC JR Z,$8A2D      ;
- $89BE LD A,($71EE)    ;
- $89C1 OR A            ;
- $89C2 RET NZ          ;
- $89C3 LD L,(IX+$06)   ;
- $89C6 LD H,(IX+$07)   ;
- $89C9 LD A,(IX+$03)   ;
- $89CC SUB $10         ;
- $89CE LD (IX+$03),A   ;
- $89D1 JR NC,$89EB     ;
- $89D3 INC HL          ;
- $89D4 LD A,(HL)       ;
- $89D5 SUB $10         ;
- $89D7 JR C,$8A3C      ;
- $89D9 AND $F0         ;
- $89DB LD B,A          ;
- $89DC LD A,(IX+$03)   ;
- $89DF AND $0F         ;
- $89E1 OR B            ;
- $89E2 LD (IX+$03),A   ;
- $89E5 LD (IX+$06),L   ;
- $89E8 LD (IX+$07),H   ;
-*$89EB LD A,(HL)       ;
- $89EC LD HL,($725D)   ;
+ $89BE LD A,($71EE)    ; Return if countdown
+ $89C1 OR A            ; is not zero
+ $89C2 RET NZ          ; ...
+ $89C3 LD L,(IX+$06)   ; Get path address
+ $89C6 LD H,(IX+$07)   ; ...
+ $89C9 LD A,(IX+$03)   ; Get counter
+ $89CC SUB $10         ; Decrement upper nybble
+ $89CE LD (IX+$03),A   ; Save counter
+ $89D1 JR NC,$89EB     ; If upper nybble >= 0 then jump ahead
+ $89D3 INC HL          ; Next path address
+ $89D4 LD A,(HL)       ; Get path byte
+ $89D5 SUB $10         ; Decrement upper nybble
+ $89D7 JR C,$8A3C      ; If < 0 then set flag and return
+ $89D9 AND $F0         ; Isolate upper nybble
+ $89DB LD B,A          ; Save it
+ $89DC LD A,(IX+$03)   ; Get counter
+ $89DF AND $0F         ; And apply upper nybble
+ $89E1 OR B            ; ...
+ $89E2 LD (IX+$03),A   ; ...
+ $89E5 LD (IX+$06),L   ; Set path address
+ $89E8 LD (IX+$07),H   ; ...
+*$89EB LD A,(HL)       ; Get path byte
+ $89EC LD HL,($725D)   ; Get wave data address
  $89EF BIT 0,(IX+$03)  ;
  $89F3 JR Z,$89F6      ;
  $89F5 INC HL          ;
@@ -2083,8 +2133,8 @@ c$899E CP $18          ; Is sprite type < $18
  $8A00 CP $04          ;
  $8A02 JR Z,$8A06      ;
  $8A04 XOR $0A         ;
-*$8A06 LD E,(IX+$02)   ;
- $8A09 LD D,(IX+$01)   ;
+*$8A06 LD E,(IX+$02)   ; Get polar x
+ $8A09 LD D,(IX+$01)   ; Get polar y
  $8A0C BIT 0,A         ;
  $8A0E JR Z,$8A11      ;
  $8A10 INC D           ;
@@ -2101,13 +2151,13 @@ c$899E CP $18          ; Is sprite type < $18
  $8A23 LD A,E          ;
  $8A24 AND $3F         ;
  $8A26 LD (IX+$02),A   ;
- $8A29 INC (IX+$05)    ;
+ $8A29 INC (IX+$05)    ; Mark for pattern reload
  $8A2C RET             ;
 *$8A2D LD A,(IX+$01)   ;
  $8A30 CP $F2          ;
  $8A32 JP Z,$8835      ;
  $8A35 DEC (IX+$01)    ;
- $8A38 INC (IX+$05)    ;
+ $8A38 INC (IX+$05)    ; Mark for pattern reload
  $8A3B RET             ;
 *$8A3C LD (IX+$07),$04 ;
  $8A40 RET             ;
@@ -2208,7 +2258,7 @@ c$8AC0 LD B,$01       ; Direction = 1
  $8ADC LD A,$10       ; $10
  $8ADE ADD A,B        ; $10 + direction, i.e. $0F or $11
  $8ADF LD (IX+$00),A  ; Change sprite type?
- $8AE2 INC (IX+$05)   ;
+ $8AE2 INC (IX+$05)   ; Increment counter
  $8AE5 RET            ;
 
 ; Update sprite types $0E - $11
@@ -2487,7 +2537,7 @@ c$8C68 LD HL,$725B    ; Decrement wave speed counter
  $8CAF LD (IX+$0B),A  ; Set color
  $8CB2 LD A,(IY+$03)  ; Get wave data byte 3
  $8CB5 AND $0F        ; Isolate bits 0-3
- $8CB7 LD C,A         ; BC = A = table offset (actually only 0 or 1)
+ $8CB7 LD C,A         ; BC = A = table offset (actually only 0 - 2)
  $8CB8 LD B,$00       ; ...
  $8CBA LD HL,$A57E    ; Table base address
  $8CBD ADD HL,BC      ; Table address
@@ -2669,12 +2719,13 @@ c$8DD7 BIT 1,(IY+$07)  ;
  $8E0C RET             ;
 
 ; Enemy types in different waves (chance stage)
-@labe=enemies_by_wave_table
+@label=enemies_by_wave_table
 b$8E0D DEFB $18,$0E,$18,$0E,$19,$0E,$19,$0E
  $8E15 DEFB $1A,$0E,$1A,$0E,$1A,$0E,$1A,$0E
  $8E1D DEFB $19,$0E,$19,$0E,$1A,$0E,$1A,$0E
 
 ; Table at 8E25
+@label=table_at_8E25
 b$8E25 DEFB $42,$41,$40,$00,$42,$42,$40,$42
 
 ; Create or display mines
@@ -5139,7 +5190,7 @@ b$A57E DEFB $2A,$F7,$FB
 
 ; Wave data address table
 ;
-; Bits 0-3 of wave init byte 2 determines entry. Stored in sprite data bytes 6
+; Bits 0-3 of wave init byte 2 determines entry. Value is stored in sprite data bytes 6
 ; and 7.
 @label=wave_address_table
 w$A581 DEFW $A5A3
@@ -6614,11 +6665,10 @@ c$B1C6 PUSH IX        ;
  $B1C9 PUSH BC        ;
  $B1CA LD A,$0B       ; 11
  $B1CC ADD A,D        ; Polar y + 11
- $B1CD JP M,$B217     ; If this is 128 or more (polar y > 116), then set
+ $B1CD JP M,$B217     ; If this is 128 or more (polar y > 116 or polar y < -11), then set
                       ; position outside screen and return
- $B1D0 LD L,A         ; Calculate table address, starting with y + 11 (11 first
-                      ; table rows are never used?)
- $B1D1 LD H,$00       ;
+ $B1D0 LD L,A         ; Calculate table address, with polar y = -11 corresponding to row 0
+ $B1D1 LD H,$00       ; and polar y = 0 corresponding to row 11
  $B1D3 ADD HL,HL      ; (y + 11) * 32
  $B1D4 ADD HL,HL      ; ...
  $B1D5 ADD HL,HL      ; ...

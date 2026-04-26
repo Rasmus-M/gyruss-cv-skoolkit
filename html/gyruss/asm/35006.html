@@ -45,13 +45,13 @@ Used by the routine at <a href="34936.html">L8878</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="35007"></span>88BF</td>
 <td class="instruction">AND $07</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">0 - 7</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35009"></span>88C1</td>
-<td class="instruction">LD HL,<a href="36389.html">L8E25</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD HL,<a href="36389.html">table_at_8E25</a></td>
+<td class="comment-1" rowspan="1">Table base address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -63,7 +63,7 @@ Used by the routine at <a href="34936.html">L8878</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="35013"></span>88C5</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get table value</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -103,7 +103,7 @@ This entry point is used by the routine at <a href="34936.html">L8878</a>.
 <td class="asm-label">L88BE_0</td>
 <td class="address-2"><span id="35023"></span>88CF</td>
 <td class="instruction">LD (IX+$07),$10</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set flags</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

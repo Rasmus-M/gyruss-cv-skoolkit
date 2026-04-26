@@ -24,7 +24,7 @@ Next: <a href="34936.html">8878</a>
 </td>
 </tr>
 </table>
-<div class="description">885F: Routine at 885F</div>
+<div class="description">885F: Create enemy shot and move</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -33,61 +33,70 @@ Next: <a href="34936.html">8878</a>
 Used by the routine at <a href="34704.html">handle_sprite_types_0E_11</a>.
 </div>
 </div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Sprite data of enemy</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
 <td class="asm-label">L885F</td>
 <td class="address-2"><span id="34911"></span>885F</td>
 <td class="instruction">CALL <a href="35446.html">create_enemy_shot</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Create enemy shot</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34914"></span>8862</td>
 <td class="instruction">LD A,(IX+$01)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get polar y</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34917"></span>8865</td>
 <td class="instruction">CP $22</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Is it &lt; $22</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34919"></span>8867</td>
 <td class="instruction">JR C,<a href="34936.html">L8878</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Then jump ahead</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34921"></span>8869</td>
 <td class="instruction">DEC (IX+$01)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Decrement polar y</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34924"></span>886C</td>
 <td class="instruction">LD (IX+$03),$02</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34928"></span>8870</td>
 <td class="instruction">LD (IX+$00),$10</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set sprite type</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34932"></span>8874</td>
 <td class="instruction">INC (IX+$05)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Mark for pattern reload</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34935"></span>8877</td>
 <td class="instruction">RET</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 </table>
 <table class="asm-navigation">

@@ -24,7 +24,7 @@ Next: <a href="34853.html">8825</a>
 </td>
 </tr>
 </table>
-<div class="description">8815: Routine at 8815</div>
+<div class="description">8815: Return enemy to map</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -33,19 +33,28 @@ Next: <a href="34853.html">8825</a>
 Used by the routine at <a href="34773.html#34817">create_map_entry_for_sprite_2</a>.
 </div>
 </div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Sprite data of enemy</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L8815</td>
+<td class="asm-label">return_enemy_to_map</td>
 <td class="address-2"><span id="34837"></span>8815</td>
 <td class="instruction">LD A,(IX+$0B)</td>
-<td class="comment-1" rowspan="1">Get color</td>
+<td class="comment-1" rowspan="1">Get color (why not pattern?)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34840"></span>8818</td>
 <td class="instruction">LD (HL),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set in map</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -63,19 +72,19 @@ Used by the routine at <a href="34773.html#34817">create_map_entry_for_sprite_2<
 <td class="asm-label"></td>
 <td class="address-1"><span id="34845"></span>881D</td>
 <td class="instruction">LD HL,<a href="29270.html">other_flags</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set a flag</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34848"></span>8820</td>
 <td class="instruction">SET 5,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34850"></span>8822</td>
 <td class="instruction">JP <a href="34278.html#34351">deallocate_sprite</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Deallocate sprite</td>
 </tr>
 </table>
 <table class="asm-navigation">

@@ -39,7 +39,7 @@ Search for a value (pattern OR $80) in map. If not found, allocate an entry. If 
 </tr>
 <tr>
 <td class="register"></td>
-<td class="register-desc">IX Sprite data</td>
+<td class="register-desc">IX Sprite data of enemy</td>
 </tr>
 </table>
 </td>
@@ -66,7 +66,7 @@ Search for a value (pattern OR $80) in map. If not found, allocate an entry. If 
 <td class="asm-label"></td>
 <td class="address-1"><span id="34778"></span>87DA</td>
 <td class="instruction">INC (IX+$05)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Mark for pattern reload</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -144,7 +144,7 @@ Search for a value (pattern OR $80) in map. If not found, allocate an entry. If 
 <td class="asm-label"></td>
 <td class="address-1"><span id="34808"></span>87F8</td>
 <td class="instruction">LD A,E</td>
-<td class="comment-1" rowspan="1">Get x</td>
+<td class="comment-1" rowspan="1">Get x from map</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -190,19 +190,19 @@ Move towards y
 <td class="asm-label"></td>
 <td class="address-1"><span id="34824"></span>8808</td>
 <td class="instruction">CP D</td>
-<td class="comment-1" rowspan="1">Compare with polar y</td>
+<td class="comment-1" rowspan="1">Compare with polar y from map</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34825"></span>8809</td>
-<td class="instruction">JR Z,<a href="34837.html">L8815</a></td>
+<td class="instruction">JR Z,<a href="34837.html">return_enemy_to_map</a></td>
 <td class="comment-1" rowspan="1">If same, jump ahead</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34827"></span>880B</td>
 <td class="instruction">JR C,<a href="34773.html#34833">create_map_entry_for_sprite_3</a></td>
-<td class="comment-1" rowspan="1">If less than, skip jump to increment polar y</td>
+<td class="comment-1" rowspan="1">If less than, skip to increment polar y</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

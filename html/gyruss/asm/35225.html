@@ -24,28 +24,41 @@ Next: <a href="35230.html">899E</a>
 </td>
 </tr>
 </table>
-<div class="description">8999: Routine at 8999</div>
+<div class="description">8999: Set sprite flags to $40</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="35070.html">L88FE</a>.
+Used by the routine at <a href="35070.html">update_sprite_path</a>.
 </div>
 </div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Sprite data</td>
+</tr>
+<tr>
+<td class="register">HL</td>
+<td class="register-desc">Path address</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L8999</td>
+<td class="asm-label">set_sprite_flags_to_40</td>
 <td class="address-2"><span id="35225"></span>8999</td>
 <td class="instruction">LD (IX+$07),$40</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set flags</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35229"></span>899D</td>
 <td class="instruction">RET</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 </table>
 <table class="asm-navigation">

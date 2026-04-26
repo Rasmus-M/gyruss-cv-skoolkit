@@ -24,7 +24,7 @@ Next: <a href="34983.html">88A7</a>
 </td>
 </tr>
 </table>
-<div class="description">8878: Routine at 8878</div>
+<div class="description">8878: Polar Y of enemy &lt; $22</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -39,19 +39,19 @@ Used by the routine at <a href="34911.html">L885F</a>.
 <td class="asm-label">L8878</td>
 <td class="address-2"><span id="34936"></span>8878</td>
 <td class="instruction">LD A,(<a href="29166.html">sprite_countdown</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get sprite countdown</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34939"></span>887B</td>
 <td class="instruction">OR A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return if not zero</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34940"></span>887C</td>
 <td class="instruction">RET NZ</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -99,25 +99,25 @@ Used by the routine at <a href="34911.html">L885F</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="34957"></span>888D</td>
 <td class="instruction">DEC (IX+$01)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Decrement polar y</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34960"></span>8890</td>
 <td class="instruction">LD A,(IX+$01)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get polar y</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34963"></span>8893</td>
 <td class="instruction">CP $08</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If it's 8</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34965"></span>8895</td>
 <td class="instruction">JR Z,<a href="35006.html#35023">L88BE_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Then jump ahead</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -129,7 +129,7 @@ Used by the routine at <a href="34911.html">L885F</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="34968"></span>8898</td>
 <td class="instruction">AND $0F</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">0 - 15</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -151,13 +151,13 @@ This entry point is used by the routine at <a href="35006.html">L88BE</a>.
 <td class="asm-label">L8878_0</td>
 <td class="address-2"><span id="34972"></span>889C</td>
 <td class="instruction">LD A,($7004)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Ship polar x</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34975"></span>889F</td>
 <td class="instruction">CALL <a href="35520.html">move_towards_x</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move towards x</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

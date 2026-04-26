@@ -24,58 +24,71 @@ Next: <a href="35220.html">8994</a>
 </td>
 </tr>
 </table>
-<div class="description">8986: Routine at 8986</div>
+<div class="description">8986: Set sprite flags to $18 if ...</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="35070.html">L88FE</a>.
+Used by the routine at <a href="35070.html">update_sprite_path</a>.
 </div>
 </div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Sprite data</td>
+</tr>
+<tr>
+<td class="register">HL</td>
+<td class="register-desc">Path address</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L8986</td>
+<td class="asm-label">set_sprite_flags_to_18_if_match</td>
 <td class="address-2"><span id="35206"></span>8986</td>
 <td class="instruction">INC HL</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Advance path address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35207"></span>8987</td>
 <td class="instruction">LD A,(IX+$03)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get counter</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35210"></span>898A</td>
 <td class="instruction">AND $0F</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Isolate sprite position in wave</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35212"></span>898C</td>
 <td class="instruction">CP (HL)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Compare with path byte</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35213"></span>898D</td>
-<td class="instruction">JR NZ,<a href="35070.html#35094">L88FE_1</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="35070.html#35094">update_sprite_path_1</a></td>
+<td class="comment-1" rowspan="1">If different, then back to update sprite path</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35215"></span>898F</td>
 <td class="instruction">LD (IX+$07),$18</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set flags</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35219"></span>8993</td>
 <td class="instruction">RET</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 </table>
 <table class="asm-navigation">
