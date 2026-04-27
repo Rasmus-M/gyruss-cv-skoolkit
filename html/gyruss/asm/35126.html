@@ -24,7 +24,7 @@ Next: <a href="35206.html">8986</a>
 </td>
 </tr>
 </table>
-<div class="description">8936: Move sprite along path</div>
+<div class="description">8936: Move sprite along path and update sprite type</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -49,7 +49,7 @@ Used by the routine at <a href="35070.html">update_sprite_path</a>.
 </td>
 </tr>
 <tr>
-<td class="asm-label">move_sprite_along_path</td>
+<td class="asm-label">move_animate_sprite_along_path</td>
 <td class="address-2"><span id="35126"></span>8936</td>
 <td class="instruction">LD A,(HL)</td>
 <td class="comment-1" rowspan="1">Get path byte</td>
@@ -64,12 +64,12 @@ Used by the routine at <a href="35070.html">update_sprite_path</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="35130"></span>893A</td>
 <td class="instruction">BIT 0,(IX+$03)</td>
-<td class="comment-1" rowspan="1">If bit 0 of byte 3 is reset</td>
+<td class="comment-1" rowspan="1">If bit 0 of counter is reset</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35134"></span>893E</td>
-<td class="instruction">JR Z,<a href="35126.html#35137">move_sprite_along_path_0</a></td>
+<td class="instruction">JR Z,<a href="35126.html#35137">move_animate_sprite_along_path_0</a></td>
 <td class="comment-1" rowspan="1">Then skip moving to next byte</td>
 </tr>
 <tr>
@@ -79,7 +79,7 @@ Used by the routine at <a href="35070.html">update_sprite_path</a>.
 <td class="comment-1" rowspan="1">Else move to next byte</td>
 </tr>
 <tr>
-<td class="asm-label">move_sprite_along_path_0</td>
+<td class="asm-label">move_animate_sprite_along_path_0</td>
 <td class="address-2"><span id="35137"></span>8941</td>
 <td class="instruction">BIT 7,(HL)</td>
 <td class="comment-1" rowspan="1">Is bit 7 reset</td>
@@ -87,7 +87,7 @@ Used by the routine at <a href="35070.html">update_sprite_path</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35139"></span>8943</td>
-<td class="instruction">JR Z,<a href="35126.html#35153">move_sprite_along_path_1</a></td>
+<td class="instruction">JR Z,<a href="35126.html#35153">move_animate_sprite_along_path_1</a></td>
 <td class="comment-1" rowspan="1">Then skip ahead</td>
 </tr>
 <tr>
@@ -105,7 +105,7 @@ Used by the routine at <a href="35070.html">update_sprite_path</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35145"></span>8949</td>
-<td class="instruction">JR Z,<a href="35126.html#35153">move_sprite_along_path_1</a></td>
+<td class="instruction">JR Z,<a href="35126.html#35153">move_animate_sprite_along_path_1</a></td>
 <td class="comment-1" rowspan="1">Then skip ahead</td>
 </tr>
 <tr>
@@ -117,7 +117,7 @@ Used by the routine at <a href="35070.html">update_sprite_path</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35149"></span>894D</td>
-<td class="instruction">JR Z,<a href="35126.html#35153">move_sprite_along_path_1</a></td>
+<td class="instruction">JR Z,<a href="35126.html#35153">move_animate_sprite_along_path_1</a></td>
 <td class="comment-1" rowspan="1">Then skip ahead</td>
 </tr>
 <tr>
@@ -127,7 +127,7 @@ Used by the routine at <a href="35070.html">update_sprite_path</a>.
 <td class="comment-1" rowspan="1">Else flip bits 1 and 3</td>
 </tr>
 <tr>
-<td class="asm-label">move_sprite_along_path_1</td>
+<td class="asm-label">move_animate_sprite_along_path_1</td>
 <td class="address-2"><span id="35153"></span>8951</td>
 <td class="instruction">LD E,(IX+$02)</td>
 <td class="comment-1" rowspan="1">Get polar x</td>
@@ -153,7 +153,7 @@ Used by the routine at <a href="35070.html">update_sprite_path</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35164"></span>895C</td>
-<td class="instruction">JR Z,<a href="35126.html#35169">move_sprite_along_path_2</a></td>
+<td class="instruction">JR Z,<a href="35126.html#35169">move_animate_sprite_along_path_2</a></td>
 <td class="comment-1" rowspan="1">Then skip next</td>
 </tr>
 <tr>
@@ -169,7 +169,7 @@ Used by the routine at <a href="35070.html">update_sprite_path</a>.
 <td class="comment-1" rowspan="1">Sprite type $0E</td>
 </tr>
 <tr>
-<td class="asm-label">move_sprite_along_path_2</td>
+<td class="asm-label">move_animate_sprite_along_path_2</td>
 <td class="address-2"><span id="35169"></span>8961</td>
 <td class="instruction">BIT 2,A</td>
 <td class="comment-1" rowspan="1">If bit for decrementing polar y is reset</td>
@@ -177,7 +177,7 @@ Used by the routine at <a href="35070.html">update_sprite_path</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35171"></span>8963</td>
-<td class="instruction">JR Z,<a href="35126.html#35176">move_sprite_along_path_3</a></td>
+<td class="instruction">JR Z,<a href="35126.html#35176">move_animate_sprite_along_path_3</a></td>
 <td class="comment-1" rowspan="1">Then skip next</td>
 </tr>
 <tr>
@@ -193,7 +193,7 @@ Used by the routine at <a href="35070.html">update_sprite_path</a>.
 <td class="comment-1" rowspan="1">Sprite type $10</td>
 </tr>
 <tr>
-<td class="asm-label">move_sprite_along_path_3</td>
+<td class="asm-label">move_animate_sprite_along_path_3</td>
 <td class="address-2"><span id="35176"></span>8968</td>
 <td class="instruction">BIT 1,A</td>
 <td class="comment-1" rowspan="1">If bit for decrementing polar x is reset</td>
@@ -201,7 +201,7 @@ Used by the routine at <a href="35070.html">update_sprite_path</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35178"></span>896A</td>
-<td class="instruction">JR Z,<a href="35126.html#35183">move_sprite_along_path_4</a></td>
+<td class="instruction">JR Z,<a href="35126.html#35183">move_animate_sprite_along_path_4</a></td>
 <td class="comment-1" rowspan="1">Then skip next</td>
 </tr>
 <tr>
@@ -217,7 +217,7 @@ Used by the routine at <a href="35070.html">update_sprite_path</a>.
 <td class="comment-1" rowspan="1">Sprite type $0F</td>
 </tr>
 <tr>
-<td class="asm-label">move_sprite_along_path_4</td>
+<td class="asm-label">move_animate_sprite_along_path_4</td>
 <td class="address-2"><span id="35183"></span>896F</td>
 <td class="instruction">BIT 3,A</td>
 <td class="comment-1" rowspan="1">If bit for incrementing polar x is reset</td>
@@ -225,7 +225,7 @@ Used by the routine at <a href="35070.html">update_sprite_path</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35185"></span>8971</td>
-<td class="instruction">JR Z,<a href="35126.html#35190">move_sprite_along_path_5</a></td>
+<td class="instruction">JR Z,<a href="35126.html#35190">move_animate_sprite_along_path_5</a></td>
 <td class="comment-1" rowspan="1">Then skip next</td>
 </tr>
 <tr>
@@ -241,7 +241,7 @@ Used by the routine at <a href="35070.html">update_sprite_path</a>.
 <td class="comment-1" rowspan="1">Sprite type $11</td>
 </tr>
 <tr>
-<td class="asm-label">move_sprite_along_path_5</td>
+<td class="asm-label">move_animate_sprite_along_path_5</td>
 <td class="address-2"><span id="35190"></span>8976</td>
 <td class="instruction">LD (IX+$00),B</td>
 <td class="comment-1" rowspan="1">Set sprite type</td>
@@ -280,7 +280,7 @@ Used by the routine at <a href="35070.html">update_sprite_path</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="35205"></span>8985</td>
 <td class="instruction">RET</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return to <a href="35393.html">return_from_sprite_handler</a></td>
 </tr>
 </table>
 <table class="asm-navigation">

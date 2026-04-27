@@ -20,7 +20,7 @@ Prev: <a href="35225.html">8999</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#35230">Map</a></td>
 <td class="next">
-Next: <a href="35393.html">8A41</a>
+Next: <a href="35307.html">89EB</a>
 </td>
 </tr>
 </table>
@@ -148,7 +148,7 @@ Sprite types $18 - $19 (three spheres, star shape) plus $1A - 1C
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35260"></span>89BC</td>
-<td class="instruction">JR Z,<a href="35230.html#35373">handle_sprite_types_18_1C_9</a></td>
+<td class="instruction">JR Z,<a href="35373.html">L8A2D</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -202,7 +202,7 @@ Sprite types $18 - $19 (three spheres, star shape) plus $1A - 1C
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35281"></span>89D1</td>
-<td class="instruction">JR NC,<a href="35230.html#35307">handle_sprite_types_18_1C_2</a></td>
+<td class="instruction">JR NC,<a href="35307.html">move_sprite_along_path</a></td>
 <td class="comment-1" rowspan="1">If upper nybble &gt;= 0 then jump ahead</td>
 </tr>
 <tr>
@@ -226,7 +226,7 @@ Sprite types $18 - $19 (three spheres, star shape) plus $1A - 1C
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35287"></span>89D7</td>
-<td class="instruction">JR C,<a href="35230.html#35388">handle_sprite_types_18_1C_10</a></td>
+<td class="instruction">JR C,<a href="35388.html">L8A3C</a></td>
 <td class="comment-1" rowspan="1">If &lt; 0 then set flag and return</td>
 </tr>
 <tr>
@@ -275,253 +275,7 @@ Sprite types $18 - $19 (three spheres, star shape) plus $1A - 1C
 <td class="asm-label"></td>
 <td class="address-1"><span id="35304"></span>89E8</td>
 <td class="instruction">LD (IX+$07),H</td>
-<td class="comment-1" rowspan="1">...</td>
-</tr>
-<tr>
-<td class="asm-label">handle_sprite_types_18_1C_2</td>
-<td class="address-2"><span id="35307"></span>89EB</td>
-<td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1">Get path byte</td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="35308"></span>89EC</td>
-<td class="instruction">LD HL,(<a href="29277.html">wave_data_address</a>)</td>
-<td class="comment-1" rowspan="1">Get wave data address</td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="35311"></span>89EF</td>
-<td class="instruction">BIT 0,(IX+$03)</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="35315"></span>89F3</td>
-<td class="instruction">JR Z,<a href="35230.html#35318">handle_sprite_types_18_1C_3</a></td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="35317"></span>89F5</td>
-<td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label">handle_sprite_types_18_1C_3</td>
-<td class="address-2"><span id="35318"></span>89F6</td>
-<td class="instruction">BIT 7,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="35320"></span>89F8</td>
-<td class="instruction">JR Z,<a href="35230.html#35334">handle_sprite_types_18_1C_4</a></td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="35322"></span>89FA</td>
-<td class="instruction">AND $0F</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="35324"></span>89FC</td>
-<td class="instruction">CP $01</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="35326"></span>89FE</td>
-<td class="instruction">JR Z,<a href="35230.html#35334">handle_sprite_types_18_1C_4</a></td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="35328"></span>8A00</td>
-<td class="instruction">CP $04</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="35330"></span>8A02</td>
-<td class="instruction">JR Z,<a href="35230.html#35334">handle_sprite_types_18_1C_4</a></td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="35332"></span>8A04</td>
-<td class="instruction">XOR $0A</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label">handle_sprite_types_18_1C_4</td>
-<td class="address-2"><span id="35334"></span>8A06</td>
-<td class="instruction">LD E,(IX+$02)</td>
-<td class="comment-1" rowspan="1">Get polar x</td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="35337"></span>8A09</td>
-<td class="instruction">LD D,(IX+$01)</td>
-<td class="comment-1" rowspan="1">Get polar y</td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="35340"></span>8A0C</td>
-<td class="instruction">BIT 0,A</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="35342"></span>8A0E</td>
-<td class="instruction">JR Z,<a href="35230.html#35345">handle_sprite_types_18_1C_5</a></td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="35344"></span>8A10</td>
-<td class="instruction">INC D</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label">handle_sprite_types_18_1C_5</td>
-<td class="address-2"><span id="35345"></span>8A11</td>
-<td class="instruction">BIT 2,A</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="35347"></span>8A13</td>
-<td class="instruction">JR Z,<a href="35230.html#35350">handle_sprite_types_18_1C_6</a></td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="35349"></span>8A15</td>
-<td class="instruction">DEC D</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label">handle_sprite_types_18_1C_6</td>
-<td class="address-2"><span id="35350"></span>8A16</td>
-<td class="instruction">BIT 1,A</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="35352"></span>8A18</td>
-<td class="instruction">JR Z,<a href="35230.html#35355">handle_sprite_types_18_1C_7</a></td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="35354"></span>8A1A</td>
-<td class="instruction">DEC E</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label">handle_sprite_types_18_1C_7</td>
-<td class="address-2"><span id="35355"></span>8A1B</td>
-<td class="instruction">BIT 3,A</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="35357"></span>8A1D</td>
-<td class="instruction">JR Z,<a href="35230.html#35360">handle_sprite_types_18_1C_8</a></td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="35359"></span>8A1F</td>
-<td class="instruction">INC E</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label">handle_sprite_types_18_1C_8</td>
-<td class="address-2"><span id="35360"></span>8A20</td>
-<td class="instruction">LD (IX+$01),D</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="35363"></span>8A23</td>
-<td class="instruction">LD A,E</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="35364"></span>8A24</td>
-<td class="instruction">AND $3F</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="35366"></span>8A26</td>
-<td class="instruction">LD (IX+$02),A</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="35369"></span>8A29</td>
-<td class="instruction">INC (IX+$05)</td>
-<td class="comment-1" rowspan="1">Mark for pattern reload</td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="35372"></span>8A2C</td>
-<td class="instruction">RET</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label">handle_sprite_types_18_1C_9</td>
-<td class="address-2"><span id="35373"></span>8A2D</td>
-<td class="instruction">LD A,(IX+$01)</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="35376"></span>8A30</td>
-<td class="instruction">CP $F2</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="35378"></span>8A32</td>
-<td class="instruction">JP Z,<a href="34853.html#34869">move_towards_viewer_0</a></td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="35381"></span>8A35</td>
-<td class="instruction">DEC (IX+$01)</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="35384"></span>8A38</td>
-<td class="instruction">INC (IX+$05)</td>
-<td class="comment-1" rowspan="1">Mark for pattern reload</td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="35387"></span>8A3B</td>
-<td class="instruction">RET</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label">handle_sprite_types_18_1C_10</td>
-<td class="address-2"><span id="35388"></span>8A3C</td>
-<td class="instruction">LD (IX+$07),$04</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="35392"></span>8A40</td>
-<td class="instruction">RET</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">... (continue to <a href="35307.html">move_sprite_along_path</a>)</td>
 </tr>
 </table>
 <table class="asm-navigation">
@@ -531,7 +285,7 @@ Prev: <a href="35225.html">8999</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#35230">Map</a></td>
 <td class="next">
-Next: <a href="35393.html">8A41</a>
+Next: <a href="35307.html">89EB</a>
 </td>
 </tr>
 </table>

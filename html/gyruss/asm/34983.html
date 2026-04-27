@@ -39,19 +39,19 @@ Used by the routine at <a href="34936.html">L8878</a>.
 <td class="asm-label">L88A7</td>
 <td class="address-2"><span id="34983"></span>88A7</td>
 <td class="instruction">LD A,(IX+$03)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get counter</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34986"></span>88AA</td>
 <td class="instruction">DEC A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Counter - 1</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34987"></span>88AB</td>
 <td class="instruction">LD B,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Store in B</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -75,13 +75,13 @@ Used by the routine at <a href="34936.html">L8878</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="34996"></span>88B4</td>
 <td class="instruction">LD A,$10</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">16</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34998"></span>88B6</td>
 <td class="instruction">ADD A,B</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">16 + counter - 1</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -99,7 +99,7 @@ Used by the routine at <a href="34936.html">L8878</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="35005"></span>88BD</td>
 <td class="instruction">RET</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return to <a href="35393.html">return_from_sprite_handler</a></td>
 </tr>
 </table>
 <table class="asm-navigation">

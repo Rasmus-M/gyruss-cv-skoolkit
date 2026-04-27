@@ -102,7 +102,7 @@ This entry point is used by the routine at <a href="35115.html">L892B</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35092"></span>8914</td>
-<td class="instruction">JR NC,<a href="35126.html">move_sprite_along_path</a></td>
+<td class="instruction">JR NC,<a href="35126.html">move_animate_sprite_along_path</a></td>
 <td class="comment-1" rowspan="1">If upper nybble &gt;= 0, then jump to move sprite</td>
 </tr>
 <tr>
@@ -149,7 +149,7 @@ This entry point is used by the routine at <a href="35206.html">set_sprite_flags
 <td class="asm-label"></td>
 <td class="address-1"><span id="35104"></span>8920</td>
 <td class="instruction">JR NC,<a href="35115.html">L892B</a></td>
-<td class="comment-1" rowspan="1">Then jump ahead</td>
+<td class="comment-1" rowspan="1">Then jump ahead to update counter</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -161,19 +161,19 @@ This entry point is used by the routine at <a href="35206.html">set_sprite_flags
 <td class="asm-label"></td>
 <td class="address-1"><span id="35107"></span>8923</td>
 <td class="instruction">JP M,<a href="35206.html">set_sprite_flags_to_18_if_match</a></td>
-<td class="comment-1" rowspan="1">If negative then ...</td>
+<td class="comment-1" rowspan="1">If negative then set sprite flag to $18 if path byte matches and return</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35110"></span>8926</td>
 <td class="instruction">JR Z,<a href="35220.html">set_sprite_flags_to_04</a></td>
-<td class="comment-1" rowspan="1">If zero then ...</td>
+<td class="comment-1" rowspan="1">If zero then set sprite flag to $04 and return</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35112"></span>8928</td>
 <td class="instruction">JP <a href="35225.html">set_sprite_flags_to_40</a></td>
-<td class="comment-1" rowspan="1">If positive then ...</td>
+<td class="comment-1" rowspan="1">If positive then set sprite flag to $40 and return</td>
 </tr>
 </table>
 <table class="asm-navigation">

@@ -1178,7 +1178,7 @@ C $871B,3 X velocity, set to $02 or $FE when created
 C $871E,3 Add to polar x
 C $8721,2 Mod 64
 C $8723,3 Save again
-C $8726,3 Countdown, set to $10 when created
+C $8726,3 Counter, set to $10 when created
 C $8729,1 Return if > 0
 C $872A,3 Get ship polar x
 C $872D,3 Get polar x
@@ -1255,6 +1255,7 @@ C $87C7,3 Ship polar x
 C $87CA,3 Move towards x
 C $87CD,4 Set sprite type
 C $87D1,3 Mark for pattern reload
+C $87D4,1 Return to #R$8A41
 c $87D5 Create map entry for enemy sprite
 D $87D5 Search for a value (pattern OR $80) in map. If not found, allocate an entry. If found, calculate coordinates and move towards them. Used by the routine at #R$8790.
 R $87D5 I: IX Sprite data of enemy
@@ -1286,7 +1287,9 @@ C $8808,1 Compare with polar y from map
 C $8809,2 If same, jump ahead
 C $880B,2 If less than, skip to increment polar y
 C $880D,3 Decrement polar y
+C $8810,1 Return to #R$8A41
 C $8811,3 Increment polar y
+C $8814,1 Return to #R$8A41
 c $8815 Return enemy to map
 D $8815 Used by the routine at #R$8801.
 R $8815 I:IX Sprite data of enemy
@@ -1297,7 +1300,7 @@ C $8819,3 Decrease active enemies
 C $881C,1 ...
 C $881D,3 Set a flag
 C $8820,2 ...
-C $8822,3 Deallocate sprite
+C $8822,3 Deallocate sprite and return
 c $8825 Move enemy towards viewer
 D $8825 Used by the routine at #R$8790.
 R $8825 I:IX Sprite data of enemy
@@ -1307,17 +1310,18 @@ C $8829,3 Mark for pattern reload
 C $882C,3 Decrement polar y
 C $882F,3 Get polar y
 C $8832,2 Return if not $F2 (-14)
-C $8834,1 ...
-N $8835 This entry point is used by the routine at #R$8A2D.
+C $8834,1 Else continue to #R$8835
+c $8835 Determine action when out of screen
+D $8835 Used by the routine at #R$8A2D.
+R $8835 I:IX Sprite data of enemy
+@ $8835 label=handle_out_of_screen
 C $8835,4 If a flag is reset
 C $8839,2 Then skip ahead and determine what to do
 N $883B This entry point is used by the routine at #R$8848.
 C $883B,4 Reset polar y back to center
 C $883F,4 Reset polar x
 C $8843,4 Set flags
-c $8848 Determine action when out of screen
-D $8848 Used by the routine at #R$8825.
-R $8848 I:IX Sprite data of enemy
+C $8847,1 Return to #R$8A41
 C $8848,4 Test flag
 C $884C,2 If not set, skip ahead
 C $884E,1 Random number
@@ -1329,13 +1333,14 @@ C $8857,3 Set flag
 C $885A,2 ...
 C $885C,3 Deallocate and return
 c $885F Create enemy shot and move
-D $885F Used by the routine at #R$8790.
+D $885F Used by the routine at #R$8790. Called and jumped.
 R $885F I:IX Sprite data of enemy
 C $885F,3 Create enemy shot
 C $8862,3 Get polar y
 C $8865,2 Is it < $22
 C $8867,2 Then jump ahead
 C $8869,3 Decrement polar y
+C $886C,4 Set counter
 C $8870,4 Set sprite type
 C $8874,3 Mark for pattern reload
 c $8878 Polar Y of enemy < $22
@@ -1343,6 +1348,7 @@ D $8878 Used by the routine at #R$885F.
 C $8878,3 Get sprite countdown
 C $887B,1 Return if not zero
 C $887C,1 ...
+C $887D,3 Get counter
 C $8884,3 Get stage data address in IY
 C $8887,1 Random number
 C $888D,3 Decrement polar y
@@ -1354,13 +1360,21 @@ C $8898,2 0 - 15
 N $889C This entry point is used by the routine at #R$88BE.
 C $889C,3 Ship polar x
 C $889F,3 Move towards x
+C $88A3,3 Set counter
+C $88A6,1 Return to #R$8A41
 c $88A7 Routine at 88A7
 D $88A7 Used by the routine at #R$8878.
+C $88A7,3 Get counter
+C $88AA,1 Counter - 1
+C $88AB,1 Store in B
 C $88AC,3 Add polar x
 C $88AF,2 Mod 64
 C $88B1,3 Set polar x
+C $88B4,2 16
+C $88B6,1 16 + counter - 1
 C $88B7,3 Set sprite type
 C $88BA,3 Mark for pattern reload
+C $88BD,1 Return to #R$8A41
 c $88BE Routine at 88BE
 D $88BE Used by the routine at #R$8878.
 C $88BE,1 Random number
@@ -1368,8 +1382,13 @@ C $88BF,2 0 - 7
 C $88C1,3 Table base address
 C $88C4,1 Add A to HL
 C $88C5,1 Get table value
+C $88C6,3 Set counter
+C $88C9,2 Compare to $40
+C $88CB,2 If < $40 then ...
+C $88CD,2 If > $40 then ...
 N $88CF This entry point is used by the routine at #R$8878.
 C $88CF,4 Set flags
+C $88D3,1 Return to #R$8A41
 c $88D4 Routine at 88D4
 D $88D4 Used by the routines at #R$8878 and #R$88BE.
 C $88D8,3 Decrement polar y
@@ -1378,11 +1397,14 @@ C $88E5,3 Mark for pattern reload
 C $88E8,3 Get polar y
 C $88EB,2 Return if not 8
 C $88ED,1 ...
+C $88EE,4 Set counter
+C $88F2,1 Return to #R$8A41
 c $88F3 Routine at 88F3
 D $88F3 Used by the routine at #R$88D4.
 C $88F3,3 Increment polar y
 C $88F6,4 Set type to enemy
 C $88FA,3 Mark for pattern reload
+C $88FD,1 Return to #R$8A41
 c $88FE Update sprite path
 D $88FE Used by the routine at #R$8790.
 @ $88FE label=update_sprite_path
@@ -1400,11 +1422,11 @@ C $8917,3 Set path address
 C $891A,3 ...
 C $891D,1 Get path byte
 C $891E,2 If upper nybble >= 1
-C $8920,2 Then jump ahead
+C $8920,2 Then jump ahead to update counter
 C $8922,1 Else decrement lower nybble
-C $8923,3 If negative then ...
-C $8926,2 If zero then ...
-C $8928,3 If positive then ...
+C $8923,3 If negative then set sprite flag to $18 if path byte matches and return
+C $8926,2 If zero then set sprite flag to $04 and return
+C $8928,3 If positive then set sprite flag to $40 and return
 c $892B Upper nybble >= 1
 D $892B Used by the routine at #R$88FE.
 C $892B,2 Isolate upper nybble
@@ -1412,14 +1434,15 @@ C $892D,1 Save it
 C $892E,3 Get counter
 C $8931,2 And apply upper nybble
 C $8933,1 ...
-c $8936 Move sprite along path
+C $8934,2 Jump back into #R$88FE
+c $8936 Move sprite along path and update sprite type
 D $8936 Used by the routine at #R$88FE.
 R $8936 I:IX Sprite data
 R $8936 I:HL Path address
-@ $8936 label=move_sprite_along_path
+@ $8936 label=move_animate_sprite_along_path
 C $8936,1 Get path byte
 C $8937,3 Get wave data address
-C $893A,4 If bit 0 of byte 3 is reset
+C $893A,4 If bit 0 of counter is reset
 C $893E,2 Then skip moving to next byte
 C $8940,1 Else move to next byte
 C $8941,2 Is bit 7 reset
@@ -1455,6 +1478,7 @@ C $897C,1 Polar x
 C $897D,2 Mod 64
 C $897F,3 Set polar x
 C $8982,3 Mark for pattern reload
+C $8985,1 Return to #R$8A41
 c $8986 Set sprite flags to $18 if ...
 D $8986 Used by the routine at #R$88FE.
 R $8986 I:IX Sprite data
@@ -1464,20 +1488,23 @@ C $8986,1 Advance path address
 C $8987,3 Get counter
 C $898A,2 Isolate sprite position in wave
 C $898C,1 Compare with path byte
-C $898D,2 If different, then back to update sprite path
+C $898D,2 If different, then jump back to #R$88FE
 C $898F,4 Set flags
+C $8993,1 Return to #R$8A41
 c $8994 Set sprite flags to $04
 D $8994 Used by the routine at #R$88FE.
 R $8994 I:IX Sprite data
 R $8994 I:HL Path address
 @ $8994 label=set_sprite_flags_to_04
 C $8994,4 Set flags
+C $8998,1 Return to #R$8A41
 c $8999 Set sprite flags to $40
 D $8999 Used by the routine at #R$88FE.
 R $8999 I:IX Sprite data
 R $8999 I:HL Path address
 @ $8999 label=set_sprite_flags_to_40
 C $8999,4 Set flags
+C $899D,1 Return to #R$8A41
 c $899E Handle sprite types $18 - $1C
 D $899E Used by the routine at #R$8790.
 @ $899E label=handle_sprite_types_18_1C
@@ -1517,13 +1544,56 @@ C $89DF,2 And apply upper nybble
 C $89E1,1 ...
 C $89E2,3 ...
 C $89E5,3 Set path address
-C $89E8,3 ...
+C $89E8,3 ... (continue to #R$89EB)
+c $89EB Move sprite along path
+D $89EB Used by the routine at #R$899E. Identical to code at #R$8936
+@ $89EB label=move_sprite_along_path
 C $89EB,1 Get path byte
 C $89EC,3 Get wave data address
+C $89EF,4 If bit 0 of counter is reset
+C $89F3,2 Then skip moving to next byte
+C $89F5,1 Else move to next byte
+C $89F6,2 Is bit 7 reset
+C $89F8,2 Then skip ahead
+C $89FA,2 Isolate bits 0-3
+C $89FC,2 If 1 (inc polar y)
+C $89FE,2 Then skip ahead
+C $8A00,2 If 4 (dec polar y)
+C $8A02,2 Then skip ahead
+C $8A04,2 Else flip bits 1 and 3
 C $8A06,3 Get polar x
 C $8A09,3 Get polar y
+N $8A0C Identical to code at #R$895A except doesn't set sprite type
+C $8A0C,2 If bit for incrementing polar y is reset
+C $8A0E,2 Then skip next
+C $8A10,1 Increment polar y
+C $8A11,2 If bit for decrementing polar y is reset
+C $8A13,2 Then skip next
+C $8A15,1 Decrement polar y
+C $8A16,2 If bit for decrementing polar x is reset
+C $8A18,2 Then skip next
+C $8A1A,1 Decrement polar x
+C $8A1B,2 If bit for incrementing polar x is reset
+C $8A1D,2 Then skip next
+C $8A1F,1 Increment polar x
+C $8A20,3 Set polar y
+C $8A23,1 Polar x
+C $8A24,2 Mod 64
+C $8A26,3 Set polar x
 C $8A29,3 Mark for pattern reload
+C $8A2C,1 Return to #R$8A41
+c $8A2D Routine at 8A2D
+D $8A2D Used by the routine at #R$899E.
+C $8A2D,3 Get polar y
+C $8A30,2 If $F2 (-14)
+C $8A32,3 Then jump to handler
+C $8A35,3 Decrement polar y
 C $8A38,3 Mark for pattern reload
+C $8A3B,1 Return to #R$8A41
+c $8A3C Set sprite flags to $04
+D $8A3C Used by the routine at #R$899E.
+C $8A3C,4 Set flags
+C $8A40,1 Return to #R$8A41
 c $8A41 Return from sprite handler
 D $8A41 Sprite handler branching out from #R$8600
 @ $8A41 label=return_from_sprite_handler
