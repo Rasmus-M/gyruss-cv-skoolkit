@@ -1242,10 +1242,15 @@ C $8792,3 If so, jump ahead
 C $8795,2 Is sprite type >= $12
 C $8797,3 If so, jump ahead
 N $879A Sprite type $0E - $11 (enemies)
+C $879A,4 Check bit 7 of flags
 C $879E,3 Update sprite path
-C $87A5,3 Move towards viewer
+C $87A1,4 Check bit 7 of polar y
+C $87A5,3 If set, move towards viewer
+C $87A8,4 Check bit 6 of flags
 C $87AC,2 Create map entry for enemy sprite
+C $87AE,4 Check bit 2 of flags
 C $87B2,3 Move towards viewer
+C $87B5,4 Check bit 0 of flags
 C $87B9,3 Create enemy shot and ...
 C $87BC,3 Sprite countdown 2
 C $87BF,1 Return if not zero
@@ -1535,6 +1540,8 @@ C $89B1,2 Then skip next
 C $89B3,2 Else set sprite type to $1A
 C $89B5,3 This means rotate between $1A, $1B, and $1C
 N $89B8 Sprite types $18 - $19 (three spheres, star shape) plus $1A - 1C
+C $89B8,4 Text flag bit 7
+C $89BC,2 If reset, move towards viewer
 C $89BE,3 Return if countdown
 C $89C1,1 is not zero
 C $89C2,1 ...
@@ -2706,7 +2713,7 @@ C $97CA,2 Then move on to next sprite
 C $97CC,3 Is it chance stage?
 C $97CF,2 ...
 C $97D1,2 Then move to next sprite
-C $97D3,4 If the flag for ? set in sprite data?
+C $97D3,4 If the flag bit 7 set in sprite data
 C $97D7,2 Then move to next sprite
 C $97D9,4 Ship sprite data
 C $97DD,3 Is polar x = ship x?
@@ -3094,7 +3101,9 @@ c $9AC3 VDP write byte (RST $10)
 D $9AC3 Used by the routine at #R$800F.
 R $9AC3 I:DE Write address I:A byte to write
 @ $9AC3 label=vdp_write_byte
+C $9AC4,1 LSB
 C $9AC5,2 Set LSB of VDP address
+C $9AC7,1 MSB
 C $9AC8,2 Setup write address
 C $9ACA,2 Set MSB of VDP address
 C $9ACD,2 Write byte
@@ -3115,8 +3124,6 @@ C $9AE7,3 $727D
 C $9AEB,3 $7287
 C $9AEF,3 $7291
 C $9AF3,3 $729B
-C $9AFC,4 Set as not allocated
-C $9B04,4 Set y
 c $9B0D Play tune?
 D $9B0D Used by the routines at #R$9BD9, #R$9C1C and #R$9E91.
 R $9B0D I:A Index of tune (0 - 6)
@@ -3148,13 +3155,10 @@ c $9C4B Routine at 9C4B
 D $9C4B Used by the routine at #R$9C39.
 c $9C7E Routine at 9C7E
 D $9C7E Used by the routine at #R$9C4B.
-C $9C7E,3 Get y
 N $9C87 This entry point is used by the routine at #R$9C4B.
 N $9C8A This entry point is used by the routines at #R$9BFD, #R$9C1C and #R$9C4B.
 c $9C92 Routine at 9C92
 D $9C92 Used by the routines at #R$9BF8 and #R$9C46.
-C $9C93,3 Get x
-C $9C99,3 Dec x
 c $9CA0 Routine at 9CA0
 D $9CA0 Used by the routine at #R$9C92.
 C $9CA0,3 Set x

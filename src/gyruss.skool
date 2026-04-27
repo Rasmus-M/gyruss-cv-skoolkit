@@ -1748,15 +1748,15 @@ c$8790 CP $0E          ; Is sprite type < $0E
  $8795 CP $12          ; Is sprite type >= $12
  $8797 JP NC,$899E     ; If so, jump ahead
 ; Sprite type $0E - $11 (enemies)
- $879A BIT 7,(IX+$07)  ;
+ $879A BIT 7,(IX+$07)  ; Check bit 7 of flags
  $879E JP NZ,$88FE     ; Update sprite path
- $87A1 BIT 7,(IX+$01)  ;
- $87A5 JP NZ,$8825     ; Move towards viewer
- $87A8 BIT 6,(IX+$07)  ;
+ $87A1 BIT 7,(IX+$01)  ; Check bit 7 of polar y
+ $87A5 JP NZ,$8825     ; If set, move towards viewer
+ $87A8 BIT 6,(IX+$07)  ; Check bit 6 of flags
  $87AC JR NZ,$87D5     ; Create map entry for enemy sprite
- $87AE BIT 2,(IX+$07)  ;
+ $87AE BIT 2,(IX+$07)  ; Check bit 2 of flags
  $87B2 JP NZ,$8825     ; Move towards viewer
- $87B5 BIT 0,(IX+$07)  ;
+ $87B5 BIT 0,(IX+$07)  ; Check bit 0 of flags
  $87B9 JP NZ,$885F     ; Create enemy shot and ...
  $87BC LD A,($7260)    ; Sprite countdown 2
  $87BF OR A            ; Return if not zero
@@ -2099,8 +2099,8 @@ c$899E CP $18         ; Is sprite type < $18
  $89B3 LD A,$1A       ; Else set sprite type to $1A
 *$89B5 LD (IX+$00),A  ; This means rotate between $1A, $1B, and $1C
 ; Sprite types $18 - $19 (three spheres, star shape) plus $1A - 1C
-*$89B8 BIT 7,(IX+$07) ;
- $89BC JR Z,$8A2D     ;
+*$89B8 BIT 7,(IX+$07) ; Text flag bit 7
+ $89BC JR Z,$8A2D     ; If reset, move towards viewer
  $89BE LD A,($71EE)   ; Return if countdown
  $89C1 OR A           ; is not zero
  $89C2 RET NZ         ; ...
@@ -3671,7 +3671,7 @@ c$9796 LD A,($7182)    ; Allocated sprites
  $97CC LD A,($71EB)    ; Is it chance stage?
  $97CF BIT 3,A         ; ...
  $97D1 JR NZ,$97F3     ; Then move to next sprite
- $97D3 BIT 7,(IX+$07)  ; If the flag for ? set in sprite data?
+ $97D3 BIT 7,(IX+$07)  ; If the flag bit 7 set in sprite data
  $97D7 JR NZ,$97F3     ; Then move to next sprite
  $97D9 LD IY,$7002     ; Ship sprite data
  $97DD LD A,(IX+$01)   ; Is polar x = ship x?
@@ -4131,9 +4131,9 @@ c$9ABB LD L,A        ;
 ; I:DE Write address I:A byte to write
 @label=vdp_write_byte
 c$9AC3 PUSH AF       ;
- $9AC4 LD A,E        ;
+ $9AC4 LD A,E        ; LSB
  $9AC5 OUT ($BF),A   ; Set LSB of VDP address
- $9AC7 LD A,D        ;
+ $9AC7 LD A,D        ; MSB
  $9AC8 OR $40        ; Setup write address
  $9ACA OUT ($BF),A   ; Set MSB of VDP address
  $9ACC POP AF        ;
@@ -4173,9 +4173,9 @@ c$9ADE CALL $1FD6      ; TURN_OFF_SOUND
  $9AF3 LD ($7276),HL   ; $729B
  $9AF6 LD B,$04        ;
  $9AF8 LD IX,$727D     ;
-*$9AFC LD (IX+$00),$FF ; Set as not allocated
+*$9AFC LD (IX+$00),$FF ;
  $9B00 LD (IX+$06),$50 ;
- $9B04 LD (IX+$08),$05 ; Set y
+ $9B04 LD (IX+$08),$05 ;
  $9B08 ADD IX,DE       ;
  $9B0A DJNZ $9AFC      ;
  $9B0C RET             ;
@@ -4406,7 +4406,7 @@ c$9C4B LD (IX+$05),A ;
 ; Routine at 9C7E
 ;
 ; Used by the routine at #R$9C4B.
-c$9C7E LD E,(IX+$08) ; Get y
+c$9C7E LD E,(IX+$08) ;
  $9C81 LD (IX+$07),E ;
  $9C84 OR (IX+$06)   ;
 ; This entry point is used by the routine at #R$9C4B.
@@ -4421,10 +4421,10 @@ c$9C7E LD E,(IX+$08) ; Get y
 ;
 ; Used by the routines at #R$9BF8 and #R$9C46.
 c$9C92 LD E,A        ;
- $9C93 LD A,(IX+$09) ; Get x
+ $9C93 LD A,(IX+$09) ;
  $9C96 AND A         ;
  $9C97 JR Z,$9CA0    ;
- $9C99 DEC (IX+$09)  ; Dec x
+ $9C99 DEC (IX+$09)  ;
  $9C9C JR NZ,$9CA3   ;
  $9C9E INC HL        ;
  $9C9F RET           ;
