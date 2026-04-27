@@ -44,7 +44,7 @@ Contains data for 32 sprites, or actually entities, since only those entities wi
 </tr>
 <tr>
 <td class="default" colspan="1" rowspan="1">$01</td>
-<td class="" colspan="1" rowspan="1">Polar y (depth, 0 is closest (normal ship position), 116 is furthest away)</td>
+<td class="" colspan="1" rowspan="1">Polar y (depth, -11 is closest, 0 is normal ship position, 116 is furthest away)</td>
 </tr>
 <tr>
 <td class="default" colspan="1" rowspan="1">$02</td>
@@ -52,23 +52,23 @@ Contains data for 32 sprites, or actually entities, since only those entities wi
 </tr>
 <tr>
 <td class="default" colspan="1" rowspan="1">$03</td>
-<td class="" colspan="1" rowspan="1">Close to polar y for ship, counter, upper nybble path data, lower nybble sprite position in wave</td>
+<td class="" colspan="1" rowspan="1">Movement counter, velocity. For enemy, upper nybble from path data, lower nybble sprite position in wave</td>
 </tr>
 <tr>
 <td class="default" colspan="1" rowspan="1">$04</td>
-<td class="" colspan="1" rowspan="1">Polar x + 2 of pattern loaded in <a href="44427.html">load_sprite_pattern</a></td>
+<td class="" colspan="1" rowspan="1">Loaded pattern index within sprite type, $FF means not loaded</td>
 </tr>
 <tr>
 <td class="default" colspan="1" rowspan="1">$05</td>
-<td class="" colspan="1" rowspan="1">Close to polar x for ship, counter</td>
+<td class="" colspan="1" rowspan="1">Copy of sprite type to check for pattern reload</td>
 </tr>
 <tr>
 <td class="default" colspan="1" rowspan="1">$06</td>
-<td class="" colspan="1" rowspan="1">Replacement sprite type, or LSB of path? address</td>
+<td class="" colspan="1" rowspan="1">Replacement sprite type when destroyed, or LSB of path address</td>
 </tr>
 <tr>
 <td class="default" colspan="1" rowspan="1">$07</td>
-<td class="" colspan="1" rowspan="1">Flags, or MSB of path? address</td>
+<td class="" colspan="1" rowspan="1">Flags, velocity, or MSB of path address</td>
 </tr>
 <tr>
 <td class="default" colspan="1" rowspan="1">$08</td>

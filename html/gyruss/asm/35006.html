@@ -24,7 +24,7 @@ Next: <a href="35028.html">88D4</a>
 </td>
 </tr>
 </table>
-<div class="description">88BE: Routine at 88BE</div>
+<div class="description">88BE: Enemy movement: Called with random probability.</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -81,13 +81,13 @@ Used by the routine at <a href="34936.html">L8878</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="35019"></span>88CB</td>
 <td class="instruction">JR C,<a href="34936.html#34972">L8878_0</a></td>
-<td class="comment-1" rowspan="1">If &lt; $40 then ...</td>
+<td class="comment-1" rowspan="1">If &lt; $40 then jump to move towards ship</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35021"></span>88CD</td>
 <td class="instruction">JR NZ,<a href="35028.html">L88D4</a></td>
-<td class="comment-1" rowspan="1">If &gt; $40 then ...</td>
+<td class="comment-1" rowspan="1">If &gt; $40 then jump ahead</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">

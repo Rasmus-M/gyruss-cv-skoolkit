@@ -7,7 +7,7 @@ w $7000 Center of projection
 W $7000,2,2
 b $7002 Sprite data
 D $7002 Contains data for 32 sprites, or actually entities, since only those entities with entries in the #R$7183 are rendered as sprites. Other entities have entries in the #R$7207 and are rendered in a bitmap at the center of the screen.
-D $7002 #TABLE(default, default) { =h Byte offset | =h Purpose } { $00 | Sprite type, or $FF if not allocated } { $01 | Polar y (depth, 0 is closest (normal ship position), 116 is furthest away) } { $02 | Polar x (angle, 0 at bottom center, moving clockwise to 16 at the left side, 32 at the top, and 48 at the right side) } { $03 | Close to polar y for ship, counter, upper nybble path data, lower nybble sprite position in wave } { $04 | Polar x + 2 of pattern loaded in #R$AD8B } { $05 | Close to polar x for ship, counter } { $06 | Replacement sprite type, or LSB of path? address } { $07 | Flags, or MSB of path? address } { $08 | Screen y } { $09 | Screen x } { $0A | Pattern } { $0B | Color } TABLE#
+D $7002 #TABLE(default, default) { =h Byte offset | =h Purpose } { $00 | Sprite type, or $FF if not allocated } { $01 | Polar y (depth, -11 is closest, 0 is normal ship position, 116 is furthest away) } { $02 | Polar x (angle, 0 at bottom center, moving clockwise to 16 at the left side, 32 at the top, and 48 at the right side) } { $03 | Movement counter, velocity. For enemy, upper nybble from path data, lower nybble sprite position in wave } { $04 | Loaded pattern index within sprite type, $FF means not loaded } { $05 | Copy of sprite type to check for pattern reload } { $06 | Replacement sprite type when destroyed, or LSB of path address } { $07 | Flags, velocity, or MSB of path address } { $08 | Screen y } { $09 | Screen x } { $0A | Pattern } { $0B | Color } TABLE#
 D $7002 #TABLE(default, default) { =h Sprite type | =h Pattern example | =h Description } { $00 | #UDG$B9E6 | Ship body } { $01 | #UDG$BA66 | Ship exhaust } { $02 | #UDG$BAE6 | Shot } { $03 | #UDG$BB06 | Double shot pickup } { $04 | #UDG$BB0E | Dots (another explosion) } { $05 | #UDG$BB2E | Destroyed enemy  } { $06 | #UDG$BB4E | Number 5 } { $07 | #UDG$BB56 | Number 10 } { $08 | #UDG$BB5E | Number 15 } { $09 | #UDG$BB66 | Number 20 } { $0A | #UDG$BB6E | Number 25 } { $0B | #UDG$BB76 | Number 30 } { $0C | #UDG$BB7E | Number 00 } { $0D | #UDG$BDE6 | Explosion dot } { $0E | #UDG$BB86 | Enemy } { $0F | #UDG$BC06 | Enemy } { $10 | #UDG$BC86 | Enemy } { $11 | #UDG$BD06 | Enemy } { $12 | #UDG$BD86 | Enemy missile 1 } { $13 | #UDG$BDA6 | Enemy missile 2 } { $14 | #UDG$BDC6 | Meteor } { $15 | #UDG$BDEE | Laser fence end 1 } { $16 | #UDG$BE4E | Laser fence end 2 } { $17 | #UDG$BEAE | Laser fence center } { $18 | #UDG$BF0E | Star shaped enemy } { $19 | #UDG$BF2E | Three spheres } { $1A | #UDG$BF4E | Enemy (chance stage) 1 } { $1B | #UDG$BF6E | Enemy (chance stage) 2 } { $1C | #UDG$BF8E | Enemy (chance stage) 3 } TABLE#
 @ $7002 label=sprite_data
 B $7002,384,12
@@ -962,7 +962,7 @@ t $853C STAGE message
 T $853C,5,5
 b $8541 Stage data (8 bytes per stage)
 D $8541 #TABLE(default, default) { =h Byte offset | =h Purpose } { $00 | Speed } { $01 | Max enemy shots } { $02 | Enemy shooting speed } { $03 | Unknown } { $04 | Unknown } { $05 | Unknown } { $06 | Time between waves } { $07 | Unknown } TABLE#
-@ $8541 label=stage_data
+@ $8541 label=stage_data_table
 B $8541,64,8
 t $8581 PLAYER message
 @ $8581 label=player_msg
@@ -1110,6 +1110,7 @@ C $869A,3 Set new type
 C $869D,4 Counter
 C $86A1,4 No replacement type
 C $86A5,4 Set color
+C $86A9,4 Set loaded patten index to none
 C $86AD,1 Load sprite pattern
 C $86AE,2 Save sprite data address
 C $86B0,1 Allocate new sprite for last digits of points
@@ -1290,7 +1291,7 @@ C $880D,3 Decrement polar y
 C $8810,1 Return to #R$8A41
 C $8811,3 Increment polar y
 C $8814,1 Return to #R$8A41
-c $8815 Return enemy to map
+c $8815 Enemy movement: Return enemy to map
 D $8815 Used by the routine at #R$8801.
 R $8815 I:IX Sprite data of enemy
 @ $8815 label=return_enemy_to_map
@@ -1301,7 +1302,7 @@ C $881C,1 ...
 C $881D,3 Set a flag
 C $8820,2 ...
 C $8822,3 Deallocate sprite and return
-c $8825 Move enemy towards viewer
+c $8825 Enemy movement: Move enemy towards viewer
 D $8825 Used by the routine at #R$8790.
 R $8825 I:IX Sprite data of enemy
 @ $8825 label=move_towards_viewer
@@ -1311,7 +1312,7 @@ C $882C,3 Decrement polar y
 C $882F,3 Get polar y
 C $8832,2 Return if not $F2 (-14)
 C $8834,1 Else continue to #R$8835
-c $8835 Determine action when out of screen
+c $8835 Enemy movement: Determine action when out of screen
 D $8835 Used by the routine at #R$8A2D.
 R $8835 I:IX Sprite data of enemy
 @ $8835 label=handle_out_of_screen
@@ -1332,7 +1333,7 @@ C $8856,1 ...
 C $8857,3 Set flag
 C $885A,2 ...
 C $885C,3 Deallocate and return
-c $885F Create enemy shot and move
+c $885F Enemy movement: Create enemy shot and move
 D $885F Used by the routine at #R$8790. Called and jumped.
 R $885F I:IX Sprite data of enemy
 C $885F,3 Create enemy shot
@@ -1343,26 +1344,31 @@ C $8869,3 Decrement polar y
 C $886C,4 Set counter
 C $8870,4 Set sprite type
 C $8874,3 Mark for pattern reload
-c $8878 Polar Y of enemy < $22
+c $8878 Enemy movement: Polar Y of enemy < $22
 D $8878 Used by the routine at #R$885F.
 C $8878,3 Get sprite countdown
 C $887B,1 Return if not zero
 C $887C,1 ...
 C $887D,3 Get counter
+C $8880,2 If >= $40
+C $8882,2 Then jump to ...
 C $8884,3 Get stage data address in IY
 C $8887,1 Random number
+C $8888,3 AND stage data byte 3 ($3F, $1F, $0F)
+C $888B,2 If not all zeros, then jump (more likely on earlier stages)
 C $888D,3 Decrement polar y
 C $8890,3 Get polar y
 C $8893,2 If it's 8
 C $8895,2 Then jump ahead
 C $8897,1 Random number
 C $8898,2 0 - 15
+C $889A,2 If it's not 0 then jump ahead
 N $889C This entry point is used by the routine at #R$88BE.
 C $889C,3 Ship polar x
 C $889F,3 Move towards x
 C $88A3,3 Set counter
 C $88A6,1 Return to #R$8A41
-c $88A7 Routine at 88A7
+c $88A7 Enemy movement: Called with random probability.
 D $88A7 Used by the routine at #R$8878.
 C $88A7,3 Get counter
 C $88AA,1 Counter - 1
@@ -1375,7 +1381,7 @@ C $88B6,1 16 + counter - 1
 C $88B7,3 Set sprite type
 C $88BA,3 Mark for pattern reload
 C $88BD,1 Return to #R$8A41
-c $88BE Routine at 88BE
+c $88BE Enemy movement: Called with random probability.
 D $88BE Used by the routine at #R$8878.
 C $88BE,1 Random number
 C $88BF,2 0 - 7
@@ -1384,28 +1390,33 @@ C $88C4,1 Add A to HL
 C $88C5,1 Get table value
 C $88C6,3 Set counter
 C $88C9,2 Compare to $40
-C $88CB,2 If < $40 then ...
-C $88CD,2 If > $40 then ...
+C $88CB,2 If < $40 then jump to move towards ship
+C $88CD,2 If > $40 then jump ahead
 N $88CF This entry point is used by the routine at #R$8878.
 C $88CF,4 Set flags
 C $88D3,1 Return to #R$8A41
-c $88D4 Routine at 88D4
+c $88D4 Enemy movement: Counter is >(=) $40
 D $88D4 Used by the routines at #R$8878 and #R$88BE.
+R $88D4 I:A counter (IX+$03)
+C $88D4,2 If $41
+C $88D6,2 Then jump to next routine
 C $88D8,3 Decrement polar y
+C $88DB,3 Get ship polar x
 C $88DE,3 Move towards x
+C $88E1,4 Set sprite type
 C $88E5,3 Mark for pattern reload
 C $88E8,3 Get polar y
 C $88EB,2 Return if not 8
 C $88ED,1 ...
 C $88EE,4 Set counter
 C $88F2,1 Return to #R$8A41
-c $88F3 Routine at 88F3
+c $88F3 Enemy movement: Counter is $41
 D $88F3 Used by the routine at #R$88D4.
 C $88F3,3 Increment polar y
 C $88F6,4 Set type to enemy
 C $88FA,3 Mark for pattern reload
 C $88FD,1 Return to #R$8A41
-c $88FE Update sprite path
+c $88FE Enemy movement: Update sprite path
 D $88FE Used by the routine at #R$8790.
 @ $88FE label=update_sprite_path
 C $8903,3 Create enemy shot
@@ -1427,7 +1438,7 @@ C $8922,1 Else decrement lower nybble
 C $8923,3 If negative then set sprite flag to $18 if path byte matches and return
 C $8926,2 If zero then set sprite flag to $04 and return
 C $8928,3 If positive then set sprite flag to $40 and return
-c $892B Upper nybble >= 1
+c $892B Enemy movement: Upper nybble >= 1
 D $892B Used by the routine at #R$88FE.
 C $892B,2 Isolate upper nybble
 C $892D,1 Save it
@@ -1435,7 +1446,7 @@ C $892E,3 Get counter
 C $8931,2 And apply upper nybble
 C $8933,1 ...
 C $8934,2 Jump back into #R$88FE
-c $8936 Move sprite along path and update sprite type
+c $8936 Enemy movement: Move sprite along path and update sprite type
 D $8936 Used by the routine at #R$88FE.
 R $8936 I:IX Sprite data
 R $8936 I:HL Path address
@@ -1479,7 +1490,7 @@ C $897D,2 Mod 64
 C $897F,3 Set polar x
 C $8982,3 Mark for pattern reload
 C $8985,1 Return to #R$8A41
-c $8986 Set sprite flags to $18 if ...
+c $8986 Enemy movement: Set sprite flags to $18 if ...
 D $8986 Used by the routine at #R$88FE.
 R $8986 I:IX Sprite data
 R $8986 I:HL Path address
@@ -1491,14 +1502,14 @@ C $898C,1 Compare with path byte
 C $898D,2 If different, then jump back to #R$88FE
 C $898F,4 Set flags
 C $8993,1 Return to #R$8A41
-c $8994 Set sprite flags to $04
+c $8994 Enemy movement: Set sprite flags to $04
 D $8994 Used by the routine at #R$88FE.
 R $8994 I:IX Sprite data
 R $8994 I:HL Path address
 @ $8994 label=set_sprite_flags_to_04
 C $8994,4 Set flags
 C $8998,1 Return to #R$8A41
-c $8999 Set sprite flags to $40
+c $8999 Enemy movement: Set sprite flags to $40
 D $8999 Used by the routine at #R$88FE.
 R $8999 I:IX Sprite data
 R $8999 I:HL Path address
@@ -1512,7 +1523,7 @@ C $899E,2 Is sprite type < $18
 C $89A0,1 Then return
 C $89A1,2 Is sprite type < $1A
 C $89A3,2 If so, jump ahead
-N $89A5 Sprite types $1A - $1C (circular enemy)
+N $89A5 Sprite types $1A - $1C (circular enemies)
 C $89A5,1 B = sprite type
 C $89A6,3 Frame counter
 C $89A9,2 Mod 4
@@ -1545,7 +1556,7 @@ C $89E1,1 ...
 C $89E2,3 ...
 C $89E5,3 Set path address
 C $89E8,3 ... (continue to #R$89EB)
-c $89EB Move sprite along path
+c $89EB Circular enemy movement: Move sprite along path
 D $89EB Used by the routine at #R$899E. Identical to code at #R$8936
 @ $89EB label=move_sprite_along_path
 C $89EB,1 Get path byte
@@ -1582,7 +1593,7 @@ C $8A24,2 Mod 64
 C $8A26,3 Set polar x
 C $8A29,3 Mark for pattern reload
 C $8A2C,1 Return to #R$8A41
-c $8A2D Routine at 8A2D
+c $8A2D Circular enemy movement: Move enemy towards viewer
 D $8A2D Used by the routine at #R$899E.
 C $8A2D,3 Get polar y
 C $8A30,2 If $F2 (-14)
@@ -1590,7 +1601,7 @@ C $8A32,3 Then jump to handler
 C $8A35,3 Decrement polar y
 C $8A38,3 Mark for pattern reload
 C $8A3B,1 Return to #R$8A41
-c $8A3C Set sprite flags to $04
+c $8A3C Circular enemy movement: Set sprite flags to $04
 D $8A3C Used by the routine at #R$899E.
 C $8A3C,4 Set flags
 C $8A40,1 Return to #R$8A41
@@ -1600,6 +1611,7 @@ D $8A41 Sprite handler branching out from #R$8600
 C $8A41,3 Get sprite type
 C $8A44,3 Same as before?
 C $8A47,2 Skip ahead if so
+C $8A49,4 Set loaded patten index to none
 C $8A4D,1 Load sprite pattern
 N $8A4E This entry point is used by the routine at #R$867D.
 C $8A4E,1 Restore sprite allocation table address
@@ -1681,22 +1693,22 @@ C $8ADC,2 $10
 C $8ADE,1 $10 + direction, i.e. $0F or $11
 C $8ADF,3 Change sprite type?
 C $8AE2,3 Increment counter
-c $8AE6 Update sprite types $0E - $11
+c $8AE6 Reset enemy sprite types after dying
 D $8AE6 Used by the routine at #R$8139.
-@ $8AE6 label=update_enemy_sprite_types
+@ $8AE6 label=reset_enemy_sprite_types
 C $8AE6,4 Sprite data
 C $8AEA,3 Size of each sprite
 C $8AED,2 32 sprites
 C $8AEF,3 Get type
-C $8AF2,2 If < 14 then move on
+C $8AF2,2 If < $0E then move on
 C $8AF4,2 ...
-C $8AF6,2 If >= 18 then move on
+C $8AF6,2 If >= $12 then move on
 C $8AF8,2 ...
-C $8AFA,4 For types $0F - $11 (enemies), test flag bit 6
+C $8AFA,4 For types $0E - $11 (enemies), test flag bit 6
 C $8AFE,2 If not set, move on
 C $8B00,4 Set type to $10
 C $8B04,4 Set flags to $0C
-C $8B08,4 Set ? to $FF
+C $8B08,4 Set loaded patten index to none
 C $8B0C,1 Load sprite pattern
 C $8B0D,2 Next sprite
 C $8B0F,2 Loop for 32 sprites
@@ -2062,6 +2074,7 @@ C $8DB3,1 Allocate sprite
 C $8DB4,4 Set type to laser fence center
 C $8DB8,4 Set polar y
 C $8DBC,4 Set color
+C $8DC0,4 Set velocity
 C $8DC4,1 Restore polar x
 C $8DC5,2 Polar x + 4
 C $8DC7,2 Mod 64
@@ -2740,7 +2753,7 @@ C $983B,1 Load sprite pattern
 C $983C,3 Create double shot sprite
 C $983F,4 Polar x velocity
 C $9843,1 Load sprite pattern
-c $9845 Create double shot sprite
+c $9845 Create double shot pickup sprite
 D $9845 Used by the routine at #R$9796.
 @ $9845 label=create_double_shot_sprite
 C $9845,1 Allocate sprite
@@ -2748,6 +2761,7 @@ C $9846,4 Double shot circle
 C $984A,4 Polar y
 C $984E,3 Get ship polar x
 C $9851,3 Set as sprite polar x
+C $9854,4 Set counter
 C $9858,4 Set color
 C $985C,3 Increment total enemies
 C $985F,1 ...
@@ -2992,6 +3006,7 @@ R $9A1C I:IX Sprite data of shot
 C $9A1C,4 Set sprite type to destroyed
 C $9A20,3 Set color
 C $9A23,4 Set animation counter
+C $9A27,4 Set loaded patten index to none
 C $9A2F,3 Decrement active shots
 C $9A32,1 ...
 C $9A33,3 Decrement total enemies (hmm, why here?)
@@ -3024,6 +3039,7 @@ C $9A54,1 ...
 C $9A55,3 Deallocate from map
 C $9A58,4 Set sprite type to destroyed
 C $9A5C,4 Set animation counter
+C $9A60,4 Set loaded patten index to none
 C $9A68,1 Load sprite pattern
 N $9A69 This entry point is used by the routine at #R$9A75.
 C $9A69,3 Decrement total enemies
@@ -4125,6 +4141,8 @@ C $AD73,1 ...
 C $AD74,1 Record sprite index in table
 C $AD75,2 IX now holds sprite address
 C $AD77,4 Init sprite
+C $AD7B,4 Set counter to 0
+C $AD7F,4 Set loaded patten index to none
 C $AD83,4 Set y
 c $AD8B Load sprite pattern (RST $30)
 D $AD8B Ensure sprite pattern is loaded and set screen position Used by the routine at #R$801B.
@@ -4171,7 +4189,7 @@ C $ADD1,2 Divide polar x by 2
 C $ADD3,2 B times
 C $ADD5,1 * 4
 C $ADD6,1 ...
-C $ADD7,1 + number of patterns -1
+C $ADD7,1 + number of patterns - 1
 C $ADD8,1 Copy result into B, which is the index of pattern to fetch within sprite type
 C $ADD9,3 Same as existing?
 C $ADDC,2 If so, skip ahead

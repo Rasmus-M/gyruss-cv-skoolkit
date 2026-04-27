@@ -24,7 +24,7 @@ Next: <a href="34983.html">88A7</a>
 </td>
 </tr>
 </table>
-<div class="description">8878: Polar Y of enemy &lt; $22</div>
+<div class="description">8878: Enemy movement: Polar Y of enemy &lt; $22</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -63,13 +63,13 @@ Used by the routine at <a href="34911.html">L885F</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="34944"></span>8880</td>
 <td class="instruction">CP $40</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If &gt;= $40</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34946"></span>8882</td>
 <td class="instruction">JR NC,<a href="35028.html">L88D4</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Then jump to ...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -87,13 +87,13 @@ Used by the routine at <a href="34911.html">L885F</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="34952"></span>8888</td>
 <td class="instruction">AND (IY+$03)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">AND stage data byte 3 ($3F, $1F, $0F)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34955"></span>888B</td>
 <td class="instruction">JR NZ,<a href="34983.html">L88A7</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If not all zeros, then jump (more likely on earlier stages)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -135,7 +135,7 @@ Used by the routine at <a href="34911.html">L885F</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="34970"></span>889A</td>
 <td class="instruction">JR NZ,<a href="35006.html">L88BE</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If it's not 0 then jump ahead</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">

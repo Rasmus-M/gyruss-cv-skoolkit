@@ -17,16 +17,15 @@ w$7000 DEFW $0000
 ; #TABLE(default, default)
 ; { =h Byte offset | =h Purpose }
 ; { $00 | Sprite type, or $FF if not allocated }
-; { $01 | Polar y (depth, 0 is closest (normal ship position), 116 is furthest
+; { $01 | Polar y (depth, -11 is closest, 0 is normal ship position, 116 is furthest
 ; away) }
 ; { $02 | Polar x (angle, 0 at bottom center, moving clockwise to 16 at the
 ; left side, 32 at the top, and 48 at the right side) }
-; { $03 | Close to polar y for ship, counter, upper nybble path data, lower
-; nybble sprite position in wave }
-; { $04 | Polar x + 2 of pattern loaded in #R$AD8B }
-; { $05 | Close to polar x for ship, counter }
-; { $06 | Replacement sprite type, or LSB of path? address }
-; { $07 | Flags, or MSB of path? address }
+; { $03 | Movement counter, velocity. For enemy, upper nybble from path data, lower nybble sprite position in wave }
+; { $04 | Loaded pattern index within sprite type, $FF means not loaded }
+; { $05 | Copy of sprite type to check for pattern reload }
+; { $06 | Replacement sprite type when destroyed, or LSB of path address }
+; { $07 | Flags, velocity, or MSB of path address }
 ; { $08 | Screen y }
 ; { $09 | Screen x }
 ; { $0A | Pattern }
@@ -1602,7 +1601,7 @@ c$867D CP $04          ; Is sprite type < $04
  $869D LD (IX+$03),$3C ; Counter
  $86A1 LD (IX+$06),$00 ; No replacement type
  $86A5 LD (IX+$0B),$0F ; Set color
- $86A9 LD (IX+$04),$FF ;
+ $86A9 LD (IX+$04),$FF ; Set loaded patten index to none
  $86AD RST $30         ; Load sprite pattern
  $86AE PUSH IX         ; Save sprite data address
  $86B0 RST $28         ; Allocate new sprite for last digits of points
@@ -1809,7 +1808,7 @@ c$87D5 LD A,($71EE)    ; Return if countdown
 *$8811 INC (IX+$01)    ; Increment polar y
  $8814 RET             ; Return to #R$8A41
 
-; Return enemy to map
+; Enemy movement: Return enemy to map
 ;
 ; Used by the routine at #R$8801.
 ;
@@ -1823,7 +1822,7 @@ c$8815 LD A,(IX+$0B) ; Get color (why not pattern?)
  $8820 SET 5,(HL)    ; ...
  $8822 JP $862F      ; Deallocate sprite and return
 
-; Move enemy towards viewer
+; Enemy movement: Move enemy towards viewer
 ;
 ; Used by the routine at #R$8790.
 ;
@@ -1836,7 +1835,7 @@ c$8825 LD (IX+$00),$10 ; Change sprite type
  $8832 CP $F2          ; Return if not $F2 (-14)
  $8834 RET NZ          ; Else continue to #R$8835
 
-; Determine action when out of screen
+; Enemy movement: Determine action when out of screen
 ;
 ; Used by the routine at #R$8A2D.
 ;
@@ -1860,7 +1859,7 @@ c$8835 BIT 3,(IX+$07)  ; If a flag is reset
  $885A SET 5,(HL)      ; ...
  $885C JP $8654        ; Deallocate and return
 
-; Create enemy shot and move
+; Enemy movement: Create enemy shot and move
 ;
 ; Used by the routine at #R$8790.
 ; Called and jumped.
@@ -1876,7 +1875,7 @@ c$885F CALL $8A76      ; Create enemy shot
  $8874 INC (IX+$05)    ; Mark for pattern reload
  $8877 RET             ;
 
-; Enemy movement. Polar Y of enemy < $22
+; Enemy movement: Polar Y of enemy < $22
 ;
 ; Used by the routine at #R$885F.
 c$8878 LD A,($71EE)  ; Get sprite countdown
@@ -1903,7 +1902,7 @@ c$8878 LD A,($71EE)  ; Get sprite countdown
  $88A3 LD (IX+$03),B ; Set counter
  $88A6 RET           ; Return to #R$8A41
 
-; Enemy movement. Called with random probability.
+; Enemy movement: Called with random probability.
 ;
 ; Used by the routine at #R$8878.
 c$88A7 LD A,(IX+$03)  ; Get counter
@@ -1918,7 +1917,7 @@ c$88A7 LD A,(IX+$03)  ; Get counter
  $88BA INC (IX+$05)   ; Mark for pattern reload
  $88BD RET            ; Return to #R$8A41
 
-; Enemy movement. Called with random probability.
+; Enemy movement: Called with random probability.
 ;
 ; Used by the routine at #R$8878.
 c$88BE RST $20         ; Random number
@@ -1934,7 +1933,7 @@ c$88BE RST $20         ; Random number
 *$88CF LD (IX+$07),$10 ; Set flags
  $88D3 RET             ; Return to #R$8A41
 
-; Enemy movement. Counter is >(=) $40
+; Enemy movement: Counter is >(=) $40
 ;
 ; Used by the routines at #R$8878 and #R$88BE.
 ;
@@ -1952,7 +1951,7 @@ c$88D4 CP $41          ; If $41
  $88EE LD (IX+$03),$41 ; Set counter
  $88F2 RET             ; Return to #R$8A41
 
-; Enemy movement. Counter is $41
+; Enemy movement: Counter is $41
 ;
 ; Used by the routine at #R$88D4.
 c$88F3 INC (IX+$01)    ; Increment polar y
@@ -1960,7 +1959,7 @@ c$88F3 INC (IX+$01)    ; Increment polar y
  $88FA INC (IX+$05)    ; Mark for pattern reload
  $88FD RET             ; Return to #R$8A41
 
-; Enemy movement. Update sprite path
+; Enemy movement: Update sprite path
 ;
 ; Used by the routine at #R$8790.
 @label=update_sprite_path
@@ -1987,7 +1986,7 @@ c$88FE LD A,($71EE)  ;
  $8926 JR Z,$8994    ; If zero then set sprite flag to $04 and return
  $8928 JP $8999      ; If positive then set sprite flag to $40 and return
 
-; Enemy movement. Upper nybble >= 1
+; Enemy movement: Upper nybble >= 1
 ;
 ; Used by the routine at #R$88FE.
 c$892B AND $F0       ; Isolate upper nybble
@@ -1997,7 +1996,7 @@ c$892B AND $F0       ; Isolate upper nybble
  $8933 OR B          ; ...
  $8934 JR $890F      ; Jump back into #R$88FE
 
-; Enemy movement. Move sprite along path and update sprite type
+; Enemy movement: Move sprite along path and update sprite type
 ;
 ; Used by the routine at #R$88FE.
 ;
@@ -2044,7 +2043,7 @@ c$8936 LD A,(HL)      ; Get path byte
  $8982 INC (IX+$05)   ; Mark for pattern reload
  $8985 RET            ; Return to #R$8A41
 
-; Enemy movement. Set sprite flags to $18 if ...
+; Enemy movement: Set sprite flags to $18 if ...
 ;
 ; Used by the routine at #R$88FE.
 ;
@@ -2059,7 +2058,7 @@ c$8986 INC HL          ; Advance path address
  $898F LD (IX+$07),$18 ; Set flags
  $8993 RET             ; Return to #R$8A41
 
-; Enemy movement. Set sprite flags to $04
+; Enemy movement: Set sprite flags to $04
 ;
 ; Used by the routine at #R$88FE.
 ;
@@ -2069,7 +2068,7 @@ c$8986 INC HL          ; Advance path address
 c$8994 LD (IX+$07),$04 ; Set flags
  $8998 RET             ; Return to #R$8A41
 
-; Enemy movement. Set sprite flags to $40
+; Enemy movement: Set sprite flags to $40
 ;
 ; Used by the routine at #R$88FE.
 ;
@@ -2087,7 +2086,7 @@ c$899E CP $18         ; Is sprite type < $18
  $89A0 RET C          ; Then return
  $89A1 CP $1A         ; Is sprite type < $1A
  $89A3 JR C,$89B8     ; If so, jump ahead
-; Sprite types $1A - $1C (circular enemy)
+; Sprite types $1A - $1C (circular enemies)
  $89A5 LD B,A         ; B = sprite type
  $89A6 LD A,($71F2)   ; Frame counter
  $89A9 AND $03        ; Mod 4
@@ -2124,7 +2123,7 @@ c$899E CP $18         ; Is sprite type < $18
  $89E5 LD (IX+$06),L  ; Set path address
  $89E8 LD (IX+$07),H  ; ... (continue to #R$89EB)
 
-; Move sprite along path
+; Circular enemy movement: Move sprite along path
 ;
 ; Used by the routine at #R$899E. Identical to code at #R$8936
 @label=move_sprite_along_path
@@ -2163,7 +2162,7 @@ c$89EB LD A,(HL)      ; Get path byte
  $8A29 INC (IX+$05)   ; Mark for pattern reload
  $8A2C RET            ; Return to #R$8A41
 
-; Routine at 8A2D
+; Circular enemy movement: Move enemy towards viewer
 ;
 ; Used by the routine at #R$899E.
 c$8A2D LD A,(IX+$01) ; Get polar y
@@ -2173,7 +2172,7 @@ c$8A2D LD A,(IX+$01) ; Get polar y
  $8A38 INC (IX+$05)  ; Mark for pattern reload
  $8A3B RET           ; Return to #R$8A41
 
-; Set sprite flags to $04
+; Circular enemy movement: Set sprite flags to $04
 ;
 ; Used by the routine at #R$899E.
 c$8A3C LD (IX+$07),$04 ; Set flags
@@ -2186,7 +2185,7 @@ c$8A3C LD (IX+$07),$04 ; Set flags
 c$8A41 LD A,(IX+$00)   ; Get sprite type
  $8A44 CP (IX+$05)     ; Same as before?
  $8A47 JR Z,$8A4E      ; Skip ahead if so
- $8A49 LD (IX+$04),$FF ;
+ $8A49 LD (IX+$04),$FF ; Set loaded patten index to none
  $8A4D RST $30         ; Load sprite pattern
 ; This entry point is used by the routine at #R$867D.
 *$8A4E POP HL          ; Restore sprite allocation table address
@@ -2278,23 +2277,23 @@ c$8AC0 LD B,$01       ; Direction = 1
  $8AE2 INC (IX+$05)   ; Increment counter
  $8AE5 RET            ;
 
-; Update sprite types $0E - $11
+; Reset enemy sprite types after dying
 ;
 ; Used by the routine at #R$8139.
-@label=update_enemy_sprite_types
+@label=reset_enemy_sprite_types
 c$8AE6 LD IX,$7002     ; Sprite data
  $8AEA LD DE,$000C     ; Size of each sprite
  $8AED LD B,$20        ; 32 sprites
 *$8AEF LD A,(IX+$00)   ; Get type
- $8AF2 CP $0E          ; If < 14 then move on
+ $8AF2 CP $0E          ; If < $0E then move on
  $8AF4 JR C,$8B0D      ; ...
- $8AF6 CP $12          ; If >= 18 then move on
+ $8AF6 CP $12          ; If >= $12 then move on
  $8AF8 JR NC,$8B0D     ; ...
- $8AFA BIT 6,(IX+$07)  ; For types $0F - $11 (enemies), test flag bit 6
+ $8AFA BIT 6,(IX+$07)  ; For types $0E - $11 (enemies), test flag bit 6
  $8AFE JR NZ,$8B0D     ; If not set, move on
  $8B00 LD (IX+$00),$10 ; Set type to $10
  $8B04 LD (IX+$07),$0C ; Set flags to $0C
- $8B08 LD (IX+$04),$FF ; Set ? to $FF
+ $8B08 LD (IX+$04),$FF ; Set loaded patten index to none
  $8B0C RST $30         ; Load sprite pattern
 *$8B0D ADD IX,DE       ; Next sprite
  $8B0F DJNZ $8AEF      ; Loop for 32 sprites
@@ -2693,7 +2692,7 @@ c$8D50 LD A,($71F2)    ; Frame counter
  $8DB4 LD (IX+$00),$17 ; Set type to laser fence center
  $8DB8 LD (IX+$01),$25 ; Set polar y
  $8DBC LD (IX+$0B),$0F ; Set color
- $8DC0 LD (IX+$03),$01 ;
+ $8DC0 LD (IX+$03),$01 ; Set velocity
  $8DC4 POP AF          ; Restore polar x
  $8DC5 ADD A,$04       ; Polar x + 4
  $8DC7 AND $3F         ; Mod 64
@@ -3721,7 +3720,7 @@ c$9796 LD A,($7182)    ; Allocated sprites
  $9843 RST $30         ; Load sprite pattern
  $9844 RET             ;
 
-; Create double shot sprite
+; Create double shot pickup sprite
 ;
 ; Used by the routine at #R$9796.
 @label=create_double_shot_sprite
@@ -3730,7 +3729,7 @@ c$9845 RST $28         ; Allocate sprite
  $984A LD (IX+$01),$00 ; Polar y
  $984E LD A,($7004)    ; Get ship polar x
  $9851 LD (IX+$02),A   ; Set as sprite polar x
- $9854 LD (IX+$03),$10 ;
+ $9854 LD (IX+$03),$10 ; Set counter
  $9858 LD (IX+$0B),$02 ; Set color
  $985C LD HL,$7206     ; Increment total enemies
  $985F INC (HL)        ; ...
@@ -4003,7 +4002,7 @@ c$9A08 LD (IY+$00),$7F ; Set sprite type to unallocated
 c$9A1C LD (IX+$00),$04 ; Set sprite type to destroyed
  $9A20 LD (IX+$0B),D   ; Set color
  $9A23 LD (IX+$03),$0F ; Set animation counter
- $9A27 LD (IX+$04),$FF ;
+ $9A27 LD (IX+$04),$FF ; Set loaded patten index to none
  $9A2B LD (IX+$06),$00 ;
  $9A2F LD HL,$7253     ; Decrement active shots
  $9A32 DEC (HL)        ; ...
@@ -4044,7 +4043,7 @@ c$9A49 CP $0E          ; If < $0E
  $9A55 CALL $AB53      ; Deallocate from map
  $9A58 LD (IX+$00),$04 ; Set sprite type to destroyed
  $9A5C LD (IX+$03),$0F ; Set animation counter
- $9A60 LD (IX+$04),$FF ;
+ $9A60 LD (IX+$04),$FF ; Set loaded patten index to none
  $9A64 LD (IX+$06),$00 ;
  $9A68 RST $30         ; Load sprite pattern
 ; This entry point is used by the routine at #R$9A75.
@@ -6174,8 +6173,8 @@ c$AD49 PUSH HL         ;
 *$AD74 LD (HL),C       ; Record sprite index in table
 *$AD75 POP IX          ; IX now holds sprite address
  $AD77 LD (IX+$07),$00 ; Init sprite
- $AD7B LD (IX+$03),$00 ;
- $AD7F LD (IX+$04),$FF ;
+ $AD7B LD (IX+$03),$00 ; Set counter to 0
+ $AD7F LD (IX+$04),$FF ; Set loaded patten index to none
  $AD83 LD (IX+$08),$F8 ; Set y
 *$AD87 POP BC          ;
  $AD88 POP DE          ;
@@ -6236,7 +6235,7 @@ c$AD8B PUSH HL       ;
  $ADD3 DJNZ $ADD1    ; B times
  $ADD5 ADD A,A       ; * 4
  $ADD6 ADD A,A       ; ...
-*$ADD7 ADD A,C       ; + number of patterns -1
+*$ADD7 ADD A,C       ; + number of patterns - 1
  $ADD8 LD B,A        ; Copy result into B, which is the index of pattern to
                      ; fetch within sprite type
  $ADD9 CP (IX+$04)   ; Same as existing?
