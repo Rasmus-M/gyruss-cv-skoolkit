@@ -16,7 +16,7 @@
 <table class="asm-navigation">
 <tr>
 <td class="prev">
-Prev: <a href="40388.html">9DC4</a>
+Prev: <a href="40407.html">9DD7</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#40424">Map</a></td>
 <td class="next">
@@ -24,117 +24,120 @@ Next: <a href="40449.html">9E01</a>
 </td>
 </tr>
 </table>
-<div class="description">9DE8: Routine at 9DE8</div>
+<div class="description">9DE8: Sound routine at 9DE8</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
+<div class="paragraph">
+I:B Channel index I:IX Sound data channel
+</div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L9DE8</td>
+<td class="asm-label">sound_command_0</td>
 <td class="address-2"><span id="40424"></span>9DE8</td>
 <td class="instruction">DEC (IX+$03)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40427"></span>9DEB</td>
 <td class="instruction">LD A,(IX+$03)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40430"></span>9DEE</td>
 <td class="instruction">RRA</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40431"></span>9DEF</td>
 <td class="instruction">RET C</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40432"></span>9DF0</td>
 <td class="instruction">LD C,$10</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="40434"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="40388.html">L9DC4</a>.
+This entry point is used by the routine at <a href="40388.html">sound_command_1_4</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L9DE8_0</td>
+<td class="asm-label">sound_command_0_0</td>
 <td class="address-2"><span id="40434"></span>9DF2</td>
 <td class="instruction">LD A,(IX+$04)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40437"></span>9DF5</td>
 <td class="instruction">ADD A,C</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40438"></span>9DF6</td>
 <td class="instruction">LD (IX+$04),A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40441"></span>9DF9</td>
 <td class="instruction">AND $F0</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40443"></span>9DFB</td>
 <td class="instruction">RET NZ</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="40444"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routines at <a href="40359.html">L9DA7</a> and <a href="40388.html">L9DC4</a>.
+This entry point is used by the routines at <a href="40359.html">sound_command_3</a> and <a href="40388.html">sound_command_1_4</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L9DE8_1</td>
+<td class="asm-label">sound_command_0_1</td>
 <td class="address-2"><span id="40444"></span>9DFC</td>
 <td class="instruction">LD A,B</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40445"></span>9DFD</td>
 <td class="instruction">DEC A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Channel</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40446"></span>9DFE</td>
-<td class="instruction">JP <a href="40253.html">L9D3D</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JP <a href="40253.html">reset_sound_data_ptr</a></td>
+<td class="comment-1" rowspan="1">Reset sound data pointer</td>
 </tr>
 </table>
 <table class="asm-navigation">
 <tr>
 <td class="prev">
-Prev: <a href="40388.html">9DC4</a>
+Prev: <a href="40407.html">9DD7</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#40424">Map</a></td>
 <td class="next">

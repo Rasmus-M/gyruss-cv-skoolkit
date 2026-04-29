@@ -16,7 +16,7 @@
 <table class="asm-navigation">
 <tr>
 <td class="prev">
-Prev: <a href="41715.html">A2F3</a>
+Prev: <a href="41731.html">A303</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#41748">Map</a></td>
 <td class="next">
@@ -24,13 +24,13 @@ Next: <a href="41757.html">A31D</a>
 </td>
 </tr>
 </table>
-<div class="description">A314: Send sound bytes to PSG</div>
+<div class="description">A314: Send data for tone channel to PSG</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="41659.html">LA2BB</a>.
+Used by the routine at <a href="41659.html">all_channels_data_to_psg</a>.
 </div>
 </div>
 <table class="input">
@@ -39,25 +39,25 @@ Used by the routine at <a href="41659.html">LA2BB</a>.
 </tr>
 <tr>
 <td class="register">A</td>
-<td class="register-desc">Attenuation or noise byte</td>
+<td class="register-desc">Mute operation for channel</td>
 </tr>
 <tr>
 <td class="register">C</td>
-<td class="register-desc"></td>
+<td class="register-desc">Attenuation operation for channel</td>
 </tr>
 <tr>
 <td class="register">D</td>
-<td class="register-desc">Operation</td>
+<td class="register-desc">Tone operation for channel</td>
 </tr>
 <tr>
 <td class="register">IX</td>
-<td class="register-desc">-&gt; B0: $00 for tone, B1, B2: frequency LSB, B3: frequency MSB</td>
+<td class="register-desc">-&gt; B0: $00 for tone, B1, B2, B3, B4</td>
 </tr>
 </table>
 </td>
 </tr>
 <tr>
-<td class="asm-label">bytes_to_psg</td>
+<td class="asm-label">tone_data_to_psg</td>
 <td class="address-2"><span id="41748"></span>A314</td>
 <td class="instruction">LD E,(IX+$00)</td>
 <td class="comment-1" rowspan="1">Get B0</td>
@@ -71,14 +71,14 @@ Used by the routine at <a href="41659.html">LA2BB</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41752"></span>A318</td>
-<td class="instruction">JR NZ,<a href="41757.html">freq_to_psg</a></td>
-<td class="comment-1" rowspan="1">Tone</td>
+<td class="instruction">JR NZ,<a href="41757.html">attn_and_freq_to_psg</a></td>
+<td class="comment-1" rowspan="1">Jump for tone</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41754"></span>A31A</td>
 <td class="instruction">OUT ($FF),A</td>
-<td class="comment-1" rowspan="1">Attenuation or noise to PSG</td>
+<td class="comment-1" rowspan="1">Mute</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -90,7 +90,7 @@ Used by the routine at <a href="41659.html">LA2BB</a>.
 <table class="asm-navigation">
 <tr>
 <td class="prev">
-Prev: <a href="41715.html">A2F3</a>
+Prev: <a href="41731.html">A303</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#41748">Map</a></td>
 <td class="next">

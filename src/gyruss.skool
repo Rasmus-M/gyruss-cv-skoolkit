@@ -17,11 +17,12 @@ w$7000 DEFW $0000
 ; #TABLE(default, default)
 ; { =h Byte offset | =h Purpose }
 ; { $00 | Sprite type, or $FF if not allocated }
-; { $01 | Polar y (depth, -11 is closest, 0 is normal ship position, 116 is furthest
-; away) }
+; { $01 | Polar y (depth, -11 is closest, 0 is normal ship position, 116 is
+; furthest away) }
 ; { $02 | Polar x (angle, 0 at bottom center, moving clockwise to 16 at the
 ; left side, 32 at the top, and 48 at the right side) }
-; { $03 | Movement counter, velocity. For enemy, upper nybble from path data, lower nybble sprite position in wave }
+; { $03 | Movement counter, velocity. For enemy, upper nybble from path data,
+; lower nybble sprite position in wave }
 ; { $04 | Loaded pattern index within sprite type, $FF means not loaded }
 ; { $05 | Copy of sprite type to check for pattern reload }
 ; { $06 | Replacement sprite type when destroyed, or LSB of path address }
@@ -412,67 +413,114 @@ b$726E DEFB $00
 @label=temp_polar_x
 b$726F DEFB $00
 
-; Word at 7270 (sound)
+; Pointer to #R$727D
+;
+; Usually points to #R$727D But sometimes changed to #R$72A5 by #R$9CE3
+@label=ptr_sound_data_noise
 w$7270 DEFW $0000
 
-; Word at 7272 (sound)
+; Pointer to #R$7287
+@label=ptr_sound_data_tone_1
 w$7272 DEFW $0000
 
-; Word at 7274 (sound)
+; Pointer to #R$7291
+@label=ptr_sound_data_tone_2
 w$7274 DEFW $0000
 
-; Word at 7276 (sound)
+; Pointer to #R$729B
+@label=ptr_sound_data_tone_3
 w$7276 DEFW $0000
 
-; Data block at 7278 (sound)
+; Last noise operation
+@label=last_noise_operation
 b$7278 DEFB $00,$00
 
-; Byte at 727A (sound)
+; Is a tune playing?
+;
+; Set to 5 when starting a tune, but any non-zero value could be used. Set to 0
+; when stopping a tune
+@label=is_tune_playing
 b$727A DEFB $00
 
-; Byte at 727B (sound)
+; Sound player countdown (tune speed?)
+;
+; Counts down from 5 to zero, and certain sound player actions are only
+; performed when 0.
+@sound_player_countdown
 b$727B DEFB $00
 
-; Byte at 727C (sound)
+; Index of tune playing
+@label=tune_playing
 b$727C DEFB $00
 
-; Sound channel 1
+; Sound data for PSG noise channel
+;
+; #TABLE(default, default)
+; { =h Byte | =h Purpose }
+; { $00 | $00 for tone/noise, $FF for ... }
+; { $01 | LSB of ... }
+; { $02 | MSB of ... }
+; { $03 | Frequency LSB }
+; { $04 | Bits 4-8 attenuation, bits 0-3 frequency 2 MSbits or noise value  }
+; { $05 | Countdown, e.g. 4 to 0 }
+; { $06 | Unknown }
+; { $07 | Countdown }
+; { $08 | Unknown }
+; { $09 | Initialized to 0 }
+; TABLE#
+@label=sound_data_noise
 b$727D DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 
-; Sound channel 2
+; Sound data for PSG tone 1
+@label=sound_data_tone_1
 b$7287 DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 
-; Sound channel 3
+; Sound data for PSG tone 2
+@label=sound_data_tone_2
 b$7291 DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 
-; Sound channel 4
+; Sound data for PSG tone 3
+@label=sound_data_tone_3
 b$729B DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 
-; Buffer at 72A5
+; Sound data channel 1
 ;
-; Used by sound routines.
-@label=sound_buffer
+; #TABLE(default, default)
+; { =h Byte | =h Purpose }
+; { $00 | Unknown }
+; { $01 | Unknown }
+; { $02 | Unknown }
+; { $03 | Unknown }
+; { $04 | Unknown }
+; { $05 | Command }
+; { $06 | Unknown }
+; { $07 | Unknown }
+; TABLE#
+@label=sound_data_channel_1
 b$72A5 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $72AD DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $72B5 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $72BD DEFB $00
 
-; Word at 72BE
-;
-; Used by sound routines.
+; Sound data channel 2
+@label=sound_data_channel_2
+b$72AD DEFB $00,$00,$00,$00,$00,$00,$00,$00
+
+; Sound data channel 3
+@label=sound_data_channel_3
+b$72B5 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+
+; Sound data channel 4
+@label=sound_data_channel_4
+b$72BD DEFB $00
+
+; Word at 72BE (sound data channel 4)
 w$72BE DEFW $0000
 
-; Word at 72C0
-;
-; Used by sound routines.
+; Word at 72C0 (sound data channel 4)
 w$72C0 DEFW $0000
 
-; Byte at 72C2 (unused?)
+; Byte at 72C2 (sound data channel 4)
 b$72C2 DEFB $00
 
-; Word at 72C3
-;
-; Used by sound routines.
+; Word at 72C3 (sound data channel 4)
 w$72C3 DEFW $0000
 
 ; Temporary center of projection
@@ -1833,7 +1881,7 @@ c$8825 LD (IX+$00),$10 ; Change sprite type
  $882C DEC (IX+$01)    ; Decrement polar y
  $882F LD A,(IX+$01)   ; Get polar y
  $8832 CP $F2          ; Return if not $F2 (-14)
- $8834 RET NZ          ; Else continue to #R$8835
+ $8834 RET NZ          ; Else continue into #R$8835
 
 ; Enemy movement: Determine action when out of screen
 ;
@@ -1861,8 +1909,7 @@ c$8835 BIT 3,(IX+$07)  ; If a flag is reset
 
 ; Enemy movement: Create enemy shot and move
 ;
-; Used by the routine at #R$8790.
-; Called and jumped.
+; Used by the routine at #R$8790. Called and jumped.
 ;
 ; I:IX Sprite data of enemy
 c$885F CALL $8A76      ; Create enemy shot
@@ -1887,7 +1934,8 @@ c$8878 LD A,($71EE)  ; Get sprite countdown
  $8884 CALL $84DB    ; Get stage data address in IY
  $8887 RST $20       ; Random number
  $8888 AND (IY+$03)  ; AND stage data byte 3 ($3F, $1F, $0F)
- $888B JR NZ,$88A7   ; If not all zeros, then jump (more likely on earlier stages)
+ $888B JR NZ,$88A7   ; If not all zeros, then jump (more likely on earlier
+                     ; stages)
  $888D DEC (IX+$01)  ; Decrement polar y
  $8890 LD A,(IX+$01) ; Get polar y
  $8893 CP $08        ; If it's 8
@@ -1982,7 +2030,8 @@ c$88FE LD A,($71EE)  ;
  $891E CP $10        ; If upper nybble >= 1
  $8920 JR NC,$892B   ; Then jump ahead to update counter
  $8922 DEC A         ; Else decrement lower nybble
- $8923 JP M,$8986    ; If negative then set sprite flag to $18 if path byte matches and return
+ $8923 JP M,$8986    ; If negative then set sprite flag to $18 if path byte
+                     ; matches and return
  $8926 JR Z,$8994    ; If zero then set sprite flag to $04 and return
  $8928 JP $8999      ; If positive then set sprite flag to $40 and return
 
@@ -2121,7 +2170,7 @@ c$899E CP $18         ; Is sprite type < $18
  $89E1 OR B           ; ...
  $89E2 LD (IX+$03),A  ; ...
  $89E5 LD (IX+$06),L  ; Set path address
- $89E8 LD (IX+$07),H  ; ... (continue to #R$89EB)
+ $89E8 LD (IX+$07),H  ; ... (continue into #R$89EB)
 
 ; Circular enemy movement: Move sprite along path
 ;
@@ -4180,120 +4229,124 @@ c$9ADE CALL $1FD6      ; TURN_OFF_SOUND
  $9B0A DJNZ $9AFC      ;
  $9B0C RET             ;
 
-; Play tune?
+; Play tune
 ;
 ; Used by the routines at #R$9BD9, #R$9C1C and #R$9E91.
 ;
 ; I:A Index of tune (0 - 6)
 @label=play_tune
-c$9B0D CP $07          ;
- $9B0F JR Z,$9B19      ;
- $9B11 LD ($727C),A    ;
- $9B14 LD HL,$7284     ;
- $9B17 LD (HL),$02     ;
-*$9B19 RLCA            ;
- $9B1A RLCA            ;
- $9B1B RLCA            ;
- $9B1C LD E,A          ;
- $9B1D LD D,$00        ;
- $9B1F LD HL,$9EEA     ;
- $9B22 ADD HL,DE       ;
- $9B23 LD IX,$727D     ;
- $9B27 LD B,$04        ;
- $9B29 LD E,$0A        ;
-*$9B2B LD A,(HL)       ;
- $9B2C LD (IX+$01),A   ;
- $9B2F INC HL          ;
- $9B30 LD A,(HL)       ;
- $9B31 LD (IX+$02),A   ;
- $9B34 LD (IX+$05),$01 ;
- $9B38 INC HL          ;
+c$9B0D CP $07          ; If tune index is 7
+ $9B0F JR Z,$9B19      ; Then skip ahead
+ $9B11 LD ($727C),A    ; Else save tune index
+ $9B14 LD HL,$7284     ; #R$727D+7
+ $9B17 LD (HL),$02     ; Set to 2
+*$9B19 RLCA            ; Multiply index by 8
+ $9B1A RLCA            ; ...
+ $9B1B RLCA            ; ...
+ $9B1C LD E,A          ; DE = A
+ $9B1D LD D,$00        ; ...
+ $9B1F LD HL,$9EEA     ; Table base address
+ $9B22 ADD HL,DE       ; Add offset
+ $9B23 LD IX,$727D     ; First sound data buffer
+ $9B27 LD B,$04        ; 4 channels
+ $9B29 LD E,$0A        ; 10 bytes each
+*$9B2B LD A,(HL)       ; Get LSB
+ $9B2C LD (IX+$01),A   ; Store in sound data buffer
+ $9B2F INC HL          ; Next table address
+ $9B30 LD A,(HL)       ; Get MSB
+ $9B31 LD (IX+$02),A   ; Store in sound data buffer
+ $9B34 LD (IX+$05),$01 ; Set countdown
+ $9B38 INC HL          ; Next table address
  $9B39 LD (IX+$09),$00 ;
- $9B3D ADD IX,DE       ;
- $9B3F DJNZ $9B2B      ;
- $9B41 LD A,$05        ;
- $9B43 LD ($727B),A    ;
- $9B46 LD ($727A),A    ;
- $9B49 LD A,($727C)    ;
- $9B4C DEC A           ;
- $9B4D JR Z,$9B54      ;
- $9B4F RET P           ;
- $9B50 LD C,$05        ;
- $9B52 JR $9B56        ;
-*$9B54 LD C,$09        ;
-*$9B56 JP $9CB5        ;
-; This entry point is used by the routine at #R$9B99.
-*$9B59 LD IX,$727D     ;
- $9B5D LD B,$04        ;
- $9B5F LD DE,$000A     ;
- $9B62 LD A,($727C)    ;
- $9B65 CP $03          ;
- $9B67 JR C,$9B70      ;
- $9B69 LD A,$FF        ;
- $9B6B LD ($727D),A    ;
- $9B6E JR $9B82        ;
-*$9B70 LD A,(IX+$07)   ;
- $9B73 DEC A           ;
- $9B74 JP M,$9B82      ;
- $9B77 LD (IX+$07),A   ;
- $9B7A LD A,(IX+$04)   ;
- $9B7D ADD A,$10       ;
- $9B7F LD (IX+$04),A   ;
-*$9B82 ADD IX,DE       ;
- $9B84 DJNZ $9B70      ;
- $9B86 RET             ;
+ $9B3D ADD IX,DE       ; Next sound data buffer
+ $9B3F DJNZ $9B2B      ; Loop for 4 channels
+ $9B41 LD A,$05        ; Tune speed?
+ $9B43 LD ($727B),A    ; Init countdown
+ $9B46 LD ($727A),A    ; Set a tune is playing
+ $9B49 LD A,($727C)    ; Get tune index
+ $9B4C DEC A           ; Minus 1
+ $9B4D JR Z,$9B54      ; If tune index was 1 then skip ahead and set C = 9
+ $9B4F RET P           ; If tune index was > 1 then return
+ $9B50 LD C,$05        ; Set C = 5 (sound index)
+ $9B52 JR $9B56        ; Skip next
+*$9B54 LD C,$09        ; Set C = 9 (sound index)
+*$9B56 JP $9CB5        ; Jump to central part of play_sound
+
+; Increase attenuation for all channels
+;
+; Used by the routine at #R$9B99.
+@label=dampen_all_channels
+c$9B59 LD IX,$727D   ; First sound data buffer
+ $9B5D LD B,$04      ; 4 channels
+ $9B5F LD DE,$000A   ; Size of channel data
+ $9B62 LD A,($727C)  ; Get tune index
+ $9B65 CP $03        ; If < 3
+ $9B67 JR C,$9B70    ; Then skip ahead
+ $9B69 LD A,$FF      ; Else set first byte
+ $9B6B LD ($727D),A  ; of buffer to $FF
+ $9B6E JR $9B82      ; and skip first channel
+*$9B70 LD A,(IX+$07) ; Get countdown
+ $9B73 DEC A         ; and decrement
+ $9B74 JP M,$9B82    ; If it was 0 then move to next channel
+ $9B77 LD (IX+$07),A ; Else save new value
+ $9B7A LD A,(IX+$04) ; Get attenuation in bits 4-7
+ $9B7D ADD A,$10     ; Add 1
+ $9B7F LD (IX+$04),A ; Save again
+*$9B82 ADD IX,DE     ; Next channel address
+ $9B84 DJNZ $9B70    ; Loop for 4 channels
+ $9B86 RET           ;
 
 ; Stop tune
 ;
 ; Used by the routines at #R$8139, #R$832A and #R$9C1C.
 @label=stop_tune
 c$9B87 XOR A         ;
- $9B88 LD ($727A),A  ;
- $9B8B DEC A         ;
- $9B8C LD ($727D),A  ;
- $9B8F LD ($7287),A  ;
- $9B92 LD ($7291),A  ;
- $9B95 LD ($729B),A  ;
+ $9B88 LD ($727A),A  ; Set tune playing flag to 0
+ $9B8B DEC A         ; $FF
+ $9B8C LD ($727D),A  ; Noise
+ $9B8F LD ($7287),A  ; Tone 1
+ $9B92 LD ($7291),A  ; Tone 2
+ $9B95 LD ($729B),A  ; Tone 3
  $9B98 RET           ;
 
 ; Sound player
 ;
 ; Used by the routine at #R$8522.
 @label=sound_player
-c$9B99 CALL $A2BB      ;
- $9B9C CALL $9D67      ;
- $9B9F LD A,($727A)    ;
- $9BA2 AND A           ;
- $9BA3 RET Z           ;
- $9BA4 CALL $9B59      ;
- $9BA7 LD HL,$727B     ;
- $9BAA DEC (HL)        ;
- $9BAB RET NZ          ;
- $9BAC LD (HL),$05     ;
+c$9B99 CALL $A2BB      ; Send data for all channels to PSG
+ $9B9C CALL $9D67      ; Execute command for all sound channels
+ $9B9F LD A,($727A)    ; Is tune playing?
+ $9BA2 AND A           ; ...
+ $9BA3 RET Z           ; Return is not
+ $9BA4 CALL $9B59      ; Dampen all channels
+ $9BA7 LD HL,$727B     ; Decrement countdown
+ $9BAA DEC (HL)        ; ...
+ $9BAB RET NZ          ; Return if not 0
+ $9BAC LD (HL),$05     ; Reset countdown
 ; This entry point is used by the routine at #R$9BD9.
-*$9BAE LD IX,$727D     ;
- $9BB2 LD B,$04        ;
- $9BB4 LD A,($727C)    ;
- $9BB7 CP $03          ;
- $9BB9 JR C,$9C1C      ;
- $9BBB DEC (IX+$05)    ;
- $9BBE JR NZ,$9C06     ;
- $9BC0 LD (IX+$05),$04 ;
- $9BC4 LD L,(IX+$01)   ;
- $9BC7 LD H,(IX+$02)   ;
+*$9BAE LD IX,$727D     ; First sound data buffer
+ $9BB2 LD B,$04        ; 4 channels
+ $9BB4 LD A,($727C)    ; Get tune index
+ $9BB7 CP $03          ; If < 3
+ $9BB9 JR C,$9C1C      ; Then ...
+ $9BBB DEC (IX+$05)    ; Decrement countdown
+ $9BBE JR NZ,$9C06     ; If not 0 then ...
+ $9BC0 LD (IX+$05),$04 ; Reset countdown
+ $9BC4 LD L,(IX+$01)   ; Get address LSB
+ $9BC7 LD H,(IX+$02)   ; Get address MSB
 ; This entry point is used by the routines at #R$9BD9 and #R$9BF8.
-*$9BCA LD A,(HL)       ;
- $9BCB INC HL          ;
- $9BCC AND A           ;
- $9BCD JR NZ,$9BFD     ;
- $9BCF LD A,(HL)       ;
- $9BD0 INC HL          ;
- $9BD1 AND A           ;
- $9BD2 JR NZ,$9BD9     ;
- $9BD4 LD HL,$A299     ;
- $9BD7 JR $9BCA        ;
+*$9BCA LD A,(HL)       ; Get byte at address
+ $9BCB INC HL          ; Next address
+ $9BCC AND A           ; Was the byte zero?
+ $9BCD JR NZ,$9BFD     ; If not, jump ahead
+ $9BCF LD A,(HL)       ; Get next byte
+ $9BD0 INC HL          ; Next address
+ $9BD1 AND A           ; Was the byte zero?
+ $9BD2 JR NZ,$9BD9     ; If not, jump ahead
+ $9BD4 LD HL,$A299     ; Address of ...
+ $9BD7 JR $9BCA        ; Jump back and repeat with #R$A299
 
-; Routine at 9BD9
+; Sound routine at 9BD9
 ;
 ; Used by the routine at #R$9B99.
 c$9BD9 JP P,$9BF8    ;
@@ -4302,23 +4355,23 @@ c$9BD9 JP P,$9BF8    ;
  $9BE0 LD E,A        ;
  $9BE1 LD A,($727C)  ;
  $9BE4 CP $05        ;
- $9BE6 JR NZ,$9BCA   ;
+ $9BE6 JR NZ,$9BCA   ; Then jump back into #R$9B99
  $9BE8 LD A,E        ;
  $9BE9 DEC A         ;
  $9BEA JR Z,$9BF1    ;
  $9BEC DEC (IX+$07)  ;
- $9BEF JR Z,$9BCA    ;
+ $9BEF JR Z,$9BCA    ; Then jump back into #R$9B99
 *$9BF1 ADD A,$06     ;
  $9BF3 CALL $9B0D    ;
  $9BF6 JR $9BAE      ;
 
-; Routine at 9BF8
+; Sound routine at 9BF8
 ;
 ; Used by the routine at #R$9BD9.
 c$9BF8 CALL $9C92    ;
- $9BFB JR $9BCA      ;
+ $9BFB JR $9BCA      ; jump back into #R$9B99
 
-; Routine at 9BFD
+; Sound routine at 9BFD
 ;
 ; Used by the routine at #R$9B99.
 c$9BFD LD (IX+$03),A ;
@@ -4336,7 +4389,7 @@ c$9BFD LD (IX+$03),A ;
  $9C17 LD (IX+$04),A ;
  $9C1A JR $9C8A      ;
 
-; Routine at 9C1C
+; Sound routine at 9C1C
 ;
 ; Used by the routines at #R$9B99 and #R$9C7E.
 c$9C1C DEC (IX+$05)  ;
@@ -4355,7 +4408,7 @@ c$9C1C DEC (IX+$05)  ;
  $9C34 LD A,$03      ;
  $9C36 JP $9B0D      ;
 
-; Routine at 9C39
+; Sound routine at 9C39
 ;
 ; Used by the routine at #R$9C1C.
 c$9C39 JP P,$9C4B    ;
@@ -4367,13 +4420,13 @@ c$9C39 JP P,$9C4B    ;
  $9C43 EX DE,HL      ;
  $9C44 JR $9C27      ;
 
-; Routine at 9C46
+; Sound routine at 9C46
 ;
 ; Used by the routine at #R$9C39.
 c$9C46 CALL $9C92    ;
  $9C49 JR $9C27      ;
 
-; Routine at 9C4B
+; Sound routine at 9C4B
 ;
 ; Used by the routine at #R$9C39.
 c$9C4B LD (IX+$05),A ;
@@ -4403,7 +4456,7 @@ c$9C4B LD (IX+$05),A ;
  $9C7A OR $A0        ;
  $9C7C JR $9C87      ;
 
-; Routine at 9C7E
+; Sound routine at 9C7E
 ;
 ; Used by the routine at #R$9C4B.
 c$9C7E LD E,(IX+$08) ;
@@ -4417,7 +4470,7 @@ c$9C7E LD E,(IX+$08) ;
  $9C8F DJNZ $9C1C    ;
  $9C91 RET           ;
 
-; Routine at 9C92
+; Sound routine at 9C92
 ;
 ; Used by the routines at #R$9BF8 and #R$9C46.
 c$9C92 LD E,A        ;
@@ -4429,7 +4482,7 @@ c$9C92 LD E,A        ;
  $9C9E INC HL        ;
  $9C9F RET           ;
 
-; Routine at 9CA0
+; Sound routine at 9CA0
 ;
 ; Used by the routine at #R$9C92.
 c$9CA0 LD (IX+$09),E ; Set x
@@ -4439,61 +4492,72 @@ c$9CA0 LD (IX+$09),E ; Set x
  $9CA6 ADD HL,DE     ;
  $9CA7 RET           ;
 
-; Routine at 9CA8
+; Play sound
 ;
 ; Used by the routine at #R$9EA3.
 ;
-; I:C Index of sound (1-8)
+; I:C Index of sound (1-9), maybe 1 is no sound?
 @label=play_sound
-c$9CA8 LD A,($727C)  ;
- $9CAB AND A         ;
- $9CAC RET Z         ;
- $9CAD CP $06        ;
- $9CAF JR Z,$9CB5    ;
- $9CB1 LD A,C        ;
- $9CB2 CP $02        ;
- $9CB4 RET C         ;
+c$9CA8 LD A,($727C)  ; Get tune playing
+ $9CAB AND A         ; If zero
+ $9CAC RET Z         ; Then return
+ $9CAD CP $06        ; Are we playing tune 6?
+ $9CAF JR Z,$9CB5    ; Then skip ahead
+ $9CB1 LD A,C        ; A = index of sound
+ $9CB2 CP $02        ; Is it < 2?
+ $9CB4 RET C         ; Then return
 ; This entry point is used by the routines at #R$9B54 and #R$9E01.
-*$9CB5 LD A,C        ;
- $9CB6 PUSH AF       ;
- $9CB7 CALL $9CBF    ;
- $9CBA POP AF        ;
- $9CBB CP $09        ;
- $9CBD RET NZ        ;
- $9CBE INC A         ;
-*$9CBF RLCA          ;
- $9CC0 RLCA          ;
- $9CC1 RLCA          ;
- $9CC2 LD E,A        ;
- $9CC3 LD D,$00      ;
+@label=play_sound_no_checks
+*$9CB5 LD A,C        ; A = index of sound
+ $9CB6 PUSH AF       ; Save index
+ $9CB7 CALL $9CBF    ; Call next routine
+ $9CBA POP AF        ; Restore index
+ $9CBB CP $09        ; Is it 9? (if called from play_tune or #R$9E45)
+ $9CBD RET NZ        ; Return if not
+ $9CBE INC A         ; Index + 1 (now 10) (continue into #R$9CBF)
+
+; Copy data from #R$9CE7 to sound channel and change pointer from sound data to
+; sound channel
+;
+; Used by the routine at #R$9CA8.
+;
+; label=init_play_sound
+c$9CBF RLCA          ; Multiply by 8
+ $9CC0 RLCA          ; ...
+ $9CC1 RLCA          ; ...
+ $9CC2 LD E,A        ; DE = A
+ $9CC3 LD D,$00      ; ...
  $9CC5 LD HL,$9CE7   ; Table address
- $9CC8 ADD HL,DE     ;
- $9CC9 LD A,(HL)     ;
- $9CCA RLCA          ;
- $9CCB PUSH AF       ;
- $9CCC RLCA          ;
- $9CCD RLCA          ;
- $9CCE LD C,A        ;
- $9CCF LD B,D        ;
- $9CD0 EX DE,HL      ;
- $9CD1 LD HL,$72A5   ;
- $9CD4 ADD HL,BC     ;
- $9CD5 PUSH HL       ;
- $9CD6 EX DE,HL      ;
- $9CD7 LD BC,$0008   ;
- $9CDA LDIR          ;
- $9CDC POP DE        ;
- $9CDD POP AF        ;
- $9CDE LD C,A        ;
- $9CDF LD HL,$7270   ;
- $9CE2 ADD HL,BC     ;
- $9CE3 LD (HL),E     ;
- $9CE4 INC HL        ;
- $9CE5 LD (HL),D     ;
+ $9CC8 ADD HL,DE     ; Add offset
+ $9CC9 LD A,(HL)     ; Get table byte
+ $9CCA RLCA          ; Multiply by 2
+ $9CCB PUSH AF       ; Save it
+ $9CCC RLCA          ; Multiply by 4 more
+ $9CCD RLCA          ; ...
+ $9CCE LD C,A        ; BC = A
+ $9CCF LD B,D        ; ...
+ $9CD0 EX DE,HL      ; DE = table address
+ $9CD1 LD HL,$72A5   ; HL = Sound channel 1
+ $9CD4 ADD HL,BC     ; Add offset
+ $9CD5 PUSH HL       ; Save sound channel address
+ $9CD6 EX DE,HL      ; HL = table address, DE = sound channel address
+ $9CD7 LD BC,$0008   ; Copy 8 bytes from #R$9CE7 to sound channel
+ $9CDA LDIR          ; ...
+ $9CDC POP DE        ; DE = sound channel address
+ $9CDD POP AF        ; A = table byte * 2
+ $9CDE LD C,A        ; BC = A
+ $9CDF LD HL,$7270   ; First pointer
+ $9CE2 ADD HL,BC     ; Add offset
+ $9CE3 LD (HL),E     ; Set pointer LSB
+ $9CE4 INC HL        ; Next address
+ $9CE5 LD (HL),D     ; Set pointer MSB
  $9CE6 RET           ;
 
 ; Sound data
-@label=table_at_9CE7
+;
+; Byte 0 in each row is the channel.
+; Rows are copied into the channel data.
+@label=sound_data_table
 b$9CE7 DEFB $00,$00,$00,$00,$26,$80,$00,$00
  $9CEF DEFB $02,$00,$00,$40,$41,$81,$40,$00
  $9CF7 DEFB $03,$00,$00,$70,$51,$82,$00,$00
@@ -4506,62 +4570,64 @@ b$9CE7 DEFB $00,$00,$00,$00,$26,$80,$00,$00
  $9D2F DEFB $03,$00,$00,$00,$F0,$89,$00,$00
  $9D37 DEFB $00,$00,$00,$00,$87,$8A
 
-; Routine at 9D3D
+; Reset sound data pointer
 ;
-; Used by the routines at #R$9E75.
-c$9D3D RLCA          ;
- $9D3E LD C,A        ;
- $9D3F RLCA          ;
- $9D40 RLCA          ;
- $9D41 LD E,A        ;
- $9D42 LD D,$00      ;
- $9D44 LD IY,$72A5   ;
- $9D48 ADD IY,DE     ;
- $9D4A LD A,(IY+$05) ;
- $9D4D LD (IY+$05),D ;
- $9D50 LD E,C        ;
- $9D51 LD IY,$7270   ;
- $9D55 ADD IY,DE     ;
- $9D57 LD A,C        ;
- $9D58 RLCA          ;
- $9D59 RLCA          ;
- $9D5A ADD A,C       ;
- $9D5B LD E,A        ;
- $9D5C LD HL,$727D   ;
- $9D5F ADD HL,DE     ;
- $9D60 LD (IY+$00),L ;
- $9D63 LD (IY+$01),H ;
+; Also sets sound data channel command to 0 Used by the routines at #R$9E75.
+;
+; I:A Channel
+@label=reset_sound_data_ptr
+c$9D3D RLCA          ; Multiply channel by 2
+ $9D3E LD C,A        ; Store word offset in C
+ $9D3F RLCA          ; Multiply by 4
+ $9D40 RLCA          ; Multiply by 8
+ $9D41 LD E,A        ; DE = A
+ $9D42 LD D,$00      ; ...
+ $9D44 LD IY,$72A5   ; Sound channel 1
+ $9D48 ADD IY,DE     ; Add offset
+ $9D4A LD A,(IY+$05) ; Get byte 5 (not used?)
+ $9D4D LD (IY+$05),D ; Set command to 0
+ $9D50 LD E,C        ; Word offset (channel * 2)
+ $9D51 LD IY,$7270   ; First pointer
+ $9D55 ADD IY,DE     ; Add offset (IY now points to a pointer)
+ $9D57 LD A,C        ; Word offset
+ $9D58 RLCA          ; Multiply by 2
+ $9D59 RLCA          ; Multiply by 4
+ $9D5A ADD A,C       ; Multiply by 5, i.e. channel * 10
+ $9D5B LD E,A        ; DE = A
+ $9D5C LD HL,$727D   ; Sound data base
+ $9D5F ADD HL,DE     ; Add offset
+ $9D60 LD (IY+$00),L ; Update pointer with sound data address
+ $9D63 LD (IY+$01),H ; ...
  $9D66 RET           ;
 
-; Routine at 9D67
+; Execute command for all sound channels
 ;
 ; Used by the routine at #R$9B99.
-c$9D67 LD IX,$72BD   ;
- $9D6B LD B,$04      ;
+@label=execute_sound_channel_commands
+c$9D67 LD IX,$72BD   ; Sound data channel 4 (start at the end)
+ $9D6B LD B,$04      ; 4 channels
 ; This entry point is used by the routine at #R$9D89.
-*$9D6D LD A,(IX+$05) ;
- $9D70 AND A         ;
- $9D71 JP P,$9D89    ;
- $9D74 RLA           ;
- $9D75 LD E,A        ;
- $9D76 LD D,$00      ;
- $9D78 LD IY,$9D91   ;
- $9D7C ADD IY,DE     ;
- $9D7E LD L,(IY+$00) ;
- $9D81 LD H,(IY+$01) ;
- $9D84 LD DE,$9D89   ;
- $9D87 PUSH DE       ;
- $9D88 JP (HL)       ;
-
-; Routine at 9D89
-;
-; Used by the routine at #R$9D67.
-c$9D89 LD DE,$FFF8   ;
- $9D8C ADD IX,DE     ;
- $9D8E DJNZ $9D6D    ;
+*$9D6D LD A,(IX+$05) ; Get index of sound command to call
+ $9D70 AND A         ; Test bits and clear carry
+ $9D71 JP P,$9D89    ; Skip channel if bit 7 is reset
+ $9D74 RLA           ; Multiply by 2, and shift out bit 7
+ $9D75 LD E,A        ; DE = A
+ $9D76 LD D,$00      ; ...
+ $9D78 LD IY,$9D91   ; Base address of jump table
+ $9D7C ADD IY,DE     ; Add offset
+ $9D7E LD L,(IY+$00) ; Get LSB
+ $9D81 LD H,(IY+$01) ; Get MSB
+ $9D84 LD DE,$9D89   ; Return address
+ $9D87 PUSH DE       ; Push return address on stack
+ $9D88 JP (HL)       ; Jump to sound command
+*$9D89 LD DE,$FFF8   ; -8
+ $9D8C ADD IX,DE     ; Move 8 bytes back
+ $9D8E DJNZ $9D6D    ; Loop for 4 channels
+@label=sound_command_10
  $9D90 RET           ;
 
-; Data block at 9D91
+; Sound command jump table
+@label=sound_command_jump_table
 w$9D91 DEFW $9DE8
  $9D93 DEFW $9DC4
  $9D95 DEFW $9DD7
@@ -4574,7 +4640,10 @@ w$9D91 DEFW $9DE8
  $9DA3 DEFW $9E75
  $9DA5 DEFW $9D90
 
-; Routine at 9DA7
+; Sound routine at 9DA7
+;
+; I:B Channel index I:IX Sound data channel
+@label=sound_command_3
 c$9DA7 LD A,(IX+$04) ;
  $9DAA INC A         ;
  $9DAB LD C,A        ;
@@ -4586,14 +4655,20 @@ c$9DA7 LD A,(IX+$04) ;
 *$9DB5 LD (IX+$04),A ;
  $9DB8 RET           ;
 
-; Routine at 9DB9
+; Sound routine at 9DB9
+;
+; I:B Channel index I:IX Sound data channel
+@label=sound_command_6
 c$9DB9 LD A,(IX+$04) ;
  $9DBC ADD A,$04     ;
  $9DBE JR Z,$9DFC    ;
  $9DC0 LD (IX+$04),A ;
  $9DC3 RET           ;
 
-; Routine at 9DC4
+; Sound routine at 9DC4
+;
+; I:B Channel index I:IX Sound data channel
+@label=sound_command_1_4
 c$9DC4 LD A,(IX+$03) ;
  $9DC7 SUB $0C       ;
  $9DC9 LD (IX+$03),A ;
@@ -4602,7 +4677,12 @@ c$9DC4 LD A,(IX+$03) ;
  $9DD0 LD (IX+$03),A ;
  $9DD3 LD C,$20      ;
  $9DD5 JR $9DF2      ;
- $9DD7 LD A,(IX+$03) ;
+
+; Sound routine at 9DD7
+;
+; I:B Channel index I:IX Sound data channel
+@label=sound_command_2
+c$9DD7 LD A,(IX+$03) ;
  $9DDA ADD A,$04     ;
  $9DDC LD (IX+$03),A ;
  $9DDF JR Z,$9DFC    ;
@@ -4611,7 +4691,10 @@ c$9DC4 LD A,(IX+$03) ;
  $9DE4 LD (IX+$00),A ;
  $9DE7 RET           ;
 
-; Routine at 9DE8
+; Sound routine at 9DE8
+;
+; I:B Channel index I:IX Sound data channel
+@label=sound_command_0
 c$9DE8 DEC (IX+$03)  ;
  $9DEB LD A,(IX+$03) ;
  $9DEE RRA           ;
@@ -4625,10 +4708,13 @@ c$9DE8 DEC (IX+$03)  ;
  $9DFB RET NZ        ;
 ; This entry point is used by the routines at #R$9DA7 and #R$9DC4.
 *$9DFC LD A,B        ;
- $9DFD DEC A         ;
- $9DFE JP $9D3D      ;
+ $9DFD DEC A         ; Channel
+ $9DFE JP $9D3D      ; Reset sound data pointer
 
-; Routine at 9E01
+; Sound routine at 9E01
+;
+; I:B Channel index I:IX Sound data channel
+@label=sound_command_5_8
 c$9E01 LD HL,($72C0)   ;
  $9E04 RES 7,H         ;
  $9E06 LD DE,($72BE)   ;
@@ -4673,7 +4759,10 @@ c$9E01 LD HL,($72C0)   ;
  $9E58 LD ($72BE),HL   ;
  $9E5B RET             ;
 
-; Routine at 9E5C
+; Sound routine at 9E5C
+;
+; I:B Channel index I:IX Sound data channel
+@label=sound_command_7
 c$9E5C LD A,(IX+$02)   ;
  $9E5F ADD A,(IX+$03)  ;
  $9E62 JR Z,$9DFC      ;
@@ -4685,7 +4774,10 @@ c$9E5C LD A,(IX+$02)   ;
  $9E71 LD (IX+$04),A   ;
  $9E74 RET             ;
 
-; Routine at 9E75
+; Sound routine at 9E75
+;
+; I:B Channel index I:IX Sound data channel
+@label=sound_command_9
 c$9E75 INC (IX+$03)  ;
  $9E78 INC (IX+$03)  ;
  $9E7B JR NZ,$9E80   ;
@@ -4697,9 +4789,9 @@ c$9E75 INC (IX+$03)  ;
  $9E89 RET NZ        ;
  $9E8A CALL $9DFC    ;
  $9E8D XOR A         ;
- $9E8E JP $9D3D      ;
+ $9E8E JP $9D3D      ; Reset sound data pointer
 
-; Play tune, preserve registers
+; Call play tune, preserve registers
 ;
 ; Used by the routines at #R$82BF, #R$832A and #R$846B. I:A Index of tune
 @label=call_play_tune
@@ -4716,7 +4808,7 @@ c$9E91 PUSH BC       ;
  $9EA1 POP BC        ;
  $9EA2 RET           ;
 
-; Routine at 9EA3
+; Call play sound, preserve registers
 ;
 ; Used by the routines at #R$8139, #R$832A, #R$8C52, #R$8E9D, #R$9934, #R$99A0,
 ; #R$99B1, #R$99D3, #R$A33B and #R$A6EC.
@@ -4746,214 +4838,296 @@ b$9EB6 DEFB $35,$39,$3C,$40,$43,$47,$4C,$50
  $9EDE DEFB $1B,$3B,$5D,$81,$A7,$CF,$FA,$27
  $9EE6 DEFB $57,$8A,$C0,$F9
 
-; Sound data
-b$9EEA DEFB $B6,$A2,$2A,$9F,$4E,$9F,$6C,$9F
- $9EF2 DEFB $B6,$A2,$3E,$9F,$62,$9F,$6E,$9F
- $9EFA DEFB $8F,$9F,$79,$9F,$83,$9F,$8B,$9F
- $9F02 DEFB $5D,$A0,$94,$9F,$FE,$9F,$56,$A0
- $9F0A DEFB $3A,$A2,$71,$A0,$3A,$A1,$CA,$A1
- $9F12 DEFB $3A,$A2,$92,$A0,$3A,$A1,$CA,$A1
- $9F1A DEFB $99,$A2,$B6,$A2,$B6,$A2,$AF,$A2
- $9F22 DEFB $3F,$A2,$94,$A0,$3E,$A1,$D0,$A1
- $9F2A DEFB $02,$19,$02,$1B,$10,$19,$04,$FF
- $9F32 DEFB $04,$1B,$04,$5D,$04,$5E,$04,$60
- $9F3A DEFB $08,$61,$18,$60,$06,$60,$06,$61
- $9F42 DEFB $06,$5E,$06,$1B,$06,$18,$06,$15
- $9F4A DEFB $0C,$12,$18,$14,$02,$65,$02,$67
- $9F52 DEFB $10,$65,$04,$FF,$04,$67,$04,$A9
- $9F5A DEFB $04,$AA,$04,$AC,$08,$AD,$18,$AC
- $9F62 DEFB $0C,$64,$0C,$67,$0C,$AA,$0C,$AD
- $9F6A DEFB $18,$AC,$48,$FF,$24,$FF,$0C,$1B
- $9F72 DEFB $02,$5C,$02,$5E,$14,$5C,$00,$02
- $9F7A DEFB $15,$87,$FD,$02,$16,$87,$FD,$18
- $9F82 DEFB $16,$08,$61,$08,$1A,$08,$15,$20
- $9F8A DEFB $0E,$08,$FF,$30,$AD,$08,$FF,$30
- $9F92 DEFB $80,$00,$12,$FF,$01,$18,$01,$19
- $9F9A DEFB $01,$1A,$01,$1B,$01,$5C,$01,$5D
- $9FA2 DEFB $01,$5E,$01,$5F,$01,$60,$01,$61
- $9FAA DEFB $01,$62,$01,$63,$01,$64,$01,$65
- $9FB2 DEFB $02,$60,$02,$5E,$02,$5D,$02,$60
- $9FBA DEFB $02,$5E,$02,$5D,$02,$1B,$02,$5E
- $9FC2 DEFB $02,$5D,$02,$1B,$02,$19,$02,$5D
- $9FCA DEFB $02,$1B,$02,$19,$02,$18,$02,$1B
- $9FD2 DEFB $02,$19,$02,$5D,$02,$1B,$02,$5E
- $9FDA DEFB $02,$5D,$02,$60,$02,$5E,$02,$61
- $9FE2 DEFB $02,$60,$02,$65,$01,$64,$01,$65
- $9FEA DEFB $02,$67,$06,$65,$02,$65,$81,$C1
- $9FF2 DEFB $30,$FF,$10,$AC,$04,$AC,$04,$AC
- $9FFA DEFB $04,$AC,$04,$AC,$12,$FF,$01,$5F
- $A002 DEFB $01,$60,$01,$61,$01,$62,$01,$63
- $A00A DEFB $01,$64,$01,$65,$01,$66,$01,$67
- $A012 DEFB $01,$A8,$01,$A9,$01,$AA,$01,$AB
- $A01A DEFB $01,$AC,$04,$65,$04,$65,$86,$FB
- $A022 DEFB $08,$FF,$04,$65,$04,$65,$85,$FB
- $A02A DEFB $02,$AC,$02,$65,$02,$64,$02,$67
- $A032 DEFB $02,$65,$02,$A9,$02,$67,$02,$AA
- $A03A DEFB $02,$A9,$02,$AC,$02,$67,$02,$AA
- $A042 DEFB $02,$A9,$02,$AC,$02,$AA,$02,$AD
- $A04A DEFB $81,$DF,$10,$F1,$04,$F1,$04,$F1
- $A052 DEFB $04,$F1,$04,$F1,$02,$AC,$02,$F1
- $A05A DEFB $80,$56,$A0,$5A,$00,$07,$FD,$A9
- $A062 DEFB $6A,$00,$06,$FC,$AA,$8A,$A9,$6A
- $A06A DEFB $00,$10,$FC,$A9,$69,$00,$80,$12
- $A072 DEFB $FF,$01,$18,$01,$16,$01,$14,$01
- $A07A DEFB $12,$01,$11,$01,$0F,$01,$0D,$01
- $A082 DEFB $0C,$01,$0A,$01,$08,$01,$06,$01
- $A08A DEFB $05,$01,$0F,$01,$0D,$80,$94,$A0
- $A092 DEFB $20,$FF,$02,$18,$04,$18,$87,$FD
- $A09A DEFB $04,$19,$87,$FD,$04,$1B,$86,$FD
- $A0A2 DEFB $02,$1B,$02,$5D,$04,$5E,$83,$FB
- $A0AA DEFB $04,$5D,$04,$5E,$02,$FF,$06,$5D
- $A0B2 DEFB $06,$5E,$06,$60,$0C,$61,$81,$F5
- $A0BA DEFB $02,$FF,$06,$18,$06,$19,$06,$1B
- $A0C2 DEFB $06,$19,$81,$F7,$06,$18,$06,$19
- $A0CA DEFB $12,$18,$20,$19,$01,$12,$01,$0F
- $A0D2 DEFB $01,$12,$01,$15,$83,$F7,$01,$15
- $A0DA DEFB $01,$12,$01,$15,$01,$18,$83,$F7
- $A0E2 DEFB $01,$18,$01,$15,$01,$18,$01,$1B
- $A0EA DEFB $83,$F7,$01,$1B,$01,$18,$01,$1B
- $A0F2 DEFB $01,$5E,$83,$F7,$01,$5E,$01,$1B
- $A0FA DEFB $01,$5E,$01,$61,$87,$F7,$01,$18
- $A102 DEFB $01,$15,$01,$18,$01,$1B,$83,$F7
- $A10A DEFB $01,$1B,$01,$18,$01,$1B,$01,$5E
- $A112 DEFB $83,$F7,$01,$5E,$01,$1B,$01,$5E
- $A11A DEFB $01,$61,$8B,$F7,$08,$67,$08,$AA
- $A122 DEFB $10,$19,$06,$1B,$02,$19,$04,$18
- $A12A DEFB $04,$1B,$10,$19,$10,$1B,$08,$1B
- $A132 DEFB $04,$5D,$04,$5E,$10,$5D,$10,$5D
- $A13A DEFB $04,$65,$87,$FD,$02,$60,$04,$60
- $A142 DEFB $87,$FD,$04,$62,$87,$FD,$04,$64
- $A14A DEFB $86,$FD,$02,$64,$02,$60,$04,$61
- $A152 DEFB $83,$FB,$04,$60,$04,$61,$02,$FF
- $A15A DEFB $06,$65,$06,$67,$06,$A9,$0C,$AA
- $A162 DEFB $02,$FF,$06,$18,$06,$19,$06,$1B
- $A16A DEFB $0C,$19,$02,$FF,$06,$5D,$06,$5E
- $A172 DEFB $06,$60,$06,$61,$06,$5D,$06,$5E
- $A17A DEFB $06,$60,$06,$5E,$06,$5D,$06,$5E
- $A182 DEFB $12,$5D,$20,$65,$04,$67,$87,$FD
- $A18A DEFB $10,$1B,$10,$5E,$10,$61,$08,$64
- $A192 DEFB $08,$67,$81,$F5,$08,$AA,$08,$67
- $A19A DEFB $08,$AA,$08,$AD,$04,$5D,$02,$5E
- $A1A2 DEFB $02,$60,$08,$5D,$04,$64,$02,$65
- $A1AA DEFB $02,$67,$04,$60,$04,$64,$04,$AD
- $A1B2 DEFB $04,$67,$04,$65,$04,$63,$04,$61
- $A1BA DEFB $04,$63,$04,$61,$04,$65,$08,$64
- $A1C2 DEFB $04,$65,$04,$67,$10,$65,$10,$65
- $A1CA DEFB $02,$AC,$02,$F1,$87,$FB,$02,$F0
- $A1D2 DEFB $02,$A9,$87,$FB,$02,$F1,$02,$AA
- $A1DA DEFB $87,$FB,$02,$F3,$02,$AC,$87,$FB
- $A1E2 DEFB $02,$F0,$04,$F1,$83,$FB,$04,$F0
- $A1EA DEFB $04,$F1,$02,$FF,$06,$AC,$06,$AE
- $A1F2 DEFB $06,$F0,$0C,$F1,$81,$F5,$02,$FF
- $A1FA DEFB $06,$AC,$06,$AE,$06,$F0,$06,$F1
- $A202 DEFB $06,$F3,$06,$F1,$06,$F0,$06,$AE
- $A20A DEFB $06,$AC,$06,$AE,$12,$AC,$20,$F1
- $A212 DEFB $20,$FF,$10,$61,$10,$64,$10,$67
- $A21A DEFB $08,$AA,$08,$AD,$81,$F5,$08,$F0
- $A222 DEFB $08,$AD,$08,$AD,$08,$F1,$10,$AC
- $A22A DEFB $10,$AC,$10,$AA,$0C,$F1,$04,$AD
- $A232 DEFB $08,$AC,$08,$AC,$10,$AC,$10,$AC
- $A23A DEFB $A9,$6A,$00,$03,$FC,$A9,$6A,$00
- $A242 DEFB $02,$FC,$88,$A8,$A9,$6A,$00,$02
- $A24A DEFB $FC,$8A,$88,$A9,$6A,$00,$02,$FC
- $A252 DEFB $88,$A8,$A9,$6A,$00,$03,$FC,$00
- $A25A DEFB $82,$A9,$6A,$A9,$6A,$A9,$6A,$AA
- $A262 DEFB $A8,$00,$01,$F6,$A9,$6A,$00,$09
- $A26A DEFB $FC,$88,$00,$04,$FD,$AA,$AA,$AA
- $A272 DEFB $00,$81,$80,$00,$0F,$FD,$88,$00
- $A27A DEFB $0F,$FD,$AA,$00,$0C,$FD,$88,$AA
- $A282 DEFB $88,$88,$88,$8A,$88,$00,$06,$FD
- $A28A DEFB $AA,$88,$88,$88,$88,$88,$8A,$88
- $A292 DEFB $8A,$AA,$00,$08,$FD,$00,$80,$7F
- $A29A DEFB $FD,$7F,$FD,$7D,$7D,$7F,$FD,$7D
- $A2A2 DEFB $F7,$DF,$44,$5F,$5F,$55,$44,$5F
- $A2AA DEFB $5F,$44,$55,$00,$00,$01,$F1,$01
- $A2B2 DEFB $F0,$80,$AF,$A2,$40,$FF,$80,$B6
- $A2BA DEFB $A2
+; Tune data
+;
+; Each row contains 4 addresses for 4 channels
+; Addresses are copied into byte 1 and 2 of the sound data buffer.
+@label=tune_data_table
+w$9EEA DEFW $A2B6,$9F2A,$9F4E,$9F6C
+ $9EF2 DEFW $A2B6,$9F3E,$9F62,$9F6E
+ $9EFA DEFW $9F8F,$9F79,$9F83,$9F8B
+ $9F02 DEFW $A05D,$9F94,$9FFE,$A056
+ $9F0A DEFW $A23A,$A071,$A13A,$A1CA
+ $9F12 DEFW $A23A,$A092,$A13A,$A1CA
+ $9F1A DEFW $A299,$A2B6,$A2B6,$A2AF
+ $9F22 DEFW $A23F,$A094,$A13E,$A1D0
 
-; Routine at A2BB
+; Sound data block at 9F2A
+b$9F2A DEFB $02,$19,$02,$1B,$10,$19,$04,$FF
+ $9F32 DEFB $04,$1B,$04,$5D,$04,$5E,$04,$60
+ $9F3A DEFB $08,$61,$18,$60
+
+; Sound data block at 9F3E
+b$9F3E DEFB $06,$60,$06,$61,$06,$5E,$06,$1B
+ $9F46 DEFB $06,$18,$06,$15,$0C,$12,$18,$14
+
+; Sound data block at 9F4E
+b$9F4E DEFB $02,$65,$02,$67,$10,$65,$04,$FF
+ $9F56 DEFB $04,$67,$04,$A9,$04,$AA,$04,$AC
+ $9F5E DEFB $08,$AD,$18,$AC
+
+; Sound data block at 9F62
+b$9F62 DEFB $0C,$64,$0C,$67,$0C,$AA,$0C,$AD
+ $9F6A DEFB $18,$AC
+
+; Sound data block at 9F6C
+b$9F6C DEFB $48,$FF
+
+; Sound data block at 9F6E
+b$9F6E DEFB $24,$FF,$0C,$1B,$02,$5C,$02,$5E
+ $9F76 DEFB $14,$5C,$00
+
+; Sound data block at 9F79
+b$9F79 DEFB $02,$15,$87,$FD,$02,$16,$87,$FD
+ $9F81 DEFB $18,$16
+
+; Sound data block at 9F83
+b$9F83 DEFB $08,$61,$08,$1A,$08,$15,$20,$0E
+
+; Sound data block at 9F8B
+b$9F8B DEFB $08,$FF,$30,$AD
+
+; Sound data block at 9F8F
+b$9F8F DEFB $08,$FF,$30,$80,$00
+
+; Sound data block at 9F94
+b$9F94 DEFB $12,$FF,$01,$18,$01,$19,$01,$1A
+ $9F9C DEFB $01,$1B,$01,$5C,$01,$5D,$01,$5E
+ $9FA4 DEFB $01,$5F,$01,$60,$01,$61,$01,$62
+ $9FAC DEFB $01,$63,$01,$64,$01,$65,$02,$60
+ $9FB4 DEFB $02,$5E,$02,$5D,$02,$60,$02,$5E
+ $9FBC DEFB $02,$5D,$02,$1B,$02,$5E,$02,$5D
+ $9FC4 DEFB $02,$1B,$02,$19,$02,$5D,$02,$1B
+ $9FCC DEFB $02,$19,$02,$18,$02,$1B,$02,$19
+ $9FD4 DEFB $02,$5D,$02,$1B,$02,$5E,$02,$5D
+ $9FDC DEFB $02,$60,$02,$5E,$02,$61,$02,$60
+ $9FE4 DEFB $02,$65,$01,$64,$01,$65,$02,$67
+ $9FEC DEFB $06,$65,$02,$65,$81,$C1,$30,$FF
+ $9FF4 DEFB $10,$AC,$04,$AC,$04,$AC,$04,$AC
+ $9FFC DEFB $04,$AC
+
+; Sound data block at 9FFE
+b$9FFE DEFB $12,$FF,$01,$5F,$01,$60,$01,$61
+ $A006 DEFB $01,$62,$01,$63,$01,$64,$01,$65
+ $A00E DEFB $01,$66,$01,$67,$01,$A8,$01,$A9
+ $A016 DEFB $01,$AA,$01,$AB,$01,$AC,$04,$65
+ $A01E DEFB $04,$65,$86,$FB,$08,$FF,$04,$65
+ $A026 DEFB $04,$65,$85,$FB,$02,$AC,$02,$65
+ $A02E DEFB $02,$64,$02,$67,$02,$65,$02,$A9
+ $A036 DEFB $02,$67,$02,$AA,$02,$A9,$02,$AC
+ $A03E DEFB $02,$67,$02,$AA,$02,$A9,$02,$AC
+ $A046 DEFB $02,$AA,$02,$AD,$81,$DF,$10,$F1
+ $A04E DEFB $04,$F1,$04,$F1,$04,$F1,$04,$F1
+
+; Sound data block at A056
+b$A056 DEFB $02,$AC,$02,$F1,$80,$56,$A0
+
+; Sound data block at A05D
+b$A05D DEFB $5A,$00,$07,$FD,$A9,$6A,$00,$06
+ $A065 DEFB $FC,$AA,$8A,$A9,$6A,$00,$10,$FC
+ $A06D DEFB $A9,$69,$00,$80
+
+; Sound data block at A071
+b$A071 DEFB $12,$FF,$01,$18,$01,$16,$01,$14
+ $A079 DEFB $01,$12,$01,$11,$01,$0F,$01,$0D
+ $A081 DEFB $01,$0C,$01,$0A,$01,$08,$01,$06
+ $A089 DEFB $01,$05,$01,$0F,$01,$0D,$80,$94
+ $A091 DEFB $A0
+
+; Sound data block at A092
+b$A092 DEFB $20,$FF
+
+; Sound data block at A094
+b$A094 DEFB $02,$18,$04,$18,$87,$FD,$04,$19
+ $A09C DEFB $87,$FD,$04,$1B,$86,$FD,$02,$1B
+ $A0A4 DEFB $02,$5D,$04,$5E,$83,$FB,$04,$5D
+ $A0AC DEFB $04,$5E,$02,$FF,$06,$5D,$06,$5E
+ $A0B4 DEFB $06,$60,$0C,$61,$81,$F5,$02,$FF
+ $A0BC DEFB $06,$18,$06,$19,$06,$1B,$06,$19
+ $A0C4 DEFB $81,$F7,$06,$18,$06,$19,$12,$18
+ $A0CC DEFB $20,$19,$01,$12,$01,$0F,$01,$12
+ $A0D4 DEFB $01,$15,$83,$F7,$01,$15,$01,$12
+ $A0DC DEFB $01,$15,$01,$18,$83,$F7,$01,$18
+ $A0E4 DEFB $01,$15,$01,$18,$01,$1B,$83,$F7
+ $A0EC DEFB $01,$1B,$01,$18,$01,$1B,$01,$5E
+ $A0F4 DEFB $83,$F7,$01,$5E,$01,$1B,$01,$5E
+ $A0FC DEFB $01,$61,$87,$F7,$01,$18,$01,$15
+ $A104 DEFB $01,$18,$01,$1B,$83,$F7,$01,$1B
+ $A10C DEFB $01,$18,$01,$1B,$01,$5E,$83,$F7
+ $A114 DEFB $01,$5E,$01,$1B,$01,$5E,$01,$61
+ $A11C DEFB $8B,$F7,$08,$67,$08,$AA,$10,$19
+ $A124 DEFB $06,$1B,$02,$19,$04,$18,$04,$1B
+ $A12C DEFB $10,$19,$10,$1B,$08,$1B,$04,$5D
+ $A134 DEFB $04,$5E,$10,$5D,$10,$5D
+
+; Sound data block at A13A
+b$A13A DEFB $04,$65,$87,$FD
+
+; Sound data block at A13E
+b$A13E DEFB $02,$60,$04,$60,$87,$FD,$04,$62
+ $A146 DEFB $87,$FD,$04,$64,$86,$FD,$02,$64
+ $A14E DEFB $02,$60,$04,$61,$83,$FB,$04,$60
+ $A156 DEFB $04,$61,$02,$FF,$06,$65,$06,$67
+ $A15E DEFB $06,$A9,$0C,$AA,$02,$FF,$06,$18
+ $A166 DEFB $06,$19,$06,$1B,$0C,$19,$02,$FF
+ $A16E DEFB $06,$5D,$06,$5E,$06,$60,$06,$61
+ $A176 DEFB $06,$5D,$06,$5E,$06,$60,$06,$5E
+ $A17E DEFB $06,$5D,$06,$5E,$12,$5D,$20,$65
+ $A186 DEFB $04,$67,$87,$FD,$10,$1B,$10,$5E
+ $A18E DEFB $10,$61,$08,$64,$08,$67,$81,$F5
+ $A196 DEFB $08,$AA,$08,$67,$08,$AA,$08,$AD
+ $A19E DEFB $04,$5D,$02,$5E,$02,$60,$08,$5D
+ $A1A6 DEFB $04,$64,$02,$65,$02,$67,$04,$60
+ $A1AE DEFB $04,$64,$04,$AD,$04,$67,$04,$65
+ $A1B6 DEFB $04,$63,$04,$61,$04,$63,$04,$61
+ $A1BE DEFB $04,$65,$08,$64,$04,$65,$04,$67
+ $A1C6 DEFB $10,$65,$10,$65
+
+; Sound data block at A1CA
+b$A1CA DEFB $02,$AC,$02,$F1,$87,$FB
+
+; Sound data block at A1D0
+b$A1D0 DEFB $02,$F0,$02,$A9,$87,$FB,$02,$F1
+ $A1D8 DEFB $02,$AA,$87,$FB,$02,$F3,$02,$AC
+ $A1E0 DEFB $87,$FB,$02,$F0,$04,$F1,$83,$FB
+ $A1E8 DEFB $04,$F0,$04,$F1,$02,$FF,$06,$AC
+ $A1F0 DEFB $06,$AE,$06,$F0,$0C,$F1,$81,$F5
+ $A1F8 DEFB $02,$FF,$06,$AC,$06,$AE,$06,$F0
+ $A200 DEFB $06,$F1,$06,$F3,$06,$F1,$06,$F0
+ $A208 DEFB $06,$AE,$06,$AC,$06,$AE,$12,$AC
+ $A210 DEFB $20,$F1,$20,$FF,$10,$61,$10,$64
+ $A218 DEFB $10,$67,$08,$AA,$08,$AD,$81,$F5
+ $A220 DEFB $08,$F0,$08,$AD,$08,$AD,$08,$F1
+ $A228 DEFB $10,$AC,$10,$AC,$10,$AA,$0C,$F1
+ $A230 DEFB $04,$AD,$08,$AC,$08,$AC,$10,$AC
+ $A238 DEFB $10,$AC
+
+; Sound data block at A23A
+b$A23A DEFB $A9,$6A,$00,$03,$FC
+
+; Sound data block at A23F
+b$A23F DEFB $A9,$6A,$00,$02,$FC,$88,$A8,$A9
+ $A247 DEFB $6A,$00,$02,$FC,$8A,$88,$A9,$6A
+ $A24F DEFB $00,$02,$FC,$88,$A8,$A9,$6A,$00
+ $A257 DEFB $03,$FC,$00,$82,$A9,$6A,$A9,$6A
+ $A25F DEFB $A9,$6A,$AA,$A8,$00,$01,$F6,$A9
+ $A267 DEFB $6A,$00,$09,$FC,$88,$00,$04,$FD
+ $A26F DEFB $AA,$AA,$AA,$00,$81,$80,$00,$0F
+ $A277 DEFB $FD,$88,$00,$0F,$FD,$AA,$00,$0C
+ $A27F DEFB $FD,$88,$AA,$88,$88,$88,$8A,$88
+ $A287 DEFB $00,$06,$FD,$AA,$88,$88,$88,$88
+ $A28F DEFB $88,$8A,$88,$8A,$AA,$00,$08,$FD
+ $A297 DEFB $00,$80
+
+; Sound data block at A299
+b$A299 DEFB $7F,$FD,$7F,$FD,$7D,$7D,$7F,$FD
+ $A2A1 DEFB $7D,$F7,$DF,$44,$5F,$5F,$55,$44
+ $A2A9 DEFB $5F,$5F,$44,$55,$00,$00
+
+; Sound data block at A2AF
+b$A2AF DEFB $01,$F1,$01,$F0,$80,$AF,$A2
+
+; Sound data block at A2B6
+b$A2B6 DEFB $40,$FF,$80,$B6,$A2
+
+; Send data for all channels to PSG
 ;
 ; Used by the routine at #R$9B99.
+@label=all_channels_data_to_psg
 c$A2BB LD A,$9F      ; Mute channel 1
  $A2BD LD C,$90      ; Tone 1 attenuation
  $A2BF LD D,$80      ; Tone 1 frequency
- $A2C1 LD IX,($7272) ; Data from channel 1?
- $A2C5 CALL $A314    ;
+ $A2C1 LD IX,($7272) ; IX=#R$7287
+ $A2C5 CALL $A314    ; Play tone or mute
  $A2C8 LD A,$BF      ; Mute channel 2
  $A2CA LD C,$B0      ; Tone 2 attenuation
  $A2CC LD D,$A0      ; Tone 2 frequency
- $A2CE LD IX,($7274) ; Data from channel 2?
- $A2D2 CALL $A314    ;
+ $A2CE LD IX,($7274) ; IX=#R$7291
+ $A2D2 CALL $A314    ; Play tone or mute
  $A2D5 LD A,$DF      ; Mute channel 3
  $A2D7 LD C,$D0      ; Tone 3 attenuation
  $A2D9 LD D,$C0      ; Tone 3 frequency
- $A2DB LD IX,($7276) ; Data from channel 3?
- $A2DF CALL $A314    ;
+ $A2DB LD IX,($7276) ; IX=#R$729B
+ $A2DF CALL $A314    ; Play tone or mute
  $A2E2 LD A,$FF      ; Mute noise
  $A2E4 LD C,$F0      ; Noise attenuation
- $A2E6 LD IX,($7270) ; Data from channel 4?
+ $A2E6 LD IX,($7270) ; IX=#R$727D
  $A2EA LD E,(IX+$00) ; Get byte 0
- $A2ED INC E         ; If zero
- $A2EE JR NZ,$A2F3   ; Then jump
+ $A2ED INC E         ; If it was zero
+ $A2EE JR NZ,$A2F3   ; Then jump ahead
  $A2F0 OUT ($FF),A   ; Else mute
  $A2F2 RET           ;
 
-; Routine at A2F3
+; Send data for noise channel to PSG
 ;
 ; Used by the routine at #R$A2BB.
-c$A2F3 CALL $A303    ;
- $A2F6 LD A,(IX+$04) ;
- $A2F9 AND $0F       ;
- $A2FB LD HL,$7278   ;
- $A2FE CP (HL)       ;
- $A2FF RET Z         ;
- $A300 LD (HL),A     ;
- $A301 LD C,$E0      ; Noise control
-; This entry point is used by the routine at #R$A31D.
-*$A303 LD A,(IX+$04) ; Sound byte
- $A306 BIT 4,C       ; If bit 4 is 0
+;
+; I:IX -> B0, B1, B2, B3, B4: attenuation AAAAXXXX
+@label=noise_data_to_psg
+c$A2F3 CALL $A303    ; Send attenuation to PSG
+ $A2F6 LD A,(IX+$04) ; Get sound byte
+ $A2F9 AND $0F       ; Isolate bits 0-3
+ $A2FB LD HL,$7278   ; Compare to stored value
+ $A2FE CP (HL)       ; ...
+ $A2FF RET Z         ; Return if same
+ $A300 LD (HL),A     ; Else store new value
+ $A301 LD C,$E0      ; and make noise (continue into #R$A303)
+
+; Send attenuation or noise control bytes to PSG
+;
+; Used by the routines at #R$A2F3 and #R$A31D.
+;
+; I:C Operation in upper nybble 1CC0XXXX or 1CC1XXXX
+; I:IX -> B0, B1, B2, B3, B4: attenuation AAAAXXXX
+@label=attn_or_noise_to_psg
+c$A303 LD A,(IX+$04) ; Get sound byte
+ $A306 BIT 4,C       ; If bit 4 of operation is 0, i.e. noise control
  $A308 JR Z,$A30E    ; Then skip shifting
  $A30A RRCA          ; Shift bits 4-7 to 0-3
  $A30B RRCA          ; ...
  $A30C RRCA          ; ...
  $A30D RRCA          ; ...
 *$A30E AND $0F       ; Isolate bits 0-3
- $A310 OR C          ; Apply operation (attenuation?) to bits 4-7
+ $A310 OR C          ; Apply operation (attenuation or noise control) to bits
+                     ; 4-7
  $A311 OUT ($FF),A   ; Send to PSG
  $A313 RET           ;
 
-; Send sound bytes to PSG
+; Send data for tone channel to PSG
 ;
 ; Used by the routine at #R$A2BB.
 ;
-; I:A Attenuation or noise byte
-; I:C
-; I:D Operation
-; I:IX -> B0: $00 for tone, B1, B2: frequency LSB, B3: frequency MSB
-@label=bytes_to_psg
+; I:A Mute operation for channel
+; I:C Attenuation operation for channel
+; I:D Tone operation for channel
+; I:IX -> B0: $00 for tone, B1, B2, B3, B4
+@label=tone_data_to_psg
 c$A314 LD E,(IX+$00) ; Get B0
  $A317 INC E         ; If B0 was 0 then this is not 0
- $A318 JR NZ,$A31D   ; Tone
- $A31A OUT ($FF),A   ; Attenuation or noise to PSG
+ $A318 JR NZ,$A31D   ; Jump for tone
+ $A31A OUT ($FF),A   ; Mute
  $A31C RET           ;
 
-; Send tone frequency bytes to PSG
+; Send attenuation and frequency bytes to PSG
 ;
 ; Used by the routine at #R$A314.
 ;
-; D: Operation in upper nybble 1XX00000
-; I: IX -> B0, B1, B2: frequency LSB, B3: frequency MSB
-@label=freq_to_psg
-c$A31D CALL $A303    ;
+; I:C Attenuation operation in upper nybble 1CC1XXXX
+; I:D Tone operation in upper nybble 1CC0XXXX
+; I:IX -> B0, B1, B2, B3: frequency LSB, B4: attenuation/frequency MSB
+; .    (AAAA00FF),
+@label=attn_and_freq_to_psg
+c$A31D CALL $A303    ; Set attenuation
  $A320 LD A,(IX+$03) ; Frequency LSB
  $A323 AND $0F       ; Isolate bits 0-3 of frequency
  $A325 OR D          ; Apply operation to bits 4-7
  $A326 OUT ($FF),A   ; Send to PSG
- $A328 LD A,(IX+$03) ; Frequency LSB
- $A32B AND $F0       ; Isolate bits 4-7 of frequency
+ $A328 LD A,(IX+$03) ; Frequency LSB (FFFFFFFF)
+ $A32B AND $F0       ; Isolate bits 4-7 of frequency (FFFF0000)
  $A32D LD D,A        ; Save
- $A32E LD A,(IX+$04) ; Get frequency MSB
+ $A32E LD A,(IX+$04) ; Get frequency MSB (AAAA00FF)
  $A331 AND $0F       ; Isolate lower nybble with bits 8-9 of frequency
+                     ; (000000FF)
  $A333 OR D          ; Now FFFF00FF in wrong order
  $A334 RRCA          ; FFFFF00F
  $A335 RRCA          ; FFFFFF00

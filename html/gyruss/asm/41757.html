@@ -24,13 +24,13 @@ Next: <a href="41787.html">A33B</a>
 </td>
 </tr>
 </table>
-<div class="description">A31D: Send tone frequency bytes to PSG</div>
+<div class="description">A31D: Send attenuation and frequency bytes to PSG</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="41748.html">bytes_to_psg</a>.
+Used by the routine at <a href="41748.html">tone_data_to_psg</a>.
 </div>
 </div>
 <table class="input">
@@ -38,21 +38,25 @@ Used by the routine at <a href="41748.html">bytes_to_psg</a>.
 <th colspan="2">Input</th>
 </tr>
 <tr>
-<td class="register"></td>
-<td class="register-desc">Operation in upper nybble 1XX00000</td>
+<td class="register">C</td>
+<td class="register-desc">Attenuation operation in upper nybble 1CC1XXXX</td>
 </tr>
 <tr>
-<td class="register"></td>
-<td class="register-desc">IX -&gt; B0, B1, B2: frequency LSB, B3: frequency MSB</td>
+<td class="register">D</td>
+<td class="register-desc">Tone operation in upper nybble 1CC0XXXX</td>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">-&gt; B0, B1, B2, B3: frequency LSB, B4: attenuation/frequency MSB (AAAA00FF),</td>
 </tr>
 </table>
 </td>
 </tr>
 <tr>
-<td class="asm-label">freq_to_psg</td>
+<td class="asm-label">attn_and_freq_to_psg</td>
 <td class="address-2"><span id="41757"></span>A31D</td>
-<td class="instruction">CALL <a href="41715.html#41731">LA2F3_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL <a href="41731.html">attn_or_noise_to_psg</a></td>
+<td class="comment-1" rowspan="1">Set attenuation</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -82,13 +86,13 @@ Used by the routine at <a href="41748.html">bytes_to_psg</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="41768"></span>A328</td>
 <td class="instruction">LD A,(IX+$03)</td>
-<td class="comment-1" rowspan="1">Frequency LSB</td>
+<td class="comment-1" rowspan="1">Frequency LSB (FFFFFFFF)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41771"></span>A32B</td>
 <td class="instruction">AND $F0</td>
-<td class="comment-1" rowspan="1">Isolate bits 4-7 of frequency</td>
+<td class="comment-1" rowspan="1">Isolate bits 4-7 of frequency (FFFF0000)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -100,13 +104,13 @@ Used by the routine at <a href="41748.html">bytes_to_psg</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="41774"></span>A32E</td>
 <td class="instruction">LD A,(IX+$04)</td>
-<td class="comment-1" rowspan="1">Get frequency MSB</td>
+<td class="comment-1" rowspan="1">Get frequency MSB (AAAA00FF)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41777"></span>A331</td>
 <td class="instruction">AND $0F</td>
-<td class="comment-1" rowspan="1">Isolate lower nybble with bits 8-9 of frequency</td>
+<td class="comment-1" rowspan="1">Isolate lower nybble with bits 8-9 of frequency (000000FF)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

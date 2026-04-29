@@ -196,44 +196,66 @@ B $726E,1,1
 b $726F Temporary polar x
 @ $726F label=temp_polar_x
 B $726F,1,1
-w $7270 Word at 7270 (sound)
+w $7270 Pointer to #R$727D
+D $7270 Usually points to #R$727D But sometimes changed to #R$72A5 by #R$9CE3
+@ $7270 label=ptr_sound_data_noise
 W $7270,2,2
-w $7272 Word at 7272 (sound)
+w $7272 Pointer to #R$7287
+@ $7272 label=ptr_sound_data_tone_1
 W $7272,2,2
-w $7274 Word at 7274 (sound)
+w $7274 Pointer to #R$7291
+@ $7274 label=ptr_sound_data_tone_2
 W $7274,2,2
-w $7276 Word at 7276 (sound)
+w $7276 Pointer to #R$729B
+@ $7276 label=ptr_sound_data_tone_3
 W $7276,2,2
-b $7278 Data block at 7278 (sound)
+b $7278 Last noise operation
+@ $7278 label=last_noise_operation
 B $7278,2,2
-b $727A Byte at 727A (sound)
+b $727A Is a tune playing?
+D $727A Set to 5 when starting a tune, but any non-zero value could be used. Set to 0 when stopping a tune
+@ $727A label=is_tune_playing
 B $727A,1,1
-b $727B Byte at 727B (sound)
+b $727B Sound player countdown (tune speed?)
+D $727B Counts down from 5 to zero, and certain sound player actions are only performed when 0.
+@ $727B sound_player_countdown
 B $727B,1,1
-b $727C Byte at 727C (sound)
+b $727C Index of tune playing
+@ $727C label=tune_playing
 B $727C,1,1
-b $727D Sound channel 1
+b $727D Sound data for PSG noise channel
+D $727D #TABLE(default, default) { =h Byte | =h Purpose } { $00 | $00 for tone/noise, $FF for ... } { $01 | LSB of ... } { $02 | MSB of ... } { $03 | Frequency LSB } { $04 | Bits 4-8 attenuation, bits 0-3 frequency 2 MSbits or noise value  } { $05 | Countdown, e.g. 4 to 0 } { $06 | Unknown } { $07 | Countdown } { $08 | Unknown } { $09 | Initialized to 0 } TABLE#
+@ $727D label=sound_data_noise
 B $727D,10,10
-b $7287 Sound channel 2
+b $7287 Sound data for PSG tone 1
+@ $7287 label=sound_data_tone_1
 B $7287,10,10
-b $7291 Sound channel 3
+b $7291 Sound data for PSG tone 2
+@ $7291 label=sound_data_tone_2
 B $7291,10,10
-b $729B Sound channel 4
+b $729B Sound data for PSG tone 3
+@ $729B label=sound_data_tone_3
 B $729B,10,10
-b $72A5 Buffer at 72A5
-D $72A5 Used by sound routines.
-@ $72A5 label=sound_buffer
-B $72A5,25,8*3,1
-w $72BE Word at 72BE
-D $72BE Used by sound routines.
+b $72A5 Sound data channel 1
+D $72A5 #TABLE(default, default) { =h Byte | =h Purpose } { $00 | Unknown } { $01 | Unknown } { $02 | Unknown } { $03 | Unknown } { $04 | Unknown } { $05 | Command } { $06 | Unknown } { $07 | Unknown } TABLE#
+@ $72A5 label=sound_data_channel_1
+B $72A5,8,8
+b $72AD Sound data channel 2
+@ $72AD label=sound_data_channel_2
+B $72AD,8,8
+b $72B5 Sound data channel 3
+@ $72B5 label=sound_data_channel_3
+B $72B5,8,8
+b $72BD Sound data channel 4
+@ $72BD label=sound_data_channel_4
+B $72BD,1,1
+w $72BE Word at 72BE (sound data channel 4)
 W $72BE,2,2
-w $72C0 Word at 72C0
-D $72C0 Used by sound routines.
+w $72C0 Word at 72C0 (sound data channel 4)
 W $72C0,2,2
-b $72C2 Byte at 72C2 (unused?)
+b $72C2 Byte at 72C2 (sound data channel 4)
 B $72C2,1,1
-w $72C3 Word at 72C3
-D $72C3 Used by sound routines.
+w $72C3 Word at 72C3 (sound data channel 4)
 W $72C3,2,2
 w $72C5 Temporary center of projection
 D $72C5 Will be copied to #R$7000
@@ -1316,7 +1338,7 @@ C $8829,3 Mark for pattern reload
 C $882C,3 Decrement polar y
 C $882F,3 Get polar y
 C $8832,2 Return if not $F2 (-14)
-C $8834,1 Else continue to #R$8835
+C $8834,1 Else continue into #R$8835
 c $8835 Enemy movement: Determine action when out of screen
 D $8835 Used by the routine at #R$8A2D.
 R $8835 I:IX Sprite data of enemy
@@ -1562,7 +1584,7 @@ C $89DF,2 And apply upper nybble
 C $89E1,1 ...
 C $89E2,3 ...
 C $89E5,3 Set path address
-C $89E8,3 ... (continue to #R$89EB)
+C $89E8,3 ... (continue into #R$89EB)
 c $89EB Circular enemy movement: Move sprite along path
 D $89EB Used by the routine at #R$899E. Identical to code at #R$8936
 @ $89EB label=move_sprite_along_path
@@ -3124,145 +3146,423 @@ C $9AE7,3 $727D
 C $9AEB,3 $7287
 C $9AEF,3 $7291
 C $9AF3,3 $729B
-c $9B0D Play tune?
+c $9B0D Play tune
 D $9B0D Used by the routines at #R$9BD9, #R$9C1C and #R$9E91.
 R $9B0D I:A Index of tune (0 - 6)
 @ $9B0D label=play_tune
-N $9B59 This entry point is used by the routine at #R$9B99.
+C $9B0D,2 If tune index is 7
+C $9B0F,2 Then skip ahead
+C $9B11,3 Else save tune index
+C $9B14,3 #R$727D+7
+C $9B17,2 Set to 2
+C $9B19,1 Multiply index by 8
+C $9B1A,1 ...
+C $9B1B,1 ...
+C $9B1C,1 DE = A
+C $9B1D,2 ...
+C $9B1F,3 Table base address
+C $9B22,1 Add offset
+C $9B23,4 First sound data buffer
+C $9B27,2 4 channels
+C $9B29,2 10 bytes each
+C $9B2B,1 Get LSB
+C $9B2C,3 Store in sound data buffer
+C $9B2F,1 Next table address
+C $9B30,1 Get MSB
+C $9B31,3 Store in sound data buffer
+C $9B34,4 Set countdown
+C $9B38,1 Next table address
+C $9B3D,2 Next sound data buffer
+C $9B3F,2 Loop for 4 channels
+C $9B41,2 Tune speed?
+C $9B43,3 Init countdown
+C $9B46,3 Set a tune is playing
+C $9B49,3 Get tune index
+C $9B4C,1 Minus 1
+C $9B4D,2 If tune index was 1 then skip ahead and set C = 9
+C $9B4F,1 If tune index was > 1 then return
+C $9B50,2 Set C = 5 (sound index)
+C $9B52,2 Skip next
+C $9B54,2 Set C = 9 (sound index)
+C $9B56,3 Jump to central part of play_sound
+c $9B59 Increase attenuation for all channels
+D $9B59 Used by the routine at #R$9B99.
+@ $9B59 label=dampen_all_channels
+C $9B59,4 First sound data buffer
+C $9B5D,2 4 channels
+C $9B5F,3 Size of channel data
+C $9B62,3 Get tune index
+C $9B65,2 If < 3
+C $9B67,2 Then skip ahead
+C $9B69,2 Else set first byte
+C $9B6B,3 of buffer to $FF
+C $9B6E,2 and skip first channel
+C $9B70,3 Get countdown
+C $9B73,1 and decrement
+C $9B74,3 If it was 0 then move to next channel
+C $9B77,3 Else save new value
+C $9B7A,3 Get attenuation in bits 4-7
+C $9B7D,2 Add 1
+C $9B7F,3 Save again
+C $9B82,2 Next channel address
+C $9B84,2 Loop for 4 channels
 c $9B87 Stop tune
 D $9B87 Used by the routines at #R$8139, #R$832A and #R$9C1C.
 @ $9B87 label=stop_tune
+C $9B88,3 Set tune playing flag to 0
+C $9B8B,1 $FF
+C $9B8C,3 Noise
+C $9B8F,3 Tone 1
+C $9B92,3 Tone 2
+C $9B95,3 Tone 3
 c $9B99 Sound player
 D $9B99 Used by the routine at #R$8522.
 @ $9B99 label=sound_player
+C $9B99,3 Send data for all channels to PSG
+C $9B9C,3 Execute command for all sound channels
+C $9B9F,3 Is tune playing?
+C $9BA2,1 ...
+C $9BA3,1 Return is not
+C $9BA4,3 Dampen all channels
+C $9BA7,3 Decrement countdown
+C $9BAA,1 ...
+C $9BAB,1 Return if not 0
+C $9BAC,2 Reset countdown
 N $9BAE This entry point is used by the routine at #R$9BD9.
+C $9BAE,4 First sound data buffer
+C $9BB2,2 4 channels
+C $9BB4,3 Get tune index
+C $9BB7,2 If < 3
+C $9BB9,2 Then ...
+C $9BBB,3 Decrement countdown
+C $9BBE,2 If not 0 then ...
+C $9BC0,4 Reset countdown
+C $9BC4,3 Get address LSB
+C $9BC7,3 Get address MSB
 N $9BCA This entry point is used by the routines at #R$9BD9 and #R$9BF8.
-c $9BD9 Routine at 9BD9
+C $9BCA,1 Get byte at address
+C $9BCB,1 Next address
+C $9BCC,1 Was the byte zero?
+C $9BCD,2 If not, jump ahead
+C $9BCF,1 Get next byte
+C $9BD0,1 Next address
+C $9BD1,1 Was the byte zero?
+C $9BD2,2 If not, jump ahead
+C $9BD4,3 Address of ...
+C $9BD7,2 Jump back and repeat with #R$A299
+c $9BD9 Sound routine at 9BD9
 D $9BD9 Used by the routine at #R$9B99.
-c $9BF8 Routine at 9BF8
+C $9BE6,2 Then jump back into #R$9B99
+C $9BEF,2 Then jump back into #R$9B99
+c $9BF8 Sound routine at 9BF8
 D $9BF8 Used by the routine at #R$9BD9.
-c $9BFD Routine at 9BFD
+C $9BFB,2 jump back into #R$9B99
+c $9BFD Sound routine at 9BFD
 D $9BFD Used by the routine at #R$9B99.
 N $9C06 This entry point is used by the routine at #R$9B99.
-c $9C1C Routine at 9C1C
+c $9C1C Sound routine at 9C1C
 D $9C1C Used by the routines at #R$9B99 and #R$9C7E.
 N $9C27 This entry point is used by the routines at #R$9C39 and #R$9C46.
-c $9C39 Routine at 9C39
+c $9C39 Sound routine at 9C39
 D $9C39 Used by the routine at #R$9C1C.
-c $9C46 Routine at 9C46
+c $9C46 Sound routine at 9C46
 D $9C46 Used by the routine at #R$9C39.
-c $9C4B Routine at 9C4B
+c $9C4B Sound routine at 9C4B
 D $9C4B Used by the routine at #R$9C39.
-c $9C7E Routine at 9C7E
+c $9C7E Sound routine at 9C7E
 D $9C7E Used by the routine at #R$9C4B.
 N $9C87 This entry point is used by the routine at #R$9C4B.
 N $9C8A This entry point is used by the routines at #R$9BFD, #R$9C1C and #R$9C4B.
-c $9C92 Routine at 9C92
+c $9C92 Sound routine at 9C92
 D $9C92 Used by the routines at #R$9BF8 and #R$9C46.
-c $9CA0 Routine at 9CA0
+c $9CA0 Sound routine at 9CA0
 D $9CA0 Used by the routine at #R$9C92.
 C $9CA0,3 Set x
 N $9CA3 This entry point is used by the routine at #R$9C92.
-c $9CA8 Routine at 9CA8
+c $9CA8 Play sound
 D $9CA8 Used by the routine at #R$9EA3.
-R $9CA8 I:C Index of sound (1-8)
+R $9CA8 I:C Index of sound (1-9), maybe 1 is no sound?
 @ $9CA8 label=play_sound
+C $9CA8,3 Get tune playing
+C $9CAB,1 If zero
+C $9CAC,1 Then return
+C $9CAD,2 Are we playing tune 6?
+C $9CAF,2 Then skip ahead
+C $9CB1,1 A = index of sound
+C $9CB2,2 Is it < 2?
+C $9CB4,1 Then return
 N $9CB5 This entry point is used by the routines at #R$9B54 and #R$9E01.
+@ $9CB5 label=play_sound_no_checks
+C $9CB5,1 A = index of sound
+C $9CB6,1 Save index
+C $9CB7,3 Call next routine
+C $9CBA,1 Restore index
+C $9CBB,2 Is it 9? (if called from play_tune or #R$9E45)
+C $9CBD,1 Return if not
+C $9CBE,1 Index + 1 (now 10) (continue into #R$9CBF)
+c $9CBF Copy data from #R$9CE7 to sound channel and change pointer from sound data to sound channel
+D $9CBF Used by the routine at #R$9CA8.
+R $9CBF label=init_play_sound
+C $9CBF,1 Multiply by 8
+C $9CC0,1 ...
+C $9CC1,1 ...
+C $9CC2,1 DE = A
+C $9CC3,2 ...
 C $9CC5,3 Table address
+C $9CC8,1 Add offset
+C $9CC9,1 Get table byte
+C $9CCA,1 Multiply by 2
+C $9CCB,1 Save it
+C $9CCC,1 Multiply by 4 more
+C $9CCD,1 ...
+C $9CCE,1 BC = A
+C $9CCF,1 ...
+C $9CD0,1 DE = table address
+C $9CD1,3 HL = Sound channel 1
+C $9CD4,1 Add offset
+C $9CD5,1 Save sound channel address
+C $9CD6,1 HL = table address, DE = sound channel address
+C $9CD7,3 Copy 8 bytes from #R$9CE7 to sound channel
+C $9CDA,2 ...
+C $9CDC,1 DE = sound channel address
+C $9CDD,1 A = table byte * 2
+C $9CDE,1 BC = A
+C $9CDF,3 First pointer
+C $9CE2,1 Add offset
+C $9CE3,1 Set pointer LSB
+C $9CE4,1 Next address
+C $9CE5,1 Set pointer MSB
 b $9CE7 Sound data
-@ $9CE7 label=table_at_9CE7
+D $9CE7 Byte 0 in each row is the channel. Rows are copied into the channel data.
+@ $9CE7 label=sound_data_table
 B $9CE7,86,8*10,6
-c $9D3D Routine at 9D3D
-D $9D3D Used by the routines at #R$9E75.
-c $9D67 Routine at 9D67
+c $9D3D Reset sound data pointer
+D $9D3D Also sets sound data channel command to 0 Used by the routines at #R$9E75.
+R $9D3D I:A Channel
+@ $9D3D label=reset_sound_data_ptr
+C $9D3D,1 Multiply channel by 2
+C $9D3E,1 Store word offset in C
+C $9D3F,1 Multiply by 4
+C $9D40,1 Multiply by 8
+C $9D41,1 DE = A
+C $9D42,2 ...
+C $9D44,4 Sound channel 1
+C $9D48,2 Add offset
+C $9D4A,3 Get byte 5 (not used?)
+C $9D4D,3 Set command to 0
+C $9D50,1 Word offset (channel * 2)
+C $9D51,4 First pointer
+C $9D55,2 Add offset (IY now points to a pointer)
+C $9D57,1 Word offset
+C $9D58,1 Multiply by 2
+C $9D59,1 Multiply by 4
+C $9D5A,1 Multiply by 5, i.e. channel * 10
+C $9D5B,1 DE = A
+C $9D5C,3 Sound data base
+C $9D5F,1 Add offset
+C $9D60,3 Update pointer with sound data address
+C $9D63,3 ...
+c $9D67 Execute command for all sound channels
 D $9D67 Used by the routine at #R$9B99.
+@ $9D67 label=execute_sound_channel_commands
+C $9D67,4 Sound data channel 4 (start at the end)
+C $9D6B,2 4 channels
 N $9D6D This entry point is used by the routine at #R$9D89.
-c $9D89 Routine at 9D89
-D $9D89 Used by the routine at #R$9D67.
-w $9D91 Data block at 9D91
+C $9D6D,3 Get index of sound command to call
+C $9D70,1 Test bits and clear carry
+C $9D71,3 Skip channel if bit 7 is reset
+C $9D74,1 Multiply by 2, and shift out bit 7
+C $9D75,1 DE = A
+C $9D76,2 ...
+C $9D78,4 Base address of jump table
+C $9D7C,2 Add offset
+C $9D7E,3 Get LSB
+C $9D81,3 Get MSB
+C $9D84,3 Return address
+C $9D87,1 Push return address on stack
+C $9D88,1 Jump to sound command
+C $9D89,3 -8
+C $9D8C,2 Move 8 bytes back
+C $9D8E,2 Loop for 4 channels
+@ $9D90 label=sound_command_10
+w $9D91 Sound command jump table
+@ $9D91 label=sound_command_jump_table
 W $9D91,22,2
-c $9DA7 Routine at 9DA7
-c $9DB9 Routine at 9DB9
-c $9DC4 Routine at 9DC4
-c $9DE8 Routine at 9DE8
+c $9DA7 Sound routine at 9DA7
+D $9DA7 I:B Channel index I:IX Sound data channel
+@ $9DA7 label=sound_command_3
+c $9DB9 Sound routine at 9DB9
+D $9DB9 I:B Channel index I:IX Sound data channel
+@ $9DB9 label=sound_command_6
+c $9DC4 Sound routine at 9DC4
+D $9DC4 I:B Channel index I:IX Sound data channel
+@ $9DC4 label=sound_command_1_4
+c $9DD7 Sound routine at 9DD7
+D $9DD7 I:B Channel index I:IX Sound data channel
+@ $9DD7 label=sound_command_2
+c $9DE8 Sound routine at 9DE8
+D $9DE8 I:B Channel index I:IX Sound data channel
+@ $9DE8 label=sound_command_0
 N $9DF2 This entry point is used by the routine at #R$9DC4.
 N $9DFC This entry point is used by the routines at #R$9DA7 and #R$9DC4.
-c $9E01 Routine at 9E01
-c $9E5C Routine at 9E5C
-c $9E75 Routine at 9E75
-c $9E91 Play tune, preserve registers
+C $9DFD,1 Channel
+C $9DFE,3 Reset sound data pointer
+c $9E01 Sound routine at 9E01
+D $9E01 I:B Channel index I:IX Sound data channel
+@ $9E01 label=sound_command_5_8
+c $9E5C Sound routine at 9E5C
+D $9E5C I:B Channel index I:IX Sound data channel
+@ $9E5C label=sound_command_7
+c $9E75 Sound routine at 9E75
+D $9E75 I:B Channel index I:IX Sound data channel
+@ $9E75 label=sound_command_9
+C $9E8E,3 Reset sound data pointer
+c $9E91 Call play tune, preserve registers
 D $9E91 Used by the routines at #R$82BF, #R$832A and #R$846B. I:A Index of tune
 @ $9E91 label=call_play_tune
 C $9E98,3 Play tune
-c $9EA3 Routine at 9EA3
+c $9EA3 Call play sound, preserve registers
 D $9EA3 Used by the routines at #R$8139, #R$832A, #R$8C52, #R$8E9D, #R$9934, #R$99A0, #R$99B1, #R$99D3, #R$A33B and #R$A6EC.
 R $9EA3 I:A Index of sound
 @ $9EA3 label=call_play_sound
 C $9EAB,3 Play sound
 b $9EB6 Sound data
 B $9EB6,52,8*6,4
-b $9EEA Sound data
-B $9EEA,977,8*122,1
-c $A2BB Routine at A2BB
+w $9EEA Tune data
+D $9EEA Each row contains 4 addresses for 4 channels Addresses are copied into byte 1 and 2 of the sound data buffer.
+@ $9EEA label=tune_data_table
+W $9EEA,64,8
+b $9F2A Sound data block at 9F2A
+B $9F2A,20,8*2,4
+b $9F3E Sound data block at 9F3E
+B $9F3E,16,8
+b $9F4E Sound data block at 9F4E
+B $9F4E,20,8*2,4
+b $9F62 Sound data block at 9F62
+B $9F62,10,8,2
+b $9F6C Sound data block at 9F6C
+B $9F6C,2,2
+b $9F6E Sound data block at 9F6E
+B $9F6E,11,8,3
+b $9F79 Sound data block at 9F79
+B $9F79,10,8,2
+b $9F83 Sound data block at 9F83
+B $9F83,8,8
+b $9F8B Sound data block at 9F8B
+B $9F8B,4,4
+b $9F8F Sound data block at 9F8F
+B $9F8F,5,5
+b $9F94 Sound data block at 9F94
+B $9F94,106,8*13,2
+b $9FFE Sound data block at 9FFE
+B $9FFE,88,8
+b $A056 Sound data block at A056
+B $A056,7,7
+b $A05D Sound data block at A05D
+B $A05D,20,8*2,4
+b $A071 Sound data block at A071
+B $A071,33,8*4,1
+b $A092 Sound data block at A092
+B $A092,2,2
+b $A094 Sound data block at A094
+B $A094,166,8*20,6
+b $A13A Sound data block at A13A
+B $A13A,4,4
+b $A13E Sound data block at A13E
+B $A13E,140,8*17,4
+b $A1CA Sound data block at A1CA
+B $A1CA,6,6
+b $A1D0 Sound data block at A1D0
+B $A1D0,106,8*13,2
+b $A23A Sound data block at A23A
+B $A23A,5,5
+b $A23F Sound data block at A23F
+B $A23F,90,8*11,2
+b $A299 Sound data block at A299
+B $A299,22,8*2,6
+b $A2AF Sound data block at A2AF
+B $A2AF,7,7
+b $A2B6 Sound data block at A2B6
+B $A2B6,5,5
+c $A2BB Send data for all channels to PSG
 D $A2BB Used by the routine at #R$9B99.
+@ $A2BB label=all_channels_data_to_psg
 C $A2BB,2 Mute channel 1
 C $A2BD,2 Tone 1 attenuation
 C $A2BF,2 Tone 1 frequency
-C $A2C1,4 Data from channel 1?
+C $A2C1,4 IX=#R$7287
+C $A2C5,3 Play tone or mute
 C $A2C8,2 Mute channel 2
 C $A2CA,2 Tone 2 attenuation
 C $A2CC,2 Tone 2 frequency
-C $A2CE,4 Data from channel 2?
+C $A2CE,4 IX=#R$7291
+C $A2D2,3 Play tone or mute
 C $A2D5,2 Mute channel 3
 C $A2D7,2 Tone 3 attenuation
 C $A2D9,2 Tone 3 frequency
-C $A2DB,4 Data from channel 3?
+C $A2DB,4 IX=#R$729B
+C $A2DF,3 Play tone or mute
 C $A2E2,2 Mute noise
 C $A2E4,2 Noise attenuation
-C $A2E6,4 Data from channel 4?
+C $A2E6,4 IX=#R$727D
 C $A2EA,3 Get byte 0
-C $A2ED,1 If zero
-C $A2EE,2 Then jump
+C $A2ED,1 If it was zero
+C $A2EE,2 Then jump ahead
 C $A2F0,2 Else mute
-c $A2F3 Routine at A2F3
+c $A2F3 Send data for noise channel to PSG
 D $A2F3 Used by the routine at #R$A2BB.
-C $A301,2 Noise control
-N $A303 This entry point is used by the routine at #R$A31D.
-C $A303,3 Sound byte
-C $A306,2 If bit 4 is 0
+R $A2F3 I:IX -> B0, B1, B2, B3, B4: attenuation AAAAXXXX
+@ $A2F3 label=noise_data_to_psg
+C $A2F3,3 Send attenuation to PSG
+C $A2F6,3 Get sound byte
+C $A2F9,2 Isolate bits 0-3
+C $A2FB,3 Compare to stored value
+C $A2FE,1 ...
+C $A2FF,1 Return if same
+C $A300,1 Else store new value
+C $A301,2 and make noise (continue into #R$A303)
+c $A303 Send attenuation or noise control bytes to PSG
+D $A303 Used by the routines at #R$A2F3 and #R$A31D.
+R $A303 I:C Operation in upper nybble 1CC0XXXX or 1CC1XXXX
+R $A303 I:IX -> B0, B1, B2, B3, B4: attenuation AAAAXXXX
+@ $A303 label=attn_or_noise_to_psg
+C $A303,3 Get sound byte
+C $A306,2 If bit 4 of operation is 0, i.e. noise control
 C $A308,2 Then skip shifting
 C $A30A,1 Shift bits 4-7 to 0-3
 C $A30B,1 ...
 C $A30C,1 ...
 C $A30D,1 ...
 C $A30E,2 Isolate bits 0-3
-C $A310,1 Apply operation (attenuation?) to bits 4-7
+C $A310,1 Apply operation (attenuation or noise control) to bits 4-7
 C $A311,2 Send to PSG
-c $A314 Send sound bytes to PSG
+c $A314 Send data for tone channel to PSG
 D $A314 Used by the routine at #R$A2BB.
-R $A314 I:A Attenuation or noise byte
-R $A314 I:C
-R $A314 I:D Operation
-R $A314 I:IX -> B0: $00 for tone, B1, B2: frequency LSB, B3: frequency MSB
-@ $A314 label=bytes_to_psg
+R $A314 I:A Mute operation for channel
+R $A314 I:C Attenuation operation for channel
+R $A314 I:D Tone operation for channel
+R $A314 I:IX -> B0: $00 for tone, B1, B2, B3, B4
+@ $A314 label=tone_data_to_psg
 C $A314,3 Get B0
 C $A317,1 If B0 was 0 then this is not 0
-C $A318,2 Tone
-C $A31A,2 Attenuation or noise to PSG
-c $A31D Send tone frequency bytes to PSG
+C $A318,2 Jump for tone
+C $A31A,2 Mute
+c $A31D Send attenuation and frequency bytes to PSG
 D $A31D Used by the routine at #R$A314.
-R $A31D D: Operation in upper nybble 1XX00000
-R $A31D I: IX -> B0, B1, B2: frequency LSB, B3: frequency MSB
-@ $A31D label=freq_to_psg
+R $A31D I:C Attenuation operation in upper nybble 1CC1XXXX
+R $A31D I:D Tone operation in upper nybble 1CC0XXXX
+R $A31D I:IX -> B0, B1, B2, B3: frequency LSB, B4: attenuation/frequency MSB (AAAA00FF),
+@ $A31D label=attn_and_freq_to_psg
+C $A31D,3 Set attenuation
 C $A320,3 Frequency LSB
 C $A323,2 Isolate bits 0-3 of frequency
 C $A325,1 Apply operation to bits 4-7
 C $A326,2 Send to PSG
-C $A328,3 Frequency LSB
-C $A32B,2 Isolate bits 4-7 of frequency
+C $A328,3 Frequency LSB (FFFFFFFF)
+C $A32B,2 Isolate bits 4-7 of frequency (FFFF0000)
 C $A32D,1 Save
-C $A32E,3 Get frequency MSB
-C $A331,2 Isolate lower nybble with bits 8-9 of frequency
+C $A32E,3 Get frequency MSB (AAAA00FF)
+C $A331,2 Isolate lower nybble with bits 8-9 of frequency (000000FF)
 C $A333,1 Now FFFF00FF in wrong order
 C $A334,1 FFFFF00F
 C $A335,1 FFFFFF00

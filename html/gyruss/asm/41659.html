@@ -16,7 +16,7 @@
 <table class="asm-navigation">
 <tr>
 <td class="prev">
-Prev: <a href="40682.html">9EEA</a>
+Prev: <a href="41654.html">A2B6</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#41659">Map</a></td>
 <td class="next">
@@ -24,7 +24,7 @@ Next: <a href="41715.html">A2F3</a>
 </td>
 </tr>
 </table>
-<div class="description">A2BB: Routine at A2BB</div>
+<div class="description">A2BB: Send data for all channels to PSG</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -36,7 +36,7 @@ Used by the routine at <a href="39833.html">sound_player</a>.
 </td>
 </tr>
 <tr>
-<td class="asm-label">LA2BB</td>
+<td class="asm-label">all_channels_data_to_psg</td>
 <td class="address-2"><span id="41659"></span>A2BB</td>
 <td class="instruction">LD A,$9F</td>
 <td class="comment-1" rowspan="1">Mute channel 1</td>
@@ -56,14 +56,14 @@ Used by the routine at <a href="39833.html">sound_player</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41665"></span>A2C1</td>
-<td class="instruction">LD IX,(<a href="29298.html">L7272</a>)</td>
-<td class="comment-1" rowspan="1">Data from channel 1?</td>
+<td class="instruction">LD IX,(<a href="29298.html">ptr_sound_data_tone_1</a>)</td>
+<td class="comment-1" rowspan="1">IX=<a href="29319.html">sound_data_tone_1</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41669"></span>A2C5</td>
-<td class="instruction">CALL <a href="41748.html">bytes_to_psg</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL <a href="41748.html">tone_data_to_psg</a></td>
+<td class="comment-1" rowspan="1">Play tone or mute</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -86,14 +86,14 @@ Used by the routine at <a href="39833.html">sound_player</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41678"></span>A2CE</td>
-<td class="instruction">LD IX,(<a href="29300.html">L7274</a>)</td>
-<td class="comment-1" rowspan="1">Data from channel 2?</td>
+<td class="instruction">LD IX,(<a href="29300.html">ptr_sound_data_tone_2</a>)</td>
+<td class="comment-1" rowspan="1">IX=<a href="29329.html">sound_data_tone_2</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41682"></span>A2D2</td>
-<td class="instruction">CALL <a href="41748.html">bytes_to_psg</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL <a href="41748.html">tone_data_to_psg</a></td>
+<td class="comment-1" rowspan="1">Play tone or mute</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -116,14 +116,14 @@ Used by the routine at <a href="39833.html">sound_player</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41691"></span>A2DB</td>
-<td class="instruction">LD IX,(<a href="29302.html">L7276</a>)</td>
-<td class="comment-1" rowspan="1">Data from channel 3?</td>
+<td class="instruction">LD IX,(<a href="29302.html">ptr_sound_data_tone_3</a>)</td>
+<td class="comment-1" rowspan="1">IX=<a href="29339.html">sound_data_tone_3</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41695"></span>A2DF</td>
-<td class="instruction">CALL <a href="41748.html">bytes_to_psg</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL <a href="41748.html">tone_data_to_psg</a></td>
+<td class="comment-1" rowspan="1">Play tone or mute</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -140,8 +140,8 @@ Used by the routine at <a href="39833.html">sound_player</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41702"></span>A2E6</td>
-<td class="instruction">LD IX,(<a href="29296.html">L7270</a>)</td>
-<td class="comment-1" rowspan="1">Data from channel 4?</td>
+<td class="instruction">LD IX,(<a href="29296.html">ptr_sound_data_noise</a>)</td>
+<td class="comment-1" rowspan="1">IX=<a href="29309.html">sound_data_noise</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -153,13 +153,13 @@ Used by the routine at <a href="39833.html">sound_player</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="41709"></span>A2ED</td>
 <td class="instruction">INC E</td>
-<td class="comment-1" rowspan="1">If zero</td>
+<td class="comment-1" rowspan="1">If it was zero</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41710"></span>A2EE</td>
-<td class="instruction">JR NZ,<a href="41715.html">LA2F3</a></td>
-<td class="comment-1" rowspan="1">Then jump</td>
+<td class="instruction">JR NZ,<a href="41715.html">noise_data_to_psg</a></td>
+<td class="comment-1" rowspan="1">Then jump ahead</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -177,7 +177,7 @@ Used by the routine at <a href="39833.html">sound_player</a>.
 <table class="asm-navigation">
 <tr>
 <td class="prev">
-Prev: <a href="40682.html">9EEA</a>
+Prev: <a href="41654.html">A2B6</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#41659">Map</a></td>
 <td class="next">

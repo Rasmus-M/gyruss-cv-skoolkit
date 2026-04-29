@@ -38,62 +38,62 @@ Used by the routine at <a href="34049.html#34082">interrupt_routine_1</a>.
 <tr>
 <td class="asm-label">sound_player</td>
 <td class="address-2"><span id="39833"></span>9B99</td>
-<td class="instruction">CALL <a href="41659.html">LA2BB</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">CALL <a href="41659.html">all_channels_data_to_psg</a></td>
+<td class="comment-1" rowspan="1">Send data for all channels to PSG</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39836"></span>9B9C</td>
-<td class="instruction">CALL <a href="40295.html">L9D67</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">CALL <a href="40295.html">execute_sound_channel_commands</a></td>
+<td class="comment-1" rowspan="1">Execute command for all sound channels</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39839"></span>9B9F</td>
-<td class="instruction">LD A,(<a href="29306.html">L727A</a>)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">LD A,(<a href="29306.html">is_tune_playing</a>)</td>
+<td class="comment-1" rowspan="1">Is tune playing?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39842"></span>9BA2</td>
 <td class="instruction">AND A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39843"></span>9BA3</td>
 <td class="instruction">RET Z</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return is not</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39844"></span>9BA4</td>
-<td class="instruction">CALL <a href="39693.html#39769">play_tune_4</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">CALL <a href="39769.html">dampen_all_channels</a></td>
+<td class="comment-1" rowspan="1">Dampen all channels</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39847"></span>9BA7</td>
 <td class="instruction">LD HL,<a href="29307.html">L727B</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Decrement countdown</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39850"></span>9BAA</td>
 <td class="instruction">DEC (HL)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39851"></span>9BAB</td>
 <td class="instruction">RET NZ</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return if not 0</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39852"></span>9BAC</td>
 <td class="instruction">LD (HL),$05</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Reset countdown</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -108,62 +108,62 @@ This entry point is used by the routine at <a href="39897.html">L9BD9</a>.
 <tr>
 <td class="asm-label">sound_player_0</td>
 <td class="address-2"><span id="39854"></span>9BAE</td>
-<td class="instruction">LD IX,<a href="29309.html">L727D</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">LD IX,<a href="29309.html">sound_data_noise</a></td>
+<td class="comment-1" rowspan="1">First sound data buffer</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39858"></span>9BB2</td>
 <td class="instruction">LD B,$04</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">4 channels</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39860"></span>9BB4</td>
-<td class="instruction">LD A,(<a href="29308.html">L727C</a>)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">LD A,(<a href="29308.html">tune_playing</a>)</td>
+<td class="comment-1" rowspan="1">Get tune index</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39863"></span>9BB7</td>
 <td class="instruction">CP $03</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If &lt; 3</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39865"></span>9BB9</td>
 <td class="instruction">JR C,<a href="39964.html">L9C1C</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Then ...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39867"></span>9BBB</td>
 <td class="instruction">DEC (IX+$05)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Decrement countdown</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39870"></span>9BBE</td>
 <td class="instruction">JR NZ,<a href="39933.html#39942">L9BFD_0</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If not 0 then ...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39872"></span>9BC0</td>
 <td class="instruction">LD (IX+$05),$04</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Reset countdown</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39876"></span>9BC4</td>
 <td class="instruction">LD L,(IX+$01)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get address LSB</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39879"></span>9BC7</td>
 <td class="instruction">LD H,(IX+$02)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get address MSB</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -179,61 +179,61 @@ This entry point is used by the routines at <a href="39897.html">L9BD9</a> and <
 <td class="asm-label">sound_player_1</td>
 <td class="address-2"><span id="39882"></span>9BCA</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get byte at address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39883"></span>9BCB</td>
 <td class="instruction">INC HL</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Next address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39884"></span>9BCC</td>
 <td class="instruction">AND A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Was the byte zero?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39885"></span>9BCD</td>
 <td class="instruction">JR NZ,<a href="39933.html">L9BFD</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If not, jump ahead</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39887"></span>9BCF</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get next byte</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39888"></span>9BD0</td>
 <td class="instruction">INC HL</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Next address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39889"></span>9BD1</td>
 <td class="instruction">AND A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Was the byte zero?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39890"></span>9BD2</td>
 <td class="instruction">JR NZ,<a href="39897.html">L9BD9</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If not, jump ahead</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39892"></span>9BD4</td>
-<td class="instruction">LD HL,$A299</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">LD HL,<a href="41625.html">LA299</a></td>
+<td class="comment-1" rowspan="1">Address of ...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39895"></span>9BD7</td>
 <td class="instruction">JR <a href="39833.html#39882">sound_player_1</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Jump back and repeat with <a href="41625.html">LA299</a></td>
 </tr>
 </table>
 <table class="asm-navigation">
