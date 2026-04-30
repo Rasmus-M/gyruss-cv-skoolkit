@@ -30,13 +30,13 @@ Next: <a href="40593.html">9E91</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-I:B Channel index I:IX Sound data channel
+I:B Channel index I:IX Sound fx data
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">sound_command_9</td>
+<td class="asm-label">sound_fx_command_9</td>
 <td class="address-2"><span id="40565"></span>9E75</td>
 <td class="instruction">INC (IX+$03)</td>
 <td class="comment-1" rowspan="1"></td>
@@ -50,7 +50,7 @@ I:B Channel index I:IX Sound data channel
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40571"></span>9E7B</td>
-<td class="instruction">JR NZ,<a href="40565.html#40576">sound_command_9_0</a></td>
+<td class="instruction">JR NZ,<a href="40565.html#40576">sound_fx_command_9_0</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -60,7 +60,7 @@ I:B Channel index I:IX Sound data channel
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">sound_command_9_0</td>
+<td class="asm-label">sound_fx_command_9_0</td>
 <td class="address-2"><span id="40576"></span>9E80</td>
 <td class="instruction">LD HL,(<a href="29376.html">L72C0</a>)</td>
 <td class="comment-1" rowspan="1"></td>
@@ -92,7 +92,7 @@ I:B Channel index I:IX Sound data channel
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40586"></span>9E8A</td>
-<td class="instruction">CALL <a href="40424.html#40444">sound_command_0_1</a></td>
+<td class="instruction">CALL <a href="40424.html#40444">sound_fx_command_0_1</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -104,8 +104,8 @@ I:B Channel index I:IX Sound data channel
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40590"></span>9E8E</td>
-<td class="instruction">JP <a href="40253.html">reset_sound_data_ptr</a></td>
-<td class="comment-1" rowspan="1">Reset sound data pointer</td>
+<td class="instruction">JP <a href="40253.html">sound_fx_done</a></td>
+<td class="comment-1" rowspan="1">Sound fx done</td>
 </tr>
 </table>
 <table class="asm-navigation">

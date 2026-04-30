@@ -30,13 +30,13 @@ Next: <a href="40565.html">9E75</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-I:B Channel index I:IX Sound data channel
+I:B Channel index I:IX Sound fx data
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">sound_command_7</td>
+<td class="asm-label">sound_fx_command_7</td>
 <td class="address-2"><span id="40540"></span>9E5C</td>
 <td class="instruction">LD A,(IX+$02)</td>
 <td class="comment-0" rowspan="1"></td>
@@ -50,7 +50,7 @@ I:B Channel index I:IX Sound data channel
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40546"></span>9E62</td>
-<td class="instruction">JR Z,<a href="40424.html#40444">sound_command_0_1</a></td>
+<td class="instruction">JR Z,<a href="40424.html#40444">sound_fx_command_0_1</a></td>
 <td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
@@ -62,7 +62,7 @@ I:B Channel index I:IX Sound data channel
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40550"></span>9E66</td>
-<td class="instruction">JR NC,<a href="40540.html#40556">sound_command_7_0</a></td>
+<td class="instruction">JR NC,<a href="40540.html#40556">sound_fx_command_7_0</a></td>
 <td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
@@ -72,7 +72,7 @@ I:B Channel index I:IX Sound data channel
 <td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">sound_command_7_0</td>
+<td class="asm-label">sound_fx_command_7_0</td>
 <td class="address-2"><span id="40556"></span>9E6C</td>
 <td class="instruction">LD (IX+$02),A</td>
 <td class="comment-0" rowspan="1"></td>

@@ -30,13 +30,13 @@ Next: <a href="40540.html">9E5C</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-I:B Channel index I:IX Sound data channel
+I:B Channel index I:IX Sound fx data
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">sound_command_5_8</td>
+<td class="asm-label">sound_fx_command_5_8</td>
 <td class="address-2"><span id="40449"></span>9E01</td>
 <td class="instruction">LD HL,(<a href="29376.html">L72C0</a>)</td>
 <td class="comment-0" rowspan="1"></td>
@@ -86,7 +86,7 @@ I:B Channel index I:IX Sound data channel
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40469"></span>9E15</td>
-<td class="instruction">JR NC,<a href="40449.html#40479">sound_command_5_8_0</a></td>
+<td class="instruction">JR NC,<a href="40449.html#40479">sound_fx_command_5_8_0</a></td>
 <td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
@@ -114,7 +114,7 @@ I:B Channel index I:IX Sound data channel
 <td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">sound_command_5_8_0</td>
+<td class="asm-label">sound_fx_command_5_8_0</td>
 <td class="address-2"><span id="40479"></span>9E1F</td>
 <td class="instruction">LD (IX+$03),$80</td>
 <td class="comment-0" rowspan="1"></td>
@@ -170,7 +170,7 @@ I:B Channel index I:IX Sound data channel
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40499"></span>9E33</td>
-<td class="instruction">JR NZ,<a href="40449.html#40522">sound_command_5_8_1</a></td>
+<td class="instruction">JR NZ,<a href="40449.html#40522">sound_fx_command_5_8_1</a></td>
 <td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
@@ -188,7 +188,7 @@ I:B Channel index I:IX Sound data channel
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40504"></span>9E38</td>
-<td class="instruction">JR NC,<a href="40449.html#40522">sound_command_5_8_1</a></td>
+<td class="instruction">JR NC,<a href="40449.html#40522">sound_fx_command_5_8_1</a></td>
 <td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
@@ -206,7 +206,7 @@ I:B Channel index I:IX Sound data channel
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40511"></span>9E3F</td>
-<td class="instruction">JP NZ,<a href="40424.html#40444">sound_command_0_1</a></td>
+<td class="instruction">JP NZ,<a href="40424.html#40444">sound_fx_command_0_1</a></td>
 <td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
@@ -240,7 +240,7 @@ I:B Channel index I:IX Sound data channel
 <td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">sound_command_5_8_1</td>
+<td class="asm-label">sound_fx_command_5_8_1</td>
 <td class="address-2"><span id="40522"></span>9E4A</td>
 <td class="instruction">LD DE,$0080</td>
 <td class="comment-0" rowspan="1"></td>

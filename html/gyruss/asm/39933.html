@@ -39,19 +39,19 @@ Used by the routine at <a href="39833.html">sound_player</a>.
 <td class="asm-label">L9BFD</td>
 <td class="address-2"><span id="39933"></span>9BFD</td>
 <td class="instruction">LD (IX+$03),A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39936"></span>9C00</td>
 <td class="instruction">LD (IX+$01),L</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39939"></span>9C03</td>
 <td class="instruction">LD (IX+$02),H</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -67,61 +67,61 @@ This entry point is used by the routine at <a href="39833.html">sound_player</a>
 <td class="asm-label">L9BFD_0</td>
 <td class="address-2"><span id="39942"></span>9C06</td>
 <td class="instruction">XOR A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Clear A</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39943"></span>9C07</td>
 <td class="instruction">SLA (IX+$03)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Shift frequency bit into carry</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39947"></span>9C0B</td>
 <td class="instruction">RLA</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Shift carry into A bit 0</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39948"></span>9C0C</td>
 <td class="instruction">SLA (IX+$03)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Shift frequency bit into carry</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39952"></span>9C10</td>
 <td class="instruction">RLA</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Shift carry into A bit 0</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39953"></span>9C11</td>
 <td class="instruction">DEC A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39954"></span>9C12</td>
 <td class="instruction">LD (IX+$00),A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39957"></span>9C15</td>
 <td class="instruction">OR $74</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">01110100</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39959"></span>9C17</td>
 <td class="instruction">LD (IX+$04),A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39962"></span>9C1A</td>
 <td class="instruction">JR <a href="40062.html#40074">L9C7E_1</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 </table>
 <table class="asm-navigation">

@@ -24,13 +24,13 @@ Next: <a href="40295.html">9D67</a>
 </td>
 </tr>
 </table>
-<div class="description">9D3D: Reset sound data pointer</div>
+<div class="description">9D3D: Sound fx done</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Also sets sound data channel command to 0 Used by the routines at <a href="40565.html">sound_command_9</a>.
+Reset sound data pointer to point to sound data rather than fx data. Also sets sound fx data command to 0. Used by the routines at <a href="40565.html">sound_fx_command_9</a>.
 </div>
 </div>
 <table class="input">
@@ -45,7 +45,7 @@ Also sets sound data channel command to 0 Used by the routines at <a href="40565
 </td>
 </tr>
 <tr>
-<td class="asm-label">reset_sound_data_ptr</td>
+<td class="asm-label">sound_fx_done</td>
 <td class="address-2"><span id="40253"></span>9D3D</td>
 <td class="instruction">RLCA</td>
 <td class="comment-1" rowspan="1">Multiply channel by 2</td>
@@ -83,8 +83,8 @@ Also sets sound data channel command to 0 Used by the routines at <a href="40565
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40260"></span>9D44</td>
-<td class="instruction">LD IY,<a href="29349.html">sound_data_channel_1</a></td>
-<td class="comment-1" rowspan="1">Sound channel 1</td>
+<td class="instruction">LD IY,<a href="29349.html">sound_fx_data_1</a></td>
+<td class="comment-1" rowspan="1">Sound fx data 1</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -96,7 +96,7 @@ Also sets sound data channel command to 0 Used by the routines at <a href="40565
 <td class="asm-label"></td>
 <td class="address-1"><span id="40266"></span>9D4A</td>
 <td class="instruction">LD A,(IY+$05)</td>
-<td class="comment-1" rowspan="1">Get byte 5 (not used?)</td>
+<td class="comment-1" rowspan="1">Get command (not used?)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -113,7 +113,7 @@ Also sets sound data channel command to 0 Used by the routines at <a href="40565
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40273"></span>9D51</td>
-<td class="instruction">LD IY,<a href="29296.html">ptr_sound_data_noise</a></td>
+<td class="instruction">LD IY,<a href="29296.html">ptr_psg_noise_data</a></td>
 <td class="comment-1" rowspan="1">First pointer</td>
 </tr>
 <tr>
@@ -155,7 +155,7 @@ Also sets sound data channel command to 0 Used by the routines at <a href="40565
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40284"></span>9D5C</td>
-<td class="instruction">LD HL,<a href="29309.html">sound_data_noise</a></td>
+<td class="instruction">LD HL,<a href="29309.html">tune_data_1</a></td>
 <td class="comment-1" rowspan="1">Sound data base</td>
 </tr>
 <tr>

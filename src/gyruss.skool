@@ -413,22 +413,29 @@ b$726E DEFB $00
 @label=temp_polar_x
 b$726F DEFB $00
 
-; Pointer to #R$727D
+; Pointer to data for PSG noise generator
 ;
-; Usually points to #R$727D But sometimes changed to #R$72A5 by #R$9CE3
-@label=ptr_sound_data_noise
+; Points to #R$727D for tune.
+; Changed (by #R$9CE3) to #R$72A5 for sound fx
+@label=ptr_psg_noise_data
 w$7270 DEFW $0000
 
-; Pointer to #R$7287
-@label=ptr_sound_data_tone_1
+; Pointer to data for PSG tone generator 1
+;
+; Points to #R$7287 for tune.
+@label=ptr_psg_tone_1_data
 w$7272 DEFW $0000
 
-; Pointer to #R$7291
-@label=ptr_sound_data_tone_2
+; Pointer to data for PSG tone generator 2
+;
+; Points to #R$7291 for tune.
+@label=ptr_psg_tone_2_data
 w$7274 DEFW $0000
 
-; Pointer to #R$729B
-@label=ptr_sound_data_tone_3
+; Pointer to data for PSG tone generator 3
+;
+; Points to #R$729B for tune.
+@label=ptr_psg_tone_3_data
 w$7276 DEFW $0000
 
 ; Last noise operation
@@ -453,7 +460,7 @@ b$727B DEFB $00
 @label=tune_playing
 b$727C DEFB $00
 
-; Sound data for PSG noise channel
+; Tune data channel 1
 ;
 ; #TABLE(default, default)
 ; { =h Byte | =h Purpose }
@@ -461,66 +468,67 @@ b$727C DEFB $00
 ; { $01 | LSB of ... }
 ; { $02 | MSB of ... }
 ; { $03 | Frequency LSB }
-; { $04 | Bits 4-8 attenuation, bits 0-3 frequency 2 MSbits or noise value  }
+; { $04 | Bits 4-8 attenuation, bits 0-3 frequency MSB or noise value  }
 ; { $05 | Countdown, e.g. 4 to 0 }
-; { $06 | Unknown }
+; { $06 | Unknown. Initialized to $50 }
 ; { $07 | Countdown }
-; { $08 | Unknown }
+; { $08 | Unknown. Initialized to $05 }
 ; { $09 | Initialized to 0 }
 ; TABLE#
-@label=sound_data_noise
+@label=tune_data_1
 b$727D DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 
-; Sound data for PSG tone 1
-@label=sound_data_tone_1
+; Tune data channel 2
+@label=tune_data_2
 b$7287 DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 
-; Sound data for PSG tone 2
-@label=sound_data_tone_2
+; Tune data channel 3
+@label=tune_data_3
 b$7291 DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 
-; Sound data for PSG tone 3
-@label=sound_data_tone_3
+; Tune data channel 4
+@label=tune_data_4
 b$729B DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 
-; Sound data channel 1
+; Sound fx data channel 1
 ;
+; Sound fx data are initialised by #R$9CBF with data from #R$9CE7
 ; #TABLE(default, default)
 ; { =h Byte | =h Purpose }
-; { $00 | Unknown }
+; { $00 | Channel }
 ; { $01 | Unknown }
 ; { $02 | Unknown }
-; { $03 | Unknown }
-; { $04 | Unknown }
+; { $03 | Frequency LSB }
+; { $04 | Bits 4-8 attenuation, bits 0-3 frequency 2 MSbits or noise value  }
 ; { $05 | Command }
 ; { $06 | Unknown }
 ; { $07 | Unknown }
 ; TABLE#
-@label=sound_data_channel_1
+@label=sound_fx_data_1
 b$72A5 DEFB $00,$00,$00,$00,$00,$00,$00,$00
 
-; Sound data channel 2
-@label=sound_data_channel_2
+; Sound fx data channel 2
+@label=sound_fx_data_2
 b$72AD DEFB $00,$00,$00,$00,$00,$00,$00,$00
 
-; Sound data channel 3
-@label=sound_data_channel_3
+; Sound fx data channel 3
+@label=sound_data_3
 b$72B5 DEFB $00,$00,$00,$00,$00,$00,$00,$00
 
-; Sound data channel 4
-@label=sound_data_channel_4
+; Sound fx data channel 4
+@label=sound_fx_data_4
 b$72BD DEFB $00
 
-; Word at 72BE (sound data channel 4)
+; Word at 72BE (sound fx data 4)
 w$72BE DEFW $0000
 
-; Word at 72C0 (sound data channel 4)
+; Word at 72C0 (sound fx data 4)
 w$72C0 DEFW $0000
 
-; Byte at 72C2 (sound data channel 4)
+; Byte at 72C2 (sound fx data 4)
 b$72C2 DEFB $00
 
-; Word at 72C3 (sound data channel 4)
+; Word at 72C3 (sound fx data 4)
 w$72C3 DEFW $0000
 
 ; Temporary center of projection
@@ -4211,22 +4219,22 @@ c$9AD0 LD A,E        ; Set LSB of VDP address
 ; Used by the routine at #R$8024.
 @label=init_sound
 c$9ADE CALL $1FD6      ; TURN_OFF_SOUND
- $9AE1 LD HL,$727D     ;
- $9AE4 LD DE,$000A     ;
- $9AE7 LD ($7270),HL   ; $727D
+ $9AE1 LD HL,$727D     ; First tune data buffer
+ $9AE4 LD DE,$000A     ; Size of tune data
+ $9AE7 LD ($7270),HL   ; Set to #R$727D
  $9AEA ADD HL,DE       ;
- $9AEB LD ($7272),HL   ; $7287
+ $9AEB LD ($7272),HL   ; Set to #R$7287
  $9AEE ADD HL,DE       ;
- $9AEF LD ($7274),HL   ; $7291
+ $9AEF LD ($7274),HL   ; Set to #R$7291
  $9AF2 ADD HL,DE       ;
- $9AF3 LD ($7276),HL   ; $729B
- $9AF6 LD B,$04        ;
- $9AF8 LD IX,$727D     ;
-*$9AFC LD (IX+$00),$FF ;
+ $9AF3 LD ($7276),HL   ; Set to #R$729B
+ $9AF6 LD B,$04        ; 4 channels
+ $9AF8 LD IX,$727D     ; First tune data buffer
+*$9AFC LD (IX+$00),$FF ; Disable
  $9B00 LD (IX+$06),$50 ;
  $9B04 LD (IX+$08),$05 ;
- $9B08 ADD IX,DE       ;
- $9B0A DJNZ $9AFC      ;
+ $9B08 ADD IX,DE       ; Next channel
+ $9B0A DJNZ $9AFC      ; Loop for 4 channels
  $9B0C RET             ;
 
 ; Play tune
@@ -4247,18 +4255,18 @@ c$9B0D CP $07          ; If tune index is 7
  $9B1D LD D,$00        ; ...
  $9B1F LD HL,$9EEA     ; Table base address
  $9B22 ADD HL,DE       ; Add offset
- $9B23 LD IX,$727D     ; First sound data buffer
+ $9B23 LD IX,$727D     ; First tune data buffer
  $9B27 LD B,$04        ; 4 channels
  $9B29 LD E,$0A        ; 10 bytes each
 *$9B2B LD A,(HL)       ; Get LSB
- $9B2C LD (IX+$01),A   ; Store in sound data buffer
+ $9B2C LD (IX+$01),A   ; Store in tune data buffer
  $9B2F INC HL          ; Next table address
  $9B30 LD A,(HL)       ; Get MSB
- $9B31 LD (IX+$02),A   ; Store in sound data buffer
+ $9B31 LD (IX+$02),A   ; Store in tune data buffer
  $9B34 LD (IX+$05),$01 ; Set countdown
  $9B38 INC HL          ; Next table address
  $9B39 LD (IX+$09),$00 ;
- $9B3D ADD IX,DE       ; Next sound data buffer
+ $9B3D ADD IX,DE       ; Next channel
  $9B3F DJNZ $9B2B      ; Loop for 4 channels
  $9B41 LD A,$05        ; Tune speed?
  $9B43 LD ($727B),A    ; Init countdown
@@ -4272,13 +4280,13 @@ c$9B0D CP $07          ; If tune index is 7
 *$9B54 LD C,$09        ; Set C = 9 (sound index)
 *$9B56 JP $9CB5        ; Jump to central part of play_sound
 
-; Increase attenuation for all channels
+; Increase attenuation for all tune channels
 ;
 ; Used by the routine at #R$9B99.
-@label=dampen_all_channels
-c$9B59 LD IX,$727D   ; First sound data buffer
+@label=dampen_all_tune_channels
+c$9B59 LD IX,$727D   ; First tune data data buffer
  $9B5D LD B,$04      ; 4 channels
- $9B5F LD DE,$000A   ; Size of channel data
+ $9B5F LD DE,$000A   ; Size of sound data
  $9B62 LD A,($727C)  ; Get tune index
  $9B65 CP $03        ; If < 3
  $9B67 JR C,$9B70    ; Then skip ahead
@@ -4292,7 +4300,7 @@ c$9B59 LD IX,$727D   ; First sound data buffer
  $9B7A LD A,(IX+$04) ; Get attenuation in bits 4-7
  $9B7D ADD A,$10     ; Add 1
  $9B7F LD (IX+$04),A ; Save again
-*$9B82 ADD IX,DE     ; Next channel address
+*$9B82 ADD IX,DE     ; Next channel
  $9B84 DJNZ $9B70    ; Loop for 4 channels
  $9B86 RET           ;
 
@@ -4303,10 +4311,10 @@ c$9B59 LD IX,$727D   ; First sound data buffer
 c$9B87 XOR A         ;
  $9B88 LD ($727A),A  ; Set tune playing flag to 0
  $9B8B DEC A         ; $FF
- $9B8C LD ($727D),A  ; Noise
- $9B8F LD ($7287),A  ; Tone 1
- $9B92 LD ($7291),A  ; Tone 2
- $9B95 LD ($729B),A  ; Tone 3
+ $9B8C LD ($727D),A  ; Disable channel 1
+ $9B8F LD ($7287),A  ; Disable channel 2
+ $9B92 LD ($7291),A  ; Disable channel 3
+ $9B95 LD ($729B),A  ; Disable channel 4
  $9B98 RET           ;
 
 ; Sound player
@@ -4314,17 +4322,17 @@ c$9B87 XOR A         ;
 ; Used by the routine at #R$8522.
 @label=sound_player
 c$9B99 CALL $A2BB      ; Send data for all channels to PSG
- $9B9C CALL $9D67      ; Execute command for all sound channels
+ $9B9C CALL $9D67      ; Execute commands for all sound fx channels
  $9B9F LD A,($727A)    ; Is tune playing?
  $9BA2 AND A           ; ...
  $9BA3 RET Z           ; Return is not
- $9BA4 CALL $9B59      ; Dampen all channels
+ $9BA4 CALL $9B59      ; Dampen all tune channels
  $9BA7 LD HL,$727B     ; Decrement countdown
  $9BAA DEC (HL)        ; ...
  $9BAB RET NZ          ; Return if not 0
  $9BAC LD (HL),$05     ; Reset countdown
 ; This entry point is used by the routine at #R$9BD9.
-*$9BAE LD IX,$727D     ; First sound data buffer
+*$9BAE LD IX,$727D     ; First tune data buffer
  $9BB2 LD B,$04        ; 4 channels
  $9BB4 LD A,($727C)    ; Get tune index
  $9BB7 CP $03          ; If < 3
@@ -4362,7 +4370,7 @@ c$9BD9 JP P,$9BF8    ;
  $9BEC DEC (IX+$07)  ;
  $9BEF JR Z,$9BCA    ; Then jump back into #R$9B99
 *$9BF1 ADD A,$06     ;
- $9BF3 CALL $9B0D    ;
+ $9BF3 CALL $9B0D    ; play_tune
  $9BF6 JR $9BAE      ;
 
 ; Sound routine at 9BF8
@@ -4378,14 +4386,14 @@ c$9BFD LD (IX+$03),A ;
  $9C00 LD (IX+$01),L ;
  $9C03 LD (IX+$02),H ;
 ; This entry point is used by the routine at #R$9B99.
-*$9C06 XOR A         ;
- $9C07 SLA (IX+$03)  ;
- $9C0B RLA           ;
- $9C0C SLA (IX+$03)  ;
- $9C10 RLA           ;
+*$9C06 XOR A         ; Clear A
+ $9C07 SLA (IX+$03)  ; Shift frequency bit into carry
+ $9C0B RLA           ; Shift carry into A bit 0
+ $9C0C SLA (IX+$03)  ; Shift frequency bit into carry
+ $9C10 RLA           ; Shift carry into A bit 0
  $9C11 DEC A         ;
  $9C12 LD (IX+$00),A ;
- $9C15 OR $74        ;
+ $9C15 OR $74        ; 01110100
  $9C17 LD (IX+$04),A ;
  $9C1A JR $9C8A      ;
 
@@ -4406,7 +4414,7 @@ c$9C1C DEC (IX+$05)  ;
  $9C32 AND A         ;
  $9C33 RET NZ        ;
  $9C34 LD A,$03      ;
- $9C36 JP $9B0D      ;
+ $9C36 JP $9B0D      ; play_tune
 
 ; Sound routine at 9C39
 ;
@@ -4465,8 +4473,8 @@ c$9C7E LD E,(IX+$08) ;
 ; This entry point is used by the routine at #R$9C4B.
 *$9C87 LD (IX+$04),A ;
 ; This entry point is used by the routines at #R$9BFD, #R$9C1C and #R$9C4B.
-*$9C8A LD DE,$000A   ;
- $9C8D ADD IX,DE     ;
+*$9C8A LD DE,$000A   ; Next sound data buffer
+ $9C8D ADD IX,DE     ; ...
  $9C8F DJNZ $9C1C    ;
  $9C91 RET           ;
 
@@ -4485,7 +4493,7 @@ c$9C92 LD E,A        ;
 ; Sound routine at 9CA0
 ;
 ; Used by the routine at #R$9C92.
-c$9CA0 LD (IX+$09),E ; Set x
+c$9CA0 LD (IX+$09),E ;
 ; This entry point is used by the routine at #R$9C92.
 *$9CA3 LD E,(HL)     ;
  $9CA4 LD D,$FF      ;
@@ -4516,12 +4524,12 @@ c$9CA8 LD A,($727C)  ; Get tune playing
  $9CBD RET NZ        ; Return if not
  $9CBE INC A         ; Index + 1 (now 10) (continue into #R$9CBF)
 
-; Copy data from #R$9CE7 to sound channel and change pointer from sound data to
-; sound channel
+; Copy data from #R$9CE7 to sound fx channel, and change pointer from sound data to
+; sound fx data
 ;
 ; Used by the routine at #R$9CA8.
 ;
-; label=init_play_sound
+; label=init_play_sound_fx
 c$9CBF RLCA          ; Multiply by 8
  $9CC0 RLCA          ; ...
  $9CC1 RLCA          ; ...
@@ -4537,13 +4545,13 @@ c$9CBF RLCA          ; Multiply by 8
  $9CCE LD C,A        ; BC = A
  $9CCF LD B,D        ; ...
  $9CD0 EX DE,HL      ; DE = table address
- $9CD1 LD HL,$72A5   ; HL = Sound channel 1
+ $9CD1 LD HL,$72A5   ; HL = Sound fx data 1
  $9CD4 ADD HL,BC     ; Add offset
- $9CD5 PUSH HL       ; Save sound channel address
- $9CD6 EX DE,HL      ; HL = table address, DE = sound channel address
- $9CD7 LD BC,$0008   ; Copy 8 bytes from #R$9CE7 to sound channel
+ $9CD5 PUSH HL       ; Save sound fx data address
+ $9CD6 EX DE,HL      ; HL = table address, DE = sound fx data address
+ $9CD7 LD BC,$0008   ; Copy 8 bytes from #R$9CE7 to sound fx data
  $9CDA LDIR          ; ...
- $9CDC POP DE        ; DE = sound channel address
+ $9CDC POP DE        ; DE = sound fx data address
  $9CDD POP AF        ; A = table byte * 2
  $9CDE LD C,A        ; BC = A
  $9CDF LD HL,$7270   ; First pointer
@@ -4553,11 +4561,11 @@ c$9CBF RLCA          ; Multiply by 8
  $9CE5 LD (HL),D     ; Set pointer MSB
  $9CE6 RET           ;
 
-; Sound data
+; Sound fx data
 ;
 ; Byte 0 in each row is the channel.
-; Rows are copied into the channel data.
-@label=sound_data_table
+; Rows are copied into the corresponding sound fx data buffer.
+@label=sound_fx_data_table
 b$9CE7 DEFB $00,$00,$00,$00,$26,$80,$00,$00
  $9CEF DEFB $02,$00,$00,$40,$41,$81,$40,$00
  $9CF7 DEFB $03,$00,$00,$70,$51,$82,$00,$00
@@ -4570,21 +4578,23 @@ b$9CE7 DEFB $00,$00,$00,$00,$26,$80,$00,$00
  $9D2F DEFB $03,$00,$00,$00,$F0,$89,$00,$00
  $9D37 DEFB $00,$00,$00,$00,$87,$8A
 
-; Reset sound data pointer
+; Sound fx done
 ;
-; Also sets sound data channel command to 0 Used by the routines at #R$9E75.
+; Reset sound data pointer to point to sound data rather than fx data.
+; Also sets sound fx data command to 0.
+; Used by the routines at #R$9E75.
 ;
 ; I:A Channel
-@label=reset_sound_data_ptr
+@label=sound_fx_done
 c$9D3D RLCA          ; Multiply channel by 2
  $9D3E LD C,A        ; Store word offset in C
  $9D3F RLCA          ; Multiply by 4
  $9D40 RLCA          ; Multiply by 8
  $9D41 LD E,A        ; DE = A
  $9D42 LD D,$00      ; ...
- $9D44 LD IY,$72A5   ; Sound channel 1
+ $9D44 LD IY,$72A5   ; Sound fx data 1
  $9D48 ADD IY,DE     ; Add offset
- $9D4A LD A,(IY+$05) ; Get byte 5 (not used?)
+ $9D4A LD A,(IY+$05) ; Get command (not used?)
  $9D4D LD (IY+$05),D ; Set command to 0
  $9D50 LD E,C        ; Word offset (channel * 2)
  $9D51 LD IY,$7270   ; First pointer
@@ -4600,11 +4610,11 @@ c$9D3D RLCA          ; Multiply channel by 2
  $9D63 LD (IY+$01),H ; ...
  $9D66 RET           ;
 
-; Execute command for all sound channels
+; Execute commands for all sound fx channels
 ;
 ; Used by the routine at #R$9B99.
-@label=execute_sound_channel_commands
-c$9D67 LD IX,$72BD   ; Sound data channel 4 (start at the end)
+@label=execute_sound_fx_commands
+c$9D67 LD IX,$72BD   ; Sound fx data 4 (start at the end)
  $9D6B LD B,$04      ; 4 channels
 ; This entry point is used by the routine at #R$9D89.
 *$9D6D LD A,(IX+$05) ; Get index of sound command to call
@@ -4623,11 +4633,11 @@ c$9D67 LD IX,$72BD   ; Sound data channel 4 (start at the end)
 *$9D89 LD DE,$FFF8   ; -8
  $9D8C ADD IX,DE     ; Move 8 bytes back
  $9D8E DJNZ $9D6D    ; Loop for 4 channels
-@label=sound_command_10
+@label=sound_fx_command_10
  $9D90 RET           ;
 
 ; Sound command jump table
-@label=sound_command_jump_table
+@label=sound_fx_command_jump_table
 w$9D91 DEFW $9DE8
  $9D93 DEFW $9DC4
  $9D95 DEFW $9DD7
@@ -4642,8 +4652,9 @@ w$9D91 DEFW $9DE8
 
 ; Sound routine at 9DA7
 ;
-; I:B Channel index I:IX Sound data channel
-@label=sound_command_3
+; I:B Channel index
+; I:IX Sound fx data
+@label=sound_fx_command_3
 c$9DA7 LD A,(IX+$04) ;
  $9DAA INC A         ;
  $9DAB LD C,A        ;
@@ -4657,8 +4668,9 @@ c$9DA7 LD A,(IX+$04) ;
 
 ; Sound routine at 9DB9
 ;
-; I:B Channel index I:IX Sound data channel
-@label=sound_command_6
+; I:B Channel index
+; I:IX Sound fx data
+@label=sound_fx_command_6
 c$9DB9 LD A,(IX+$04) ;
  $9DBC ADD A,$04     ;
  $9DBE JR Z,$9DFC    ;
@@ -4667,8 +4679,9 @@ c$9DB9 LD A,(IX+$04) ;
 
 ; Sound routine at 9DC4
 ;
-; I:B Channel index I:IX Sound data channel
-@label=sound_command_1_4
+; I:B Channel index
+; I:IX Sound fx data
+@label=sound_fx_command_1_4
 c$9DC4 LD A,(IX+$03) ;
  $9DC7 SUB $0C       ;
  $9DC9 LD (IX+$03),A ;
@@ -4680,8 +4693,9 @@ c$9DC4 LD A,(IX+$03) ;
 
 ; Sound routine at 9DD7
 ;
-; I:B Channel index I:IX Sound data channel
-@label=sound_command_2
+; I:B Channel index
+; I:IX Sound fx data
+@label=sound_fx_command_2
 c$9DD7 LD A,(IX+$03) ;
  $9DDA ADD A,$04     ;
  $9DDC LD (IX+$03),A ;
@@ -4693,8 +4707,9 @@ c$9DD7 LD A,(IX+$03) ;
 
 ; Sound routine at 9DE8
 ;
-; I:B Channel index I:IX Sound data channel
-@label=sound_command_0
+; I:B Channel index
+; I:IX Sound fx data
+@label=sound_fx_command_0
 c$9DE8 DEC (IX+$03)  ;
  $9DEB LD A,(IX+$03) ;
  $9DEE RRA           ;
@@ -4709,12 +4724,13 @@ c$9DE8 DEC (IX+$03)  ;
 ; This entry point is used by the routines at #R$9DA7 and #R$9DC4.
 *$9DFC LD A,B        ;
  $9DFD DEC A         ; Channel
- $9DFE JP $9D3D      ; Reset sound data pointer
+ $9DFE JP $9D3D      ; Sound fx done
 
 ; Sound routine at 9E01
 ;
-; I:B Channel index I:IX Sound data channel
-@label=sound_command_5_8
+; I:B Channel index
+; I:IX Sound fx data
+@label=sound_fx_command_5_8
 c$9E01 LD HL,($72C0)   ;
  $9E04 RES 7,H         ;
  $9E06 LD DE,($72BE)   ;
@@ -4761,8 +4777,9 @@ c$9E01 LD HL,($72C0)   ;
 
 ; Sound routine at 9E5C
 ;
-; I:B Channel index I:IX Sound data channel
-@label=sound_command_7
+; I:B Channel index
+; I:IX Sound fx data
+@label=sound_fx_command_7
 c$9E5C LD A,(IX+$02)   ;
  $9E5F ADD A,(IX+$03)  ;
  $9E62 JR Z,$9DFC      ;
@@ -4776,8 +4793,9 @@ c$9E5C LD A,(IX+$02)   ;
 
 ; Sound routine at 9E75
 ;
-; I:B Channel index I:IX Sound data channel
-@label=sound_command_9
+; I:B Channel index
+; I:IX Sound fx data
+@label=sound_fx_command_9
 c$9E75 INC (IX+$03)  ;
  $9E78 INC (IX+$03)  ;
  $9E7B JR NZ,$9E80   ;
@@ -4789,7 +4807,7 @@ c$9E75 INC (IX+$03)  ;
  $9E89 RET NZ        ;
  $9E8A CALL $9DFC    ;
  $9E8D XOR A         ;
- $9E8E JP $9D3D      ; Reset sound data pointer
+ $9E8E JP $9D3D      ; Sound fx done
 
 ; Call play tune, preserve registers
 ;

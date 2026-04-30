@@ -24,7 +24,7 @@ Next: <a href="40337.html">9D91</a>
 </td>
 </tr>
 </table>
-<div class="description">9D67: Execute command for all sound channels</div>
+<div class="description">9D67: Execute commands for all sound fx channels</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -36,10 +36,10 @@ Used by the routine at <a href="39833.html">sound_player</a>.
 </td>
 </tr>
 <tr>
-<td class="asm-label">execute_sound_channel_commands</td>
+<td class="asm-label">execute_sound_fx_commands</td>
 <td class="address-2"><span id="40295"></span>9D67</td>
-<td class="instruction">LD IX,<a href="29373.html">sound_data_channel_4</a></td>
-<td class="comment-1" rowspan="1">Sound data channel 4 (start at the end)</td>
+<td class="instruction">LD IX,<a href="29373.html">sound_fx_data_4</a></td>
+<td class="comment-1" rowspan="1">Sound fx data 4 (start at the end)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -52,13 +52,13 @@ Used by the routine at <a href="39833.html">sound_player</a>.
 <span id="40301"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="40295.html#40329">execute_sound_channel_commands_1</a>.
+This entry point is used by the routine at <a href="40295.html#40329">execute_sound_fx_commands_1</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">execute_sound_channel_commands_0</td>
+<td class="asm-label">execute_sound_fx_commands_0</td>
 <td class="address-2"><span id="40301"></span>9D6D</td>
 <td class="instruction">LD A,(IX+$05)</td>
 <td class="comment-1" rowspan="1">Get index of sound command to call</td>
@@ -72,7 +72,7 @@ This entry point is used by the routine at <a href="40295.html#40329">execute_so
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40305"></span>9D71</td>
-<td class="instruction">JP P,<a href="40295.html#40329">execute_sound_channel_commands_1</a></td>
+<td class="instruction">JP P,<a href="40295.html#40329">execute_sound_fx_commands_1</a></td>
 <td class="comment-1" rowspan="1">Skip channel if bit 7 is reset</td>
 </tr>
 <tr>
@@ -96,7 +96,7 @@ This entry point is used by the routine at <a href="40295.html#40329">execute_so
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40312"></span>9D78</td>
-<td class="instruction">LD IY,<a href="40337.html">sound_command_jump_table</a></td>
+<td class="instruction">LD IY,<a href="40337.html">sound_fx_command_jump_table</a></td>
 <td class="comment-1" rowspan="1">Base address of jump table</td>
 </tr>
 <tr>
@@ -120,7 +120,7 @@ This entry point is used by the routine at <a href="40295.html#40329">execute_so
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40324"></span>9D84</td>
-<td class="instruction">LD DE,<a href="40295.html#40329">execute_sound_channel_commands_1</a></td>
+<td class="instruction">LD DE,<a href="40295.html#40329">execute_sound_fx_commands_1</a></td>
 <td class="comment-1" rowspan="1">Return address</td>
 </tr>
 <tr>
@@ -136,7 +136,7 @@ This entry point is used by the routine at <a href="40295.html#40329">execute_so
 <td class="comment-1" rowspan="1">Jump to sound command</td>
 </tr>
 <tr>
-<td class="asm-label">execute_sound_channel_commands_1</td>
+<td class="asm-label">execute_sound_fx_commands_1</td>
 <td class="address-2"><span id="40329"></span>9D89</td>
 <td class="instruction">LD DE,$FFF8</td>
 <td class="comment-1" rowspan="1">-8</td>
@@ -150,11 +150,11 @@ This entry point is used by the routine at <a href="40295.html#40329">execute_so
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40334"></span>9D8E</td>
-<td class="instruction">DJNZ <a href="40295.html#40301">execute_sound_channel_commands_0</a></td>
+<td class="instruction">DJNZ <a href="40295.html#40301">execute_sound_fx_commands_0</a></td>
 <td class="comment-1" rowspan="1">Loop for 4 channels</td>
 </tr>
 <tr>
-<td class="asm-label">sound_command_10</td>
+<td class="asm-label">sound_fx_command_10</td>
 <td class="address-1"><span id="40336"></span>9D90</td>
 <td class="instruction">RET</td>
 <td class="comment-1" rowspan="1"></td>

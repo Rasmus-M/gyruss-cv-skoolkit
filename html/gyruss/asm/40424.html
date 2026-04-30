@@ -30,13 +30,13 @@ Next: <a href="40449.html">9E01</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-I:B Channel index I:IX Sound data channel
+I:B Channel index I:IX Sound fx data
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">sound_command_0</td>
+<td class="asm-label">sound_fx_command_0</td>
 <td class="address-2"><span id="40424"></span>9DE8</td>
 <td class="instruction">DEC (IX+$03)</td>
 <td class="comment-1" rowspan="1"></td>
@@ -70,13 +70,13 @@ I:B Channel index I:IX Sound data channel
 <span id="40434"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="40388.html">sound_command_1_4</a>.
+This entry point is used by the routine at <a href="40388.html">sound_fx_command_1_4</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">sound_command_0_0</td>
+<td class="asm-label">sound_fx_command_0_0</td>
 <td class="address-2"><span id="40434"></span>9DF2</td>
 <td class="instruction">LD A,(IX+$04)</td>
 <td class="comment-1" rowspan="1"></td>
@@ -110,13 +110,13 @@ This entry point is used by the routine at <a href="40388.html">sound_command_1_
 <span id="40444"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routines at <a href="40359.html">sound_command_3</a> and <a href="40388.html">sound_command_1_4</a>.
+This entry point is used by the routines at <a href="40359.html">sound_fx_command_3</a> and <a href="40388.html">sound_fx_command_1_4</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">sound_command_0_1</td>
+<td class="asm-label">sound_fx_command_0_1</td>
 <td class="address-2"><span id="40444"></span>9DFC</td>
 <td class="instruction">LD A,B</td>
 <td class="comment-1" rowspan="1"></td>
@@ -130,8 +130,8 @@ This entry point is used by the routines at <a href="40359.html">sound_command_3
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40446"></span>9DFE</td>
-<td class="instruction">JP <a href="40253.html">reset_sound_data_ptr</a></td>
-<td class="comment-1" rowspan="1">Reset sound data pointer</td>
+<td class="instruction">JP <a href="40253.html">sound_fx_done</a></td>
+<td class="comment-1" rowspan="1">Sound fx done</td>
 </tr>
 </table>
 <table class="asm-navigation">

@@ -66,7 +66,7 @@ Used by the routines at <a href="39897.html">L9BD9</a>, <a href="39964.html">L9C
 <td class="asm-label"></td>
 <td class="address-1"><span id="39700"></span>9B14</td>
 <td class="instruction">LD HL,$7284</td>
-<td class="comment-1" rowspan="1"><a href="29309.html">sound_data_noise</a>+7</td>
+<td class="comment-1" rowspan="1"><a href="29309.html">tune_data_1</a>+7</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -119,8 +119,8 @@ Used by the routines at <a href="39897.html">L9BD9</a>, <a href="39964.html">L9C
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39715"></span>9B23</td>
-<td class="instruction">LD IX,<a href="29309.html">sound_data_noise</a></td>
-<td class="comment-1" rowspan="1">First sound data buffer</td>
+<td class="instruction">LD IX,<a href="29309.html">tune_data_1</a></td>
+<td class="comment-1" rowspan="1">First tune data buffer</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -144,7 +144,7 @@ Used by the routines at <a href="39897.html">L9BD9</a>, <a href="39964.html">L9C
 <td class="asm-label"></td>
 <td class="address-1"><span id="39724"></span>9B2C</td>
 <td class="instruction">LD (IX+$01),A</td>
-<td class="comment-1" rowspan="1">Store in sound data buffer</td>
+<td class="comment-1" rowspan="1">Store in tune data buffer</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -162,7 +162,7 @@ Used by the routines at <a href="39897.html">L9BD9</a>, <a href="39964.html">L9C
 <td class="asm-label"></td>
 <td class="address-1"><span id="39729"></span>9B31</td>
 <td class="instruction">LD (IX+$02),A</td>
-<td class="comment-1" rowspan="1">Store in sound data buffer</td>
+<td class="comment-1" rowspan="1">Store in tune data buffer</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -186,7 +186,7 @@ Used by the routines at <a href="39897.html">L9BD9</a>, <a href="39964.html">L9C
 <td class="asm-label"></td>
 <td class="address-1"><span id="39741"></span>9B3D</td>
 <td class="instruction">ADD IX,DE</td>
-<td class="comment-1" rowspan="1">Next sound data buffer</td>
+<td class="comment-1" rowspan="1">Next channel</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
