@@ -24,76 +24,89 @@ Next: <a href="40565.html">9E75</a>
 </td>
 </tr>
 </table>
-<div class="description">9E5C: Sound routine at 9E5C</div>
+<div class="description">9E5C: Sound FX command 7</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-I:B Channel index I:IX Sound fx data
+Noise. When mines appear. Generates $FD, $F5, $ED, $E5, ..., and up again.
 </div>
 </div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">B</td>
+<td class="register-desc">Channel index + 1</td>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Sound fx data</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
 <td class="asm-label">sound_fx_command_7</td>
 <td class="address-2"><span id="40540"></span>9E5C</td>
 <td class="instruction">LD A,(IX+$02)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get byte 2 (starts with $00)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40543"></span>9E5F</td>
 <td class="instruction">ADD A,(IX+$03)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add byte 3 (starts with $FC = -4)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40546"></span>9E62</td>
 <td class="instruction">JR Z,<a href="40424.html#40444">sound_fx_command_0_1</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If zero then sound FX done</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40548"></span>9E64</td>
 <td class="instruction">CP $30</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If &gt;= $30</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40550"></span>9E66</td>
 <td class="instruction">JR NC,<a href="40540.html#40556">sound_fx_command_7_0</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Then skip next</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40552"></span>9E68</td>
 <td class="instruction">LD (IX+$03),$04</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Byte 3 = 4</td>
 </tr>
 <tr>
 <td class="asm-label">sound_fx_command_7_0</td>
 <td class="address-2"><span id="40556"></span>9E6C</td>
 <td class="instruction">LD (IX+$02),A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Byte 2 = byte 2 + byte 3 from before</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40559"></span>9E6F</td>
 <td class="instruction">OR $05</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set bits 0 and 3</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40561"></span>9E71</td>
 <td class="instruction">LD (IX+$04),A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save in attenuation/noise control</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40564"></span>9E74</td>
 <td class="instruction">RET</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 </table>
 <table class="asm-navigation">

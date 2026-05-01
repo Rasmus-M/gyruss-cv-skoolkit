@@ -24,64 +24,84 @@ Next: <a href="40006.html">9C46</a>
 </td>
 </tr>
 </table>
-<div class="description">9C39: Sound routine at 9C39</div>
+<div class="description">9C39: Handle absolute or relative jump</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="39964.html">L9C1C</a>.
+Used by the routine at <a href="39964.html">process_tune_byte</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L9C39</td>
+<td class="asm-label">process_abs_rel_jump</td>
 <td class="address-2"><span id="39993"></span>9C39</td>
 <td class="instruction">JP P,<a href="40011.html">L9C4B</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If bit 7 is not set, then jump ahead</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="39996"></span>
+<div class="comments">
+<div class="paragraph">
+Duration byte has bit 7 set
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39996"></span>9C3C</td>
 <td class="instruction">AND $7F</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Clear bit 7</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39998"></span>9C3E</td>
 <td class="instruction">JR NZ,<a href="40006.html">L9C46</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If it wasn't $80 then jump ahead</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="40000"></span>
+<div class="comments">
+<div class="paragraph">
+Duration byte is $80: absolute jump
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40000"></span>9C40</td>
 <td class="instruction">LD E,(HL)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get address from tune data</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40001"></span>9C41</td>
 <td class="instruction">INC HL</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40002"></span>9C42</td>
 <td class="instruction">LD D,(HL)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40003"></span>9C43</td>
 <td class="instruction">EX DE,HL</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">HL = next address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40004"></span>9C44</td>
-<td class="instruction">JR <a href="39964.html#39975">L9C1C_0</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JR <a href="39964.html#39975">process_tune_byte_0</a></td>
+<td class="comment-1" rowspan="1">Jump to check if finished</td>
 </tr>
 </table>
 <table class="asm-navigation">

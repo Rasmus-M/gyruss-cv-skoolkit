@@ -30,7 +30,7 @@ Next: <a href="41787.html">A33B</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="41748.html">tone_data_to_psg</a>.
+Used by the routine at <a href="41748.html">tone_data_to_psg</a>. Note: The value is actually 111,861 / frequency, so higher numbers give lower notes
 </div>
 </div>
 <table class="input">
@@ -39,15 +39,15 @@ Used by the routine at <a href="41748.html">tone_data_to_psg</a>.
 </tr>
 <tr>
 <td class="register">C</td>
-<td class="register-desc">Attenuation operation in upper nybble 1CC1XXXX</td>
+<td class="register-desc">Attenuation operation in upper nybble (1CC1XXXX)</td>
 </tr>
 <tr>
 <td class="register">D</td>
-<td class="register-desc">Tone operation in upper nybble 1CC0XXXX</td>
+<td class="register-desc">Tone operation in upper nybble (1CC0XXXX)</td>
 </tr>
 <tr>
 <td class="register">IX</td>
-<td class="register-desc">-&gt; B0, B1, B2, B3: frequency LSB, B4: attenuation/frequency MSB (AAAA00FF),</td>
+<td class="register-desc">-&gt; B0, B1, B2, B3: frequency LSB, B4: attenuation/frequency MSB (AAAA00FF)</td>
 </tr>
 </table>
 </td>
@@ -98,7 +98,7 @@ Used by the routine at <a href="41748.html">tone_data_to_psg</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="41773"></span>A32D</td>
 <td class="instruction">LD D,A</td>
-<td class="comment-1" rowspan="1">Save</td>
+<td class="comment-1" rowspan="1">Save it</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

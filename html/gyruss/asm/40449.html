@@ -24,274 +24,287 @@ Next: <a href="40540.html">9E5C</a>
 </td>
 </tr>
 </table>
-<div class="description">9E01: Sound routine at 9E01</div>
+<div class="description">9E01: Sound FX command 5,8</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-I:B Channel index I:IX Sound fx data
+Tone.
 </div>
 </div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">B</td>
+<td class="register-desc">Channel index + 1</td>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Sound fx data</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
 <td class="asm-label">sound_fx_command_5_8</td>
 <td class="address-2"><span id="40449"></span>9E01</td>
 <td class="instruction">LD HL,(<a href="29376.html">L72C0</a>)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get byte 3-4 of sound fx data 4, e.g. $8080</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40452"></span>9E04</td>
 <td class="instruction">RES 7,H</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">$0080</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40454"></span>9E06</td>
 <td class="instruction">LD DE,(<a href="29374.html">L72BE</a>)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get byte 1-2 of sound fx data 4, e.g. $00DC</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40458"></span>9E0A</td>
 <td class="instruction">ADD HL,DE</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add them, e.g. $005C</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40459"></span>9E0B</td>
 <td class="instruction">LD A,H</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">$00</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40460"></span>9E0C</td>
 <td class="instruction">LD (<a href="29376.html">L72C0</a>),HL</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save again</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40463"></span>9E0F</td>
 <td class="instruction">SET 7,(IX+$04)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">$80</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40467"></span>9E13</td>
 <td class="instruction">CP $04</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If &gt;= 4</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40469"></span>9E15</td>
 <td class="instruction">JR NC,<a href="40449.html#40479">sound_fx_command_5_8_0</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Then skip ahead</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40471"></span>9E17</td>
 <td class="instruction">LD DE,(<a href="29379.html">L72C3</a>)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Else get byte 6-7, e.g. $03C0</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40475"></span>9E1B</td>
 <td class="instruction">AND A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Clear carry</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40476"></span>9E1C</td>
 <td class="instruction">SBC HL,DE</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Subtract it</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40478"></span>9E1E</td>
 <td class="instruction">RET C</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return if &lt; 0</td>
 </tr>
 <tr>
 <td class="asm-label">sound_fx_command_5_8_0</td>
 <td class="address-2"><span id="40479"></span>9E1F</td>
 <td class="instruction">LD (IX+$03),$80</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40483"></span>9E23</td>
 <td class="instruction">LD (IX+$04),$80</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40487"></span>9E27</td>
 <td class="instruction">EX DE,HL</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40488"></span>9E28</td>
 <td class="instruction">LD DE,$0008</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40491"></span>9E2B</td>
 <td class="instruction">AND A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40492"></span>9E2C</td>
 <td class="instruction">SBC HL,DE</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40494"></span>9E2E</td>
 <td class="instruction">LD (<a href="29379.html">L72C3</a>),HL</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40497"></span>9E31</td>
 <td class="instruction">LD A,H</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40498"></span>9E32</td>
 <td class="instruction">AND A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40499"></span>9E33</td>
 <td class="instruction">JR NZ,<a href="40449.html#40522">sound_fx_command_5_8_1</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40501"></span>9E35</td>
 <td class="instruction">LD A,L</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40502"></span>9E36</td>
 <td class="instruction">CP $EA</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40504"></span>9E38</td>
 <td class="instruction">JR NC,<a href="40449.html#40522">sound_fx_command_5_8_1</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40506"></span>9E3A</td>
 <td class="instruction">LD A,(IX+$05)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40509"></span>9E3D</td>
 <td class="instruction">CP $85</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40511"></span>9E3F</td>
 <td class="instruction">JP NZ,<a href="40424.html#40444">sound_fx_command_0_1</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Sound FX done</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40514"></span>9E42</td>
 <td class="instruction">LD C,$09</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40516"></span>9E44</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40517"></span>9E45</td>
 <td class="instruction">CALL <a href="40104.html#40117">play_sound_no_checks</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40520"></span>9E48</td>
 <td class="instruction">POP BC</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40521"></span>9E49</td>
 <td class="instruction">RET</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label">sound_fx_command_5_8_1</td>
 <td class="address-2"><span id="40522"></span>9E4A</td>
 <td class="instruction">LD DE,$0080</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40525"></span>9E4D</td>
 <td class="instruction">AND A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40526"></span>9E4E</td>
 <td class="instruction">SBC HL,DE</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40528"></span>9E50</td>
 <td class="instruction">SRL H</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40530"></span>9E52</td>
 <td class="instruction">RR L</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40532"></span>9E54</td>
 <td class="instruction">SRL H</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40534"></span>9E56</td>
 <td class="instruction">RR L</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40536"></span>9E58</td>
 <td class="instruction">LD (<a href="29374.html">L72BE</a>),HL</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40539"></span>9E5B</td>
 <td class="instruction">RET</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 </table>
 <table class="asm-navigation">

@@ -24,56 +24,56 @@ Next: <a href="40104.html">9CA8</a>
 </td>
 </tr>
 </table>
-<div class="description">9CA0: Sound routine at 9CA0</div>
+<div class="description">9CA0: Make a relative jump</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="40082.html">L9C92</a>.
+Used by the routine at <a href="40082.html">update_counter_and_loop</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L9CA0</td>
+<td class="asm-label">relative_jump</td>
 <td class="address-2"><span id="40096"></span>9CA0</td>
 <td class="instruction">LD (IX+$09),E</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set countdown to tune byte</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="40099"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="40082.html">L9C92</a>.
+This entry point is used by the routine at <a href="40082.html">update_counter_and_loop</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L9CA0_0</td>
+<td class="asm-label">relative_jump_0</td>
 <td class="address-2"><span id="40099"></span>9CA3</td>
 <td class="instruction">LD E,(HL)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get tune byte (negative jump offset)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40100"></span>9CA4</td>
 <td class="instruction">LD D,$FF</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set MSB of offset</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40102"></span>9CA6</td>
 <td class="instruction">ADD HL,DE</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add offset to address</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40103"></span>9CA7</td>
 <td class="instruction">RET</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"></td>
 </tr>
 </table>
 <table class="asm-navigation">

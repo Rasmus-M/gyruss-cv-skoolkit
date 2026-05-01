@@ -227,7 +227,7 @@ b $727C Index of tune playing
 @ $727C label=tune_playing
 B $727C,1,1
 b $727D Tune data channel 1
-D $727D #TABLE(default, default) { =h Byte | =h Purpose } { $00 | $00 for tone/noise, $FF for ... } { $01 | LSB of ... } { $02 | MSB of ... } { $03 | Frequency LSB } { $04 | Bits 4-8 attenuation, bits 0-3 frequency MSB or noise value  } { $05 | Countdown, e.g. 4 to 0 } { $06 | Unknown. Initialized to $50 } { $07 | Countdown } { $08 | Unknown. Initialized to $05 } { $09 | Initialized to 0 } TABLE#
+D $727D #TABLE(default, default) { =h Byte | =h Purpose } { $00 | $00 for tone/noise else mute } { $01 | LSB of ... } { $02 | MSB of ... } { $03 | Frequency LSB } { $04 | Bits 4-7 attenuation, bits 0-3 frequency MSB or noise value  } { $05 | Countdown until next note } { $06 | Attenuation. Initialized to $50 } { $07 | Countdown for when to increase attenuation } { $08 | Speed. Initialized to $05 } { $09 | Countdown for relative loops } TABLE#
 @ $727D label=tune_data_1
 B $727D,10,10
 b $7287 Tune data channel 2
@@ -240,7 +240,7 @@ b $729B Tune data channel 4
 @ $729B label=tune_data_4
 B $729B,10,10
 b $72A5 Sound fx data channel 1
-D $72A5 Sound fx data are initialised by #R$9CBF with data from #R$9CE7 #TABLE(default, default) { =h Byte | =h Purpose } { $00 | Channel } { $01 | Unknown } { $02 | Unknown } { $03 | Frequency LSB } { $04 | Bits 4-8 attenuation, bits 0-3 frequency 2 MSbits or noise value  } { $05 | Command } { $06 | Unknown } { $07 | Unknown } TABLE#
+D $72A5 Sound fx data are initialised by #R$9CBF with data from #R$9CE7 #TABLE(default, default) { =h Byte | =h Purpose } { $00 | Channel, $00 for tone/noise else mute } { $01 | Unknown, $00, $DC, $40 } { $02 | Unknown, initialized to 0 } { $03 | Frequency LSB } { $04 | Bits 4-7 attenuation, bits 0-3 frequency 2 MSbits or noise value  } { $05 | Bits 0-3 command index, bit 7 must be set or channel is skipped } { $06 | Unknown, $00, $40, $80, $C0, $F0 } { $07 | Unknown, $00, $01, $03 } TABLE#
 @ $72A5 label=sound_fx_data_1
 B $72A5,8,8
 b $72AD Sound fx data channel 2
@@ -252,13 +252,13 @@ B $72B5,8,8
 b $72BD Sound fx data channel 4
 @ $72BD label=sound_fx_data_4
 B $72BD,1,1
-w $72BE Word at 72BE (sound fx data 4)
+w $72BE Byte 1-2 of sound fx data 4
 W $72BE,2,2
-w $72C0 Word at 72C0 (sound fx data 4)
+w $72C0 Byte 3-4 of sound fx data 4
 W $72C0,2,2
-b $72C2 Byte at 72C2 (sound fx data 4)
+b $72C2 Byte 5 of sound fx data 4
 B $72C2,1,1
-w $72C3 Word at 72C3 (sound fx data 4)
+w $72C3 Byte 6-7 of sound fx data 4
 W $72C3,2,2
 w $72C5 Temporary center of projection
 D $72C5 Will be copied to #R$7000
@@ -502,7 +502,7 @@ C $8137,2 Loop
 c $8139 Died
 D $8139 Used by the routine at #R$80E8.
 @ $8139 label=died
-C $8139,3 Set variables
+C $8139,3 Stop tune
 C $813C,2 Play explosion sound
 C $813E,3 ...
 C $8141,3 Reset main loop flag
@@ -757,7 +757,7 @@ C $8346,3 Process sprites
 C $8349,3 Display center enemies
 C $834C,3 Upload sprites
 C $8350,2 Loop for 90 frames
-C $8352,3 Set variables
+C $8352,3 Stop tune
 C $8355,3 Clear rows 9 and 14
 C $8358,3 Stage
 C $835B,2 Stage mod 4
@@ -3154,6 +3154,8 @@ C $9AF3,3 Set to #R$729B
 C $9AF6,2 4 channels
 C $9AF8,4 First tune data buffer
 C $9AFC,4 Disable
+C $9B00,4 Attenuation
+C $9B04,4 Speed (lower is faster)
 C $9B08,2 Next channel
 C $9B0A,2 Loop for 4 channels
 c $9B0D Play tune
@@ -3182,6 +3184,7 @@ C $9B30,1 Get MSB
 C $9B31,3 Store in tune data buffer
 C $9B34,4 Set countdown
 C $9B38,1 Next table address
+C $9B39,4 Countdown for relative jumps
 C $9B3D,2 Next channel
 C $9B3F,2 Loop for 4 channels
 C $9B41,2 Tune speed?
@@ -3205,9 +3208,9 @@ C $9B62,3 Get tune index
 C $9B65,2 If < 3
 C $9B67,2 Then skip ahead
 C $9B69,2 Else set first byte
-C $9B6B,3 of buffer to $FF
+C $9B6B,3 of buffer to $FF (mute)
 C $9B6E,2 and skip first channel
-C $9B70,3 Get countdown
+C $9B70,3 Get countdown for when to increase attenuation
 C $9B73,1 and decrement
 C $9B74,3 If it was 0 then move to next channel
 C $9B77,3 Else save new value
@@ -3234,7 +3237,7 @@ C $9B9F,3 Is tune playing?
 C $9BA2,1 ...
 C $9BA3,1 Return is not
 C $9BA4,3 Dampen all tune channels
-C $9BA7,3 Decrement countdown
+C $9BA7,3 Decrement overall countdown
 C $9BAA,1 ...
 C $9BAB,1 Return if not 0
 C $9BAC,2 Reset countdown
@@ -3243,62 +3246,157 @@ C $9BAE,4 First tune data buffer
 C $9BB2,2 4 channels
 C $9BB4,3 Get tune index
 C $9BB7,2 If < 3
-C $9BB9,2 Then ...
-C $9BBB,3 Decrement countdown
-C $9BBE,2 If not 0 then ...
-C $9BC0,4 Reset countdown
-C $9BC4,3 Get address LSB
-C $9BC7,3 Get address MSB
+C $9BB9,2 Then jump to the standard handler code
+N $9BBB Special processing when tune index >= 3
+C $9BBB,3 Decrement countdown for channel
+C $9BBE,2 If not 0 then jump ahead and return into standard code
+N $9BC0 A countdown of 0 when tune index >= 3 would take us here
+C $9BC0,4 Reset countdown to 4 instead of 5
+C $9BC4,3 Get tune address LSB
+C $9BC7,3 Get tune address MSB
 N $9BCA This entry point is used by the routines at #R$9BD9 and #R$9BF8.
-C $9BCA,1 Get byte at address
-C $9BCB,1 Next address
+C $9BCA,1 Get tune byte
+C $9BCB,1 Next tune address (always points to next)
 C $9BCC,1 Was the byte zero?
 C $9BCD,2 If not, jump ahead
-C $9BCF,1 Get next byte
-C $9BD0,1 Next address
+C $9BCF,1 Get next tune byte
+C $9BD0,1 Next tune address
 C $9BD1,1 Was the byte zero?
 C $9BD2,2 If not, jump ahead
-C $9BD4,3 Address of ...
-C $9BD7,2 Jump back and repeat with #R$A299
-c $9BD9 Sound routine at 9BD9
+N $9BD4 Two zeros only appear at the end of #R$A299
+C $9BD4,3 Jump back and repeat with #R$A299
+C $9BD7,2 ...
+c $9BD9 Handle frequency byte when tune index >= 3
 D $9BD9 Used by the routine at #R$9B99.
+C $9BD9,3 If > 0 then jump ahead to loop
+C $9BDC,2 Negative - clear sign
+C $9BDE,2 If bit 7 was
+C $9BE0,1 Save value
+C $9BE1,3 Get tune playing
+C $9BE4,2 If not 5
 C $9BE6,2 Then jump back into #R$9B99
-C $9BEF,2 Then jump back into #R$9B99
-C $9BF3,3 play_tune
-c $9BF8 Sound routine at 9BF8
-D $9BF8 Used by the routine at #R$9BD9.
-C $9BFB,2 jump back into #R$9B99
-c $9BFD Sound routine at 9BFD
-D $9BFD Used by the routine at #R$9B99.
+C $9BE8,1 Restore value
+C $9BE9,1 Decrement value
+C $9BEA,2 If it was 1 then skip ahead
+C $9BEC,3 Decrement countdown
+C $9BEF,2 If zero then jump back into #R$9B99
+C $9BF1,2 Add 6 to get tune index
+C $9BF3,3 Play tune
+c $9BF8 Relative jump then  tune index >= 3
+D $9BF8 When tune index >= 3 Used by the routine at #R$9BD9.
+C $9BF8,3 Update counter and loop tune
+C $9BFB,2 Jump back into #R$9B99
+c $9BFD Handle duration byte when tune index >= 3
+D $9BFD When tune index >= 3 Used by the routine at #R$9B99.
+C $9BFD,3 Save tune byte in frequency LSB
+C $9C00,3 Set tune address LSB
+C $9C03,3 Set tune address MSB
 N $9C06 This entry point is used by the routine at #R$9B99.
 C $9C06,1 Clear A
-C $9C07,4 Shift frequency bit into carry
+C $9C07,4 Shift frequency bit 7 into carry
 C $9C0B,1 Shift carry into A bit 0
-C $9C0C,4 Shift frequency bit into carry
+C $9C0C,4 Shift frequency bit 7 into carry
 C $9C10,1 Shift carry into A bit 0
-C $9C15,2 01110100
-c $9C1C Sound routine at 9C1C
+C $9C11,1 -1, so that a zero will mute
+C $9C12,3 Save as tune/mute byte
+C $9C15,2 000000FF OR 01110100 -> 011101FF
+C $9C17,3 Save in attenuation/frequency
+C $9C1A,2 Next tune data buffer
+c $9C1C Process tune byte
 D $9C1C Used by the routines at #R$9B99 and #R$9C7E.
+@ $9C1C label=process_tune_byte
+C $9C1C,3 Decrement countdown
+C $9C1F,2 If not 0 then next tune data buffer
+C $9C21,3 Get tune address LSB
+C $9C24,3 Get tune address MSB
 N $9C27 This entry point is used by the routines at #R$9C39 and #R$9C46.
-C $9C36,3 play_tune
-c $9C39 Sound routine at 9C39
+C $9C27,1 Get tune byte (duration)
+C $9C28,1 Next tune address (always points to next)
+C $9C29,1 Was the byte zero?
+C $9C2A,2 If not then jump ahead
+C $9C2C,3 Stop tune
+C $9C2F,3 Get tune index
+C $9C32,1 Return if not zero
+C $9C33,1 ...
+C $9C34,2 Play tune #3
+C $9C36,3 ...
+c $9C39 Handle absolute or relative jump
 D $9C39 Used by the routine at #R$9C1C.
-c $9C46 Sound routine at 9C46
+@ $9C39 label=process_abs_rel_jump
+C $9C39,3 If bit 7 is not set, then jump ahead
+N $9C3C Duration byte has bit 7 set
+C $9C3C,2 Clear bit 7
+C $9C3E,2 If it wasn't $80 then jump ahead
+N $9C40 Duration byte is $80: absolute jump
+C $9C40,1 Get address from tune data
+C $9C41,1 ...
+C $9C42,1 ...
+C $9C43,1 HL = next address
+C $9C44,2 Jump to check if finished
+c $9C46 Relative jump then check finished
 D $9C46 Used by the routine at #R$9C39.
-c $9C4B Sound routine at 9C4B
+C $9C46,3 Handle relative jump
+C $9C49,2 Jump to check if finished
+c $9C4B Process normal duration and frequency
 D $9C4B Used by the routine at #R$9C39.
-c $9C7E Sound routine at 9C7E
+@ $9C4B process_duration_and_frequency
+C $9C4B,3 Set countdown to duration
+C $9C4E,1 Get tune byte (frequency)
+C $9C4F,1 Next tune address
+C $9C50,3 Set tone/mute to tune byte
+C $9C53,3 Set tune address LSB
+C $9C56,3 Set tune address MSB
+C $9C59,2 Is it mute?
+C $9C5B,2 Then next tune data buffer
+C $9C5D,2 Isolate bits 0-5 for table lookup
+C $9C5F,1 DE = A
+C $9C60,2 ...
+C $9C62,3 Table base address
+C $9C65,1 Add offset
+C $9C66,1 Get table byte
+C $9C67,3 Set as frequency LSB
+C $9C6A,3 Get saved tune byte
+C $9C6D,2 Isolate bits 6-7
+C $9C6F,1 Shift into bits 0-1
+C $9C70,1 ...
+C $9C71,1 Save in E
+C $9C72,3 Get tune playing
+C $9C75,2 Is it 6?
+C $9C77,1 Get value back in A
+C $9C78,2 Jump if tune not 6
+C $9C7A,2 Apply special attenuation for tune 6
+C $9C7C,2 Skip reset countdown (?) and skip fetch attenuation
+c $9C7E End of processing sound channel
 D $9C7E Used by the routine at #R$9C4B.
+C $9C7E,3 Copy byte 8 (speed) to countdown
+C $9C81,3 ...
+C $9C84,3 Get attenuation from byte 6
 N $9C87 This entry point is used by the routine at #R$9C4B.
+C $9C87,3 Save in attenuation/frequency
 N $9C8A This entry point is used by the routines at #R$9BFD, #R$9C1C and #R$9C4B.
-C $9C8A,3 Next sound data buffer
+@ $9C8A label=next_tune_data_buffer
+C $9C8A,3 Next tune data buffer
 C $9C8D,2 ...
-c $9C92 Sound routine at 9C92
+C $9C8F,2 Loop for 4 channels
+c $9C92 Handle relative jump
 D $9C92 Used by the routines at #R$9BF8 and #R$9C46.
-c $9CA0 Sound routine at 9CA0
+@ $9C92 label=update_counter_and_loop
+C $9C92,1 Save tune byte
+C $9C93,3 Get countdown
+C $9C96,1 Was it zero?
+C $9C97,2 Then set it and make relative jump
+C $9C99,3 Else decrement countdown
+C $9C9C,2 If not zero then make relative jump
+C $9C9E,1 Else next tune address
+c $9CA0 Make a relative jump
 D $9CA0 Used by the routine at #R$9C92.
+@ $9CA0 label=relative_jump
+C $9CA0,3 Set countdown to tune byte
 N $9CA3 This entry point is used by the routine at #R$9C92.
-c $9CA8 Play sound
+C $9CA3,1 Get tune byte (negative jump offset)
+C $9CA4,2 Set MSB of offset
+C $9CA6,1 Add offset to address
+c $9CA8 Play sound FX
 D $9CA8 Used by the routine at #R$9EA3.
 R $9CA8 I:C Index of sound (1-9), maybe 1 is no sound?
 @ $9CA8 label=play_sound
@@ -3407,35 +3505,123 @@ C $9D8E,2 Loop for 4 channels
 w $9D91 Sound command jump table
 @ $9D91 label=sound_fx_command_jump_table
 W $9D91,22,2
-c $9DA7 Sound routine at 9DA7
-D $9DA7 I:B Channel index I:IX Sound fx data
+c $9DA7 Sound FX command 3
+D $9DA7 Noise.
+R $9DA7 I:B Channel index + 1
+R $9DA7 I:IX Sound fx data
 @ $9DA7 label=sound_fx_command_3
-c $9DB9 Sound routine at 9DB9
-D $9DB9 I:B Channel index I:IX Sound fx data
+C $9DA7,3 Get attenuation/noise control (starts with $00)
+C $9DAA,1 Increment
+C $9DAB,1 And save
+C $9DAC,2 Test if bits 0-3 were 0
+C $9DAE,1 Restore incremented value
+C $9DAF,2 If bits weren't 0 then skip next
+C $9DB1,2 Add 1 to attenuation
+C $9DB3,2 If it rolled over then sound FX done
+C $9DB5,3 Save again
+c $9DB9 Sound FX command 6
+D $9DB9 Noise.
+R $9DB9 I:B Channel index + 1
+R $9DB9 I:IX Sound fx data
 @ $9DB9 label=sound_fx_command_6
-c $9DC4 Sound routine at 9DC4
-D $9DC4 I:B Channel index I:IX Sound fx data
+C $9DB9,3 Get attenuation/noise control (starts with $48)
+C $9DBC,2 Add 4 (changes noise control?)
+C $9DBE,2 If it rolled over then sound FX done
+C $9DC0,3 Else save again
+c $9DC4 Sound FX command 1,4
+D $9DC4 Tone.
+R $9DC4 I:B Channel index + 1
+R $9DC4 I:IX Sound fx data
 @ $9DC4 label=sound_fx_command_1_4
-c $9DD7 Sound routine at 9DD7
-D $9DD7 I:B Channel index I:IX Sound fx data
+C $9DC4,3 Get frequency LSB (starts at $40 or $80)
+C $9DC7,2 Subtract 12
+C $9DC9,3 Save again
+C $9DCC,1 Return if positive
+C $9DCD,3 Get reset value (starts same as IX+$03)
+C $9DD0,3 Reset value
+C $9DD3,2 Value to increase attenuation by
+C $9DD5,2 Jump to increase attenuation
+c $9DD7 Sound FX command 2
+D $9DD7 Tone.
+R $9DD7 I:B Channel index + 1
+R $9DD7 I:IX Sound fx data
 @ $9DD7 label=sound_fx_command_2
-c $9DE8 Sound routine at 9DE8
-D $9DE8 I:B Channel index I:IX Sound fx data
+C $9DD7,3 Get frequency LSB (starts at $70)
+C $9DDA,2 Add 4
+C $9DDC,3 Save again
+C $9DDF,2 If it rolled over then sound fx done
+C $9DE1,2 Else isolate bit 2 of frequency
+C $9DE3,1 Invert
+C $9DE4,3 Save in byte 0 to switch between noise and mute
+c $9DE8 Sound FX command 0
+D $9DE8 Noise.
+R $9DE8 I:B Channel index + 1
+R $9DE8 I:IX Sound fx data
 @ $9DE8 label=sound_fx_command_0
+C $9DE8,3 Decrement frequency LSB (starts at $00)
+C $9DEB,3 Get frequency LSB
+C $9DEE,1 Shift bit 0 into carry
+C $9DEF,1 Return if bit 0 was set
 N $9DF2 This entry point is used by the routine at #R$9DC4.
+C $9DF2,3 AAAA00FF (starts at $26)
+C $9DF5,1 Add 1 to attenuation
+C $9DF6,3 Store again
+C $9DF9,2 Return if attenuation has no rolled over to 0
+C $9DFB,1 ...
 N $9DFC This entry point is used by the routines at #R$9DA7 and #R$9DC4.
-C $9DFD,1 Channel
+C $9DFC,1 Channel index + 1
+C $9DFD,1 Channel index
 C $9DFE,3 Sound fx done
-c $9E01 Sound routine at 9E01
-D $9E01 I:B Channel index I:IX Sound fx data
+c $9E01 Sound FX command 5,8
+D $9E01 Tone.
+R $9E01 I:B Channel index + 1
+R $9E01 I:IX Sound fx data
 @ $9E01 label=sound_fx_command_5_8
-c $9E5C Sound routine at 9E5C
-D $9E5C I:B Channel index I:IX Sound fx data
+C $9E01,3 Get byte 3-4 of sound fx data 4, e.g. $8080
+C $9E04,2 $0080
+C $9E06,4 Get byte 1-2 of sound fx data 4, e.g. $00DC
+C $9E0A,1 Add them, e.g. $005C
+C $9E0B,1 $00
+C $9E0C,3 Save again
+C $9E0F,4 $80
+C $9E13,2 If >= 4
+C $9E15,2 Then skip ahead
+C $9E17,4 Else get byte 6-7, e.g. $03C0
+C $9E1B,1 Clear carry
+C $9E1C,2 Subtract it
+C $9E1E,1 Return if < 0
+C $9E3F,3 Sound FX done
+c $9E5C Sound FX command 7
+D $9E5C Noise. When mines appear. Generates $FD, $F5, $ED, $E5, ..., and up again.
+R $9E5C I:B Channel index + 1
+R $9E5C I:IX Sound fx data
 @ $9E5C label=sound_fx_command_7
-c $9E75 Sound routine at 9E75
-D $9E75 I:B Channel index I:IX Sound fx data
+C $9E5C,3 Get byte 2 (starts with $00)
+C $9E5F,3 Add byte 3 (starts with $FC = -4)
+C $9E62,2 If zero then sound FX done
+C $9E64,2 If >= $30
+C $9E66,2 Then skip next
+C $9E68,4 Byte 3 = 4
+C $9E6C,3 Byte 2 = byte 2 + byte 3 from before
+C $9E6F,2 Set bits 0 and 3
+C $9E71,3 Save in attenuation/noise control
+c $9E75 Sound FX command 9
+D $9E75 Tone (silent). Increases frequency up to $016C.
+R $9E75 I:B Channel index + 1
+R $9E75 I:IX Sound fx data
 @ $9E75 label=sound_fx_command_9
-C $9E8E,3 Sound fx done
+C $9E75,3 Increment frequency LSB (starts at $00)
+C $9E78,3 Increment frequency LSB
+C $9E7B,2 If it didn't turn over, skip ahead
+C $9E7D,3 Increment frequency MSB
+C $9E80,3 Get attenuation/frequency of channel 4 (this channel)
+C $9E83,3 Compare to this number
+C $9E86,1 Clear carry
+C $9E87,2 ...
+C $9E89,1 And return if not the same
+C $9E8A,3 Sound fx done for this channel
+C $9E8D,1 Sound fx done for channel 0 (played together with noise)
+C $9E8E,3 ...
 c $9E91 Call play tune, preserve registers
 D $9E91 Used by the routines at #R$82BF, #R$832A and #R$846B. I:A Index of tune
 @ $9E91 label=call_play_tune
@@ -3445,13 +3631,15 @@ D $9EA3 Used by the routines at #R$8139, #R$832A, #R$8C52, #R$8E9D, #R$9934, #R$
 R $9EA3 I:A Index of sound
 @ $9EA3 label=call_play_sound
 C $9EAB,3 Play sound
-b $9EB6 Sound data
+b $9EB6 Sound frequency table
+@ $9EB6 label=frequency_table
 B $9EB6,52,8*6,4
 w $9EEA Tune data
 D $9EEA Each row contains 4 addresses for 4 channels Addresses are copied into byte 1 and 2 of the sound data buffer.
 @ $9EEA label=tune_data_table
 W $9EEA,64,8
 b $9F2A Sound data block at 9F2A
+D $9F2A Sound data basically consist of pairs of 2 bytes: 1st byte is the duration. If bit 7 if set, it has a special meaning: - If it's 1000000 then load new address from next two bytes - If it's 1XXXXXX then subtract XXXXXXX from address 2nd byte is the frequency: - $FF means that the channel is muted, else: - Bits 6-7 are used directly as bits 8-9 of the PSG frequency. - Bits 0-5 are used as index into #R$9EB6, which produces bits 0-7 of the PSG frequency.
 B $9F2A,20,8*2,4
 b $9F3E Sound data block at 9F3E
 B $9F3E,16,8
@@ -3530,7 +3718,7 @@ C $A2EE,2 Then jump ahead
 C $A2F0,2 Else mute
 c $A2F3 Send data for noise channel to PSG
 D $A2F3 Used by the routine at #R$A2BB.
-R $A2F3 I:IX -> B0, B1, B2, B3, B4: attenuation AAAAXXXX
+R $A2F3 I:IX -> B0, B1, B2, B3, B4: attenuation/noise control AAAAXNNN
 @ $A2F3 label=noise_data_to_psg
 C $A2F3,3 Send attenuation to PSG
 C $A2F6,3 Get sound byte
@@ -3543,12 +3731,12 @@ C $A301,2 and make noise (continue into #R$A303)
 c $A303 Send attenuation or noise control bytes to PSG
 D $A303 Used by the routines at #R$A2F3 and #R$A31D.
 R $A303 I:C Operation in upper nybble 1CC0XXXX or 1CC1XXXX
-R $A303 I:IX -> B0, B1, B2, B3, B4: attenuation AAAAXXXX
+R $A303 I:IX -> B0, B1, B2, B3, B4: attenuation/noise AAAAXNNN or attenuation/freq AAAA00FF
 @ $A303 label=attn_or_noise_to_psg
 C $A303,3 Get sound byte
 C $A306,2 If bit 4 of operation is 0, i.e. noise control
 C $A308,2 Then skip shifting
-C $A30A,1 Shift bits 4-7 to 0-3
+C $A30A,1 Swap bits 4-7 and 0-3
 C $A30B,1 ...
 C $A30C,1 ...
 C $A30D,1 ...
@@ -3560,17 +3748,17 @@ D $A314 Used by the routine at #R$A2BB.
 R $A314 I:A Mute operation for channel
 R $A314 I:C Attenuation operation for channel
 R $A314 I:D Tone operation for channel
-R $A314 I:IX -> B0: $00 for tone, B1, B2, B3, B4
+R $A314 I:IX -> B0: $00 for tone else mute, B1, B2, B3, B4
 @ $A314 label=tone_data_to_psg
 C $A314,3 Get B0
 C $A317,1 If B0 was 0 then this is not 0
 C $A318,2 Jump for tone
 C $A31A,2 Mute
 c $A31D Send attenuation and frequency bytes to PSG
-D $A31D Used by the routine at #R$A314.
-R $A31D I:C Attenuation operation in upper nybble 1CC1XXXX
-R $A31D I:D Tone operation in upper nybble 1CC0XXXX
-R $A31D I:IX -> B0, B1, B2, B3: frequency LSB, B4: attenuation/frequency MSB (AAAA00FF),
+D $A31D Used by the routine at #R$A314. Note: The value is actually 111,861 / frequency, so higher numbers give lower notes
+R $A31D I:C Attenuation operation in upper nybble (1CC1XXXX)
+R $A31D I:D Tone operation in upper nybble (1CC0XXXX)
+R $A31D I:IX -> B0, B1, B2, B3: frequency LSB, B4: attenuation/frequency MSB (AAAA00FF)
 @ $A31D label=attn_and_freq_to_psg
 C $A31D,3 Set attenuation
 C $A320,3 Frequency LSB
@@ -3579,7 +3767,7 @@ C $A325,1 Apply operation to bits 4-7
 C $A326,2 Send to PSG
 C $A328,3 Frequency LSB (FFFFFFFF)
 C $A32B,2 Isolate bits 4-7 of frequency (FFFF0000)
-C $A32D,1 Save
+C $A32D,1 Save it
 C $A32E,3 Get frequency MSB (AAAA00FF)
 C $A331,2 Isolate lower nybble with bits 8-9 of frequency (000000FF)
 C $A333,1 Now FFFF00FF in wrong order

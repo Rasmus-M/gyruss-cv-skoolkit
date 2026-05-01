@@ -24,88 +24,101 @@ Next: <a href="40593.html">9E91</a>
 </td>
 </tr>
 </table>
-<div class="description">9E75: Sound routine at 9E75</div>
+<div class="description">9E75: Sound FX command 9</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-I:B Channel index I:IX Sound fx data
+Tone (silent). Increases frequency up to $016C.
 </div>
 </div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">B</td>
+<td class="register-desc">Channel index + 1</td>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Sound fx data</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
 <td class="asm-label">sound_fx_command_9</td>
 <td class="address-2"><span id="40565"></span>9E75</td>
 <td class="instruction">INC (IX+$03)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Increment frequency LSB (starts at $00)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40568"></span>9E78</td>
 <td class="instruction">INC (IX+$03)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Increment frequency LSB</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40571"></span>9E7B</td>
 <td class="instruction">JR NZ,<a href="40565.html#40576">sound_fx_command_9_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If it didn't turn over, skip ahead</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40573"></span>9E7D</td>
 <td class="instruction">INC (IX+$04)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Increment frequency MSB</td>
 </tr>
 <tr>
 <td class="asm-label">sound_fx_command_9_0</td>
 <td class="address-2"><span id="40576"></span>9E80</td>
 <td class="instruction">LD HL,(<a href="29376.html">L72C0</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get attenuation/frequency of channel 4 (this channel)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40579"></span>9E83</td>
 <td class="instruction">LD DE,$F16C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Compare to this number</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40582"></span>9E86</td>
 <td class="instruction">AND A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Clear carry</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40583"></span>9E87</td>
 <td class="instruction">SBC HL,DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40585"></span>9E89</td>
 <td class="instruction">RET NZ</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">And return if not the same</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40586"></span>9E8A</td>
 <td class="instruction">CALL <a href="40424.html#40444">sound_fx_command_0_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Sound fx done for this channel</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40589"></span>9E8D</td>
 <td class="instruction">XOR A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Sound fx done for channel 0 (played together with noise)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40590"></span>9E8E</td>
 <td class="instruction">JP <a href="40253.html">sound_fx_done</a></td>
-<td class="comment-1" rowspan="1">Sound fx done</td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 </table>
 <table class="asm-navigation">

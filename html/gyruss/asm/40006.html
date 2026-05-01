@@ -24,13 +24,13 @@ Next: <a href="40011.html">9C4B</a>
 </td>
 </tr>
 </table>
-<div class="description">9C46: Sound routine at 9C46</div>
+<div class="description">9C46: Relative jump then check finished</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="39993.html">L9C39</a>.
+Used by the routine at <a href="39993.html">process_abs_rel_jump</a>.
 </div>
 </div>
 </td>
@@ -38,14 +38,14 @@ Used by the routine at <a href="39993.html">L9C39</a>.
 <tr>
 <td class="asm-label">L9C46</td>
 <td class="address-2"><span id="40006"></span>9C46</td>
-<td class="instruction">CALL <a href="40082.html">L9C92</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">CALL <a href="40082.html">update_counter_and_loop</a></td>
+<td class="comment-1" rowspan="1">Handle relative jump</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40009"></span>9C49</td>
-<td class="instruction">JR <a href="39964.html#39975">L9C1C_0</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JR <a href="39964.html#39975">process_tune_byte_0</a></td>
+<td class="comment-1" rowspan="1">Jump to check if finished</td>
 </tr>
 </table>
 <table class="asm-navigation">
