@@ -771,7 +771,7 @@ C $835D,2 If not planet reached (2)
 C $835F,2 Then skip ahead
 C $8361,2 Play tune 1
 C $8363,3 ...
-C $8368,2 If not 2 then play sound
+C $8368,2 If not planet reached then play sound
 C $836A,3 ...
 C $8374,3 Stage
 C $8377,1 B = stage
@@ -3473,7 +3473,7 @@ C $9CE3,1 Set pointer LSB
 C $9CE4,1 Next address
 C $9CE5,1 Set pointer MSB
 b $9CE7 Sound fx data
-D $9CE7 Byte 0 in each row is the channel. Rows are copied into the corresponding sound fx data buffer.
+D $9CE7 Byte 0 in each row is the channel. Rows are copied into the corresponding sound fx data buffer. #TABLE(default, default) { =h Index | =h Played when } { $00 | None } { $01 | Shot hit center enemy } { $02 | New wave } { $03 | Explosion } { $04 | Shot hit enemy } { $05 | Stage completed } { $06 | Extra life } { $07 | Mines appear, ship appear } { $08 | Shot hit mine } { $09 | Part of tune } { $0A | None } TABLE#
 @ $9CE7 label=sound_fx_data_table
 B $9CE7,86,8*10,6
 c $9D3D Sound fx done
@@ -3658,7 +3658,7 @@ b $9EB6 Sound frequency table
 @ $9EB6 label=frequency_table
 B $9EB6,52,8*6,4
 w $9EEA Tune data
-D $9EEA Each row contains 4 addresses for 4 channels Addresses are copied into byte 1 and 2 of the sound data buffer.
+D $9EEA Each row contains 4 addresses for 4 channels. Addresses are copied into byte 1 and 2 of the sound data buffer. #TABLE(default, default) { =h Index | =h Played when } { $00 | First stage } { $01 | Planet reached } { $02 | Perfect bonus } { $03 | 2 warps to planet } { $04 | 1 warp to planet } { $05 | 3 warps to planet } { $06 | Chance stage } { $07 | Unknown } TABLE#
 @ $9EEA label=tune_data_table
 W $9EEA,64,8
 b $9F2A Tune data 1
@@ -3873,6 +3873,8 @@ C $A3A4,4 Set color (blue)
 C $A3A8,1 Load sprite pattern
 C $A3A9,3 Display ship background patterns
 C $A3AC,3 Upload sprite data
+C $A3AF,2 Play a sound
+C $A3B1,3 ...
 N $A3B4 Game loop 60 times
 C $A3B4,2 60
 C $A3B6,1 Wait interrupt
@@ -4185,6 +4187,9 @@ C $A779,4 Sprite 1
 C $A77D,1 Load sprite pattern sprite 1
 C $A77E,3 Display ship background patterns
 N $A781 Handle fire
+C $A781,3 Test stage init flag
+C $A784,2 Return if set
+C $A786,1 ...
 C $A787,3 Controller: #R$71F1
 C $A78A,1 Save current player
 C $A78B,2 Segment 0
@@ -4451,6 +4456,7 @@ C $AB65,2 Break out if found
 C $AB67,1 Next map address
 C $AB68,2 Loop through whole map
 C $AB6A,2 Not found - return
+C $AB6C,3 Deallocate map entry
 c $AB72 Display distant enemies at the center of the screen
 D $AB72 Used by the routines at #R$8024, #R$8139, #R$832A, #R$846B, #R$A33B and #R$A3E1.
 @ $AB72 label=display_center_enemies
@@ -5299,6 +5305,17 @@ B $B9E6,1480,8
 c $BFAE Random number generator (RST $20)
 D $BFAE Used by the routine at #R$8015.
 @ $BFAE label=rnd
+C $BFB0,4 Last random number
+C $BFB4,3 Get byte 0
+C $BFB7,1 Rotate left
+C $BFB8,3 Flip some bits
+C $BFBB,1 Rotate right
+C $BFBC,3 Increment byte 1
+C $BFBF,3 Add byte 1
+C $BFC2,1 Set flags
+C $BFC3,3 Skip ahead if even parity
+C $BFC6,3 Else increment byte 1
+C $BFC9,3 Set byte 0
 s $BFCF Unused
 B $BFCF,49,8*6,1
 s $C000 Unused

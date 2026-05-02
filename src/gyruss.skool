@@ -1187,7 +1187,7 @@ c$832A LD A,$08        ; Set counter for later
  $8361 LD A,$01        ; Play tune 1
  $8363 CALL $9E91      ; ...
  $8366 JR $836D        ;
-*$8368 LD A,$05        ; If not 2 then play sound
+*$8368 LD A,$05        ; If not planet reached then play sound
  $836A CALL $9EA3      ; ...
 *$836D LD HL,$71EB     ;
  $8370 SET 0,(HL)      ;
@@ -4585,6 +4585,20 @@ c$9CBF RLCA          ; Multiply by 8
 ;
 ; Byte 0 in each row is the channel. Rows are copied into the corresponding
 ; sound fx data buffer.
+; #TABLE(default, default)
+; { =h Index | =h Played when }
+; { $00 | None }
+; { $01 | Shot hit center enemy }
+; { $02 | New wave }
+; { $03 | Explosion }
+; { $04 | Shot hit enemy }
+; { $05 | Stage completed }
+; { $06 | Extra life }
+; { $07 | Mines appear, ship appear }
+; { $08 | Shot hit mine }
+; { $09 | Part of tune }
+; { $0A | None }
+; TABLE#
 @label=sound_fx_data_table
 b$9CE7 DEFB $00,$00,$00,$00,$26,$80,$00,$00
  $9CEF DEFB $02,$00,$00,$40,$41,$81,$40,$00
@@ -4894,8 +4908,19 @@ b$9EB6 DEFB $35,$39,$3C,$40,$43,$47,$4C,$50
 
 ; Tune data
 ;
-; Each row contains 4 addresses for 4 channels Addresses are copied into byte 1
+; Each row contains 4 addresses for 4 channels. Addresses are copied into byte 1
 ; and 2 of the sound data buffer.
+; #TABLE(default, default)
+; { =h Index | =h Played when }
+; { $00 | First stage }
+; { $01 | Planet reached }
+; { $02 | Perfect bonus }
+; { $03 | 2 warps to planet }
+; { $04 | 1 warp to planet }
+; { $05 | 3 warps to planet }
+; { $06 | Chance stage }
+; { $07 | Unknown }
+; TABLE#
 @label=tune_data_table
 w$9EEA DEFW $A2B6,$9F2A,$9F4E,$9F6C
  $9EF2 DEFW $A2B6,$9F3E,$9F62,$9F6E
@@ -5280,8 +5305,8 @@ c$A33B LD HL,$80B5     ; New center of projection at bottom center for
  $A3A8 RST $30         ; Load sprite pattern
  $A3A9 CALL $A808      ; Display ship background patterns
  $A3AC CALL $ACF9      ; Upload sprite data
- $A3AF LD A,$07        ;
- $A3B1 CALL $9EA3      ;
+ $A3AF LD A,$07        ; Play a sound
+ $A3B1 CALL $9EA3      ; ...
 ; Game loop 60 times
  $A3B4 LD B,$3C        ; 60
 *$A3B6 HALT            ; Wait interrupt
@@ -5744,9 +5769,9 @@ c$A73C LD A,($71F2)    ; Get frame counter
  $A77D RST $30         ; Load sprite pattern sprite 1
  $A77E CALL $A808      ; Display ship background patterns
 ; Handle fire
-*$A781 LD A,($71EB)    ;
- $A784 BIT 4,A         ;
- $A786 RET NZ          ;
+*$A781 LD A,($71EB)    ; Test stage init flag
+ $A784 BIT 4,A         ; Return if set
+ $A786 RET NZ          ; ...
  $A787 LD HL,($71F0)   ; Controller: #R$71F1
  $A78A PUSH HL         ; Save current player
  $A78B LD L,$00        ; Segment 0
@@ -6138,7 +6163,7 @@ c$AB53 BIT 6,(IX+$07) ; Test bit
  $AB67 INC HL         ; Next map address
  $AB68 DJNZ $AB64     ; Loop through whole map
  $AB6A JR $AB6F       ; Not found - return
-*$AB6C CALL $AAE3     ;
+*$AB6C CALL $AAE3     ; Deallocate map entry
 *$AB6F POP BC         ;
  $AB70 POP HL         ;
  $AB71 RET            ;
@@ -7604,17 +7629,17 @@ b$B9E6 DEFB $00,$7F,$3E,$63,$41,$00,$00,$00
 ; Used by the routine at #R$8015.
 @label=rnd
 c$BFAE PUSH IX        ;
- $BFB0 LD IX,$731B    ;
- $BFB4 LD A,(IX+$00)  ;
- $BFB7 RLCA           ;
- $BFB8 XOR (IX+$00)   ;
- $BFBB RRCA           ;
- $BFBC INC (IX+$01)   ;
- $BFBF ADD A,(IX+$01) ;
- $BFC2 AND A          ;
- $BFC3 JP PE,$BFC9    ;
- $BFC6 INC (IX+$01)   ;
-*$BFC9 LD (IX+$00),A  ;
+ $BFB0 LD IX,$731B    ; Last random number
+ $BFB4 LD A,(IX+$00)  ; Get byte 0
+ $BFB7 RLCA           ; Rotate left
+ $BFB8 XOR (IX+$00)   ; Flip some bits
+ $BFBB RRCA           ; Rotate right
+ $BFBC INC (IX+$01)   ; Increment byte 1
+ $BFBF ADD A,(IX+$01) ; Add byte 1
+ $BFC2 AND A          ; Set flags
+ $BFC3 JP PE,$BFC9    ; Skip ahead if even parity
+ $BFC6 INC (IX+$01)   ; Else increment byte 1
+*$BFC9 LD (IX+$00),A  ; Set byte 0
  $BFCC POP IX         ;
  $BFCE RET            ;
 
