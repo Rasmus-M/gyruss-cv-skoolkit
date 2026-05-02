@@ -3099,9 +3099,10 @@ b$9046 DEFB $01,$FF,$01,$FF,$01,$01,$01,$01
 
 ; 3 spheres background graphics
 ;
+; Organized as 16x16 sprites.
 ; #UDGTABLE(no-border, no-border)
-; { #UDGARRAY8,,4($9056-$90C7-16)(graphics-9056.png) }
-; { #UDGARRAY8,,4($905E-$90D5-16)(graphics-905E.png) }
+; { #UDGARRAY8,,4($9056-$908D-16)(graphics-9056.png) }
+; { #UDGARRAY8,,4($905E-$9095-16)(graphics-905E.png) }
 ; TABLE#
 @label=3_spheres_graphics
 b$9056 DEFB $00,$03,$07,$0F,$0F,$0F,$07,$07
@@ -3115,9 +3116,10 @@ b$9056 DEFB $00,$03,$07,$0F,$0F,$0F,$07,$07
 
 ; Mine background graphics
 ;
+; Organized as 16x16 sprites.
 ; #UDGTABLE(no-border, no-border)
-; { #UDGARRAY8,,4($9056-$90C7-16)(graphics-9056.png) }
-; { #UDGARRAY8,,4($905E-$90D5-16)(graphics-905E.png) }
+; { #UDGARRAY8,,4($9096-$90CD-16)(graphics-9096.png) }
+; { #UDGARRAY8,,4($909E-$90D5-16)(graphics-909E.png) }
 ; TABLE#
 @label=mine_graphics
 b$9096 DEFB $00,$02,$01,$21,$17,$0D,$17,$17
@@ -5896,7 +5898,7 @@ b$A875 DEFB $03,$01,$00,$FC,$05,$F9,$08,$FE
 
 ; Ship background patterns
 ;
-; 16 frames of 4 patterns, organised as 16x16 sprite patterns
+; 16 frames of 4 patterns, organized as 16x16 sprite patterns.
 ; #UDGTABLE(no-border, no-border)
 ; { #UDGARRAY32,,4($A87D-$AA75-16)(graphics-A87D.png) }
 ; { #UDGARRAY32,,4($A885-$AA7D-16)(graphics-A885.png) }

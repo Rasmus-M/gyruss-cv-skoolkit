@@ -2409,11 +2409,11 @@ b $9046 Mines movement table
 @ $9046 label=mines_movement_table
 B $9046,16,8
 b $9056 3 spheres background graphics
-D $9056 #UDGTABLE(no-border, no-border) { #UDGARRAY8,,4($9056-$90C7-16)(graphics-9056.png) } { #UDGARRAY8,,4($905E-$90D5-16)(graphics-905E.png) } TABLE#
+D $9056 Organized as 16x16 sprites. #UDGTABLE(no-border, no-border) { #UDGARRAY8,,4($9056-$908D-16)(graphics-9056.png) } { #UDGARRAY8,,4($905E-$9095-16)(graphics-905E.png) } TABLE#
 @ $9056 label=3_spheres_graphics
 B $9056,64,8
 b $9096 Mine background graphics
-D $9096 #UDGTABLE(no-border, no-border) { #UDGARRAY8,,4($9056-$90C7-16)(graphics-9056.png) } { #UDGARRAY8,,4($905E-$90D5-16)(graphics-905E.png) } TABLE#
+D $9096 Organized as 16x16 sprites. #UDGTABLE(no-border, no-border) { #UDGARRAY8,,4($9096-$90CD-16)(graphics-9096.png) } { #UDGARRAY8,,4($909E-$90D5-16)(graphics-909E.png) } TABLE#
 @ $9096 label=mine_graphics
 B $9096,64,8
 c $90D6 Start screen
@@ -4311,7 +4311,7 @@ b $A875 Adjust ship coordinates table
 @ $A875 label=adjust_ship_x_y_table
 B $A875,8,8
 b $A87D Ship background patterns
-D $A87D 16 frames of 4 patterns, organised as 16x16 sprite patterns #UDGTABLE(no-border, no-border) { #UDGARRAY32,,4($A87D-$AA75-16)(graphics-A87D.png) } { #UDGARRAY32,,4($A885-$AA7D-16)(graphics-A885.png) } TABLE#
+D $A87D 16 frames of 4 patterns, organized as 16x16 sprite patterns. #UDGTABLE(no-border, no-border) { #UDGARRAY32,,4($A87D-$AA75-16)(graphics-A87D.png) } { #UDGARRAY32,,4($A885-$AA7D-16)(graphics-A885.png) } TABLE#
 @ $A87D label=ship_patterns
 B $A87D,512,8
 c $AA7D Init center enemies

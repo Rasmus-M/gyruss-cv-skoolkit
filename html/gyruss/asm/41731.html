@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at A303</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="41715.html">A2F3</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#41731">Map</a></td>
+<td class="next">
+Next: <a href="41748.html">A314</a>
+</td>
+</tr>
+</table>
+<div class="description">A303: Send attenuation or noise control bytes to PSG</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routines at <a href="41715.html">noise_data_to_psg</a> and <a href="41757.html">attn_and_freq_to_psg</a>.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">C</td>
+<td class="register-desc">Operation in upper nybble 1CC0XXXX or 1CC1XXXX</td>
+</tr>
+<tr>
+<td class="register">(IX+$04):</td>
+<td class="register-desc">Attenuation/noise AAAAXNNN or attenuation/freq AAAA00FF</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">attn_or_noise_to_psg</td>
+<td class="address-2"><span id="41731"></span>A303</td>
+<td class="instruction">LD A,(IX+$04)</td>
+<td class="comment-1" rowspan="1">Get sound byte</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41734"></span>A306</td>
+<td class="instruction">BIT 4,C</td>
+<td class="comment-1" rowspan="1">If bit 4 of operation is 0, i.e. noise control</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41736"></span>A308</td>
+<td class="instruction">JR Z,<a href="41731.html#41742">attn_or_noise_to_psg_0</a></td>
+<td class="comment-1" rowspan="1">Then skip shifting</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41738"></span>A30A</td>
+<td class="instruction">RRCA</td>
+<td class="comment-1" rowspan="1">Swap bits 4-7 and 0-3</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41739"></span>A30B</td>
+<td class="instruction">RRCA</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41740"></span>A30C</td>
+<td class="instruction">RRCA</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41741"></span>A30D</td>
+<td class="instruction">RRCA</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label">attn_or_noise_to_psg_0</td>
+<td class="address-2"><span id="41742"></span>A30E</td>
+<td class="instruction">AND $0F</td>
+<td class="comment-1" rowspan="1">Isolate bits 0-3</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41744"></span>A310</td>
+<td class="instruction">OR C</td>
+<td class="comment-1" rowspan="1">Apply operation (attenuation or noise control) to bits 4-7</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41745"></span>A311</td>
+<td class="instruction">OUT ($FF),A</td>
+<td class="comment-1" rowspan="1">Send to PSG</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41747"></span>A313</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="41715.html">A2F3</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#41731">Map</a></td>
+<td class="next">
+Next: <a href="41748.html">A314</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

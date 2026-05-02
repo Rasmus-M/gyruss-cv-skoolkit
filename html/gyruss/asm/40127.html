@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at 9CBF</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="40104.html">9CA8</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#40127">Map</a></td>
+<td class="next">
+Next: <a href="40167.html">9CE7</a>
+</td>
+</tr>
+</table>
+<div class="description">9CBF: Copy data from <a href="40167.html">sound_fx_data_table</a> to sound fx channel, and change pointer from sound data to sound fx data</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="40104.html">play_sound</a>.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">label=init_play_sound_fx</td>
+<td class="register-desc"></td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">L9CBF</td>
+<td class="address-2"><span id="40127"></span>9CBF</td>
+<td class="instruction">RLCA</td>
+<td class="comment-1" rowspan="1">Multiply by 8</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40128"></span>9CC0</td>
+<td class="instruction">RLCA</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40129"></span>9CC1</td>
+<td class="instruction">RLCA</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40130"></span>9CC2</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">DE = A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40131"></span>9CC3</td>
+<td class="instruction">LD D,$00</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40133"></span>9CC5</td>
+<td class="instruction">LD HL,<a href="40167.html">sound_fx_data_table</a></td>
+<td class="comment-1" rowspan="1">Table address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40136"></span>9CC8</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Add offset</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40137"></span>9CC9</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Get table byte</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40138"></span>9CCA</td>
+<td class="instruction">RLCA</td>
+<td class="comment-1" rowspan="1">Multiply by 2</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40139"></span>9CCB</td>
+<td class="instruction">PUSH AF</td>
+<td class="comment-1" rowspan="1">Save it</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40140"></span>9CCC</td>
+<td class="instruction">RLCA</td>
+<td class="comment-1" rowspan="1">Multiply by 4 more</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40141"></span>9CCD</td>
+<td class="instruction">RLCA</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40142"></span>9CCE</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">BC = A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40143"></span>9CCF</td>
+<td class="instruction">LD B,D</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40144"></span>9CD0</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">DE = table address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40145"></span>9CD1</td>
+<td class="instruction">LD HL,<a href="29349.html">sound_fx_data_buffer_1</a></td>
+<td class="comment-1" rowspan="1">HL = Sound fx data 1</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40148"></span>9CD4</td>
+<td class="instruction">ADD HL,BC</td>
+<td class="comment-1" rowspan="1">Add offset</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40149"></span>9CD5</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Save sound fx data address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40150"></span>9CD6</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">HL = table address, DE = sound fx data address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40151"></span>9CD7</td>
+<td class="instruction">LD BC,$0008</td>
+<td class="comment-1" rowspan="1">Copy 8 bytes from <a href="40167.html">sound_fx_data_table</a> to sound fx data</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40154"></span>9CDA</td>
+<td class="instruction">LDIR</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40156"></span>9CDC</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="1">DE = sound fx data address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40157"></span>9CDD</td>
+<td class="instruction">POP AF</td>
+<td class="comment-1" rowspan="1">A = table byte * 2</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40158"></span>9CDE</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">BC = A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40159"></span>9CDF</td>
+<td class="instruction">LD HL,<a href="29296.html">ptr_psg_noise_data</a></td>
+<td class="comment-1" rowspan="1">First pointer</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40162"></span>9CE2</td>
+<td class="instruction">ADD HL,BC</td>
+<td class="comment-1" rowspan="1">Add offset</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40163"></span>9CE3</td>
+<td class="instruction">LD (HL),E</td>
+<td class="comment-1" rowspan="1">Set pointer LSB</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40164"></span>9CE4</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Next address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40165"></span>9CE5</td>
+<td class="instruction">LD (HL),D</td>
+<td class="comment-1" rowspan="1">Set pointer MSB</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40166"></span>9CE6</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="40104.html">9CA8</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#40127">Map</a></td>
+<td class="next">
+Next: <a href="40167.html">9CE7</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Gyruss: Routine at 8848</title>
+<title>Gyruss: Routine at 8835</title>
 <meta charset="utf-8" />
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../custom.css" />
@@ -16,21 +16,21 @@
 <table class="asm-navigation">
 <tr>
 <td class="prev">
-Prev: <a href="34869.html">8835</a>
+Prev: <a href="34853.html">8825</a>
 </td>
-<td class="up">Up: <a href="../maps/all.html#34888">Map</a></td>
+<td class="up">Up: <a href="../maps/all.html#34869">Map</a></td>
 <td class="next">
 Next: <a href="34911.html">885F</a>
 </td>
 </tr>
 </table>
-<div class="description">8848: Determine action when out of screen</div>
+<div class="description">8835: Enemy movement: Determine action when out of screen</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="34853.html">move_towards_viewer</a>.
+Used by the routine at <a href="35373.html">L8A2D</a>.
 </div>
 </div>
 <table class="input">
@@ -45,7 +45,53 @@ Used by the routine at <a href="34853.html">move_towards_viewer</a>.
 </td>
 </tr>
 <tr>
-<td class="asm-label">L8848</td>
+<td class="asm-label">handle_out_of_screen</td>
+<td class="address-2"><span id="34869"></span>8835</td>
+<td class="instruction">BIT 3,(IX+$07)</td>
+<td class="comment-1" rowspan="1">If a flag is reset</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34873"></span>8839</td>
+<td class="instruction">JR Z,<a href="34869.html#34888">handle_out_of_screen_1</a></td>
+<td class="comment-1" rowspan="1">Then skip ahead and determine what to do</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="34875"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="34869.html#34888">handle_out_of_screen_1</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">handle_out_of_screen_0</td>
+<td class="address-2"><span id="34875"></span>883B</td>
+<td class="instruction">LD (IX+$01),$2A</td>
+<td class="comment-1" rowspan="1">Reset polar y back to center</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34879"></span>883F</td>
+<td class="instruction">LD (IX+$02),$00</td>
+<td class="comment-1" rowspan="1">Reset polar x</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34883"></span>8843</td>
+<td class="instruction">LD (IX+$07),$40</td>
+<td class="comment-1" rowspan="1">Set flags</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34887"></span>8847</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return to <a href="35393.html">return_from_sprite_handler</a></td>
+</tr>
+<tr>
+<td class="asm-label">handle_out_of_screen_1</td>
 <td class="address-2"><span id="34888"></span>8848</td>
 <td class="instruction">BIT 4,(IX+$07)</td>
 <td class="comment-1" rowspan="1">Test flag</td>
@@ -53,7 +99,7 @@ Used by the routine at <a href="34853.html">move_towards_viewer</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34892"></span>884C</td>
-<td class="instruction">JR Z,<a href="34888.html#34899">L8848_0</a></td>
+<td class="instruction">JR Z,<a href="34869.html#34899">handle_out_of_screen_2</a></td>
 <td class="comment-1" rowspan="1">If not set, skip ahead</td>
 </tr>
 <tr>
@@ -71,11 +117,11 @@ Used by the routine at <a href="34853.html">move_towards_viewer</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34897"></span>8851</td>
-<td class="instruction">JR NZ,<a href="34869.html#34875">L8835_0</a></td>
+<td class="instruction">JR NZ,<a href="34869.html#34875">handle_out_of_screen_0</a></td>
 <td class="comment-1" rowspan="1">If not 0, jump back</td>
 </tr>
 <tr>
-<td class="asm-label">L8848_0</td>
+<td class="asm-label">handle_out_of_screen_2</td>
 <td class="address-2"><span id="34899"></span>8853</td>
 <td class="instruction">LD HL,<a href="29228.html">active_enemies</a></td>
 <td class="comment-1" rowspan="1">Decrement active enemies</td>
@@ -108,9 +154,9 @@ Used by the routine at <a href="34853.html">move_towards_viewer</a>.
 <table class="asm-navigation">
 <tr>
 <td class="prev">
-Prev: <a href="34869.html">8835</a>
+Prev: <a href="34853.html">8825</a>
 </td>
-<td class="up">Up: <a href="../maps/all.html#34888">Map</a></td>
+<td class="up">Up: <a href="../maps/all.html#34869">Map</a></td>
 <td class="next">
 Next: <a href="34911.html">885F</a>
 </td>
