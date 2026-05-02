@@ -50,8 +50,8 @@ Used by the routine at <a href="41659.html">all_channels_data_to_psg</a>.
 <td class="register-desc">Tone operation for channel</td>
 </tr>
 <tr>
-<td class="register">IX</td>
-<td class="register-desc">-&gt; B0: $00 for tone else mute, B1, B2, B3, B4</td>
+<td class="register">(IX+$00):</td>
+<td class="register-desc">$00 for tone else mute</td>
 </tr>
 </table>
 </td>
@@ -60,13 +60,13 @@ Used by the routine at <a href="41659.html">all_channels_data_to_psg</a>.
 <td class="asm-label">tone_data_to_psg</td>
 <td class="address-2"><span id="41748"></span>A314</td>
 <td class="instruction">LD E,(IX+$00)</td>
-<td class="comment-1" rowspan="1">Get B0</td>
+<td class="comment-1" rowspan="1">Get byte 0</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41751"></span>A317</td>
 <td class="instruction">INC E</td>
-<td class="comment-1" rowspan="1">If B0 was 0 then this is not 0</td>
+<td class="comment-1" rowspan="1">If byte 0 was 0 then this is not 0</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

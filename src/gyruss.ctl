@@ -232,29 +232,29 @@ b $727C Index of tune playing
 B $727C,1,1
 b $727D Tune data channel 1
 D $727D #TABLE(default, default) { =h Byte | =h Purpose } { $00 | $00 for tone/noise else mute } { $01 | LSB of ... } { $02 | MSB of ... } { $03 | Frequency LSB } { $04 | Bits 4-7 attenuation, bits 0-3 frequency MSB or noise value  } { $05 | Countdown until next note } { $06 | Attenuation. Initialized to $50 } { $07 | Countdown for when to increase attenuation } { $08 | Speed. Initialized to $05 } { $09 | Countdown for relative loops } TABLE#
-@ $727D label=tune_data_1
+@ $727D label=tune_data_buffer_1
 B $727D,10,10
 b $7287 Tune data channel 2
-@ $7287 label=tune_data_2
+@ $7287 label=tune_data_buffer_2
 B $7287,10,10
 b $7291 Tune data channel 3
-@ $7291 label=tune_data_3
+@ $7291 label=tune_data_buffer_3
 B $7291,10,10
 b $729B Tune data channel 4
-@ $729B label=tune_data_4
+@ $729B label=tune_data_buffer_4
 B $729B,10,10
 b $72A5 Sound fx data channel 1
 D $72A5 Sound fx data are initialised by #R$9CBF with data from #R$9CE7 #TABLE(default, default) { =h Byte | =h Purpose } { $00 | Channel, $00 for tone/noise else mute } { $01 | Unknown, $00, $DC, $40 } { $02 | Unknown, initialized to 0 } { $03 | Frequency LSB } { $04 | Bits 4-7 attenuation, bits 0-3 frequency 2 MSbits or noise value  } { $05 | Bits 0-3 command index, bit 7 must be set or channel is skipped } { $06 | Unknown, $00, $40, $80, $C0, $F0 } { $07 | Unknown, $00, $01, $03 } TABLE#
-@ $72A5 label=sound_fx_data_1
+@ $72A5 label=sound_fx_data_buffer_1
 B $72A5,8,8
 b $72AD Sound fx data channel 2
-@ $72AD label=sound_fx_data_2
+@ $72AD label=sound_fx_data_buffer_2
 B $72AD,8,8
 b $72B5 Sound fx data channel 3
-@ $72B5 label=sound_data_3
+@ $72B5 label=sound_data_buffer_3
 B $72B5,8,8
 b $72BD Sound fx data channel 4
-@ $72BD label=sound_fx_data_4
+@ $72BD label=sound_fx_data_buffer_4
 B $72BD,1,1
 w $72BE Byte 1-2 of sound fx data 4
 W $72BE,2,2
@@ -2151,8 +2151,9 @@ C $8E09,3 Store countdown
 b $8E0D Enemy types in different waves (chance stage)
 @ $8E0D label=enemies_by_wave_table
 B $8E0D,24,8
-b $8E25 Table at 8E25
-@ $8E25 label=table_at_8E25
+b $8E25 Enemy movement table
+D $8E25 A random value is selected for the counter.
+@ $8E25 label=enemy_movement_table
 B $8E25,8,8
 c $8E2D Create or display mines
 D $8E2D Used by the routines at #R$80E8, #R$8139 and #R$A3E1.
@@ -2580,7 +2581,7 @@ C $921F,3 Number of bytes in block at $9475
 C $9222,3 Save it
 C $9225,1 A = 0
 C $9226,3 Save it
-C $9229,3 Source address - 1
+C $9229,3 #R$9475 - 1
 C $922C,3 Destination address in VDP RAM
 N $922F This entry point is used by the routine at #R$924E.
 C $922F,3 MSB of counter
@@ -2673,49 +2674,50 @@ W $9398,12,2
 b $93A4 Neptune
 @ $93A4 label=neptune
 B $93A4,17,4*4,1
-t $93B5 Message at 93B5
+t $93B5 NEPTUNE message
 T $93B5,7,7
-b $93BC Data block at 93BC
+b $93BC Neptune sprite data
 B $93BC,11,8,3
 b $93C7 Uranus
 @ $93C7 label=uranus
 B $93C7,17,4*4,1
-t $93D8 Message at 93D8
+t $93D8 URANUS message
 T $93D8,6,6
-b $93DE Data block at 93DE
+b $93DE Uranus sprite data
 B $93DE,19,8*2,3
 b $93F1 Saturn
 @ $93F1 label=saturn
 B $93F1,17,4*4,1
-t $9402 Message at 9402
+t $9402 SATURN message
 T $9402,6,6
-b $9408 Data block at 9408
+b $9408 Saturn sprite data
 B $9408,15,8,7
 b $9417 Jupiter
 @ $9417 label=jupiter
 B $9417,17,4*4,1
-t $9428 Message at 9428
+t $9428 JUPITER message
 T $9428,7,7
-b $942F Data block at 942F
+b $942F Jupiter sprite data
 B $942F,9,8,1
 b $9438 Mars
 @ $9438 label=mars
 B $9438,17,4*4,1
-t $9449 Message at 9449
+t $9449 MARS message
 T $9449,4,4
-b $944D Data block at 944D
+b $944D Mars sprite data
 B $944D,7,7
 b $9454 Earth
 @ $9454 label=earth
 B $9454,17,4*4,1
-t $9465 Message at 9465
+t $9465 EARTH message
 T $9465,5,5
-b $946A Data block at 946A
+b $946A Earth sprite data
 B $946A,10,8,2
-b $9474 Data block at 9474
+b $9474 Byte before planet graphics
 B $9474,1,1
 b $9475 Planet graphics - encoded
 D $9475 0 bit means a run: read next 5 bits and add 2. This is the number of repeats. 1 bit means a single byte. Read next 8 bits for the byte to repeat/not repeat.
+@ $9475 label=planet_graphics
 B $9475,633,8*79,1
 b $96EE Planet colors
 @ $96EE label=planet_colors
@@ -3659,58 +3661,84 @@ w $9EEA Tune data
 D $9EEA Each row contains 4 addresses for 4 channels Addresses are copied into byte 1 and 2 of the sound data buffer.
 @ $9EEA label=tune_data_table
 W $9EEA,64,8
-b $9F2A Sound data block at 9F2A
-D $9F2A Sound data basically consist of pairs of 2 bytes: 1st byte is the duration. If bit 7 if set, it has a special meaning: - If it's 1000000 then load new address from next two bytes - If it's 1XXXXXX then subtract XXXXXXX from address 2nd byte is the frequency: - $FF means that the channel is muted, else: - Bits 6-7 are used directly as bits 8-9 of the PSG frequency. - Bits 0-5 are used as index into #R$9EB6, which produces bits 0-7 of the PSG frequency.
+b $9F2A Tune data 1
+D $9F2A Tune data basically consist of pairs of 2 bytes #TABLE(default, default) { =h Byte offset | =h Purpose } { $00 | Duration } {     | If bit 7 if set, it has a special meaning: } {     | 1000000: load new address from next two bytes } {     | 1XXXXXX: subtract XXXXXXX from address } {     | 1111111: mute channel } { $01 | Frequency } {     | Bits 6-7 are used directly as bits 8-9 of the PSG frequency } {     | Bits 0-5 are used as index into #R$9EB6, which produces bits 0-7 of the PSG frequency } TABLE#
+@ $9F2A label=tune_data_1
 B $9F2A,20,8*2,4
-b $9F3E Sound data block at 9F3E
+b $9F3E Tune data 2
+@ $9F3E label=tune_data_2
 B $9F3E,16,8
-b $9F4E Sound data block at 9F4E
+b $9F4E Tune data 3
+@ $9F4E label=tune_data_3
 B $9F4E,20,8*2,4
-b $9F62 Sound data block at 9F62
+b $9F62 Tune data 4
+@ $9F62 label=tune_data_4
 B $9F62,10,8,2
-b $9F6C Sound data block at 9F6C
+b $9F6C Tune data 5
+@ $9F6C label=tune_data_5
 B $9F6C,2,2
-b $9F6E Sound data block at 9F6E
+b $9F6E Tune data 6
+@ $9F6E label=tune_data_6
 B $9F6E,11,8,3
-b $9F79 Sound data block at 9F79
+b $9F79 Tune data 7
+@ $9F79 label=tune_data_7
 B $9F79,10,8,2
-b $9F83 Sound data block at 9F83
+b $9F83 Tune data 8
+@ $9F83 label=tune_data_8
 B $9F83,8,8
-b $9F8B Sound data block at 9F8B
+b $9F8B Tune data 9
+@ $9F8B label=tune_data_9
 B $9F8B,4,4
-b $9F8F Sound data block at 9F8F
+b $9F8F Tune data 10
+@ $9F8F label=tune_data_10
 B $9F8F,5,5
-b $9F94 Sound data block at 9F94
+b $9F94 Tune data 11
+@ $9F94 label=tune_data_11
 B $9F94,106,8*13,2
-b $9FFE Sound data block at 9FFE
+b $9FFE Tune data 12
+@ $9FFE label=tune_data_12
 B $9FFE,88,8
-b $A056 Sound data block at A056
+b $A056 Tune data 13
+@ $A056 label=tune_data_13
 B $A056,7,7
-b $A05D Sound data block at A05D
+b $A05D Tune data 14
+@ $A05D label=tune_data_14
 B $A05D,20,8*2,4
-b $A071 Sound data block at A071
+b $A071 Tune data 15
+@ $A071 label=tune_data_15
 B $A071,33,8*4,1
-b $A092 Sound data block at A092
+b $A092 Tune data 16
+@ $A092 label=tune_data_16
 B $A092,2,2
-b $A094 Sound data block at A094
+b $A094 Tune data 17
+@ $A094 label=tune_data_17
 B $A094,166,8*20,6
-b $A13A Sound data block at A13A
+b $A13A Tune data 18
+@ $A13A label=tune_data_18
 B $A13A,4,4
-b $A13E Sound data block at A13E
+b $A13E Tune data 19
+@ $A13E label=tune_data_19
 B $A13E,140,8*17,4
-b $A1CA Sound data block at A1CA
+b $A1CA Tune data 20
+@ $A1CA label=tune_data_20
 B $A1CA,6,6
-b $A1D0 Sound data block at A1D0
+b $A1D0 Tune data 21
+@ $A1D0 label=tune_data_21
 B $A1D0,106,8*13,2
-b $A23A Sound data block at A23A
+b $A23A Tune data 22
+@ $A23A label=tune_data_22
 B $A23A,5,5
-b $A23F Sound data block at A23F
+b $A23F Tune data 23
+@ $A23F label=tune_data_23
 B $A23F,90,8*11,2
-b $A299 Sound data block at A299
+b $A299 Tune data 24
+@ $A299 label=tune_data_24
 B $A299,22,8*2,6
-b $A2AF Sound data block at A2AF
+b $A2AF Tune data 25
+@ $A2AF label=tune_data_25
 B $A2AF,7,7
-b $A2B6 Sound data block at A2B6
+b $A2B6 Tune data 26
+@ $A2B6 label=tune_data_26
 B $A2B6,5,5
 c $A2BB Send data for all channels to PSG
 D $A2BB Used by the routine at #R$9B99.
@@ -3739,7 +3767,7 @@ C $A2EE,2 Then jump ahead
 C $A2F0,2 Else mute
 c $A2F3 Send data for noise channel to PSG
 D $A2F3 Used by the routine at #R$A2BB.
-R $A2F3 I:IX -> B0, B1, B2, B3, B4: attenuation/noise control AAAAXNNN
+R $A2F3 I:(IX+$04) Attenuation/noise control AAAAXNNN
 @ $A2F3 label=noise_data_to_psg
 C $A2F3,3 Send attenuation to PSG
 C $A2F6,3 Get sound byte
@@ -3752,7 +3780,7 @@ C $A301,2 and make noise (continue into #R$A303)
 c $A303 Send attenuation or noise control bytes to PSG
 D $A303 Used by the routines at #R$A2F3 and #R$A31D.
 R $A303 I:C Operation in upper nybble 1CC0XXXX or 1CC1XXXX
-R $A303 I:IX -> B0, B1, B2, B3, B4: attenuation/noise AAAAXNNN or attenuation/freq AAAA00FF
+R $A303 I:(IX+$04): Attenuation/noise AAAAXNNN or attenuation/freq AAAA00FF
 @ $A303 label=attn_or_noise_to_psg
 C $A303,3 Get sound byte
 C $A306,2 If bit 4 of operation is 0, i.e. noise control
@@ -3769,17 +3797,18 @@ D $A314 Used by the routine at #R$A2BB.
 R $A314 I:A Mute operation for channel
 R $A314 I:C Attenuation operation for channel
 R $A314 I:D Tone operation for channel
-R $A314 I:IX -> B0: $00 for tone else mute, B1, B2, B3, B4
+R $A314 I:(IX+$00): $00 for tone else mute
 @ $A314 label=tone_data_to_psg
-C $A314,3 Get B0
-C $A317,1 If B0 was 0 then this is not 0
+C $A314,3 Get byte 0
+C $A317,1 If byte 0 was 0 then this is not 0
 C $A318,2 Jump for tone
 C $A31A,2 Mute
 c $A31D Send attenuation and frequency bytes to PSG
 D $A31D Used by the routine at #R$A314. Note: The value is actually 111,861 / frequency, so higher numbers give lower notes
 R $A31D I:C Attenuation operation in upper nybble (1CC1XXXX)
 R $A31D I:D Tone operation in upper nybble (1CC0XXXX)
-R $A31D I:IX -> B0, B1, B2, B3: frequency LSB, B4: attenuation/frequency MSB (AAAA00FF)
+R $A31D I:(IX+$03) Frequency LSB
+R $A31D I:(IX+$04) Attenuation/frequency MSB (AAAA00FF)
 @ $A31D label=attn_and_freq_to_psg
 C $A31D,3 Set attenuation
 C $A320,3 Frequency LSB

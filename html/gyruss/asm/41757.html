@@ -46,8 +46,12 @@ Used by the routine at <a href="41748.html">tone_data_to_psg</a>. Note: The valu
 <td class="register-desc">Tone operation in upper nybble (1CC0XXXX)</td>
 </tr>
 <tr>
-<td class="register">IX</td>
-<td class="register-desc">-&gt; B0, B1, B2, B3: frequency LSB, B4: attenuation/frequency MSB (AAAA00FF)</td>
+<td class="register">(IX+$03)</td>
+<td class="register-desc">Frequency LSB</td>
+</tr>
+<tr>
+<td class="register">(IX+$04)</td>
+<td class="register-desc">Attenuation/frequency MSB (AAAA00FF)</td>
 </tr>
 </table>
 </td>

@@ -479,19 +479,19 @@ b$727C DEFB $00
 ; { $08 | Speed. Initialized to $05 }
 ; { $09 | Countdown for relative loops }
 ; TABLE#
-@label=tune_data_1
+@label=tune_data_buffer_1
 b$727D DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 
 ; Tune data channel 2
-@label=tune_data_2
+@label=tune_data_buffer_2
 b$7287 DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 
 ; Tune data channel 3
-@label=tune_data_3
+@label=tune_data_buffer_3
 b$7291 DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 
 ; Tune data channel 4
-@label=tune_data_4
+@label=tune_data_buffer_4
 b$729B DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 
 ; Sound fx data channel 1
@@ -508,19 +508,19 @@ b$729B DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 ; { $06 | Unknown, $00, $40, $80, $C0, $F0 }
 ; { $07 | Unknown, $00, $01, $03 }
 ; TABLE#
-@label=sound_fx_data_1
+@label=sound_fx_data_buffer_1
 b$72A5 DEFB $00,$00,$00,$00,$00,$00,$00,$00
 
 ; Sound fx data channel 2
-@label=sound_fx_data_2
+@label=sound_fx_data_buffer_2
 b$72AD DEFB $00,$00,$00,$00,$00,$00,$00,$00
 
 ; Sound fx data channel 3
-@label=sound_data_3
+@label=sound_data_buffer_3
 b$72B5 DEFB $00,$00,$00,$00,$00,$00,$00,$00
 
 ; Sound fx data channel 4
-@label=sound_fx_data_4
+@label=sound_fx_data_buffer_4
 b$72BD DEFB $00
 
 ; Byte 1-2 of sound fx data 4
@@ -2801,8 +2801,10 @@ b$8E0D DEFB $18,$0E,$18,$0E,$19,$0E,$19,$0E
  $8E15 DEFB $1A,$0E,$1A,$0E,$1A,$0E,$1A,$0E
  $8E1D DEFB $19,$0E,$19,$0E,$1A,$0E,$1A,$0E
 
-; Table at 8E25
-@label=table_at_8E25
+; Enemy movement table
+;
+; A random value is selected for the counter.
+@label=enemy_movement_table
 b$8E25 DEFB $42,$41,$40,$00,$42,$42,$40,$42
 
 ; Create or display mines
@@ -3337,7 +3339,7 @@ c$921F LD HL,$0279   ; Number of bytes in block at $9475
  $9222 LD ($726A),HL ; Save it
  $9225 XOR A         ; A = 0
  $9226 LD ($726C),A  ; Save it
- $9229 LD HL,$9474   ; Source address - 1
+ $9229 LD HL,$9474   ; #R$9475 - 1
  $922C LD DE,$1400   ; Destination address in VDP RAM
 ; This entry point is used by the routine at #R$924E.
 *$922F LD A,($726B)  ; MSB of counter
@@ -3494,10 +3496,10 @@ b$93A4 DEFB $80,$90,$91,$92
  $93B0 DEFB $83,$84,$85,$86
  $93B4 DEFB $07
 
-; Message at 93B5
+; NEPTUNE message
 t$93B5 DEFM "NEPTUNE"
 
-; Data block at 93BC
+; Neptune sprite data
 b$93BC DEFB $04,$0F,$00,$4F,$80,$4F,$88,$57
  $93C4 DEFB $80,$57,$88
 
@@ -3509,10 +3511,10 @@ b$93C7 DEFB $87,$B0,$B1,$B2
  $93D3 DEFB $BC,$BB,$BA,$B9
  $93D7 DEFB $06
 
-; Message at 93D8
+; URANUS message
 t$93D8 DEFM "URANUS"
 
-; Data block at 93DE
+; Uranus sprite data
 b$93DE DEFB $08,$0F,$10,$77,$80,$EF,$80,$E7
  $93E6 DEFB $80,$DF,$80,$D7,$80,$CF,$80,$47
  $93EE DEFB $80,$3F,$80
@@ -3525,10 +3527,10 @@ b$93F1 DEFB $98,$A8,$A9,$AA
  $93FD DEFB $9B,$9D,$9E,$9F
  $9401 DEFB $06
 
-; Message at 9402
+; SATURN message
 t$9402 DEFM "SATURN"
 
-; Data block at 9408
+; Saturn sprite data
 b$9408 DEFB $06,$0F,$04,$6F,$68,$E7,$70,$DF
  $9410 DEFB $78,$D7,$80,$4F,$88,$47,$90
 
@@ -3540,10 +3542,10 @@ b$9417 DEFB $D0,$D1,$D2,$D3
  $9423 DEFB $DD,$DE,$DF,$E0
  $9427 DEFB $07
 
-; Message at 9428
+; JUPITER message
 t$9428 DEFM "JUPITER"
 
-; Data block at 942F
+; Jupiter sprite data
 b$942F DEFB $03,$09,$0D,$50,$80,$54,$86,$5D
  $9437 DEFB $79
 
@@ -3555,10 +3557,10 @@ b$9438 DEFB $00,$C0,$C1,$00
  $9444 DEFB $00,$CA,$CB,$00
  $9448 DEFB $04
 
-; Message at 9449
+; MARS message
 t$9449 DEFM "MARS"
 
-; Data block at 944D
+; Mars sprite data
 b$944D DEFB $02,$0B,$0B,$57,$80,$57,$88
 
 ; Earth
@@ -3569,14 +3571,14 @@ b$9454 DEFB $F0,$F1,$F2,$F3
  $9460 DEFB $F8,$F9,$FA,$FB
  $9464 DEFB $05
 
-; Message at 9465
+; EARTH message
 t$9465 DEFM "EARTH"
 
-; Data block at 946A
+; Earth sprite data
 b$946A DEFB $04,$06,$07,$4F,$78,$4F,$80,$67
  $9472 DEFB $78,$67
 
-; Data block at 9474
+; Byte before planet graphics
 b$9474 DEFB $80
 
 ; Planet graphics - encoded
@@ -3584,6 +3586,7 @@ b$9474 DEFB $80
 ; 0 bit means a run: read next 5 bits and add 2. This is the number of repeats.
 ; 1 bit means a single byte. Read next 8 bits for the byte to repeat/not
 ; repeat.
+@label=planet_graphics
 b$9475 DEFB $04,$02,$07,$07,$87,$C7,$E7,$F3
  $947D DEFB $BB,$7D,$7E,$CF,$EF,$EB,$F3,$F5
  $9485 DEFB $FA,$5E,$BE,$BF,$A7,$6F,$AD,$5D
@@ -4901,53 +4904,69 @@ w$9EEA DEFW $A2B6,$9F2A,$9F4E,$9F6C
  $9F1A DEFW $A299,$A2B6,$A2B6,$A2AF
  $9F22 DEFW $A23F,$A094,$A13E,$A1D0
 
-; Sound data block at 9F2A
+; Tune data 1
 ;
-; Sound data basically consist of pairs of 2 bytes: 1st byte is the duration.
-; If bit 7 if set, it has a special meaning: - If it's 1000000 then load new
-; address from next two bytes - If it's 1XXXXXX then subtract XXXXXXX from
-; address 2nd byte is the frequency: - $FF means that the channel is muted,
-; else: - Bits 6-7 are used directly as bits 8-9 of the PSG frequency. - Bits
-; 0-5 are used as index into #R$9EB6, which produces bits 0-7 of the PSG
-; frequency.
+; Tune data basically consist of pairs of 2 bytes
+; #TABLE(default, default)
+; { =h Byte offset | =h Purpose }
+; { $00 | Duration }
+; {     | If bit 7 if set, it has a special meaning: }
+; {     | 1000000: load new address from next two bytes }
+; {     | 1XXXXXX: subtract XXXXXXX from address }
+; {     | 1111111: mute channel }
+; { $01 | Frequency }
+; {     | Bits 6-7 are used directly as bits 8-9 of the PSG frequency }
+; {     | Bits 0-5 are used as index into #R$9EB6, which produces bits 0-7 of the PSG frequency }
+; TABLE#
+@label=tune_data_1
 b$9F2A DEFB $02,$19,$02,$1B,$10,$19,$04,$FF
  $9F32 DEFB $04,$1B,$04,$5D,$04,$5E,$04,$60
  $9F3A DEFB $08,$61,$18,$60
 
-; Sound data block at 9F3E
+; Tune data 2
+@label=tune_data_2
 b$9F3E DEFB $06,$60,$06,$61,$06,$5E,$06,$1B
  $9F46 DEFB $06,$18,$06,$15,$0C,$12,$18,$14
 
-; Sound data block at 9F4E
+; Tune data 3
+@label=tune_data_3
 b$9F4E DEFB $02,$65,$02,$67,$10,$65,$04,$FF
  $9F56 DEFB $04,$67,$04,$A9,$04,$AA,$04,$AC
  $9F5E DEFB $08,$AD,$18,$AC
 
-; Sound data block at 9F62
+; Tune data 4
+@label=tune_data_4
 b$9F62 DEFB $0C,$64,$0C,$67,$0C,$AA,$0C,$AD
  $9F6A DEFB $18,$AC
 
-; Sound data block at 9F6C
+; Tune data 5
+@label=tune_data_5
 b$9F6C DEFB $48,$FF
 
-; Sound data block at 9F6E
+; Tune data 6
+@label=tune_data_6
 b$9F6E DEFB $24,$FF,$0C,$1B,$02,$5C,$02,$5E
  $9F76 DEFB $14,$5C,$00
 
-; Sound data block at 9F79
+; Tune data 7
+@label=tune_data_7
 b$9F79 DEFB $02,$15,$87,$FD,$02,$16,$87,$FD
  $9F81 DEFB $18,$16
 
-; Sound data block at 9F83
+; Tune data 8
+@label=tune_data_8
 b$9F83 DEFB $08,$61,$08,$1A,$08,$15,$20,$0E
 
-; Sound data block at 9F8B
+; Tune data 9
+@label=tune_data_9
 b$9F8B DEFB $08,$FF,$30,$AD
 
-; Sound data block at 9F8F
+; Tune data 10
+@label=tune_data_10
 b$9F8F DEFB $08,$FF,$30,$80,$00
 
-; Sound data block at 9F94
+; Tune data 11
+@label=tune_data_11
 b$9F94 DEFB $12,$FF,$01,$18,$01,$19,$01,$1A
  $9F9C DEFB $01,$1B,$01,$5C,$01,$5D,$01,$5E
  $9FA4 DEFB $01,$5F,$01,$60,$01,$61,$01,$62
@@ -4963,7 +4982,8 @@ b$9F94 DEFB $12,$FF,$01,$18,$01,$19,$01,$1A
  $9FF4 DEFB $10,$AC,$04,$AC,$04,$AC,$04,$AC
  $9FFC DEFB $04,$AC
 
-; Sound data block at 9FFE
+; Tune data 12
+@label=tune_data_12
 b$9FFE DEFB $12,$FF,$01,$5F,$01,$60,$01,$61
  $A006 DEFB $01,$62,$01,$63,$01,$64,$01,$65
  $A00E DEFB $01,$66,$01,$67,$01,$A8,$01,$A9
@@ -4976,25 +4996,30 @@ b$9FFE DEFB $12,$FF,$01,$5F,$01,$60,$01,$61
  $A046 DEFB $02,$AA,$02,$AD,$81,$DF,$10,$F1
  $A04E DEFB $04,$F1,$04,$F1,$04,$F1,$04,$F1
 
-; Sound data block at A056
+; Tune data 13
+@label=tune_data_13
 b$A056 DEFB $02,$AC,$02,$F1,$80,$56,$A0
 
-; Sound data block at A05D
+; Tune data 14
+@label=tune_data_14
 b$A05D DEFB $5A,$00,$07,$FD,$A9,$6A,$00,$06
  $A065 DEFB $FC,$AA,$8A,$A9,$6A,$00,$10,$FC
  $A06D DEFB $A9,$69,$00,$80
 
-; Sound data block at A071
+; Tune data 15
+@label=tune_data_15
 b$A071 DEFB $12,$FF,$01,$18,$01,$16,$01,$14
  $A079 DEFB $01,$12,$01,$11,$01,$0F,$01,$0D
  $A081 DEFB $01,$0C,$01,$0A,$01,$08,$01,$06
  $A089 DEFB $01,$05,$01,$0F,$01,$0D,$80,$94
  $A091 DEFB $A0
 
-; Sound data block at A092
+; Tune data 16
+@label=tune_data_16
 b$A092 DEFB $20,$FF
 
-; Sound data block at A094
+; Tune data 17
+@label=tune_data_17
 b$A094 DEFB $02,$18,$04,$18,$87,$FD,$04,$19
  $A09C DEFB $87,$FD,$04,$1B,$86,$FD,$02,$1B
  $A0A4 DEFB $02,$5D,$04,$5E,$83,$FB,$04,$5D
@@ -5017,10 +5042,12 @@ b$A094 DEFB $02,$18,$04,$18,$87,$FD,$04,$19
  $A12C DEFB $10,$19,$10,$1B,$08,$1B,$04,$5D
  $A134 DEFB $04,$5E,$10,$5D,$10,$5D
 
-; Sound data block at A13A
+; Tune data 18
+@label=tune_data_18
 b$A13A DEFB $04,$65,$87,$FD
 
-; Sound data block at A13E
+; Tune data 19
+@label=tune_data_19
 b$A13E DEFB $02,$60,$04,$60,$87,$FD,$04,$62
  $A146 DEFB $87,$FD,$04,$64,$86,$FD,$02,$64
  $A14E DEFB $02,$60,$04,$61,$83,$FB,$04,$60
@@ -5040,10 +5067,12 @@ b$A13E DEFB $02,$60,$04,$60,$87,$FD,$04,$62
  $A1BE DEFB $04,$65,$08,$64,$04,$65,$04,$67
  $A1C6 DEFB $10,$65,$10,$65
 
-; Sound data block at A1CA
+; Tune data 20
+@label=tune_data_20
 b$A1CA DEFB $02,$AC,$02,$F1,$87,$FB
 
-; Sound data block at A1D0
+; Tune data 21
+@label=tune_data_21
 b$A1D0 DEFB $02,$F0,$02,$A9,$87,$FB,$02,$F1
  $A1D8 DEFB $02,$AA,$87,$FB,$02,$F3,$02,$AC
  $A1E0 DEFB $87,$FB,$02,$F0,$04,$F1,$83,$FB
@@ -5059,10 +5088,12 @@ b$A1D0 DEFB $02,$F0,$02,$A9,$87,$FB,$02,$F1
  $A230 DEFB $04,$AD,$08,$AC,$08,$AC,$10,$AC
  $A238 DEFB $10,$AC
 
-; Sound data block at A23A
+; Tune data 22
+@label=tune_data_22
 b$A23A DEFB $A9,$6A,$00,$03,$FC
 
-; Sound data block at A23F
+; Tune data 23
+@label=tune_data_23
 b$A23F DEFB $A9,$6A,$00,$02,$FC,$88,$A8,$A9
  $A247 DEFB $6A,$00,$02,$FC,$8A,$88,$A9,$6A
  $A24F DEFB $00,$02,$FC,$88,$A8,$A9,$6A,$00
@@ -5076,15 +5107,18 @@ b$A23F DEFB $A9,$6A,$00,$02,$FC,$88,$A8,$A9
  $A28F DEFB $88,$8A,$88,$8A,$AA,$00,$08,$FD
  $A297 DEFB $00,$80
 
-; Sound data block at A299
+; Tune data 24
+@label=tune_data_24
 b$A299 DEFB $7F,$FD,$7F,$FD,$7D,$7D,$7F,$FD
  $A2A1 DEFB $7D,$F7,$DF,$44,$5F,$5F,$55,$44
  $A2A9 DEFB $5F,$5F,$44,$55,$00,$00
 
-; Sound data block at A2AF
+; Tune data 25
+@label=tune_data_25
 b$A2AF DEFB $01,$F1,$01,$F0,$80,$AF,$A2
 
-; Sound data block at A2B6
+; Tune data 26
+@label=tune_data_26
 b$A2B6 DEFB $40,$FF,$80,$B6,$A2
 
 ; Send data for all channels to PSG
@@ -5119,7 +5153,7 @@ c$A2BB LD A,$9F      ; Mute channel 1
 ;
 ; Used by the routine at #R$A2BB.
 ;
-; I:IX -> B0, B1, B2, B3, B4: attenuation/noise control AAAAXNNN
+; I:(IX+$04) Attenuation/noise control AAAAXNNN
 @label=noise_data_to_psg
 c$A2F3 CALL $A303    ; Send attenuation to PSG
  $A2F6 LD A,(IX+$04) ; Get sound byte
@@ -5135,8 +5169,7 @@ c$A2F3 CALL $A303    ; Send attenuation to PSG
 ; Used by the routines at #R$A2F3 and #R$A31D.
 ;
 ; I:C Operation in upper nybble 1CC0XXXX or 1CC1XXXX
-; I:IX -> B0, B1, B2, B3, B4: attenuation/noise AAAAXNNN or attenuation/freq
-; .    AAAA00FF
+; I:(IX+$04): Attenuation/noise AAAAXNNN or attenuation/freq AAAA00FF
 @label=attn_or_noise_to_psg
 c$A303 LD A,(IX+$04) ; Get sound byte
  $A306 BIT 4,C       ; If bit 4 of operation is 0, i.e. noise control
@@ -5158,10 +5191,10 @@ c$A303 LD A,(IX+$04) ; Get sound byte
 ; I:A Mute operation for channel
 ; I:C Attenuation operation for channel
 ; I:D Tone operation for channel
-; I:IX -> B0: $00 for tone else mute, B1, B2, B3, B4
+; I:(IX+$00): $00 for tone else mute
 @label=tone_data_to_psg
-c$A314 LD E,(IX+$00) ; Get B0
- $A317 INC E         ; If B0 was 0 then this is not 0
+c$A314 LD E,(IX+$00) ; Get byte 0
+ $A317 INC E         ; If byte 0 was 0 then this is not 0
  $A318 JR NZ,$A31D   ; Jump for tone
  $A31A OUT ($FF),A   ; Mute
  $A31C RET           ;
@@ -5173,8 +5206,8 @@ c$A314 LD E,(IX+$00) ; Get B0
 ;
 ; I:C Attenuation operation in upper nybble (1CC1XXXX)
 ; I:D Tone operation in upper nybble (1CC0XXXX)
-; I:IX -> B0, B1, B2, B3: frequency LSB, B4: attenuation/frequency MSB
-; .    (AAAA00FF)
+; I:(IX+$03) Frequency LSB
+; I:(IX+$04) Attenuation/frequency MSB (AAAA00FF)
 @label=attn_and_freq_to_psg
 c$A31D CALL $A303    ; Set attenuation
  $A320 LD A,(IX+$03) ; Frequency LSB
