@@ -74,7 +74,7 @@ Used by the routine at <a href="33000.html">main_loop</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36188"></span>8D5C</td>
-<td class="instruction">LD A,(<a href="29279.html">countdown_at_725F</a>)</td>
+<td class="instruction">LD A,(<a href="29279.html">laser_meteor_countdown</a>)</td>
 <td class="comment-1" rowspan="1">Is countdown zero?</td>
 </tr>
 <tr>
@@ -98,7 +98,7 @@ Used by the routine at <a href="33000.html">main_loop</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36196"></span>8D64</td>
-<td class="instruction">LD (<a href="29279.html">countdown_at_725F</a>),A</td>
+<td class="instruction">LD (<a href="29279.html">laser_meteor_countdown</a>),A</td>
 <td class="comment-1" rowspan="1">And save it</td>
 </tr>
 <tr>
@@ -129,7 +129,7 @@ Used by the routine at <a href="33000.html">main_loop</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="36206"></span>8D6E</td>
 <td class="instruction">JR NZ,<a href="36311.html">create_meteor</a></td>
-<td class="comment-1" rowspan="1">Then jump to ...</td>
+<td class="comment-1" rowspan="1">Then jump to create meteor</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -147,7 +147,7 @@ Used by the routine at <a href="33000.html">main_loop</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="36214"></span>8D76</td>
 <td class="instruction">LD HL,<a href="29270.html">other_flags</a></td>
-<td class="comment-1" rowspan="1">If other flag 4 is set</td>
+<td class="comment-1" rowspan="1">If laser fence flag is set</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -159,7 +159,7 @@ Used by the routine at <a href="33000.html">main_loop</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="36219"></span>8D7B</td>
 <td class="instruction">JR NZ,<a href="36311.html">create_meteor</a></td>
-<td class="comment-1" rowspan="1">Then jump to ...</td>
+<td class="comment-1" rowspan="1">Then jump to create meteor</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">

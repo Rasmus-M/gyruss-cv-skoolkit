@@ -34,13 +34,13 @@ b $71EE Sprite countdown
 D $71EE Decremented when #R$85E6 is called, and it reset to first byte of level data by #R$8A53. 4 sprite handler actions are only executed when counter is zero.
 @ $71EE label=sprite_countdown
 B $71EE,1,1
-b $71EF Countdown at 71EF
-D $71EF Reset to 2nd byte of stage data
-@ $71EF countdown_at_71EF
+b $71EF Countdown to enemy shooting
+D $71EF Reset to 2nd byte of stage data. See #R$8541.
+@ $71EF label=countdown_at_shoot
 B $71EF,1,1
 b $71F0 Time to next wave
-D $71F0 Reset to 6th byte of stage data
-@ $71F0 countdown_to_wave
+D $71F0 Reset to 6th byte of stage data. See #R$8541.
+@ $71F0 label=countdown_to_wave
 B $71F0,1,1
 b $71F1 Current player (0 or 1)
 @ $71F1 label=current_player
@@ -78,7 +78,8 @@ B $7201,1,1
 b $7202 Enemies destroyed not chance stage
 @ $7202 label=enemies_hit
 B $7202,1,1
-b $7203 Index (0-7) into #R$8541 (blocks of 8 bytes)
+b $7203 Stage data index
+D $7203 Index (0-7) into #R$8541 (blocks of 8 bytes)
 @ $7203 label=stage_data_index
 B $7203,1,1
 b $7204 Number of times died within stage
@@ -110,12 +111,13 @@ D $722D 3 - 0 during mines sub-stage.
 B $722D,1,1
 b $722E Ship background data
 @ $722E label=ship_background_data
-B $722E,9,8,1
-b $7237 Mines background data (3x9 bytes)
-D $7237 #TABLE(default, default) { =h Byte | =h Purpose } { $00 | Screen x } { $01 | Screen y } { $02 | Name table address of area to clear LSB } { $03 | Name table address of area to clear MSB } { $04 | Patterns address LSB } { $05 | Patterns address MSB } { $06 | Name } { $07 | Polar y } { $08 | Polar x } TABLE#
+B $722E,9,9
+b $7237 Mines background data
+D $7237 3x9 bytes #TABLE(default, default) { =h Byte | =h Purpose } { $00 | Screen x } { $01 | Screen y } { $02 | Name table address of area to clear LSB } { $03 | Name table address of area to clear MSB } { $04 | Patterns address LSB } { $05 | Patterns address MSB } { $06 | Name } { $07 | Polar y } { $08 | Polar x } TABLE#
 @ $7237 label=mines_background_data
-B $7237,27,8*3,3
-b $7252 Active enemy shots, set to $FF during explosion
+B $7237,27,9
+b $7252 Active enemy shots
+D $7252 Set to $FF during explosion
 @ $7252 label=active_enemy_shots
 B $7252,1,1
 b $7253 Number of active shots
@@ -128,7 +130,7 @@ b $7255 Enemies destroyed in chance stage
 @ $7255 label=bonus_enemies_hit
 B $7255,1,1
 b $7256 Other flags
-D $7256 #TABLE(default, default) { =h Bit | =h Purpose } { $00 | Fire pressed last time } { $01 | Double shot } { $02 | Unknown } { $03 | Unknown } { $04 | Set when laser fence exists } { $05 | Reset when wave starts } { $06 | Set when wave starts } { $07 | Unknown } TABLE#
+D $7256 #TABLE(default, default) { =h Bit | =h Purpose } { $00 | Fire pressed last time } { $01 | Double shot pickup } { $02 | Set when mines exist } { $03 | Ever set? Reset when laser fence destroyed } { $04 | Set when laser fence exists } { $05 | Set when stage starts. Reset when wave starts. Set when enemy hit } { $06 | Set when wave starts } { $07 | Unused } TABLE#
 @ $7256 label=other_flags
 B $7256,1,1
 w $7257 Countdown to screen off
@@ -140,8 +142,8 @@ B $7259,1,1
 b $725A Interrupt flag
 @ $725A label=interrupt_flag
 B $725A,1,1
-b $725B Counter at 725B
-@ $725B label=wave_spedd_counter
+b $725B Wave speed counter
+@ $725B label=wave_speed_counter
 B $725B,1,1
 b $725C Number of enemies left center
 D $725C Number of enemies that have left center in the current wave. Set to zero when all enemies are out.
@@ -151,8 +153,8 @@ w $725D Wave data address
 D $725D Pointer into #R$A4BE or #R$A51E
 @ $725D label=wave_data_address
 W $725D,2,2
-b $725F Countdown at 725F
-@ $725F label=countdown_at_725F
+b $725F Laser fence/meteor countdown
+@ $725F label=laser_meteor_countdown
 B $725F,1,1
 b $7260 Sprite countdown 2
 D $7260 Decremented when #R$85E6 is called, and it reset to first byte of level data (x2) by #R$8A53. One action at #R$87C1 is only executed when counter is zero.
@@ -180,15 +182,17 @@ B $7267,1,1
 b $7268 Mine name/pattern index
 @ $7268 label=mine_name
 B $7268,1,1
-b $7269 Byte at 7269
+b $7269 Mine countdown to shoot
+@ $7269 label=mine_countdown_to_shoot
 B $7269,1,1
-w $726A Word at 726A
-@ $726A label=word_at_726A
+w $726A Pattern decoder length
+@ $726A label=decoder_length
 W $726A,2,2
-b $726C Byte at 726C
-@ $726C label=byte_at_726C
+b $726C Pattern decoder bits left
+@ $726C label=decoder_bits_left
 B $726C,1,1
-b $726D Byte at 726D
+b $726D Pattern decoder source byte
+@ $726D label=decoder_source_byte
 B $726D,1,1
 b $726E Flag for showing double shot pickup
 @ $726E label=offset_double_shot_flag
@@ -273,8 +277,8 @@ b $72CB Update counters countdown
 D $72CB Counter from $0F to $00. Other counters are updated when 0.
 @ $72CB update_counters_countdown
 B $72CB,1,1
-b $72CC Flag at 72CC
-@ $72CC label=flag_at_72CC
+b $72CC Center enemies redraw flag
+@ $72CC label=center_enemies_redraw
 B $72CC,1,1
 b $72CD Counter for drawing center enemies
 D $72CD Counts from $00 up to $24. Updated each frame.
@@ -571,6 +575,8 @@ C $81DA,3 Current player
 C $81DD,2 Switch player
 C $81DF,3 Save again
 C $81E2,3 Initialize stage
+C $81E5,3 Set flag
+C $81E8,2 ...
 C $81EA,3 To main loop
 c $81ED Wait for restart
 D $81ED Used by the routine at #R$8170.
@@ -1031,7 +1037,7 @@ C $85F1,1 ...
 C $85F2,3 ...
 C $85F5,3 ...
 C $85F8,3 Flags
-C $85FB,2 Reset init flag
+C $85FB,2 Reset laser fence flag
 C $85FD,3 Table address #R$7183+2 (skip ship sprites)
 N $8600 This entry point is used by the routine at #R$8A41.
 C $8600,1 Save table address
@@ -1235,11 +1241,11 @@ C $8755,2 If not zero, skip next 2
 C $8757,3 Decrement polar y
 C $875A,3 Mark for pattern reload
 C $875D,3 Flags
-C $8760,2 Set flag
+C $8760,2 Set laser fence flag
 C $8762,3 Get sprite type
 C $8765,2 If not laser fence center
 C $8767,1 Then return to #R$8A41
-C $8768,3 If bit 2 is reset
+C $8768,3 If bit 3 is reset
 C $876B,2 ...
 C $876D,3 Then deallocate
 C $8770,3 Mark for pattern reload
@@ -1898,7 +1904,7 @@ C $8C1F,3 Reset outcoming enemies
 C $8C22,3 Reset counter
 C $8C25,3 Set all waves completed flag
 C $8C28,2 ...
-C $8C2A,3 Reset other flag
+C $8C2A,3 Reset flag
 C $8C2D,2 ...
 c $8C30 Manage wave < 4
 D $8C30 Used by the routine at #R$8BD9.
@@ -2074,12 +2080,12 @@ C $8D67,1 If it's still not zero then return
 C $8D68,3 Get stage data address in IY
 C $8D6B,1 Random number
 C $8D6C,2 If any of 3 bits are set
-C $8D6E,2 Then jump to ...
+C $8D6E,2 Then jump to create meteor
 C $8D70,4 ...
 C $8D74,2 ...
-C $8D76,3 If other flag 4 is set
+C $8D76,3 If laser fence flag is set
 C $8D79,2 ...
-C $8D7B,2 Then jump to ...
+C $8D7B,2 Then jump to create meteor
 N $8D7D Allocate laser fence
 C $8D81,1 Allocate sprite
 C $8D82,4 Set type to laser fence end 1
@@ -2161,7 +2167,7 @@ C $8E3C,3 If 2 then display mines
 C $8E3F,3 If died
 C $8E42,2 ...
 C $8E44,1 Then return
-C $8E45,3 If unknown flag is set
+C $8E45,3 If mines flag is set
 C $8E48,2 ...
 C $8E4A,1 The return
 C $8E4B,3 Frame counter
@@ -2191,7 +2197,7 @@ C $8E77,2 ...
 C $8E79,1 Then return
 C $8E7A,1 Else increment calculated value
 C $8E7B,3 And store
-C $8E7E,3 Set flag
+C $8E7E,3 Set mines flag
 C $8E81,2 ...
 C $8E83,2 Set action to create mines
 C $8E85,3 ...
@@ -2250,6 +2256,7 @@ C $8EED,3 Total enemies
 C $8EF0,1 Add 3
 C $8EF1,1 Save again
 C $8EF6,3 No mines destroyed
+C $8EFA,3 Set countdown to shoot to 1
 C $8EFD,3 Create shot from mine
 C $8F00,3 Get stage data address in IY
 C $8F09,2 Play sound
@@ -2371,18 +2378,32 @@ C $8FFA,3 Decrement total enemies
 C $8FFD,1 ...
 C $8FFE,3 Decrement mines left
 C $9001,1 ...
-C $9004,3 Clear ... flag
+C $9004,3 Clear mines flag
 C $9007,2 ...
 c $900E Create shot from mine
 D $900E Used by the routines at #R$8E9D and #R$8F55.
+C $900E,3 Decrement countdown
+C $9011,1 ...
+C $9012,1 Return if not 0
+C $9013,4 Mine data
+C $9017,3 Check if mine exists
+C $901A,3 ...
+C $901D,2 Skip ahead if not
 C $901F,3 Increment enemy shots
 C $9022,1 ...
 C $9023,1 Allocate sprite
+C $9024,4 Missile
 C $9028,4 Set color
+C $902C,3 Set polar y to mine polar y
+C $902F,3 ...
+C $9032,3 Set polar x to mine polar x
+C $9035,3 ...
 C $9038,1 Load sprite pattern
 C $9039,3 Get stage data address in IY
 C $903C,1 Random number
 C $903D,2 0-63
+C $903F,3 Add ?
+C $9042,3 Set countdown to random value
 b $9046 Mines movement table
 @ $9046 label=mines_movement_table
 B $9046,16,8
@@ -2927,7 +2948,7 @@ C $9959,2 If still active enemies then add default points
 C $995B,3 Are all waves complete?
 C $995E,2 ...
 C $9960,2 If not add points from enemy
-C $9962,3 Text wave flag
+C $9962,3 Test wave flag
 C $9965,2 ...
 C $9967,2 If not wave then add default points
 C $9969,3 Get center enemies
@@ -3015,7 +3036,7 @@ C $99F5,3 Display background patterns
 C $99F8,3 Decrement mines left
 C $99FB,1 ...
 C $99FC,2 Skip ahead if any left
-C $99FE,3 Clear ... flag
+C $99FE,3 Clear mines flag
 C $9A01,2 ...
 C $9A05,1 Restore score
 C $9A06,2 Add points to score
@@ -4784,7 +4805,7 @@ C $AE79,2 If < $15
 C $AE7B,2 Then set off-screen values and return
 C $AE7D,2 If >= $18
 C $AE7F,2 Then set off-screen values and return
-C $AE81,3 $15 - $17 Reset chance stage flag
+C $AE81,3 $15 - $17 Reset flag
 C $AE84,2 ...
 C $AE86,4 Set as not allocated
 C $AE8A,4 Set x

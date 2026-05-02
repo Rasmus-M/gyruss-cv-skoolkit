@@ -154,16 +154,16 @@ b$71ED DEFB $00
 @label=sprite_countdown
 b$71EE DEFB $00
 
-; Countdown at 71EF
+; Countdown to enemy shooting
 ;
-; Reset to 2nd byte of stage data
-@countdown_at_71EF
+; Reset to 2nd byte of stage data. See #R$8541.
+@label=countdown_at_shoot
 b$71EF DEFB $00
 
 ; Time to next wave
 ;
-; Reset to 6th byte of stage data
-@countdown_to_wave
+; Reset to 6th byte of stage data. See #R$8541.
+@label=countdown_to_wave
 b$71F0 DEFB $00
 
 ; Current player (0 or 1)
@@ -214,6 +214,8 @@ b$7201 DEFB $00
 @label=enemies_hit
 b$7202 DEFB $00
 
+; Stage data index
+;
 ; Index (0-7) into #R$8541 (blocks of 8 bytes)
 @label=stage_data_index
 b$7203 DEFB $00
@@ -265,11 +267,11 @@ b$722D DEFB $00
 
 ; Ship background data
 @label=ship_background_data
-b$722E DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7236 DEFB $00
+b$722E DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00
 
-; Mines background data (3x9 bytes)
+; Mines background data
 ;
+; 3x9 bytes
 ; #TABLE(default, default)
 ; { =h Byte | =h Purpose }
 ; { $00 | Screen x }
@@ -283,12 +285,13 @@ b$722E DEFB $00,$00,$00,$00,$00,$00,$00,$00
 ; { $08 | Polar x }
 ; TABLE#
 @label=mines_background_data
-b$7237 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $723F DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7247 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $724F DEFB $00,$00,$00
+b$7237 DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00
+ $7240 DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00
+ $7249 DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00
 
-; Active enemy shots, set to $FF during explosion
+; Active enemy shots
+;
+; Set to $FF during explosion
 @label=active_enemy_shots
 b$7252 DEFB $00
 
@@ -309,13 +312,13 @@ b$7255 DEFB $00
 ; #TABLE(default, default)
 ; { =h Bit | =h Purpose }
 ; { $00 | Fire pressed last time }
-; { $01 | Double shot }
-; { $02 | Unknown }
-; { $03 | Unknown }
+; { $01 | Double shot pickup }
+; { $02 | Set when mines exist }
+; { $03 | Ever set? Reset when laser fence destroyed }
 ; { $04 | Set when laser fence exists }
-; { $05 | Reset when wave starts }
+; { $05 | Set when stage starts. Reset when wave starts. Set when enemy hit }
 ; { $06 | Set when wave starts }
-; { $07 | Unknown }
+; { $07 | Unused }
 ; TABLE#
 @label=other_flags
 b$7256 DEFB $00
@@ -332,8 +335,8 @@ b$7259 DEFB $00
 @label=interrupt_flag
 b$725A DEFB $00
 
-; Counter at 725B
-@label=wave_spedd_counter
+; Wave speed counter
+@label=wave_speed_counter
 b$725B DEFB $00
 
 ; Number of enemies left center
@@ -349,8 +352,8 @@ b$725C DEFB $00
 @label=wave_data_address
 w$725D DEFW $0000
 
-; Countdown at 725F
-@label=countdown_at_725F
+; Laser fence/meteor countdown
+@label=laser_meteor_countdown
 b$725F DEFB $00
 
 ; Sprite countdown 2
@@ -391,18 +394,20 @@ b$7267 DEFB $00
 @label=mine_name
 b$7268 DEFB $00
 
-; Byte at 7269
+; Mine countdown to shoot
+@label=mine_countdown_to_shoot
 b$7269 DEFB $00
 
-; Word at 726A
-@label=word_at_726A
+; Pattern decoder length
+@label=decoder_length
 w$726A DEFW $0000
 
-; Byte at 726C
-@label=byte_at_726C
+; Pattern decoder bits left
+@label=decoder_bits_left
 b$726C DEFB $00
 
-; Byte at 726D
+; Pattern decoder source byte
+@label=decoder_source_byte
 b$726D DEFB $00
 
 ; Flag for showing double shot pickup
@@ -549,8 +554,8 @@ b$72C8 DEFB $00,$00,$00
 @update_counters_countdown
 b$72CB DEFB $00
 
-; Flag at 72CC
-@label=flag_at_72CC
+; Center enemies redraw flag
+@label=center_enemies_redraw
 b$72CC DEFB $00
 
 ; Counter for drawing center enemies
@@ -966,8 +971,8 @@ c$81AE LD A,($71EB)  ; Test for two players
  $81DD XOR $01       ; Switch player
  $81DF LD ($71F1),A  ; Save again
 *$81E2 CALL $8212    ; Initialize stage
- $81E5 LD HL,$7256   ;
- $81E8 SET 5,(HL)    ;
+ $81E5 LD HL,$7256   ; Set flag
+ $81E8 SET 5,(HL)    ; ...
  $81EA JP $80E8      ; To main loop
 
 ; Wait for restart
@@ -1541,7 +1546,7 @@ c$85E6 LD HL,$71EE     ; Decrement counter 1
  $85F2 JP M,$85F8      ; ...
  $85F5 LD ($71EF),A    ; ...
 *$85F8 LD HL,$7256     ; Flags
- $85FB RES 4,(HL)      ; Reset init flag
+ $85FB RES 4,(HL)      ; Reset laser fence flag
  $85FD LD HL,$7185     ; Table address #R$7183+2 (skip ship sprites)
 ; This entry point is used by the routine at #R$8A41.
 *$8600 PUSH HL         ; Save table address
@@ -1768,11 +1773,11 @@ c$873E CP $15         ; Is sprite type < $15
  $8757 DEC (IX+$01)   ; Decrement polar y
  $875A INC (IX+$05)   ; Mark for pattern reload
 *$875D LD HL,$7256    ; Flags
- $8760 SET 4,(HL)     ; Set flag
+ $8760 SET 4,(HL)     ; Set laser fence flag
  $8762 LD A,(IX+$00)  ; Get sprite type
  $8765 CP $17         ; If not laser fence center
  $8767 RET NZ         ; Then return to #R$8A41
- $8768 LD A,($7256)   ; If bit 2 is reset
+ $8768 LD A,($7256)   ; If bit 3 is reset
  $876B BIT 3,A        ; ...
  $876D JP Z,$8654     ; Then deallocate
  $8770 INC (IX+$05)   ; Mark for pattern reload
@@ -2521,7 +2526,7 @@ c$8C1E XOR A         ; A = 0
  $8C22 LD ($71F0),A  ; Reset counter
  $8C25 LD HL,$71EB   ; Set all waves completed flag
  $8C28 SET 1,(HL)    ; ...
- $8C2A LD HL,$7256   ; Reset other flag
+ $8C2A LD HL,$7256   ; Reset flag
  $8C2D RES 5,(HL)    ; ...
  $8C2F RET           ;
 
@@ -2714,12 +2719,12 @@ c$8D50 LD A,($71F2)    ; Frame counter
  $8D68 CALL $84DB      ; Get stage data address in IY
  $8D6B RST $20         ; Random number
  $8D6C AND $E0         ; If any of 3 bits are set
- $8D6E JR NZ,$8DD7     ; Then jump to ...
+ $8D6E JR NZ,$8DD7     ; Then jump to create meteor
  $8D70 BIT 0,(IY+$07)  ; ...
  $8D74 JR Z,$8DD7      ; ...
- $8D76 LD HL,$7256     ; If other flag 4 is set
+ $8D76 LD HL,$7256     ; If laser fence flag is set
  $8D79 BIT 4,(HL)      ; ...
- $8D7B JR NZ,$8DD7     ; Then jump to ...
+ $8D7B JR NZ,$8DD7     ; Then jump to create meteor
 ; Allocate laser fence
  $8D7D SET 4,(HL)      ;
  $8D7F SET 3,(HL)      ;
@@ -2814,7 +2819,7 @@ c$8E2D LD A,($71EB)  ; Get flags
  $8E3F LD A,($71EB)  ; If died
  $8E42 BIT 2,A       ; ...
  $8E44 RET NZ        ; Then return
- $8E45 LD A,($7256)  ; If unknown flag is set
+ $8E45 LD A,($7256)  ; If mines flag is set
  $8E48 BIT 2,A       ; ...
  $8E4A RET NZ        ; The return
  $8E4B LD A,($71F2)  ; Frame counter
@@ -2844,7 +2849,7 @@ c$8E2D LD A,($71EB)  ; Get flags
  $8E79 RET Z         ; Then return
  $8E7A INC A         ; Else increment calculated value
  $8E7B LD ($7266),A  ; And store
- $8E7E LD HL,$7256   ; Set flag
+ $8E7E LD HL,$7256   ; Set mines flag
  $8E81 SET 2,(HL)    ; ...
  $8E83 LD A,$01      ; Set action to create mines
  $8E85 LD ($7264),A  ; ...
@@ -2915,7 +2920,7 @@ c$8E9D LD IY,$722E   ; Ship background data
  $8EF3 LD ($7267),A  ;
  $8EF6 LD ($7254),A  ; No mines destroyed
  $8EF9 INC A         ;
- $8EFA LD ($7269),A  ;
+ $8EFA LD ($7269),A  ; Set countdown to shoot to 1
  $8EFD CALL $900E    ; Create shot from mine
  $8F00 CALL $84DB    ; Get stage data address in IY
  $8F03 LD A,(IY+$05) ;
@@ -3053,7 +3058,7 @@ c$8FED DEC (IY+$07)    ;
  $8FFE LD HL,$722D     ; Decrement mines left
  $9001 DEC (HL)        ; ...
  $9002 JR NZ,$8FAE     ;
- $9004 LD HL,$7256     ; Clear ... flag
+ $9004 LD HL,$7256     ; Clear mines flag
  $9007 RES 2,(HL)      ; ...
  $9009 CALL $8E8D      ;
  $900C JR $8FAE        ;
@@ -3061,28 +3066,28 @@ c$8FED DEC (IY+$07)    ;
 ; Create shot from mine
 ;
 ; Used by the routines at #R$8E9D and #R$8F55.
-c$900E LD HL,$7269     ;
- $9011 DEC (HL)        ;
- $9012 RET NZ          ;
- $9013 LD IY,$7237     ;
- $9017 LD A,(IY+$04)   ;
- $901A OR (IY+$05)     ;
- $901D JR Z,$9039      ;
+c$900E LD HL,$7269     ; Decrement countdown
+ $9011 DEC (HL)        ; ...
+ $9012 RET NZ          ; Return if not 0
+ $9013 LD IY,$7237     ; Mine data
+ $9017 LD A,(IY+$04)   ; Check if mine exists
+ $901A OR (IY+$05)     ; ...
+ $901D JR Z,$9039      ; Skip ahead if not
  $901F LD HL,$7252     ; Increment enemy shots
  $9022 INC (HL)        ; ...
  $9023 RST $28         ; Allocate sprite
- $9024 LD (IX+$00),$12 ;
+ $9024 LD (IX+$00),$12 ; Missile
  $9028 LD (IX+$0B),$0A ; Set color
- $902C LD A,(IY+$07)   ;
- $902F LD (IX+$01),A   ;
- $9032 LD A,(IY+$08)   ;
- $9035 LD (IX+$02),A   ;
+ $902C LD A,(IY+$07)   ; Set polar y to mine polar y
+ $902F LD (IX+$01),A   ; ...
+ $9032 LD A,(IY+$08)   ; Set polar x to mine polar x
+ $9035 LD (IX+$02),A   ; ...
  $9038 RST $30         ; Load sprite pattern
 *$9039 CALL $84DB      ; Get stage data address in IY
  $903C RST $20         ; Random number
  $903D AND $3F         ; 0-63
- $903F ADD A,(IY+$06)  ;
- $9042 LD ($7269),A    ;
+ $903F ADD A,(IY+$06)  ; Add ?
+ $9042 LD ($7269),A    ; Set countdown to random value
  $9045 RET             ;
 
 ; Mines movement table
@@ -3929,7 +3934,7 @@ c$9934 LD A,$04        ; Sound = 4
  $995B LD A,($71EB)    ; Are all waves complete?
  $995E BIT 1,A         ; ...
  $9960 JR Z,$9978      ; If not add points from enemy
- $9962 LD A,($7256)    ; Text wave flag
+ $9962 LD A,($7256)    ; Test wave flag
  $9965 BIT 5,A         ; ...
  $9967 JR NZ,$9999     ; If not wave then add default points
  $9969 LD A,($722B)    ; Get center enemies
@@ -4028,7 +4033,7 @@ c$99B1 LD D,$0F        ; Color
  $99F8 LD HL,$722D     ; Decrement mines left
  $99FB DEC (HL)        ; ...
  $99FC JR NZ,$9A03     ; Skip ahead if any left
- $99FE LD HL,$7256     ; Clear ... flag
+ $99FE LD HL,$7256     ; Clear mines flag
  $9A01 RES 2,(HL)      ; ...
 *$9A03 POP IX          ;
  $9A05 POP DE          ; Restore score
@@ -4377,15 +4382,13 @@ c$9BD9 JP P,$9BF8    ; If > 0 then jump ahead to loop
 
 ; Relative jump then  tune index >= 3
 ;
-; When tune index >= 3
-; Used by the routine at #R$9BD9.
+; When tune index >= 3 Used by the routine at #R$9BD9.
 c$9BF8 CALL $9C92    ; Update counter and loop tune
  $9BFB JR $9BCA      ; Jump back into #R$9B99
 
 ; Handle duration byte when tune index >= 3
 ;
-; When tune index >= 3
-; Used by the routine at #R$9B99.
+; When tune index >= 3 Used by the routine at #R$9B99.
 c$9BFD LD (IX+$03),A ; Save tune byte in frequency LSB
  $9C00 LD (IX+$01),L ; Set tune address LSB
  $9C03 LD (IX+$02),H ; Set tune address MSB
@@ -6557,7 +6560,7 @@ c$AE54 LD A,(IX+$00)   ; Get sprite type
  $AE7B JR C,$AE86      ; Then set off-screen values and return
  $AE7D CP $18          ; If >= $18
  $AE7F JR NC,$AE86     ; Then set off-screen values and return
- $AE81 LD HL,$7256     ; $15 - $17 Reset chance stage flag
+ $AE81 LD HL,$7256     ; $15 - $17 Reset flag
  $AE84 RES 3,(HL)      ; ...
 *$AE86 LD (IX+$00),$7F ; Set as not allocated
  $AE8A LD (IX+$09),$00 ; Set x
