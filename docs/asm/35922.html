@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at 8C52</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="35888.html">8C30</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#35922">Map</a></td>
+<td class="next">
+Next: <a href="35944.html">8C68</a>
+</td>
+</tr>
+</table>
+<div class="description">8C52: Start new wave</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="35888.html">manage_wave_lt_4</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">start_new_wave</td>
+<td class="address-2"><span id="35922"></span>8C52</td>
+<td class="instruction">LD A,$02</td>
+<td class="comment-1" rowspan="1">Play a sound</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35924"></span>8C54</td>
+<td class="instruction">CALL <a href="40611.html">call_play_sound</a></td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="35927"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="35888.html">manage_wave_lt_4</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">start_new_wave_0</td>
+<td class="address-2"><span id="35927"></span>8C57</td>
+<td class="instruction">ADD HL,BC</td>
+<td class="comment-1" rowspan="1">Add offset to table base</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35928"></span>8C58</td>
+<td class="instruction">LD (<a href="29277.html">wave_data_address</a>),HL</td>
+<td class="comment-1" rowspan="1">Save table address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35931"></span>8C5B</td>
+<td class="instruction">LD HL,<a href="29185.html">wave</a></td>
+<td class="comment-1" rowspan="1">Next wave</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35934"></span>8C5E</td>
+<td class="instruction">INC (HL)</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35935"></span>8C5F</td>
+<td class="instruction">LD HL,<a href="29270.html">other_flags</a></td>
+<td class="comment-1" rowspan="1">Flags</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35938"></span>8C62</td>
+<td class="instruction">RES 5,(HL)</td>
+<td class="comment-1" rowspan="1">Reset flag</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35940"></span>8C64</td>
+<td class="instruction">SET 6,(HL)</td>
+<td class="comment-1" rowspan="1">Set flag</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35942"></span>8C66</td>
+<td class="instruction">JR <a href="35944.html#35949">handle_wave_outcoming_0</a></td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="35888.html">8C30</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#35922">Map</a></td>
+<td class="next">
+Next: <a href="35944.html">8C68</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

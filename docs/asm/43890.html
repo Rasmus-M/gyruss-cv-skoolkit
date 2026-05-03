@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at AB72</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="43859.html">AB53</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#43890">Map</a></td>
+<td class="next">
+Next: <a href="44031.html">ABFF</a>
+</td>
+</tr>
+</table>
+<div class="description">AB72: Display distant enemies at the center of the screen</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routines at <a href="32804.html">entry</a>, <a href="33081.html">died</a>, <a href="33578.html">stage_completed</a>, <a href="33899.html">perfect_bonus</a>, <a href="41787.html">initial_game_loop</a> and <a href="41953.html">explode</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">display_center_enemies</td>
+<td class="address-2"><span id="43890"></span>AB72</td>
+<td class="instruction">LD HL,<a href="29387.html">update_counters_countdown</a></td>
+<td class="comment-1" rowspan="1">Countdown for when to update counters</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43893"></span>AB75</td>
+<td class="instruction">DEC (HL)</td>
+<td class="comment-1" rowspan="1">-1</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43894"></span>AB76</td>
+<td class="instruction">JP P,<a href="43890.html#43936">display_center_enemies_2</a></td>
+<td class="comment-1" rowspan="1">If &gt; 0, then don't update other counters</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43897"></span>AB79</td>
+<td class="instruction">LD (HL),$0F</td>
+<td class="comment-1" rowspan="1">Reset to 15</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43899"></span>AB7B</td>
+<td class="instruction">LD A,(<a href="29395.html">y_counter</a>)</td>
+<td class="comment-1" rowspan="1">Y counter</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43902"></span>AB7E</td>
+<td class="instruction">LD HL,<a href="29394.html">y_counter_direction</a></td>
+<td class="comment-1" rowspan="1">Add direction 1 or -1</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43905"></span>AB81</td>
+<td class="instruction">ADD A,(HL)</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43906"></span>AB82</td>
+<td class="instruction">LD (<a href="29395.html">y_counter</a>),A</td>
+<td class="comment-1" rowspan="1">Store y counter</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43909"></span>AB85</td>
+<td class="instruction">JP P,<a href="43890.html#43914">display_center_enemies_0</a></td>
+<td class="comment-1" rowspan="1">If y counter &gt; 0 then skip ahead</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43912"></span>AB88</td>
+<td class="instruction">NEG</td>
+<td class="comment-1" rowspan="1">Else make positive</td>
+</tr>
+<tr>
+<td class="asm-label">display_center_enemies_0</td>
+<td class="address-2"><span id="43914"></span>AB8A</td>
+<td class="instruction">CP $01</td>
+<td class="comment-1" rowspan="1">If not 1</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43916"></span>AB8C</td>
+<td class="instruction">JR NZ,<a href="43890.html#43931">display_center_enemies_1</a></td>
+<td class="comment-1" rowspan="1">Then skip ahead</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43918"></span>AB8E</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">IF 1, get direction</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43919"></span>AB8F</td>
+<td class="instruction">NEG</td>
+<td class="comment-1" rowspan="1">Reverse direction</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43921"></span>AB91</td>
+<td class="instruction">LD (HL),A</td>
+<td class="comment-1" rowspan="1">Store direction</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43922"></span>AB92</td>
+<td class="instruction">LD A,(<a href="29396.html">x_counter</a>)</td>
+<td class="comment-1" rowspan="1">x counter</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43925"></span>AB95</td>
+<td class="instruction">INC A</td>
+<td class="comment-1" rowspan="1">+1</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43926"></span>AB96</td>
+<td class="instruction">AND $3F</td>
+<td class="comment-1" rowspan="1">Mod 64</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43928"></span>AB98</td>
+<td class="instruction">LD (<a href="29396.html">x_counter</a>),A</td>
+<td class="comment-1" rowspan="1">Store x counter</td>
+</tr>
+<tr>
+<td class="asm-label">display_center_enemies_1</td>
+<td class="address-2"><span id="43931"></span>AB9B</td>
+<td class="instruction">LD HL,<a href="29388.html">center_enemies_redraw</a></td>
+<td class="comment-1" rowspan="1">Set flag</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43934"></span>AB9E</td>
+<td class="instruction">SET 0,(HL)</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label">display_center_enemies_2</td>
+<td class="address-2"><span id="43936"></span>ABA0</td>
+<td class="instruction">LD A,(<a href="29389.html">center_enemy_processed</a>)</td>
+<td class="comment-1" rowspan="1">Get enemy to process</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43939"></span>ABA3</td>
+<td class="instruction">CP $24</td>
+<td class="comment-1" rowspan="1">If 36,</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43941"></span>ABA5</td>
+<td class="instruction">JP Z,<a href="44031.html">display_center_enemies_names</a></td>
+<td class="comment-1" rowspan="1">Then jump to update name table</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43944"></span>ABA8</td>
+<td class="instruction">OR A</td>
+<td class="comment-1" rowspan="1">If 0 then erase all enemies</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43945"></span>ABA9</td>
+<td class="instruction">JR NZ,<a href="43890.html#43972">display_center_enemies_3</a></td>
+<td class="comment-1" rowspan="1">Else jump ahead</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43947"></span>ABAB</td>
+<td class="instruction">LD HL,(<a href="29391.html">center_enemies_name_2</a>)</td>
+<td class="comment-1" rowspan="1">Get first name used for center enemies</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43950"></span>ABAE</td>
+<td class="instruction">LD H,$00</td>
+<td class="comment-1" rowspan="1">Set MSB to 0</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43952"></span>ABB0</td>
+<td class="instruction">ADD HL,HL</td>
+<td class="comment-1" rowspan="1">Multiply by 8</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43953"></span>ABB1</td>
+<td class="instruction">ADD HL,HL</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43954"></span>ABB2</td>
+<td class="instruction">ADD HL,HL</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43955"></span>ABB3</td>
+<td class="instruction">LD DE,$0000</td>
+<td class="comment-1" rowspan="1">Add pattern table address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43958"></span>ABB6</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43959"></span>ABB7</td>
+<td class="instruction">LD (<a href="29392.html">center_enemies_pattern</a>),HL</td>
+<td class="comment-1" rowspan="1">Save VDP address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43962"></span>ABBA</td>
+<td class="instruction">LD DE,$0080</td>
+<td class="comment-1" rowspan="1">Clear 16 patterns</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43965"></span>ABBD</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43966"></span>ABBE</td>
+<td class="instruction">CALL $1F82</td>
+<td class="comment-1" rowspan="1">FILL_VRAM</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43969"></span>ABC1</td>
+<td class="instruction">LD A,(<a href="29389.html">center_enemy_processed</a>)</td>
+<td class="comment-1" rowspan="1">Get enemy to process</td>
+</tr>
+<tr>
+<td class="asm-label">display_center_enemies_3</td>
+<td class="address-2"><span id="43972"></span>ABC4</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">BC = enemy to process</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43973"></span>ABC5</td>
+<td class="instruction">LD B,$00</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43975"></span>ABC7</td>
+<td class="instruction">LD HL,<a href="29191.html">center_enemy_map</a></td>
+<td class="comment-1" rowspan="1">Add map address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43978"></span>ABCA</td>
+<td class="instruction">ADD HL,BC</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43979"></span>ABCB</td>
+<td class="instruction">BIT 7,(HL)</td>
+<td class="comment-1" rowspan="1">If unallocated</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43981"></span>ABCD</td>
+<td class="instruction">JP NZ,<a href="43890.html#44026">display_center_enemies_5</a></td>
+<td class="comment-1" rowspan="1">Then update counter and return</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43984"></span>ABD0</td>
+<td class="instruction">CALL <a href="43832.html">polar_coord_from_map</a></td>
+<td class="comment-1" rowspan="1">Now DE contains polar y,x</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43987"></span>ABD3</td>
+<td class="instruction">CALL <a href="45510.html">polar_to_screen</a></td>
+<td class="comment-1" rowspan="1">Convert polar to screen</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43990"></span>ABD6</td>
+<td class="instruction">PUSH DE</td>
+<td class="comment-1" rowspan="1">Save screen coordinates</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43991"></span>ABD7</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Get map value</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43992"></span>ABD8</td>
+<td class="instruction">RRA</td>
+<td class="comment-1" rowspan="1">Isolate 3 bits</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43993"></span>ABD9</td>
+<td class="instruction">RRA</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43994"></span>ABDA</td>
+<td class="instruction">AND $0E</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43996"></span>ABDC</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">And load into BC</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43997"></span>ABDD</td>
+<td class="instruction">LD B,$00</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43999"></span>ABDF</td>
+<td class="instruction">LD HL,<a href="44239.html">pixel_offsets_table</a></td>
+<td class="comment-1" rowspan="1">Add table base address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44002"></span>ABE2</td>
+<td class="instruction">ADD HL,BC</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44003"></span>ABE3</td>
+<td class="instruction">CALL <a href="44103.html">plot_pixel</a></td>
+<td class="comment-1" rowspan="1">Plot pixel</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44006"></span>ABE6</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Get x offset</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44007"></span>ABE7</td>
+<td class="instruction">OR A</td>
+<td class="comment-1" rowspan="1">If zero</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44008"></span>ABE8</td>
+<td class="instruction">JR Z,<a href="43890.html#44015">display_center_enemies_4</a></td>
+<td class="comment-1" rowspan="1">Then skip ahead</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44010"></span>ABEA</td>
+<td class="instruction">ADD A,E</td>
+<td class="comment-1" rowspan="1">Add to screen x</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44011"></span>ABEB</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44012"></span>ABEC</td>
+<td class="instruction">CALL <a href="44103.html">plot_pixel</a></td>
+<td class="comment-1" rowspan="1">Plot pixel</td>
+</tr>
+<tr>
+<td class="asm-label">display_center_enemies_4</td>
+<td class="address-2"><span id="44015"></span>ABEF</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Next table address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44016"></span>ABF0</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="1">Restore screen coordinates</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44017"></span>ABF1</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Get y offset</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44018"></span>ABF2</td>
+<td class="instruction">OR A</td>
+<td class="comment-1" rowspan="1">If zero</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44019"></span>ABF3</td>
+<td class="instruction">JR Z,<a href="43890.html#44026">display_center_enemies_5</a></td>
+<td class="comment-1" rowspan="1">Then skip ahead</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44021"></span>ABF5</td>
+<td class="instruction">ADD A,D</td>
+<td class="comment-1" rowspan="1">Add to screen x</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44022"></span>ABF6</td>
+<td class="instruction">LD D,A</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44023"></span>ABF7</td>
+<td class="instruction">CALL <a href="44103.html">plot_pixel</a></td>
+<td class="comment-1" rowspan="1">Plot pixel</td>
+</tr>
+<tr>
+<td class="asm-label">display_center_enemies_5</td>
+<td class="address-2"><span id="44026"></span>ABFA</td>
+<td class="instruction">LD HL,<a href="29389.html">center_enemy_processed</a></td>
+<td class="comment-1" rowspan="1">Update counter</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44029"></span>ABFD</td>
+<td class="instruction">INC (HL)</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44030"></span>ABFE</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="43859.html">AB53</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#43890">Map</a></td>
+<td class="next">
+Next: <a href="44031.html">ABFF</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

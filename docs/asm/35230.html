@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at 899E</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="35225.html">8999</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#35230">Map</a></td>
+<td class="next">
+Next: <a href="35307.html">89EB</a>
+</td>
+</tr>
+</table>
+<div class="description">899E: Handle sprite types $18 - $1C</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="34704.html">handle_sprite_types_0E_11</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">handle_sprite_types_18_1C</td>
+<td class="address-2"><span id="35230"></span>899E</td>
+<td class="instruction">CP $18</td>
+<td class="comment-1" rowspan="1">Is sprite type &lt; $18</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35232"></span>89A0</td>
+<td class="instruction">RET C</td>
+<td class="comment-1" rowspan="1">Then return</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35233"></span>89A1</td>
+<td class="instruction">CP $1A</td>
+<td class="comment-1" rowspan="1">Is sprite type &lt; $1A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35235"></span>89A3</td>
+<td class="instruction">JR C,<a href="35230.html#35256">handle_sprite_types_18_1C_1</a></td>
+<td class="comment-1" rowspan="1">If so, jump ahead</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="35237"></span>
+<div class="comments">
+<div class="paragraph">
+Sprite types $1A - $1C (circular enemies)
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35237"></span>89A5</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">B = sprite type</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35238"></span>89A6</td>
+<td class="instruction">LD A,(<a href="29170.html">frame_counter</a>)</td>
+<td class="comment-1" rowspan="1">Frame counter</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35241"></span>89A9</td>
+<td class="instruction">AND $03</td>
+<td class="comment-1" rowspan="1">Mod 4</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35243"></span>89AB</td>
+<td class="instruction">JR NZ,<a href="35230.html#35256">handle_sprite_types_18_1C_1</a></td>
+<td class="comment-1" rowspan="1">If not zero the skip ahead</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35245"></span>89AD</td>
+<td class="instruction">LD A,B</td>
+<td class="comment-1" rowspan="1">A = sprite type</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35246"></span>89AE</td>
+<td class="instruction">INC A</td>
+<td class="comment-1" rowspan="1">A = sprite type + 1</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35247"></span>89AF</td>
+<td class="instruction">CP $1D</td>
+<td class="comment-1" rowspan="1">Is sprite type + 1 &lt; $1D, i.e. sprite type &lt; $1C, i.e. $1A or $1B</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35249"></span>89B1</td>
+<td class="instruction">JR C,<a href="35230.html#35253">handle_sprite_types_18_1C_0</a></td>
+<td class="comment-1" rowspan="1">Then skip next</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35251"></span>89B3</td>
+<td class="instruction">LD A,$1A</td>
+<td class="comment-1" rowspan="1">Else set sprite type to $1A</td>
+</tr>
+<tr>
+<td class="asm-label">handle_sprite_types_18_1C_0</td>
+<td class="address-2"><span id="35253"></span>89B5</td>
+<td class="instruction">LD (IX+$00),A</td>
+<td class="comment-1" rowspan="1">This means rotate between $1A, $1B, and $1C</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="35256"></span>
+<div class="comments">
+<div class="paragraph">
+Sprite types $18 - $19 (three spheres, star shape) plus $1A - 1C
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">handle_sprite_types_18_1C_1</td>
+<td class="address-2"><span id="35256"></span>89B8</td>
+<td class="instruction">BIT 7,(IX+$07)</td>
+<td class="comment-1" rowspan="1">Text flag bit 7</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35260"></span>89BC</td>
+<td class="instruction">JR Z,<a href="35373.html">L8A2D</a></td>
+<td class="comment-1" rowspan="1">If reset, move towards viewer</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35262"></span>89BE</td>
+<td class="instruction">LD A,(<a href="29166.html">sprite_countdown</a>)</td>
+<td class="comment-1" rowspan="1">Return if countdown</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35265"></span>89C1</td>
+<td class="instruction">OR A</td>
+<td class="comment-1" rowspan="1">is not zero</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35266"></span>89C2</td>
+<td class="instruction">RET NZ</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35267"></span>89C3</td>
+<td class="instruction">LD L,(IX+$06)</td>
+<td class="comment-1" rowspan="1">Get path address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35270"></span>89C6</td>
+<td class="instruction">LD H,(IX+$07)</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35273"></span>89C9</td>
+<td class="instruction">LD A,(IX+$03)</td>
+<td class="comment-1" rowspan="1">Get counter</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35276"></span>89CC</td>
+<td class="instruction">SUB $10</td>
+<td class="comment-1" rowspan="1">Decrement upper nybble</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35278"></span>89CE</td>
+<td class="instruction">LD (IX+$03),A</td>
+<td class="comment-1" rowspan="1">Save counter</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35281"></span>89D1</td>
+<td class="instruction">JR NC,<a href="35307.html">move_sprite_along_path</a></td>
+<td class="comment-1" rowspan="1">If upper nybble &gt;= 0 then jump ahead</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35283"></span>89D3</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Next path address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35284"></span>89D4</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Get path byte</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35285"></span>89D5</td>
+<td class="instruction">SUB $10</td>
+<td class="comment-1" rowspan="1">Decrement upper nybble</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35287"></span>89D7</td>
+<td class="instruction">JR C,<a href="35388.html">L8A3C</a></td>
+<td class="comment-1" rowspan="1">If &lt; 0 then set flag and return</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35289"></span>89D9</td>
+<td class="instruction">AND $F0</td>
+<td class="comment-1" rowspan="1">Isolate upper nybble</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35291"></span>89DB</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">Save it</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35292"></span>89DC</td>
+<td class="instruction">LD A,(IX+$03)</td>
+<td class="comment-1" rowspan="1">Get counter</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35295"></span>89DF</td>
+<td class="instruction">AND $0F</td>
+<td class="comment-1" rowspan="1">And apply upper nybble</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35297"></span>89E1</td>
+<td class="instruction">OR B</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35298"></span>89E2</td>
+<td class="instruction">LD (IX+$03),A</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35301"></span>89E5</td>
+<td class="instruction">LD (IX+$06),L</td>
+<td class="comment-1" rowspan="1">Set path address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35304"></span>89E8</td>
+<td class="instruction">LD (IX+$07),H</td>
+<td class="comment-1" rowspan="1">... (continue into <a href="35307.html">move_sprite_along_path</a>)</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="35225.html">8999</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#35230">Map</a></td>
+<td class="next">
+Next: <a href="35307.html">89EB</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

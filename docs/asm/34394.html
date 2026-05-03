@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at 865A</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="34388.html">8654</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#34394">Map</a></td>
+<td class="next">
+Next: <a href="34429.html">867D</a>
+</td>
+</tr>
+</table>
+<div class="description">865A: Handle sprite type $02</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="34278.html">process_sprites</a>.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">A</td>
+<td class="register-desc">Sprite type</td>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Sprite data</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">handle_sprite_type_02</td>
+<td class="address-2"><span id="34394"></span>865A</td>
+<td class="instruction">CP $02</td>
+<td class="comment-1" rowspan="1">Is sprite type $02?</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34396"></span>865C</td>
+<td class="instruction">JP NZ,<a href="34429.html">handle_sprite_types_04_0C</a></td>
+<td class="comment-1" rowspan="1">If not proceed to next handler</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="34399"></span>
+<div class="comments">
+<div class="paragraph">
+Sprite type $02 (shot)
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34399"></span>865F</td>
+<td class="instruction">INC (IX+$05)</td>
+<td class="comment-1" rowspan="1">Mark for pattern reload</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34402"></span>8662</td>
+<td class="instruction">LD A,(IX+$01)</td>
+<td class="comment-1" rowspan="1">Get polar y</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34405"></span>8665</td>
+<td class="instruction">INC A</td>
+<td class="comment-1" rowspan="1">Move shot</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34406"></span>8666</td>
+<td class="instruction">INC A</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34407"></span>8667</td>
+<td class="instruction">LD (IX+$01),A</td>
+<td class="comment-1" rowspan="1">And save again</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34410"></span>866A</td>
+<td class="instruction">CP $08</td>
+<td class="comment-1" rowspan="1">Is polar y now 7?</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34412"></span>866C</td>
+<td class="instruction">JR NZ,<a href="34394.html#34419">handle_sprite_type_02_0</a></td>
+<td class="comment-1" rowspan="1">If not, jump ahead</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34414"></span>866E</td>
+<td class="instruction">LD (IX+$0B),$05</td>
+<td class="comment-1" rowspan="1">Set color</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34418"></span>8672</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return to <a href="35393.html">return_from_sprite_handler</a></td>
+</tr>
+<tr>
+<td class="asm-label">handle_sprite_type_02_0</td>
+<td class="address-2"><span id="34419"></span>8673</td>
+<td class="instruction">CP $2B</td>
+<td class="comment-1" rowspan="1">Is polar y 43?</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34421"></span>8675</td>
+<td class="instruction">RET C</td>
+<td class="comment-1" rowspan="1">Return if less than</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34422"></span>8676</td>
+<td class="instruction">LD HL,<a href="29267.html">active_shots</a></td>
+<td class="comment-1" rowspan="1">Decrease active shots</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34425"></span>8679</td>
+<td class="instruction">DEC (HL)</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34426"></span>867A</td>
+<td class="instruction">JP <a href="34278.html#34351">deallocate_sprite</a></td>
+<td class="comment-1" rowspan="1">Deallocate sprite</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="34388.html">8654</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#34394">Map</a></td>
+<td class="next">
+Next: <a href="34429.html">867D</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

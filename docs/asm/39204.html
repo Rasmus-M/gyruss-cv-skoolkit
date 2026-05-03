@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at 9924</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="39009.html">9861</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#39204">Map</a></td>
+<td class="next">
+Next: <a href="39220.html">9934</a>
+</td>
+</tr>
+</table>
+<div class="description">9924: Shot hit sprite</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routines at <a href="39009.html">handle_shot_collision</a>.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Sprite data of shot</td>
+</tr>
+<tr>
+<td class="register">IY</td>
+<td class="register-desc">Sprite data of other</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">shot_hit_sprite</td>
+<td class="address-2"><span id="39204"></span>9924</td>
+<td class="instruction">LD A,(IY+$00)</td>
+<td class="comment-1" rowspan="1">Get sprite type</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39207"></span>9927</td>
+<td class="instruction">CP $18</td>
+<td class="comment-1" rowspan="1">If &gt;= $18 (uncommon enemies)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39209"></span>9929</td>
+<td class="instruction">JR NC,<a href="39220.html">shot_hit_sprite_enemy</a></td>
+<td class="comment-1" rowspan="1">Then jump to enemy handler</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39211"></span>992B</td>
+<td class="instruction">CP $15</td>
+<td class="comment-1" rowspan="1">If &gt;= $15 and =&lt; $17 (laser fence)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39213"></span>992D</td>
+<td class="instruction">JP NC,<a href="39432.html">shot_hit_laser_fence</a></td>
+<td class="comment-1" rowspan="1">Then jump to handler</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39216"></span>9930</td>
+<td class="instruction">LD A,$01</td>
+<td class="comment-1" rowspan="1">Else set sound to 1</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39218"></span>9932</td>
+<td class="instruction">JR <a href="39220.html#39222">shot_hit_sprite_enemy_0</a></td>
+<td class="comment-1" rowspan="1">And jump to enemy handler</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="39009.html">9861</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#39204">Map</a></td>
+<td class="next">
+Next: <a href="39220.html">9934</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

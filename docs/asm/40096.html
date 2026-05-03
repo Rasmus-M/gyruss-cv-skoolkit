@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at 9CA0</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="40082.html">9C92</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#40096">Map</a></td>
+<td class="next">
+Next: <a href="40104.html">9CA8</a>
+</td>
+</tr>
+</table>
+<div class="description">9CA0: Make a relative jump</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="40082.html">update_counter_and_loop</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">relative_jump</td>
+<td class="address-2"><span id="40096"></span>9CA0</td>
+<td class="instruction">LD (IX+$09),E</td>
+<td class="comment-1" rowspan="1">Set countdown to tune byte</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="40099"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="40082.html">update_counter_and_loop</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">relative_jump_0</td>
+<td class="address-2"><span id="40099"></span>9CA3</td>
+<td class="instruction">LD E,(HL)</td>
+<td class="comment-1" rowspan="1">Get tune byte (negative jump offset)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40100"></span>9CA4</td>
+<td class="instruction">LD D,$FF</td>
+<td class="comment-1" rowspan="1">Set MSB of offset</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40102"></span>9CA6</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Add offset to address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40103"></span>9CA7</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="40082.html">9C92</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#40096">Map</a></td>
+<td class="next">
+Next: <a href="40104.html">9CA8</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

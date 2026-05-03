@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at A3E1</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="41787.html">A33B</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#41953">Map</a></td>
+<td class="next">
+Next: <a href="42097.html">A471</a>
+</td>
+</tr>
+</table>
+<div class="description">A3E1: Explode</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="33081.html">died</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">explode</td>
+<td class="address-2"><span id="41953"></span>A3E1</td>
+<td class="instruction">LD A,$2A</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41955"></span>A3E3</td>
+<td class="instruction">LD ($7003),A</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41958"></span>A3E6</td>
+<td class="instruction">CALL <a href="43016.html">display_ship_background_patterns</a></td>
+<td class="comment-1" rowspan="1">Display ship background patterns</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41961"></span>A3E9</td>
+<td class="instruction">LD A,$7F</td>
+<td class="comment-1" rowspan="1">Not allocated</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41963"></span>A3EB</td>
+<td class="instruction">LD (<a href="28674.html">sprite_data</a>),A</td>
+<td class="comment-1" rowspan="1">1st sprite</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41966"></span>A3EE</td>
+<td class="instruction">LD (<a href="28674.html#28686">$700E</a>),A</td>
+<td class="comment-1" rowspan="1">2nd sprite</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41969"></span>A3F1</td>
+<td class="instruction">LD A,(<a href="29267.html">active_shots</a>)</td>
+<td class="comment-1" rowspan="1">Active shots</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41972"></span>A3F4</td>
+<td class="instruction">OR A</td>
+<td class="comment-1" rowspan="1">If zero</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41973"></span>A3F5</td>
+<td class="instruction">JR Z,<a href="41953.html#42003">explode_2</a></td>
+<td class="comment-1" rowspan="1">Then skip ahead</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="41975"></span>
+<div class="comments">
+<div class="paragraph">
+Deallocate all shots
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41975"></span>A3F7</td>
+<td class="instruction">LD IX,<a href="28674.html">sprite_data</a></td>
+<td class="comment-1" rowspan="1">Sprite data table</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41979"></span>A3FB</td>
+<td class="instruction">LD DE,$000C</td>
+<td class="comment-1" rowspan="1">Size of each sprite</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41982"></span>A3FE</td>
+<td class="instruction">LD B,$20</td>
+<td class="comment-1" rowspan="1">32 sprites</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41984"></span>A400</td>
+<td class="instruction">LD A,$02</td>
+<td class="comment-1" rowspan="1">Is it type $02 (shot)?</td>
+</tr>
+<tr>
+<td class="asm-label">explode_0</td>
+<td class="address-2"><span id="41986"></span>A402</td>
+<td class="instruction">CP (IX+$00)</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41989"></span>A405</td>
+<td class="instruction">JR NZ,<a href="41953.html#41999">explode_1</a></td>
+<td class="comment-1" rowspan="1">No, then skip</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41991"></span>A407</td>
+<td class="instruction">LD (IX+$00),$7F</td>
+<td class="comment-1" rowspan="1">Set as not allocated</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41995"></span>A40B</td>
+<td class="instruction">LD (IX+$08),$F8</td>
+<td class="comment-1" rowspan="1">Set y</td>
+</tr>
+<tr>
+<td class="asm-label">explode_1</td>
+<td class="address-2"><span id="41999"></span>A40F</td>
+<td class="instruction">ADD IX,DE</td>
+<td class="comment-1" rowspan="1">Next sprite</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42001"></span>A411</td>
+<td class="instruction">DJNZ <a href="41953.html#41986">explode_0</a></td>
+<td class="comment-1" rowspan="1">Loop 32 times</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="42003"></span>
+<div class="comments">
+<div class="paragraph">
+Set center of projection for explosion
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">explode_2</td>
+<td class="address-2"><span id="42003"></span>A413</td>
+<td class="instruction">LD HL,($700A)</td>
+<td class="comment-1" rowspan="1">Y and X of 1st sprite</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42006"></span>A416</td>
+<td class="instruction">LD BC,$0404</td>
+<td class="comment-1" rowspan="1">Add 4 to each</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42009"></span>A419</td>
+<td class="instruction">ADD HL,BC</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42010"></span>A41A</td>
+<td class="instruction">LD (<a href="29381.html">tmp_center_of_projection</a>),HL</td>
+<td class="comment-1" rowspan="1">Save it in <a href="29381.html">tmp_center_of_projection</a>, which will be copied to <a href="28672.html">center_of_projection</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42013"></span>A41D</td>
+<td class="instruction">LD A,($7004)</td>
+<td class="comment-1" rowspan="1">Byte 2 of 1st sprite</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42016"></span>A420</td>
+<td class="instruction">LD (<a href="29383.html">L72C7</a>),A</td>
+<td class="comment-1" rowspan="1">Save it temporary</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="42019"></span>
+<div class="comments">
+<div class="paragraph">
+Allocate 6 sprites for explosion
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42019"></span>A423</td>
+<td class="instruction">LD IY,<a href="42168.html">LA4B8</a></td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42023"></span>A427</td>
+<td class="instruction">LD B,$06</td>
+<td class="comment-1" rowspan="1">Allocate 6 sprites</td>
+</tr>
+<tr>
+<td class="asm-label">explode_3</td>
+<td class="address-2"><span id="42025"></span>A429</td>
+<td class="instruction">RST $28</td>
+<td class="comment-1" rowspan="1">Allocate sprite</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42026"></span>A42A</td>
+<td class="instruction">LD (IX+$00),$0D</td>
+<td class="comment-1" rowspan="1">Sprite type is $0D (a dot)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42030"></span>A42E</td>
+<td class="instruction">LD (IX+$01),$00</td>
+<td class="comment-1" rowspan="1">Polar y</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42034"></span>A432</td>
+<td class="instruction">LD (IX+$02),$00</td>
+<td class="comment-1" rowspan="1">Polar x</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42038"></span>A436</td>
+<td class="instruction">LD (IX+$0B),$09</td>
+<td class="comment-1" rowspan="1">Set color (pink)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42042"></span>A43A</td>
+<td class="instruction">RST $30</td>
+<td class="comment-1" rowspan="1">Load sprite pattern</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42043"></span>A43B</td>
+<td class="instruction">LD A,(<a href="29383.html">L72C7</a>)</td>
+<td class="comment-1" rowspan="1">Restore byte 2 of 1st sprite</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42046"></span>A43E</td>
+<td class="instruction">ADD A,(IY+$00)</td>
+<td class="comment-1" rowspan="1">Add data from table</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42049"></span>A441</td>
+<td class="instruction">AND $3F</td>
+<td class="comment-1" rowspan="1">Mod $40</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42051"></span>A443</td>
+<td class="instruction">LD (IX+$02),A</td>
+<td class="comment-1" rowspan="1">Set polar x on new sprite</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42054"></span>A446</td>
+<td class="instruction">LD (IX+$01),$2A</td>
+<td class="comment-1" rowspan="1">Set polar y</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42058"></span>A44A</td>
+<td class="instruction">INC IY</td>
+<td class="comment-1" rowspan="1">Next init data</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42060"></span>A44C</td>
+<td class="instruction">DJNZ <a href="41953.html#42025">explode_3</a></td>
+<td class="comment-1" rowspan="1">Loop for 6 sprites</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="42062"></span>
+<div class="comments">
+<div class="paragraph">
+Game loop for 3 seconds
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42062"></span>A44E</td>
+<td class="instruction">LD B,$14</td>
+<td class="comment-1" rowspan="1">20</td>
+</tr>
+<tr>
+<td class="asm-label">explode_4</td>
+<td class="address-2"><span id="42064"></span>A450</td>
+<td class="instruction">PUSH BC</td>
+<td class="comment-1" rowspan="1">Outer loop</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42065"></span>A451</td>
+<td class="instruction">CALL <a href="42097.html">move_dots</a></td>
+<td class="comment-1" rowspan="1">Move dots</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42068"></span>A454</td>
+<td class="instruction">CALL <a href="44281.html">upload_sprite_data</a></td>
+<td class="comment-1" rowspan="1">Upload sprite data</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42071"></span>A457</td>
+<td class="instruction">LD B,$09</td>
+<td class="comment-1" rowspan="1">9</td>
+</tr>
+<tr>
+<td class="asm-label">explode_5</td>
+<td class="address-2"><span id="42073"></span>A459</td>
+<td class="instruction">HALT</td>
+<td class="comment-1" rowspan="1">Inner loop</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42074"></span>A45A</td>
+<td class="instruction">PUSH BC</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42075"></span>A45B</td>
+<td class="instruction">CALL <a href="45055.html">display_stars</a></td>
+<td class="comment-1" rowspan="1">Display stars</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42078"></span>A45E</td>
+<td class="instruction">CALL <a href="34278.html">process_sprites</a></td>
+<td class="comment-1" rowspan="1">Process sprites</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42081"></span>A461</td>
+<td class="instruction">CALL <a href="43890.html">display_center_enemies</a></td>
+<td class="comment-1" rowspan="1">Display center enemies</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42084"></span>A464</td>
+<td class="instruction">CALL <a href="36397.html">create_or_display_mines</a></td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42087"></span>A467</td>
+<td class="instruction">CALL <a href="33969.html">next_frame_upl_sprites</a></td>
+<td class="comment-1" rowspan="1">Upload sprites</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42090"></span>A46A</td>
+<td class="instruction">POP BC</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42091"></span>A46B</td>
+<td class="instruction">DJNZ <a href="41953.html#42073">explode_5</a></td>
+<td class="comment-1" rowspan="1">Loop 9 times</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42093"></span>A46D</td>
+<td class="instruction">POP BC</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42094"></span>A46E</td>
+<td class="instruction">DJNZ <a href="41953.html#42064">explode_4</a></td>
+<td class="comment-1" rowspan="1">Loop 20 times</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42096"></span>A470</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="41787.html">A33B</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#41953">Map</a></td>
+<td class="next">
+Next: <a href="42097.html">A471</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

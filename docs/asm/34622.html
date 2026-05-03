@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at 873E</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="34572.html">870C</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#34622">Map</a></td>
+<td class="next">
+Next: <a href="34704.html">8790</a>
+</td>
+</tr>
+</table>
+<div class="description">873E: Handle sprite types $15 - $17</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="34572.html">handle_sprite_type_03</a>.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">A</td>
+<td class="register-desc">Sprite type</td>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Sprite data</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">handle_sprite_types_15_17</td>
+<td class="address-2"><span id="34622"></span>873E</td>
+<td class="instruction">CP $15</td>
+<td class="comment-1" rowspan="1">Is sprite type &lt; $15</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34624"></span>8740</td>
+<td class="instruction">JR C,<a href="34704.html">handle_sprite_types_0E_11</a></td>
+<td class="comment-1" rowspan="1">If so, jump ahead</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34626"></span>8742</td>
+<td class="instruction">CP $18</td>
+<td class="comment-1" rowspan="1">Is sprite type &gt;= $18</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34628"></span>8744</td>
+<td class="instruction">JR NC,<a href="34704.html">handle_sprite_types_0E_11</a></td>
+<td class="comment-1" rowspan="1">If so, jump ahead</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="34630"></span>
+<div class="comments">
+<div class="paragraph">
+sprite types $15 - $17 (laser fence)
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34630"></span>8746</td>
+<td class="instruction">LD B,$07</td>
+<td class="comment-1" rowspan="1">Mask = 7</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34632"></span>8748</td>
+<td class="instruction">LD A,(<a href="29163.html">status_flags</a>)</td>
+<td class="comment-1" rowspan="1">Check if you have died</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34635"></span>874B</td>
+<td class="instruction">BIT 2,A</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34637"></span>874D</td>
+<td class="instruction">JR Z,<a href="34622.html#34641">handle_sprite_types_15_17_0</a></td>
+<td class="comment-1" rowspan="1">If not, skip next</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34639"></span>874F</td>
+<td class="instruction">LD B,$03</td>
+<td class="comment-1" rowspan="1">Else set Mask = 3</td>
+</tr>
+<tr>
+<td class="asm-label">handle_sprite_types_15_17_0</td>
+<td class="address-2"><span id="34641"></span>8751</td>
+<td class="instruction">LD A,(<a href="29170.html">frame_counter</a>)</td>
+<td class="comment-1" rowspan="1">Frame counter</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34644"></span>8754</td>
+<td class="instruction">AND B</td>
+<td class="comment-1" rowspan="1">AND mask</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34645"></span>8755</td>
+<td class="instruction">JR NZ,<a href="34622.html#34653">handle_sprite_types_15_17_1</a></td>
+<td class="comment-1" rowspan="1">If not zero, skip next 2</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34647"></span>8757</td>
+<td class="instruction">DEC (IX+$01)</td>
+<td class="comment-1" rowspan="1">Decrement polar y</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34650"></span>875A</td>
+<td class="instruction">INC (IX+$05)</td>
+<td class="comment-1" rowspan="1">Mark for pattern reload</td>
+</tr>
+<tr>
+<td class="asm-label">handle_sprite_types_15_17_1</td>
+<td class="address-2"><span id="34653"></span>875D</td>
+<td class="instruction">LD HL,<a href="29270.html">other_flags</a></td>
+<td class="comment-1" rowspan="1">Flags</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34656"></span>8760</td>
+<td class="instruction">SET 4,(HL)</td>
+<td class="comment-1" rowspan="1">Set laser fence flag</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34658"></span>8762</td>
+<td class="instruction">LD A,(IX+$00)</td>
+<td class="comment-1" rowspan="1">Get sprite type</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34661"></span>8765</td>
+<td class="instruction">CP $17</td>
+<td class="comment-1" rowspan="1">If not laser fence center</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34663"></span>8767</td>
+<td class="instruction">RET NZ</td>
+<td class="comment-1" rowspan="1">Then return to <a href="35393.html">return_from_sprite_handler</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34664"></span>8768</td>
+<td class="instruction">LD A,(<a href="29270.html">other_flags</a>)</td>
+<td class="comment-1" rowspan="1">If bit 3 is reset</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34667"></span>876B</td>
+<td class="instruction">BIT 3,A</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34669"></span>876D</td>
+<td class="instruction">JP Z,<a href="34388.html">deallocate_enemy</a></td>
+<td class="comment-1" rowspan="1">Then deallocate</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34672"></span>8770</td>
+<td class="instruction">INC (IX+$05)</td>
+<td class="comment-1" rowspan="1">Mark for pattern reload</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34675"></span>8773</td>
+<td class="instruction">LD A,(IX+$02)</td>
+<td class="comment-1" rowspan="1">Get polar x</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34678"></span>8776</td>
+<td class="instruction">ADD A,(IX+$03)</td>
+<td class="comment-1" rowspan="1">Add velocity</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34681"></span>8779</td>
+<td class="instruction">AND $3F</td>
+<td class="comment-1" rowspan="1">Mod 64</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34683"></span>877B</td>
+<td class="instruction">LD (IX+$02),A</td>
+<td class="comment-1" rowspan="1">Save new polar x</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34686"></span>877E</td>
+<td class="instruction">LD HL,<a href="29281.html">L7261</a></td>
+<td class="comment-1" rowspan="1">Did center reach end 2?</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34689"></span>8781</td>
+<td class="instruction">CP (HL)</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34690"></span>8782</td>
+<td class="instruction">JR Z,<a href="34622.html#34695">handle_sprite_types_15_17_2</a></td>
+<td class="comment-1" rowspan="1">Then skip ahead</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34692"></span>8784</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Did center reach end 1?</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34693"></span>8785</td>
+<td class="instruction">CP (HL)</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34694"></span>8786</td>
+<td class="instruction">RET NZ</td>
+<td class="comment-1" rowspan="1">If not, return to <a href="35393.html">return_from_sprite_handler</a></td>
+</tr>
+<tr>
+<td class="asm-label">handle_sprite_types_15_17_2</td>
+<td class="address-2"><span id="34695"></span>8787</td>
+<td class="instruction">LD A,(IX+$03)</td>
+<td class="comment-1" rowspan="1">Switch direction</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34698"></span>878A</td>
+<td class="instruction">NEG</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34700"></span>878C</td>
+<td class="instruction">LD (IX+$03),A</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34703"></span>878F</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return to <a href="35393.html">return_from_sprite_handler</a></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="34572.html">870C</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#34622">Map</a></td>
+<td class="next">
+Next: <a href="34704.html">8790</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

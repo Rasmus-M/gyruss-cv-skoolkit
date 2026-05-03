@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at AF6B</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="44692.html">AE94</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#44907">Map</a></td>
+<td class="next">
+Next: <a href="44974.html">AFAE</a>
+</td>
+</tr>
+</table>
+<div class="description">AF6B: Rotate pattern</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Take a pattern pointed to by <a href="29406.html">pattern_address</a> and rotate it left 90 degrees. Returns address of rotate pattern in <a href="29406.html">pattern_address</a>. Used by the routine at <a href="44692.html">upload_sprite_patterns</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">rotate</td>
+<td class="address-2"><span id="44907"></span>AF6B</td>
+<td class="instruction">LD HL,(<a href="29406.html">pattern_address</a>)</td>
+<td class="comment-1" rowspan="1">HL = source address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44910"></span>AF6E</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Copy source into IY</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44911"></span>AF6F</td>
+<td class="instruction">POP IY</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44913"></span>AF71</td>
+<td class="instruction">LD DE,$0008</td>
+<td class="comment-1" rowspan="1">HL = destination address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44916"></span>AF74</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44917"></span>AF75</td>
+<td class="instruction">LD (<a href="29406.html">pattern_address</a>),HL</td>
+<td class="comment-1" rowspan="1">Store destination</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44920"></span>AF78</td>
+<td class="instruction">LD B,$08</td>
+<td class="comment-1" rowspan="1">8 bytes in pattern</td>
+</tr>
+<tr>
+<td class="asm-label">rotate_0</td>
+<td class="address-2"><span id="44922"></span>AF7A</td>
+<td class="instruction">RL (IY+$00)</td>
+<td class="comment-1" rowspan="1">Shift bit 7 of source byte 0 into carry</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44926"></span>AF7E</td>
+<td class="instruction">RR (HL)</td>
+<td class="comment-1" rowspan="1">Shift carry into bit 7 of destination byte</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44928"></span>AF80</td>
+<td class="instruction">RL (IY+$01)</td>
+<td class="comment-1" rowspan="1">x2</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44932"></span>AF84</td>
+<td class="instruction">RR (HL)</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44934"></span>AF86</td>
+<td class="instruction">RL (IY+$02)</td>
+<td class="comment-1" rowspan="1">x3</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44938"></span>AF8A</td>
+<td class="instruction">RR (HL)</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44940"></span>AF8C</td>
+<td class="instruction">RL (IY+$03)</td>
+<td class="comment-1" rowspan="1">x4</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44944"></span>AF90</td>
+<td class="instruction">RR (HL)</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44946"></span>AF92</td>
+<td class="instruction">RL (IY+$04)</td>
+<td class="comment-1" rowspan="1">x5</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44950"></span>AF96</td>
+<td class="instruction">RR (HL)</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44952"></span>AF98</td>
+<td class="instruction">RL (IY+$05)</td>
+<td class="comment-1" rowspan="1">x6</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44956"></span>AF9C</td>
+<td class="instruction">RR (HL)</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44958"></span>AF9E</td>
+<td class="instruction">RL (IY+$06)</td>
+<td class="comment-1" rowspan="1">x7</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44962"></span>AFA2</td>
+<td class="instruction">RR (HL)</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44964"></span>AFA4</td>
+<td class="instruction">RL (IY+$07)</td>
+<td class="comment-1" rowspan="1">x8</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44968"></span>AFA8</td>
+<td class="instruction">RR (HL)</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44970"></span>AFAA</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Next destination</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44971"></span>AFAB</td>
+<td class="instruction">DJNZ <a href="44907.html#44922">rotate_0</a></td>
+<td class="comment-1" rowspan="1">Repeat 8 times</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44973"></span>AFAD</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="44692.html">AE94</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#44907">Map</a></td>
+<td class="next">
+Next: <a href="44974.html">AFAE</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at 88F3</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="35028.html">88D4</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#35059">Map</a></td>
+<td class="next">
+Next: <a href="35070.html">88FE</a>
+</td>
+</tr>
+</table>
+<div class="description">88F3: Enemy movement: Counter is $41</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="35028.html">L88D4</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">L88F3</td>
+<td class="address-2"><span id="35059"></span>88F3</td>
+<td class="instruction">INC (IX+$01)</td>
+<td class="comment-1" rowspan="1">Increment polar y</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35062"></span>88F6</td>
+<td class="instruction">LD (IX+$00),$0E</td>
+<td class="comment-1" rowspan="1">Set type to enemy</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35066"></span>88FA</td>
+<td class="instruction">INC (IX+$05)</td>
+<td class="comment-1" rowspan="1">Mark for pattern reload</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35069"></span>88FD</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return to <a href="35393.html">return_from_sprite_handler</a></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="35028.html">88D4</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#35059">Map</a></td>
+<td class="next">
+Next: <a href="35070.html">88FE</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

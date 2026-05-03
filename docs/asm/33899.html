@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at 846B</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="33872.html">8450</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#33899">Map</a></td>
+<td class="next">
+Next: <a href="33969.html">84B1</a>
+</td>
+</tr>
+</table>
+<div class="description">846B: Perfect bonus</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="33833.html">display_bonus</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">perfect_bonus</td>
+<td class="address-2"><span id="33899"></span>846B</td>
+<td class="instruction">LD A,$02</td>
+<td class="comment-1" rowspan="1">Play a tune</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33901"></span>846D</td>
+<td class="instruction">CALL <a href="40593.html">call_play_tune</a></td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33904"></span>8470</td>
+<td class="instruction">LD HL,<a href="34233.html">congratulations_msg</a></td>
+<td class="comment-1" rowspan="1">Display CONGRATULATIONS</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33907"></span>8473</td>
+<td class="instruction">LD DE,$1928</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33910"></span>8476</td>
+<td class="instruction">LD BC,$0010</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33913"></span>8479</td>
+<td class="instruction">RST $38</td>
+<td class="comment-1" rowspan="1">WRITE_VRAM</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33914"></span>847A</td>
+<td class="instruction">LD HL,<a href="34249.html">perfect_msg</a></td>
+<td class="comment-1" rowspan="1">Display PERFECT 10000 PTS</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33917"></span>847D</td>
+<td class="instruction">LD DE,$19C6</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33920"></span>8480</td>
+<td class="instruction">LD BC,$0014</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33923"></span>8483</td>
+<td class="instruction">RST $38</td>
+<td class="comment-1" rowspan="1">WRITE_VRAM</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33924"></span>8484</td>
+<td class="instruction">LD B,$64</td>
+<td class="comment-1" rowspan="1">100 times</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="33926"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="33872.html">display_hits</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">perfect_bonus_0</td>
+<td class="address-2"><span id="33926"></span>8486</td>
+<td class="instruction">LD HL,$0100</td>
+<td class="comment-1" rowspan="1">100 points</td>
+</tr>
+<tr>
+<td class="asm-label">perfect_bonus_1</td>
+<td class="address-2"><span id="33929"></span>8489</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33930"></span>848A</td>
+<td class="instruction">PUSH BC</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33931"></span>848B</td>
+<td class="instruction">CALL <a href="42732.html">add_score</a></td>
+<td class="comment-1" rowspan="1">Add 100 points to score</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33934"></span>848E</td>
+<td class="instruction">LD A,(<a href="29169.html">current_player</a>)</td>
+<td class="comment-1" rowspan="1">Current player</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33937"></span>8491</td>
+<td class="instruction">CALL <a href="42649.html">display_score</a></td>
+<td class="comment-1" rowspan="1">Display score</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33940"></span>8494</td>
+<td class="instruction">LD B,$07</td>
+<td class="comment-1" rowspan="1">7 frames</td>
+</tr>
+<tr>
+<td class="asm-label">perfect_bonus_2</td>
+<td class="address-2"><span id="33942"></span>8496</td>
+<td class="instruction">HALT</td>
+<td class="comment-1" rowspan="1">Wait for interrupt</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33943"></span>8497</td>
+<td class="instruction">PUSH BC</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33944"></span>8498</td>
+<td class="instruction">CALL <a href="45055.html">display_stars</a></td>
+<td class="comment-1" rowspan="1">Display stars</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33947"></span>849B</td>
+<td class="instruction">CALL <a href="42812.html">control_ship</a></td>
+<td class="comment-1" rowspan="1">Control ship</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33950"></span>849E</td>
+<td class="instruction">CALL <a href="34278.html">process_sprites</a></td>
+<td class="comment-1" rowspan="1">Process sprites</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33953"></span>84A1</td>
+<td class="instruction">CALL <a href="43890.html">display_center_enemies</a></td>
+<td class="comment-1" rowspan="1">Display center enemies</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33956"></span>84A4</td>
+<td class="instruction">CALL <a href="33969.html">next_frame_upl_sprites</a></td>
+<td class="comment-1" rowspan="1">Upload sprites</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33959"></span>84A7</td>
+<td class="instruction">POP BC</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33960"></span>84A8</td>
+<td class="instruction">DJNZ <a href="33899.html#33942">perfect_bonus_2</a></td>
+<td class="comment-1" rowspan="1">Loop 7 times</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33962"></span>84AA</td>
+<td class="instruction">POP BC</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33963"></span>84AB</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33964"></span>84AC</td>
+<td class="instruction">DJNZ <a href="33899.html#33929">perfect_bonus_1</a></td>
+<td class="comment-1" rowspan="1">Loop number of ships times</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33966"></span>84AE</td>
+<td class="instruction">JP <a href="33578.html#33596">stage_completed_0</a></td>
+<td class="comment-1" rowspan="1">Jump back to complete stage</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="33872.html">8450</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#33899">Map</a></td>
+<td class="next">
+Next: <a href="33969.html">84B1</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

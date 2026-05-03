@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at 89EB</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="35230.html">899E</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#35307">Map</a></td>
+<td class="next">
+Next: <a href="35373.html">8A2D</a>
+</td>
+</tr>
+</table>
+<div class="description">89EB: Circular enemy movement: Move sprite along path</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="35230.html">handle_sprite_types_18_1C</a>. Identical to code at <a href="35126.html">move_animate_sprite_along_path</a>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">move_sprite_along_path</td>
+<td class="address-2"><span id="35307"></span>89EB</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Get path byte</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35308"></span>89EC</td>
+<td class="instruction">LD HL,(<a href="29277.html">wave_data_address</a>)</td>
+<td class="comment-1" rowspan="1">Get wave data address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35311"></span>89EF</td>
+<td class="instruction">BIT 0,(IX+$03)</td>
+<td class="comment-1" rowspan="1">If bit 0 of counter is reset</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35315"></span>89F3</td>
+<td class="instruction">JR Z,<a href="35307.html#35318">move_sprite_along_path_0</a></td>
+<td class="comment-1" rowspan="1">Then skip moving to next byte</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35317"></span>89F5</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Else move to next byte</td>
+</tr>
+<tr>
+<td class="asm-label">move_sprite_along_path_0</td>
+<td class="address-2"><span id="35318"></span>89F6</td>
+<td class="instruction">BIT 7,(HL)</td>
+<td class="comment-1" rowspan="1">Is bit 7 reset</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35320"></span>89F8</td>
+<td class="instruction">JR Z,<a href="35307.html#35334">move_sprite_along_path_1</a></td>
+<td class="comment-1" rowspan="1">Then skip ahead</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35322"></span>89FA</td>
+<td class="instruction">AND $0F</td>
+<td class="comment-1" rowspan="1">Isolate bits 0-3</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35324"></span>89FC</td>
+<td class="instruction">CP $01</td>
+<td class="comment-1" rowspan="1">If 1 (inc polar y)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35326"></span>89FE</td>
+<td class="instruction">JR Z,<a href="35307.html#35334">move_sprite_along_path_1</a></td>
+<td class="comment-1" rowspan="1">Then skip ahead</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35328"></span>8A00</td>
+<td class="instruction">CP $04</td>
+<td class="comment-1" rowspan="1">If 4 (dec polar y)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35330"></span>8A02</td>
+<td class="instruction">JR Z,<a href="35307.html#35334">move_sprite_along_path_1</a></td>
+<td class="comment-1" rowspan="1">Then skip ahead</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35332"></span>8A04</td>
+<td class="instruction">XOR $0A</td>
+<td class="comment-1" rowspan="1">Else flip bits 1 and 3</td>
+</tr>
+<tr>
+<td class="asm-label">move_sprite_along_path_1</td>
+<td class="address-2"><span id="35334"></span>8A06</td>
+<td class="instruction">LD E,(IX+$02)</td>
+<td class="comment-1" rowspan="1">Get polar x</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35337"></span>8A09</td>
+<td class="instruction">LD D,(IX+$01)</td>
+<td class="comment-1" rowspan="1">Get polar y</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="35340"></span>
+<div class="comments">
+<div class="paragraph">
+Identical to code at <a href="35126.html#35162">895A</a> except doesn't set sprite type
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35340"></span>8A0C</td>
+<td class="instruction">BIT 0,A</td>
+<td class="comment-1" rowspan="1">If bit for incrementing polar y is reset</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35342"></span>8A0E</td>
+<td class="instruction">JR Z,<a href="35307.html#35345">move_sprite_along_path_2</a></td>
+<td class="comment-1" rowspan="1">Then skip next</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35344"></span>8A10</td>
+<td class="instruction">INC D</td>
+<td class="comment-1" rowspan="1">Increment polar y</td>
+</tr>
+<tr>
+<td class="asm-label">move_sprite_along_path_2</td>
+<td class="address-2"><span id="35345"></span>8A11</td>
+<td class="instruction">BIT 2,A</td>
+<td class="comment-1" rowspan="1">If bit for decrementing polar y is reset</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35347"></span>8A13</td>
+<td class="instruction">JR Z,<a href="35307.html#35350">move_sprite_along_path_3</a></td>
+<td class="comment-1" rowspan="1">Then skip next</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35349"></span>8A15</td>
+<td class="instruction">DEC D</td>
+<td class="comment-1" rowspan="1">Decrement polar y</td>
+</tr>
+<tr>
+<td class="asm-label">move_sprite_along_path_3</td>
+<td class="address-2"><span id="35350"></span>8A16</td>
+<td class="instruction">BIT 1,A</td>
+<td class="comment-1" rowspan="1">If bit for decrementing polar x is reset</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35352"></span>8A18</td>
+<td class="instruction">JR Z,<a href="35307.html#35355">move_sprite_along_path_4</a></td>
+<td class="comment-1" rowspan="1">Then skip next</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35354"></span>8A1A</td>
+<td class="instruction">DEC E</td>
+<td class="comment-1" rowspan="1">Decrement polar x</td>
+</tr>
+<tr>
+<td class="asm-label">move_sprite_along_path_4</td>
+<td class="address-2"><span id="35355"></span>8A1B</td>
+<td class="instruction">BIT 3,A</td>
+<td class="comment-1" rowspan="1">If bit for incrementing polar x is reset</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35357"></span>8A1D</td>
+<td class="instruction">JR Z,<a href="35307.html#35360">move_sprite_along_path_5</a></td>
+<td class="comment-1" rowspan="1">Then skip next</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35359"></span>8A1F</td>
+<td class="instruction">INC E</td>
+<td class="comment-1" rowspan="1">Increment polar x</td>
+</tr>
+<tr>
+<td class="asm-label">move_sprite_along_path_5</td>
+<td class="address-2"><span id="35360"></span>8A20</td>
+<td class="instruction">LD (IX+$01),D</td>
+<td class="comment-1" rowspan="1">Set polar y</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35363"></span>8A23</td>
+<td class="instruction">LD A,E</td>
+<td class="comment-1" rowspan="1">Polar x</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35364"></span>8A24</td>
+<td class="instruction">AND $3F</td>
+<td class="comment-1" rowspan="1">Mod 64</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35366"></span>8A26</td>
+<td class="instruction">LD (IX+$02),A</td>
+<td class="comment-1" rowspan="1">Set polar x</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35369"></span>8A29</td>
+<td class="instruction">INC (IX+$05)</td>
+<td class="comment-1" rowspan="1">Mark for pattern reload</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35372"></span>8A2C</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return to <a href="35393.html">return_from_sprite_handler</a></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="35230.html">899E</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#35307">Map</a></td>
+<td class="next">
+Next: <a href="35373.html">8A2D</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at AFC2</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="44974.html">AFAE</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#44994">Map</a></td>
+<td class="next">
+Next: <a href="45021.html">AFDD</a>
+</td>
+</tr>
+</table>
+<div class="description">AFC2: Flip pattern horizontally</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Take a pattern pointed to by <a href="29406.html">pattern_address</a> and flip it horizontally (mirrored). Returns address of result in <a href="29406.html">pattern_address</a>. Used by the routine at <a href="44692.html">upload_sprite_patterns</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">flip_horizontal</td>
+<td class="address-2"><span id="44994"></span>AFC2</td>
+<td class="instruction">LD DE,(<a href="29406.html">pattern_address</a>)</td>
+<td class="comment-1" rowspan="1">DE = source address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44998"></span>AFC6</td>
+<td class="instruction">LD HL,$0008</td>
+<td class="comment-1" rowspan="1">HL = destination address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45001"></span>AFC9</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45002"></span>AFCA</td>
+<td class="instruction">LD (<a href="29406.html">pattern_address</a>),HL</td>
+<td class="comment-1" rowspan="1">Store destination</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45005"></span>AFCD</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">HL = source, DE = destination</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45006"></span>AFCE</td>
+<td class="instruction">LD B,$08</td>
+<td class="comment-1" rowspan="1">8 bytes in pattern</td>
+</tr>
+<tr>
+<td class="asm-label">flip_horizontal_0</td>
+<td class="address-2"><span id="45008"></span>AFD0</td>
+<td class="instruction">LD A,$80</td>
+<td class="comment-1" rowspan="1">Result starts with 10000000</td>
+</tr>
+<tr>
+<td class="asm-label">flip_horizontal_1</td>
+<td class="address-2"><span id="45010"></span>AFD2</td>
+<td class="instruction">RL (HL)</td>
+<td class="comment-1" rowspan="1">Shift source byte left, bit 7 to carry</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45012"></span>AFD4</td>
+<td class="instruction">RRA</td>
+<td class="comment-1" rowspan="1">Shift right, carry to bit 7, bit 0 to carry</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45013"></span>AFD5</td>
+<td class="instruction">JR NC,<a href="44994.html#45010">flip_horizontal_1</a></td>
+<td class="comment-1" rowspan="1">Repeat until bit 7 reaches carry (8 times)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45015"></span>AFD7</td>
+<td class="instruction">LD (DE),A</td>
+<td class="comment-1" rowspan="1">Store result</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45016"></span>AFD8</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Next destination</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45017"></span>AFD9</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Next source</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45018"></span>AFDA</td>
+<td class="instruction">DJNZ <a href="44994.html#45008">flip_horizontal_0</a></td>
+<td class="comment-1" rowspan="1">Repeat 8 times</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45020"></span>AFDC</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="44974.html">AFAE</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#44994">Map</a></td>
+<td class="next">
+Next: <a href="45021.html">AFDD</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

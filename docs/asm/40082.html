@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at 9C92</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="40062.html">9C7E</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#40082">Map</a></td>
+<td class="next">
+Next: <a href="40096.html">9CA0</a>
+</td>
+</tr>
+</table>
+<div class="description">9C92: Handle relative jump</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routines at <a href="39928.html">L9BF8</a> and <a href="40006.html">L9C46</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">update_counter_and_loop</td>
+<td class="address-2"><span id="40082"></span>9C92</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">Save tune byte</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40083"></span>9C93</td>
+<td class="instruction">LD A,(IX+$09)</td>
+<td class="comment-1" rowspan="1">Get countdown</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40086"></span>9C96</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="1">Was it zero?</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40087"></span>9C97</td>
+<td class="instruction">JR Z,<a href="40096.html">relative_jump</a></td>
+<td class="comment-1" rowspan="1">Then set it and make relative jump</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40089"></span>9C99</td>
+<td class="instruction">DEC (IX+$09)</td>
+<td class="comment-1" rowspan="1">Else decrement countdown</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40092"></span>9C9C</td>
+<td class="instruction">JR NZ,<a href="40096.html#40099">relative_jump_0</a></td>
+<td class="comment-1" rowspan="1">If not zero then make relative jump</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40094"></span>9C9E</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Else next tune address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40095"></span>9C9F</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="40062.html">9C7E</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#40082">Map</a></td>
+<td class="next">
+Next: <a href="40096.html">9CA0</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

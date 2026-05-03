@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at 8139</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="33000.html">80E8</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#33081">Map</a></td>
+<td class="next">
+Next: <a href="33136.html">8170</a>
+</td>
+</tr>
+</table>
+<div class="description">8139: Died</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="33000.html">main_loop</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">died</td>
+<td class="address-2"><span id="33081"></span>8139</td>
+<td class="instruction">CALL <a href="39815.html">stop_tune</a></td>
+<td class="comment-1" rowspan="1">Stop tune</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33084"></span>813C</td>
+<td class="instruction">LD A,$03</td>
+<td class="comment-1" rowspan="1">Play explosion sound</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33086"></span>813E</td>
+<td class="instruction">CALL <a href="40611.html">call_play_sound</a></td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33089"></span>8141</td>
+<td class="instruction">LD HL,<a href="29163.html">status_flags</a></td>
+<td class="comment-1" rowspan="1">Reset main loop flag</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33092"></span>8144</td>
+<td class="instruction">RES 6,(HL)</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33094"></span>8146</td>
+<td class="instruction">CALL $1FDC</td>
+<td class="comment-1" rowspan="1">READ_REGISTER</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33097"></span>8149</td>
+<td class="instruction">CALL <a href="35558.html">reset_enemy_sprite_types</a></td>
+<td class="comment-1" rowspan="1">Update sprite types $0F - $11</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33100"></span>814C</td>
+<td class="instruction">CALL <a href="41953.html">explode</a></td>
+<td class="comment-1" rowspan="1">Explosion</td>
+</tr>
+<tr>
+<td class="asm-label">died_0</td>
+<td class="address-2"><span id="33103"></span>814F</td>
+<td class="instruction">LD A,(<a href="29228.html">active_enemies</a>)</td>
+<td class="comment-1" rowspan="1">Get active enemies</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33106"></span>8152</td>
+<td class="instruction">OR A</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33107"></span>8153</td>
+<td class="instruction">JR NZ,<a href="33081.html#33118">died_1</a></td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33109"></span>8155</td>
+<td class="instruction">LD A,(<a href="29190.html">total_enemies</a>)</td>
+<td class="comment-1" rowspan="1">Get total enemies</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33112"></span>8158</td>
+<td class="instruction">LD HL,<a href="29227.html">center_map_entries</a></td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33115"></span>815B</td>
+<td class="instruction">CP (HL)</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33116"></span>815C</td>
+<td class="instruction">JR Z,<a href="33136.html">lose_life</a></td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label">died_1</td>
+<td class="address-2"><span id="33118"></span>815E</td>
+<td class="instruction">HALT</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33119"></span>815F</td>
+<td class="instruction">CALL <a href="45055.html">display_stars</a></td>
+<td class="comment-1" rowspan="1">Display stars</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33122"></span>8162</td>
+<td class="instruction">CALL <a href="34278.html">process_sprites</a></td>
+<td class="comment-1" rowspan="1">Process sprites</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33125"></span>8165</td>
+<td class="instruction">CALL <a href="36397.html">create_or_display_mines</a></td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33128"></span>8168</td>
+<td class="instruction">CALL <a href="43890.html">display_center_enemies</a></td>
+<td class="comment-1" rowspan="1">Display center enemies</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33131"></span>816B</td>
+<td class="instruction">CALL <a href="33969.html">next_frame_upl_sprites</a></td>
+<td class="comment-1" rowspan="1">Upload sprites</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33134"></span>816E</td>
+<td class="instruction">JR <a href="33081.html#33103">died_0</a></td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="33000.html">80E8</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#33081">Map</a></td>
+<td class="next">
+Next: <a href="33136.html">8170</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

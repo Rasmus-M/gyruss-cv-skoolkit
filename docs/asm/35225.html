@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at 8999</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="35220.html">8994</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#35225">Map</a></td>
+<td class="next">
+Next: <a href="35230.html">899E</a>
+</td>
+</tr>
+</table>
+<div class="description">8999: Enemy movement: Set sprite flags to $40</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="35070.html">update_sprite_path</a>.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Sprite data</td>
+</tr>
+<tr>
+<td class="register">HL</td>
+<td class="register-desc">Path address</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">set_sprite_flags_to_40</td>
+<td class="address-2"><span id="35225"></span>8999</td>
+<td class="instruction">LD (IX+$07),$40</td>
+<td class="comment-1" rowspan="1">Set flags</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35229"></span>899D</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return to <a href="35393.html">return_from_sprite_handler</a></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="35220.html">8994</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#35225">Map</a></td>
+<td class="next">
+Next: <a href="35230.html">899E</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

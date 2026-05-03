@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at AB38</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="43761.html">AAF1</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#43832">Map</a></td>
+<td class="next">
+Next: <a href="43859.html">AB53</a>
+</td>
+</tr>
+</table>
+<div class="description">AB38: Sprite coordinates from map</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Returns polar sprite coordinates from an entry in the map. Used by the routines at <a href="34773.html#34805">create_map_entry_for_sprite_1</a>, <a href="39009.html">handle_shot_collision</a>, <a href="43761.html#43799">create_sprite_from_map_entry_1</a> and <a href="43890.html">display_center_enemies</a>.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">HL</td>
+<td class="register-desc">Map address</td>
+</tr>
+</table>
+<table class="output">
+<tr class="asm-output-header">
+<th colspan="2">Output</th>
+</tr>
+<tr>
+<td class="register">D</td>
+<td class="register-desc">Polar y</td>
+</tr>
+<tr>
+<td class="register">E</td>
+<td class="register-desc">Polar x</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">polar_coord_from_map</td>
+<td class="address-2"><span id="43832"></span>AB38</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Save map address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43833"></span>AB39</td>
+<td class="instruction">LD DE,<a href="29191.html">center_enemy_map</a></td>
+<td class="comment-1" rowspan="1">Base address of map</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43836"></span>AB3C</td>
+<td class="instruction">OR A</td>
+<td class="comment-1" rowspan="1">Clear carry</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43837"></span>AB3D</td>
+<td class="instruction">SBC HL,DE</td>
+<td class="comment-1" rowspan="1">Map address - map base (offset 0 - 35)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43839"></span>AB3F</td>
+<td class="instruction">ADD HL,HL</td>
+<td class="comment-1" rowspan="1">x2 = offset</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43840"></span>AB40</td>
+<td class="instruction">LD DE,<a href="44167.html">start_coordinates_table</a></td>
+<td class="comment-1" rowspan="1">Table address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43843"></span>AB43</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Add offset</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43844"></span>AB44</td>
+<td class="instruction">LD A,(<a href="29396.html">x_counter</a>)</td>
+<td class="comment-1" rowspan="1">Get x counter</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43847"></span>AB47</td>
+<td class="instruction">ADD A,(HL)</td>
+<td class="comment-1" rowspan="1">Add table value</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43848"></span>AB48</td>
+<td class="instruction">AND $3F</td>
+<td class="comment-1" rowspan="1">Mod 64</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43850"></span>AB4A</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">Store in E</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43851"></span>AB4B</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Next table address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43852"></span>AB4C</td>
+<td class="instruction">LD A,(<a href="29395.html">y_counter</a>)</td>
+<td class="comment-1" rowspan="1">Get y counter</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43855"></span>AB4F</td>
+<td class="instruction">ADD A,(HL)</td>
+<td class="comment-1" rowspan="1">Add table value</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43856"></span>AB50</td>
+<td class="instruction">LD D,A</td>
+<td class="comment-1" rowspan="1">Store in D</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43857"></span>AB51</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore map address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43858"></span>AB52</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="43761.html">AAF1</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#43832">Map</a></td>
+<td class="next">
+Next: <a href="43859.html">AB53</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

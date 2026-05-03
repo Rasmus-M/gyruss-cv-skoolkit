@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at 84DB</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="33995.html">84CB</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#34011">Map</a></td>
+<td class="next">
+Next: <a href="34029.html">84ED</a>
+</td>
+</tr>
+</table>
+<div class="description">84DB: Get stage data address</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routines at <a href="34936.html">L8878</a>, <a href="35411.html">all_sprites_processed</a>, <a href="35446.html">create_enemy_shot</a>, <a href="35944.html">handle_wave_outcoming</a>, <a href="36176.html">create_laser_fence_or_meteor</a>, <a href="36509.html">create_mines</a>, <a href="36878.html">L900E</a> and <a href="43761.html">create_sprite_from_map_entry</a>.
+</div>
+</div>
+<table class="output">
+<tr class="asm-output-header">
+<th colspan="2">Output</th>
+</tr>
+<tr>
+<td class="register">IY</td>
+<td class="register-desc">Stage data address</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">stage_data_addr</td>
+<td class="address-2"><span id="34011"></span>84DB</td>
+<td class="instruction">PUSH DE</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34012"></span>84DC</td>
+<td class="instruction">LD A,(<a href="29187.html">stage_data_index</a>)</td>
+<td class="comment-1" rowspan="1">Get value (0 - 6)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34015"></span>84DF</td>
+<td class="instruction">ADD A,A</td>
+<td class="comment-1" rowspan="1">Multiply by 8</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34016"></span>84E0</td>
+<td class="instruction">ADD A,A</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34017"></span>84E1</td>
+<td class="instruction">ADD A,A</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34018"></span>84E2</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">Add <a href="34113.html">stage_data_table</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34019"></span>84E3</td>
+<td class="instruction">LD D,$00</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34021"></span>84E5</td>
+<td class="instruction">LD IY,<a href="34113.html">stage_data_table</a></td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34025"></span>84E9</td>
+<td class="instruction">ADD IY,DE</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34027"></span>84EB</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34028"></span>84EC</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="33995.html">84CB</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#34011">Map</a></td>
+<td class="next">
+Next: <a href="34029.html">84ED</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at 8878</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="34911.html">885F</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#34936">Map</a></td>
+<td class="next">
+Next: <a href="34983.html">88A7</a>
+</td>
+</tr>
+</table>
+<div class="description">8878: Enemy movement: Polar Y of enemy &lt; $22</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="34911.html">L885F</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">L8878</td>
+<td class="address-2"><span id="34936"></span>8878</td>
+<td class="instruction">LD A,(<a href="29166.html">sprite_countdown</a>)</td>
+<td class="comment-1" rowspan="1">Get sprite countdown</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34939"></span>887B</td>
+<td class="instruction">OR A</td>
+<td class="comment-1" rowspan="1">Return if not zero</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34940"></span>887C</td>
+<td class="instruction">RET NZ</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34941"></span>887D</td>
+<td class="instruction">LD A,(IX+$03)</td>
+<td class="comment-1" rowspan="1">Get counter</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34944"></span>8880</td>
+<td class="instruction">CP $40</td>
+<td class="comment-1" rowspan="1">If &gt;= $40</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34946"></span>8882</td>
+<td class="instruction">JR NC,<a href="35028.html">L88D4</a></td>
+<td class="comment-1" rowspan="1">Then jump to ...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34948"></span>8884</td>
+<td class="instruction">CALL <a href="34011.html">stage_data_addr</a></td>
+<td class="comment-1" rowspan="1">Get stage data address in IY</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34951"></span>8887</td>
+<td class="instruction">RST $20</td>
+<td class="comment-1" rowspan="1">Random number</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34952"></span>8888</td>
+<td class="instruction">AND (IY+$03)</td>
+<td class="comment-1" rowspan="1">AND stage data byte 3 ($3F, $1F, $0F)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34955"></span>888B</td>
+<td class="instruction">JR NZ,<a href="34983.html">L88A7</a></td>
+<td class="comment-1" rowspan="1">If not all zeros, then jump (more likely on earlier stages)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34957"></span>888D</td>
+<td class="instruction">DEC (IX+$01)</td>
+<td class="comment-1" rowspan="1">Decrement polar y</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34960"></span>8890</td>
+<td class="instruction">LD A,(IX+$01)</td>
+<td class="comment-1" rowspan="1">Get polar y</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34963"></span>8893</td>
+<td class="instruction">CP $08</td>
+<td class="comment-1" rowspan="1">If it's 8</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34965"></span>8895</td>
+<td class="instruction">JR Z,<a href="35006.html#35023">L88BE_0</a></td>
+<td class="comment-1" rowspan="1">Then jump ahead</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34967"></span>8897</td>
+<td class="instruction">RST $20</td>
+<td class="comment-1" rowspan="1">Random number</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34968"></span>8898</td>
+<td class="instruction">AND $0F</td>
+<td class="comment-1" rowspan="1">0 - 15</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34970"></span>889A</td>
+<td class="instruction">JR NZ,<a href="35006.html">L88BE</a></td>
+<td class="comment-1" rowspan="1">If it's not 0 then jump ahead</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="34972"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="35006.html">L88BE</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">L8878_0</td>
+<td class="address-2"><span id="34972"></span>889C</td>
+<td class="instruction">LD A,($7004)</td>
+<td class="comment-1" rowspan="1">Ship polar x</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34975"></span>889F</td>
+<td class="instruction">CALL <a href="35520.html">move_towards_x</a></td>
+<td class="comment-1" rowspan="1">Move towards x</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34978"></span>88A2</td>
+<td class="instruction">INC B</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34979"></span>88A3</td>
+<td class="instruction">LD (IX+$03),B</td>
+<td class="comment-1" rowspan="1">Set counter</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34982"></span>88A6</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return to <a href="35393.html">return_from_sprite_handler</a></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="34911.html">885F</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#34936">Map</a></td>
+<td class="next">
+Next: <a href="34983.html">88A7</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

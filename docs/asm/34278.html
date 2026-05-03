@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at 85E6</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="34269.html">85DD</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#34278">Map</a></td>
+<td class="next">
+Next: <a href="34388.html">8654</a>
+</td>
+</tr>
+</table>
+<div class="description">85E6: Process sprites</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routines at <a href="32804.html">entry</a>, <a href="33081.html">died</a>, <a href="33578.html">stage_completed</a>, <a href="33578.html">stage_completed</a>, <a href="33899.html">perfect_bonus</a> and <a href="41953.html">explode</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">process_sprites</td>
+<td class="address-2"><span id="34278"></span>85E6</td>
+<td class="instruction">LD HL,<a href="29166.html">sprite_countdown</a></td>
+<td class="comment-1" rowspan="1">Decrement counter 1</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34281"></span>85E9</td>
+<td class="instruction">DEC (HL)</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34282"></span>85EA</td>
+<td class="instruction">LD HL,<a href="29280.html">sprite_countdown_2</a></td>
+<td class="comment-1" rowspan="1">Decrement counter 2</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34285"></span>85ED</td>
+<td class="instruction">DEC (HL)</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34286"></span>85EE</td>
+<td class="instruction">LD A,(<a href="29167.html">countdown_at_shoot</a>)</td>
+<td class="comment-1" rowspan="1">Decrement counter stopping at 0</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34289"></span>85F1</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34290"></span>85F2</td>
+<td class="instruction">JP M,<a href="34278.html#34296">process_sprites_0</a></td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34293"></span>85F5</td>
+<td class="instruction">LD (<a href="29167.html">countdown_at_shoot</a>),A</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label">process_sprites_0</td>
+<td class="address-2"><span id="34296"></span>85F8</td>
+<td class="instruction">LD HL,<a href="29270.html">other_flags</a></td>
+<td class="comment-1" rowspan="1">Flags</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34299"></span>85FB</td>
+<td class="instruction">RES 4,(HL)</td>
+<td class="comment-1" rowspan="1">Reset laser fence flag</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34301"></span>85FD</td>
+<td class="instruction">LD HL,$7185</td>
+<td class="comment-1" rowspan="1">Table address <a href="29059.html">sprite_allocation_table</a>+2 (skip ship sprites)</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="34304"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="35393.html">return_from_sprite_handler</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">process_sprites_1</td>
+<td class="address-2"><span id="34304"></span>8600</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Save table address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34305"></span>8601</td>
+<td class="instruction">LD DE,<a href="29059.html">sprite_allocation_table</a></td>
+<td class="comment-1" rowspan="1">Sprite allocation table</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34308"></span>8604</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">Clear carry</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34309"></span>8605</td>
+<td class="instruction">SBC HL,DE</td>
+<td class="comment-1" rowspan="1">HL = offset into table</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34311"></span>8607</td>
+<td class="instruction">LD A,(<a href="29058.html">allocated_sprites</a>)</td>
+<td class="comment-1" rowspan="1">Allocated sprites</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34314"></span>860A</td>
+<td class="instruction">CP L</td>
+<td class="comment-1" rowspan="1">Compare to offset</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34315"></span>860B</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore table address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34316"></span>860C</td>
+<td class="instruction">JP Z,<a href="35411.html">all_sprites_processed</a></td>
+<td class="comment-1" rowspan="1">Jump when we have reached the last allocation</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34319"></span>860F</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Push allocation table address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34320"></span>8610</td>
+<td class="instruction">LD L,(HL)</td>
+<td class="comment-1" rowspan="1">Get sprite data table index</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34321"></span>8611</td>
+<td class="instruction">LD H,$00</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34323"></span>8613</td>
+<td class="instruction">ADD HL,HL</td>
+<td class="comment-1" rowspan="1">Multiply by 4</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34324"></span>8614</td>
+<td class="instruction">ADD HL,HL</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34325"></span>8615</td>
+<td class="instruction">LD D,H</td>
+<td class="comment-1" rowspan="1">Store in DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34326"></span>8616</td>
+<td class="instruction">LD E,L</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34327"></span>8617</td>
+<td class="instruction">ADD HL,HL</td>
+<td class="comment-1" rowspan="1">Multiplied by 8</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34328"></span>8618</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Multiplied by 12</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34329"></span>8619</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">DE = sprite data table offset</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34330"></span>861A</td>
+<td class="instruction">LD IX,<a href="28674.html">sprite_data</a></td>
+<td class="comment-1" rowspan="1">Base sprite data table address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34334"></span>861E</td>
+<td class="instruction">ADD IX,DE</td>
+<td class="comment-1" rowspan="1">IX = sprite data table address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34336"></span>8620</td>
+<td class="instruction">LD HL,<a href="35393.html">return_from_sprite_handler</a></td>
+<td class="comment-1" rowspan="1">Push return address of routine at <a href="35393.html">return_from_sprite_handler</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34339"></span>8623</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34340"></span>8624</td>
+<td class="instruction">LD A,(IX+$00)</td>
+<td class="comment-1" rowspan="1">Get sprite type</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34343"></span>8627</td>
+<td class="instruction">LD (IX+$05),A</td>
+<td class="comment-1" rowspan="1">Copy it to byte 5</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34346"></span>862A</td>
+<td class="instruction">CP $7F</td>
+<td class="comment-1" rowspan="1">Is it to be deallocated?</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34348"></span>862C</td>
+<td class="instruction">JP NZ,<a href="34394.html">handle_sprite_type_02</a></td>
+<td class="comment-1" rowspan="1">If not, jump ahead</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="34351"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routines at <a href="34388.html">deallocate_enemy</a>, <a href="34394.html#34419">handle_sprite_type_02_0</a>, <a href="34429.html">handle_sprite_types_04_0C</a> and <a href="34837.html">return_enemy_to_map</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">deallocate_sprite</td>
+<td class="address-2"><span id="34351"></span>862F</td>
+<td class="instruction">LD (IX+$00),$FF</td>
+<td class="comment-1" rowspan="1">Set as not allocated</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34355"></span>8633</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Pop return address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34356"></span>8634</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore allocation table address of sprite to be deallocated</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34357"></span>8635</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Push it again</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34358"></span>8636</td>
+<td class="instruction">LD DE,<a href="29059.html">sprite_allocation_table</a></td>
+<td class="comment-1" rowspan="1">Sprite allocation table</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34361"></span>8639</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">Clear carry</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34362"></span>863A</td>
+<td class="instruction">SBC HL,DE</td>
+<td class="comment-1" rowspan="1">HL = offset into table</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34364"></span>863C</td>
+<td class="instruction">LD A,(<a href="29058.html">allocated_sprites</a>)</td>
+<td class="comment-1" rowspan="1">Decrement number of allocated sprites</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34367"></span>863F</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34368"></span>8640</td>
+<td class="instruction">LD (<a href="29058.html">allocated_sprites</a>),A</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34371"></span>8643</td>
+<td class="instruction">SUB L</td>
+<td class="comment-1" rowspan="1">Allocated sprites - offset = number of allocations after this one</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34372"></span>8644</td>
+<td class="instruction">JR Z,<a href="34278.html#34384">process_sprites_2</a></td>
+<td class="comment-1" rowspan="1">If it was the last one, there's nothing to do</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34374"></span>8646</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">BC = number of allocations to move</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34375"></span>8647</td>
+<td class="instruction">LD B,$00</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34377"></span>8649</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="1">DE = allocation table address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34378"></span>864A</td>
+<td class="instruction">PUSH DE</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34379"></span>864B</td>
+<td class="instruction">LD H,D</td>
+<td class="comment-1" rowspan="1">HL = allocation table address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34380"></span>864C</td>
+<td class="instruction">LD L,E</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34381"></span>864D</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">HL = allocation table address + 1</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34382"></span>864E</td>
+<td class="instruction">LDIR</td>
+<td class="comment-1" rowspan="1">Copy allocations after to close hole</td>
+</tr>
+<tr>
+<td class="asm-label">process_sprites_2</td>
+<td class="address-2"><span id="34384"></span>8650</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore allocation table address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34385"></span>8651</td>
+<td class="instruction">JP <a href="34278.html#34304">process_sprites_1</a></td>
+<td class="comment-1" rowspan="1">Proceed with next sprite</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="34269.html">85DD</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#34278">Map</a></td>
+<td class="next">
+Next: <a href="34388.html">8654</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

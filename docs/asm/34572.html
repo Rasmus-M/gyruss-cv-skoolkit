@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at 870C</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="34537.html">86E9</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#34572">Map</a></td>
+<td class="next">
+Next: <a href="34622.html">873E</a>
+</td>
+</tr>
+</table>
+<div class="description">870C: Handle sprite type $03</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="34537.html">handle_sprite_types_12_13</a>.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">A</td>
+<td class="register-desc">Sprite type</td>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Sprite data</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">handle_sprite_type_03</td>
+<td class="address-2"><span id="34572"></span>870C</td>
+<td class="instruction">CP $03</td>
+<td class="comment-1" rowspan="1">Is sprite type $03?</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34574"></span>870E</td>
+<td class="instruction">JR NZ,<a href="34622.html">handle_sprite_types_15_17</a></td>
+<td class="comment-1" rowspan="1">If not, jump ahead</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="34576"></span>
+<div class="comments">
+<div class="paragraph">
+Sprite type $03 (double shot pickup)
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34576"></span>8710</td>
+<td class="instruction">LD A,(<a href="29163.html">status_flags</a>)</td>
+<td class="comment-1" rowspan="1">Check if you have died</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34579"></span>8713</td>
+<td class="instruction">BIT 2,A</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34581"></span>8715</td>
+<td class="instruction">JP NZ,<a href="34388.html">deallocate_enemy</a></td>
+<td class="comment-1" rowspan="1">If so, deallocate and return</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34584"></span>8718</td>
+<td class="instruction">INC (IX+$05)</td>
+<td class="comment-1" rowspan="1">Mark for pattern reload</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34587"></span>871B</td>
+<td class="instruction">LD A,(IX+$07)</td>
+<td class="comment-1" rowspan="1">X velocity, set to $02 or $FE when created</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34590"></span>871E</td>
+<td class="instruction">ADD A,(IX+$02)</td>
+<td class="comment-1" rowspan="1">Add to polar x</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34593"></span>8721</td>
+<td class="instruction">AND $3F</td>
+<td class="comment-1" rowspan="1">Mod 64</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34595"></span>8723</td>
+<td class="instruction">LD (IX+$02),A</td>
+<td class="comment-1" rowspan="1">Save again</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34598"></span>8726</td>
+<td class="instruction">DEC (IX+$03)</td>
+<td class="comment-1" rowspan="1">Counter, set to $10 when created</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34601"></span>8729</td>
+<td class="instruction">RET P</td>
+<td class="comment-1" rowspan="1">Return if &gt; 0</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34602"></span>872A</td>
+<td class="instruction">LD A,($7004)</td>
+<td class="comment-1" rowspan="1">Get ship polar x</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34605"></span>872D</td>
+<td class="instruction">LD B,(IX+$02)</td>
+<td class="comment-1" rowspan="1">Get polar x</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34608"></span>8730</td>
+<td class="instruction">CALL <a href="39558.html">polar_x_distance</a></td>
+<td class="comment-1" rowspan="1">Polar x distance</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34611"></span>8733</td>
+<td class="instruction">CP $04</td>
+<td class="comment-1" rowspan="1">Is it &gt;= 4</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34613"></span>8735</td>
+<td class="instruction">RET NC</td>
+<td class="comment-1" rowspan="1">Then return</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34614"></span>8736</td>
+<td class="instruction">LD HL,<a href="29270.html">other_flags</a></td>
+<td class="comment-1" rowspan="1">Set double shot flag</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34617"></span>8739</td>
+<td class="instruction">SET 1,(HL)</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34619"></span>873B</td>
+<td class="instruction">JP <a href="34388.html">deallocate_enemy</a></td>
+<td class="comment-1" rowspan="1">Deallocate and return</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="34537.html">86E9</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#34572">Map</a></td>
+<td class="next">
+Next: <a href="34622.html">873E</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

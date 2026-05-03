@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at 9BFD</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="39928.html">9BF8</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#39933">Map</a></td>
+<td class="next">
+Next: <a href="39964.html">9C1C</a>
+</td>
+</tr>
+</table>
+<div class="description">9BFD: Handle duration byte when tune index &gt;= 3</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+When tune index &gt;= 3 Used by the routine at <a href="39833.html">sound_player</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">L9BFD</td>
+<td class="address-2"><span id="39933"></span>9BFD</td>
+<td class="instruction">LD (IX+$03),A</td>
+<td class="comment-1" rowspan="1">Save tune byte in frequency LSB</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39936"></span>9C00</td>
+<td class="instruction">LD (IX+$01),L</td>
+<td class="comment-1" rowspan="1">Set tune address LSB</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39939"></span>9C03</td>
+<td class="instruction">LD (IX+$02),H</td>
+<td class="comment-1" rowspan="1">Set tune address MSB</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="39942"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="39833.html">sound_player</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">L9BFD_0</td>
+<td class="address-2"><span id="39942"></span>9C06</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">Clear A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39943"></span>9C07</td>
+<td class="instruction">SLA (IX+$03)</td>
+<td class="comment-1" rowspan="1">Shift frequency bit 7 into carry</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39947"></span>9C0B</td>
+<td class="instruction">RLA</td>
+<td class="comment-1" rowspan="1">Shift carry into A bit 0</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39948"></span>9C0C</td>
+<td class="instruction">SLA (IX+$03)</td>
+<td class="comment-1" rowspan="1">Shift frequency bit 7 into carry</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39952"></span>9C10</td>
+<td class="instruction">RLA</td>
+<td class="comment-1" rowspan="1">Shift carry into A bit 0</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39953"></span>9C11</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="1">-1, so that a zero will mute</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39954"></span>9C12</td>
+<td class="instruction">LD (IX+$00),A</td>
+<td class="comment-1" rowspan="1">Save as tune/mute byte</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39957"></span>9C15</td>
+<td class="instruction">OR $74</td>
+<td class="comment-1" rowspan="1">000000FF OR 01110100 -&gt; 011101FF</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39959"></span>9C17</td>
+<td class="instruction">LD (IX+$04),A</td>
+<td class="comment-1" rowspan="1">Save in attenuation/frequency</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39962"></span>9C1A</td>
+<td class="instruction">JR <a href="40062.html#40074">next_tune_data_buffer</a></td>
+<td class="comment-1" rowspan="1">Next tune data buffer</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="39928.html">9BF8</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#39933">Map</a></td>
+<td class="next">
+Next: <a href="39964.html">9C1C</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

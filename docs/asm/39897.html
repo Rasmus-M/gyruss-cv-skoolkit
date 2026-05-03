@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at 9BD9</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="39833.html">9B99</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#39897">Map</a></td>
+<td class="next">
+Next: <a href="39928.html">9BF8</a>
+</td>
+</tr>
+</table>
+<div class="description">9BD9: Handle frequency byte when tune index &gt;= 3</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="39833.html">sound_player</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">L9BD9</td>
+<td class="address-2"><span id="39897"></span>9BD9</td>
+<td class="instruction">JP P,<a href="39928.html">L9BF8</a></td>
+<td class="comment-1" rowspan="1">If &gt; 0 then jump ahead to loop</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39900"></span>9BDC</td>
+<td class="instruction">AND $7F</td>
+<td class="comment-1" rowspan="1">Negative - clear sign</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39902"></span>9BDE</td>
+<td class="instruction">JR Z,<a href="39897.html#39921">L9BD9_0</a></td>
+<td class="comment-1" rowspan="1">If bit 7 was</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39904"></span>9BE0</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">Save value</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39905"></span>9BE1</td>
+<td class="instruction">LD A,(<a href="29308.html">tune_playing</a>)</td>
+<td class="comment-1" rowspan="1">Get tune playing</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39908"></span>9BE4</td>
+<td class="instruction">CP $05</td>
+<td class="comment-1" rowspan="1">If not 5</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39910"></span>9BE6</td>
+<td class="instruction">JR NZ,<a href="39833.html#39882">sound_player_1</a></td>
+<td class="comment-1" rowspan="1">Then jump back into <a href="39833.html">sound_player</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39912"></span>9BE8</td>
+<td class="instruction">LD A,E</td>
+<td class="comment-1" rowspan="1">Restore value</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39913"></span>9BE9</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="1">Decrement value</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39914"></span>9BEA</td>
+<td class="instruction">JR Z,<a href="39897.html#39921">L9BD9_0</a></td>
+<td class="comment-1" rowspan="1">If it was 1 then skip ahead</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39916"></span>9BEC</td>
+<td class="instruction">DEC (IX+$07)</td>
+<td class="comment-1" rowspan="1">Decrement countdown</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39919"></span>9BEF</td>
+<td class="instruction">JR Z,<a href="39833.html#39882">sound_player_1</a></td>
+<td class="comment-1" rowspan="1">If zero then jump back into <a href="39833.html">sound_player</a></td>
+</tr>
+<tr>
+<td class="asm-label">L9BD9_0</td>
+<td class="address-2"><span id="39921"></span>9BF1</td>
+<td class="instruction">ADD A,$06</td>
+<td class="comment-1" rowspan="1">Add 6 to get tune index</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39923"></span>9BF3</td>
+<td class="instruction">CALL <a href="39693.html">play_tune</a></td>
+<td class="comment-1" rowspan="1">Play tune</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39926"></span>9BF6</td>
+<td class="instruction">JR <a href="39833.html#39854">sound_player_0</a></td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="39833.html">9B99</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#39897">Map</a></td>
+<td class="next">
+Next: <a href="39928.html">9BF8</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

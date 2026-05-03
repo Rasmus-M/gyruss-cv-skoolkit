@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at 84B1</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="33899.html">846B</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#33969">Map</a></td>
+<td class="next">
+Next: <a href="33995.html">84CB</a>
+</td>
+</tr>
+</table>
+<div class="description">84B1: Update frames and upload sprites</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routines at <a href="32804.html">entry</a>, <a href="33081.html">died</a>, <a href="33578.html">stage_completed</a>, <a href="33578.html">stage_completed</a>, <a href="33899.html">perfect_bonus</a>, <a href="41787.html">initial_game_loop</a> and <a href="41953.html">explode</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">next_frame_upl_sprites</td>
+<td class="address-2"><span id="33969"></span>84B1</td>
+<td class="instruction">LD HL,<a href="29170.html">frame_counter</a></td>
+<td class="comment-1" rowspan="1">Update frame counter</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33972"></span>84B4</td>
+<td class="instruction">INC (HL)</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33973"></span>84B5</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Get new value</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33974"></span>84B6</td>
+<td class="instruction">AND $01</td>
+<td class="comment-1" rowspan="1">Every second frame ...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33976"></span>84B8</td>
+<td class="instruction">JR NZ,<a href="33969.html#33992">next_frame_upl_sprites_0</a></td>
+<td class="comment-1" rowspan="1">go directly to upload sprite data</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33978"></span>84BA</td>
+<td class="instruction">LD A,(<a href="28674.html#28686">$700E</a>)</td>
+<td class="comment-1" rowspan="1">Else get type of sprite 1</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33981"></span>84BD</td>
+<td class="instruction">CP $01</td>
+<td class="comment-1" rowspan="1">Is it 1 (ship 2)?</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33983"></span>84BF</td>
+<td class="instruction">JR NZ,<a href="33969.html#33992">next_frame_upl_sprites_0</a></td>
+<td class="comment-1" rowspan="1">If not upload sprite data</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33985"></span>84C1</td>
+<td class="instruction">LD HL,$7019</td>
+<td class="comment-1" rowspan="1">Get color of sprite 1</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33988"></span>84C4</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33989"></span>84C5</td>
+<td class="instruction">XOR $04</td>
+<td class="comment-1" rowspan="1">Flip bit 4</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="33991"></span>84C7</td>
+<td class="instruction">LD (HL),A</td>
+<td class="comment-1" rowspan="1">And set color back</td>
+</tr>
+<tr>
+<td class="asm-label">next_frame_upl_sprites_0</td>
+<td class="address-2"><span id="33992"></span>84C8</td>
+<td class="instruction">JP <a href="44281.html">upload_sprite_data</a></td>
+<td class="comment-1" rowspan="1">Upload sprite data</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="33899.html">846B</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#33969">Map</a></td>
+<td class="next">
+Next: <a href="33995.html">84CB</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at 9978</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="39220.html">9934</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#39288">Map</a></td>
+<td class="next">
+Next: <a href="39328.html">99A0</a>
+</td>
+</tr>
+</table>
+<div class="description">9978: Add score when enemy destroyed</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="39220.html">shot_hit_sprite_enemy</a>.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Sprite data of shot</td>
+</tr>
+<tr>
+<td class="register">DE</td>
+<td class="register-desc">Points to add</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">add_points_from_enemy</td>
+<td class="address-2"><span id="39288"></span>9978</td>
+<td class="instruction">LD A,(<a href="29270.html">other_flags</a>)</td>
+<td class="comment-1" rowspan="1">Flags</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39291"></span>997B</td>
+<td class="instruction">AND $60</td>
+<td class="comment-1" rowspan="1">If bit 5 or 6 set?</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39293"></span>997D</td>
+<td class="instruction">JR NZ,<a href="39288.html#39321">add_points_in_de</a></td>
+<td class="comment-1" rowspan="1">Then just add score</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39295"></span>997F</td>
+<td class="instruction">LD HL,<a href="29163.html">status_flags</a></td>
+<td class="comment-1" rowspan="1">Flags</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39298"></span>9982</td>
+<td class="instruction">LD A,(<a href="29186.html">enemies_hit</a>)</td>
+<td class="comment-1" rowspan="1">Enemies destroyed</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39301"></span>9985</td>
+<td class="instruction">INC A</td>
+<td class="comment-1" rowspan="1">+1</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39302"></span>9986</td>
+<td class="instruction">BIT 3,(HL)</td>
+<td class="comment-1" rowspan="1">Check for chance stage</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39304"></span>9988</td>
+<td class="instruction">JR NZ,<a href="39288.html#39309">add_points_from_enemy_0</a></td>
+<td class="comment-1" rowspan="1">Skip ahead if chance stage</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39306"></span>998A</td>
+<td class="instruction">LD (<a href="29186.html">enemies_hit</a>),A</td>
+<td class="comment-1" rowspan="1">Save if not chance stage</td>
+</tr>
+<tr>
+<td class="asm-label">add_points_from_enemy_0</td>
+<td class="address-2"><span id="39309"></span>998D</td>
+<td class="instruction">ADD A,A</td>
+<td class="comment-1" rowspan="1">x2</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39310"></span>998E</td>
+<td class="instruction">LD HL,<a href="39591.html">score_table</a></td>
+<td class="comment-1" rowspan="1">Score table</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39313"></span>9991</td>
+<td class="instruction">RST $08</td>
+<td class="comment-1" rowspan="1">Add A to HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39314"></span>9992</td>
+<td class="instruction">LD D,(HL)</td>
+<td class="comment-1" rowspan="1">Get points (hundreds)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39315"></span>9993</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Next address in table</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39316"></span>9994</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Get replacement number sprite type ($06 - $0B)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39317"></span>9995</td>
+<td class="instruction">LD (IX+$06),A</td>
+<td class="comment-1" rowspan="1">Save in sprite data</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39320"></span>9998</td>
+<td class="instruction">INC D</td>
+<td class="comment-1" rowspan="1">100 more</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="39321"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routines at <a href="39220.html">shot_hit_sprite_enemy</a>, <a href="39328.html">shot_hit_center_enemy</a>, <a href="39345.html#39379">shot_hit_mine_0</a> and <a href="39432.html">shot_hit_laser_fence</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">add_points_in_de</td>
+<td class="address-2"><span id="39321"></span>9999</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">HL = points</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39322"></span>999A</td>
+<td class="instruction">CALL <a href="42732.html">add_score</a></td>
+<td class="comment-1" rowspan="1">Add score</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="39325"></span>999D</td>
+<td class="instruction">JP <a href="38806.html#38899">handle_collisions_1</a></td>
+<td class="comment-1" rowspan="1">Jump back into collisions loop</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="39220.html">9934</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#39288">Map</a></td>
+<td class="next">
+Next: <a href="39328.html">99A0</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

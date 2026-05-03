@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at 920D</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="37324.html">91CC</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#37389">Map</a></td>
+<td class="next">
+Next: <a href="37407.html">921F</a>
+</td>
+</tr>
+</table>
+<div class="description">920D: Clear name table row 7</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Where the planet name is displayed Used by the routines at <a href="33578.html">stage_completed</a>, <a href="37078.html">start_screen</a>, <a href="37281.html">erase_planet</a> and <a href="37324.html">display_planet_name_and_sprites</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">clear_row_7</td>
+<td class="address-2"><span id="37389"></span>920D</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37390"></span>920E</td>
+<td class="instruction">PUSH DE</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37391"></span>920F</td>
+<td class="instruction">PUSH BC</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37392"></span>9210</td>
+<td class="instruction">LD A,$00</td>
+<td class="comment-1" rowspan="1">Space</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37394"></span>9212</td>
+<td class="instruction">LD HL,$18E0</td>
+<td class="comment-1" rowspan="1">Address in name table (row 7)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37397"></span>9215</td>
+<td class="instruction">LD DE,$0020</td>
+<td class="comment-1" rowspan="1">32 bytes</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37400"></span>9218</td>
+<td class="instruction">CALL $1F82</td>
+<td class="comment-1" rowspan="1">FILL_VRAM</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37403"></span>921B</td>
+<td class="instruction">POP BC</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37404"></span>921C</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37405"></span>921D</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37406"></span>921E</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="37324.html">91CC</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#37389">Map</a></td>
+<td class="next">
+Next: <a href="37407.html">921F</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

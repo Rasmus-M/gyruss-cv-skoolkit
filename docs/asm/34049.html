@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at 8501</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="34029.html">84ED</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#34049">Map</a></td>
+<td class="next">
+Next: <a href="34108.html">853C</a>
+</td>
+</tr>
+</table>
+<div class="description">8501: Interrupt routine</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Calls sound player and handles screen saver Used by the routine at <a href="32801.html">L8021</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">interrupt_routine</td>
+<td class="address-2"><span id="34049"></span>8501</td>
+<td class="instruction">PUSH IX</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34051"></span>8503</td>
+<td class="instruction">PUSH IY</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34053"></span>8505</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34054"></span>8506</td>
+<td class="instruction">PUSH DE</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34055"></span>8507</td>
+<td class="instruction">PUSH BC</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34056"></span>8508</td>
+<td class="instruction">PUSH AF</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34057"></span>8509</td>
+<td class="instruction">LD HL,(<a href="29271.html">screensaver_countdown</a>)</td>
+<td class="comment-1" rowspan="1">Counter</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34060"></span>850C</td>
+<td class="instruction">LD A,H</td>
+<td class="comment-1" rowspan="1">Check if zero</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34061"></span>850D</td>
+<td class="instruction">OR L</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34062"></span>850E</td>
+<td class="instruction">JR Z,<a href="34049.html#34082">interrupt_routine_1</a></td>
+<td class="comment-1" rowspan="1">If counter is 0 then skip ahead</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34064"></span>8510</td>
+<td class="instruction">DEC HL</td>
+<td class="comment-1" rowspan="1">Otherwise decrement</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34065"></span>8511</td>
+<td class="instruction">LD (<a href="29271.html">screensaver_countdown</a>),HL</td>
+<td class="comment-1" rowspan="1">and save.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34068"></span>8514</td>
+<td class="instruction">LD A,H</td>
+<td class="comment-1" rowspan="1">Check again if zero</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34069"></span>8515</td>
+<td class="instruction">OR L</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34070"></span>8516</td>
+<td class="instruction">JR NZ,<a href="34049.html#34082">interrupt_routine_1</a></td>
+<td class="comment-1" rowspan="1">If not then skip ahead, otherwise blank screen</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34072"></span>8518</td>
+<td class="instruction">LD BC,$0180</td>
+<td class="comment-1" rowspan="1">Display off, interrupt off</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34075"></span>851B</td>
+<td class="instruction">RST $18</td>
+<td class="comment-1" rowspan="1">WRITE_REGISTER</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34076"></span>851C</td>
+<td class="instruction">LD BC,$0701</td>
+<td class="comment-1" rowspan="1">Black border</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34079"></span>851F</td>
+<td class="instruction">RST $18</td>
+<td class="comment-1" rowspan="1">WRITE_REGISTER</td>
+</tr>
+<tr>
+<td class="asm-label">interrupt_routine_0</td>
+<td class="address-2"><span id="34080"></span>8520</td>
+<td class="instruction">JR <a href="34049.html#34080">interrupt_routine_0</a></td>
+<td class="comment-1" rowspan="1">Loop</td>
+</tr>
+<tr>
+<td class="asm-label">interrupt_routine_1</td>
+<td class="address-2"><span id="34082"></span>8522</td>
+<td class="instruction">CALL <a href="39833.html">sound_player</a></td>
+<td class="comment-1" rowspan="1">Sound player</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34085"></span>8525</td>
+<td class="instruction">LD A,(<a href="29163.html">status_flags</a>)</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34088"></span>8528</td>
+<td class="instruction">BIT 6,A</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34090"></span>852A</td>
+<td class="instruction">CALL Z,$1FDC</td>
+<td class="comment-1" rowspan="1">READ_REGISTER</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34093"></span>852D</td>
+<td class="instruction">LD HL,<a href="29274.html">interrupt_flag</a></td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34096"></span>8530</td>
+<td class="instruction">SET 0,(HL)</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34098"></span>8532</td>
+<td class="instruction">POP AF</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34099"></span>8533</td>
+<td class="instruction">POP BC</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34100"></span>8534</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34101"></span>8535</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34102"></span>8536</td>
+<td class="instruction">POP IY</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34104"></span>8538</td>
+<td class="instruction">POP IX</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34106"></span>853A</td>
+<td class="instruction">RETN</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="34029.html">84ED</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#34049">Map</a></td>
+<td class="next">
+Next: <a href="34108.html">853C</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

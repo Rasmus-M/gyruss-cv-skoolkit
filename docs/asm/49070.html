@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at BFAE</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="47590.html">B9E6</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#49070">Map</a></td>
+<td class="next">
+Next: <a href="49103.html">BFCF</a>
+</td>
+</tr>
+</table>
+<div class="description">BFAE: Random number generator (RST $20)</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="32789.html">L8015</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">rnd</td>
+<td class="address-2"><span id="49070"></span>BFAE</td>
+<td class="instruction">PUSH IX</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49072"></span>BFB0</td>
+<td class="instruction">LD IX,<a href="29467.html">random_number</a></td>
+<td class="comment-1" rowspan="1">Last random number</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49076"></span>BFB4</td>
+<td class="instruction">LD A,(IX+$00)</td>
+<td class="comment-1" rowspan="1">Get byte 0</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49079"></span>BFB7</td>
+<td class="instruction">RLCA</td>
+<td class="comment-1" rowspan="1">Rotate left</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49080"></span>BFB8</td>
+<td class="instruction">XOR (IX+$00)</td>
+<td class="comment-1" rowspan="1">Flip some bits</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49083"></span>BFBB</td>
+<td class="instruction">RRCA</td>
+<td class="comment-1" rowspan="1">Rotate right</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49084"></span>BFBC</td>
+<td class="instruction">INC (IX+$01)</td>
+<td class="comment-1" rowspan="1">Increment byte 1</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49087"></span>BFBF</td>
+<td class="instruction">ADD A,(IX+$01)</td>
+<td class="comment-1" rowspan="1">Add byte 1</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49090"></span>BFC2</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="1">Set flags</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49091"></span>BFC3</td>
+<td class="instruction">JP PE,<a href="49070.html#49097">rnd_0</a></td>
+<td class="comment-1" rowspan="1">Skip ahead if even parity</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49094"></span>BFC6</td>
+<td class="instruction">INC (IX+$01)</td>
+<td class="comment-1" rowspan="1">Else increment byte 1</td>
+</tr>
+<tr>
+<td class="asm-label">rnd_0</td>
+<td class="address-2"><span id="49097"></span>BFC9</td>
+<td class="instruction">LD (IX+$00),A</td>
+<td class="comment-1" rowspan="1">Set byte 0</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49100"></span>BFCC</td>
+<td class="instruction">POP IX</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49102"></span>BFCE</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="47590.html">B9E6</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#49070">Map</a></td>
+<td class="next">
+Next: <a href="49103.html">BFCF</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

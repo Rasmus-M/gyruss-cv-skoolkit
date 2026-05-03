@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at 8E89</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="36397.html">8E2D</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#36489">Map</a></td>
+<td class="next">
+Next: <a href="36509.html">8E9D</a>
+</td>
+</tr>
+</table>
+<div class="description">8E89: Init mine variables</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="36397.html">create_or_display_mines</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">init_mine_variables</td>
+<td class="address-2"><span id="36489"></span>8E89</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36490"></span>8E8A</td>
+<td class="instruction">LD (<a href="29286.html">mines_reappear</a>),A</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="36493"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routines at <a href="33298.html#33471">init_stage_8</a> and <a href="36845.html">L8FED</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">init_mine_variables_2</td>
+<td class="address-2"><span id="36493"></span>8E8D</td>
+<td class="instruction">RST $20</td>
+<td class="comment-1" rowspan="1">Random number</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36494"></span>8E8E</td>
+<td class="instruction">AND $0F</td>
+<td class="comment-1" rowspan="1">0 - 15</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36496"></span>8E90</td>
+<td class="instruction">ADD A,$05</td>
+<td class="comment-1" rowspan="1">5  - 20</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36498"></span>8E92</td>
+<td class="instruction">LD (<a href="29283.html">mines_time_left</a>),A</td>
+<td class="comment-1" rowspan="1">Store</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36501"></span>8E95</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">A = 0</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36502"></span>8E96</td>
+<td class="instruction">LD (<a href="29285.html">destroy_mines_flag</a>),A</td>
+<td class="comment-1" rowspan="1">Set to 0</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36505"></span>8E99</td>
+<td class="instruction">LD (<a href="29284.html">mines_action</a>),A</td>
+<td class="comment-1" rowspan="1">Set action to 0</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36508"></span>8E9C</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="36397.html">8E2D</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#36489">Map</a></td>
+<td class="next">
+Next: <a href="36509.html">8E9D</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

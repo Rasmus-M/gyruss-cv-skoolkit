@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at 8654</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="34278.html">85E6</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#34388">Map</a></td>
+<td class="next">
+Next: <a href="34394.html">865A</a>
+</td>
+</tr>
+</table>
+<div class="description">8654: Deallocate enemy</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routines at <a href="34572.html">handle_sprite_type_03</a>, <a href="34622.html">handle_sprite_types_15_17</a> and <a href="34869.html#34888">handle_out_of_screen_1</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">deallocate_enemy</td>
+<td class="address-2"><span id="34388"></span>8654</td>
+<td class="instruction">LD HL,<a href="29190.html">total_enemies</a></td>
+<td class="comment-1" rowspan="1">Decrease total enemies</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34391"></span>8657</td>
+<td class="instruction">DEC (HL)</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34392"></span>8658</td>
+<td class="instruction">JR <a href="34278.html#34351">deallocate_sprite</a></td>
+<td class="comment-1" rowspan="1">Deallocate sprite</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="34278.html">85E6</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#34388">Map</a></td>
+<td class="next">
+Next: <a href="34394.html">865A</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

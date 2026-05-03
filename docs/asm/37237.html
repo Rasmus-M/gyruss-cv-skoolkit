@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at 9175</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="37078.html">90D6</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#37237">Map</a></td>
+<td class="next">
+Next: <a href="37281.html">91A1</a>
+</td>
+</tr>
+</table>
+<div class="description">9175: Display planet</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routines at <a href="33578.html">stage_completed</a>, <a href="33744.html">next_stage</a> and <a href="37078.html">start_screen</a>.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">A</td>
+<td class="register-desc">Index of planet (1 based, 0 = undraw)</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">display_planet</td>
+<td class="address-2"><span id="37237"></span>9175</td>
+<td class="instruction">ADD A,A</td>
+<td class="comment-1" rowspan="1">a *= 2</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37238"></span>9176</td>
+<td class="instruction">JR Z,<a href="37281.html">erase_planet</a></td>
+<td class="comment-1" rowspan="1">If zero then undraw planet</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37240"></span>9178</td>
+<td class="instruction">LD HL,$9396</td>
+<td class="comment-1" rowspan="1">Planet table minus 2: <a href="37784.html">planet_table</a>-2</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37243"></span>917B</td>
+<td class="instruction">RST $08</td>
+<td class="comment-1" rowspan="1">Add A to HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37244"></span>917C</td>
+<td class="instruction">LD E,(HL)</td>
+<td class="comment-1" rowspan="1">Get LSB of planet data</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37245"></span>917D</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37246"></span>917E</td>
+<td class="instruction">LD D,(HL)</td>
+<td class="comment-1" rowspan="1">Get MSB of planet data</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37247"></span>917F</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">Address now in HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37248"></span>9180</td>
+<td class="instruction">CALL <a href="37281.html#37300">display_planet_name_table</a></td>
+<td class="comment-1" rowspan="1">Draw to name table</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37251"></span>9183</td>
+<td class="instruction">CALL <a href="37324.html">display_planet_name_and_sprites</a></td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37254"></span>9186</td>
+<td class="instruction">LD HL,$0400</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37257"></span>9189</td>
+<td class="instruction">CALL <a href="37509.html">L9285</a></td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37260"></span>918C</td>
+<td class="instruction">LD HL,<a href="38638.html">planet_colors</a></td>
+<td class="comment-1" rowspan="1">Planet colors</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37263"></span>918F</td>
+<td class="instruction">LD DE,$2010</td>
+<td class="comment-1" rowspan="1">Address in color table</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37266"></span>9192</td>
+<td class="instruction">LD BC,$0010</td>
+<td class="comment-1" rowspan="1">16 color sets</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37269"></span>9195</td>
+<td class="instruction">RST $38</td>
+<td class="comment-1" rowspan="1">WRITE_VRAM</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37270"></span>9196</td>
+<td class="instruction">LD DE,$0900</td>
+<td class="comment-1" rowspan="1">Address in sprite pattern table</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37273"></span>9199</td>
+<td class="instruction">LD HL,<a href="38654.html">planet_sprite_patterns</a></td>
+<td class="comment-1" rowspan="1">Sprite patterns</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37276"></span>919C</td>
+<td class="instruction">LD BC,$0098</td>
+<td class="comment-1" rowspan="1">19 patterns</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37279"></span>919F</td>
+<td class="instruction">RST $38</td>
+<td class="comment-1" rowspan="1">WRITE_VRAM</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37280"></span>91A0</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="37078.html">90D6</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#37237">Map</a></td>
+<td class="next">
+Next: <a href="37281.html">91A1</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

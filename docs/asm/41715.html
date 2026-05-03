@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at A2F3</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="41659.html">A2BB</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#41715">Map</a></td>
+<td class="next">
+Next: <a href="41731.html">A303</a>
+</td>
+</tr>
+</table>
+<div class="description">A2F3: Send data for noise channel to PSG</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="41659.html">all_channels_data_to_psg</a>.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">(IX+$04)</td>
+<td class="register-desc">Attenuation/noise control AAAAXNNN</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">noise_data_to_psg</td>
+<td class="address-2"><span id="41715"></span>A2F3</td>
+<td class="instruction">CALL <a href="41731.html">attn_or_noise_to_psg</a></td>
+<td class="comment-1" rowspan="1">Send attenuation to PSG</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41718"></span>A2F6</td>
+<td class="instruction">LD A,(IX+$04)</td>
+<td class="comment-1" rowspan="1">Get sound byte</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41721"></span>A2F9</td>
+<td class="instruction">AND $0F</td>
+<td class="comment-1" rowspan="1">Isolate bits 0-3</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41723"></span>A2FB</td>
+<td class="instruction">LD HL,<a href="29304.html">last_noise_operation</a></td>
+<td class="comment-1" rowspan="1">Compare to stored value</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41726"></span>A2FE</td>
+<td class="instruction">CP (HL)</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41727"></span>A2FF</td>
+<td class="instruction">RET Z</td>
+<td class="comment-1" rowspan="1">Return if same</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41728"></span>A300</td>
+<td class="instruction">LD (HL),A</td>
+<td class="comment-1" rowspan="1">Else store new value</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41729"></span>A301</td>
+<td class="instruction">LD C,$E0</td>
+<td class="comment-1" rowspan="1">and make noise (continue into <a href="41731.html">attn_or_noise_to_psg</a>)</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="41659.html">A2BB</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#41715">Map</a></td>
+<td class="next">
+Next: <a href="41731.html">A303</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

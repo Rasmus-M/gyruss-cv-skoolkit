@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at A2BB</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="41654.html">A2B6</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#41659">Map</a></td>
+<td class="next">
+Next: <a href="41715.html">A2F3</a>
+</td>
+</tr>
+</table>
+<div class="description">A2BB: Send data for all channels to PSG</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="39833.html">sound_player</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">all_channels_data_to_psg</td>
+<td class="address-2"><span id="41659"></span>A2BB</td>
+<td class="instruction">LD A,$9F</td>
+<td class="comment-1" rowspan="1">Mute channel 1</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41661"></span>A2BD</td>
+<td class="instruction">LD C,$90</td>
+<td class="comment-1" rowspan="1">Tone 1 attenuation</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41663"></span>A2BF</td>
+<td class="instruction">LD D,$80</td>
+<td class="comment-1" rowspan="1">Tone 1 frequency</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41665"></span>A2C1</td>
+<td class="instruction">LD IX,(<a href="29298.html">ptr_psg_tone_1_data</a>)</td>
+<td class="comment-1" rowspan="1">IX=<a href="29319.html">tune_data_buffer_2</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41669"></span>A2C5</td>
+<td class="instruction">CALL <a href="41748.html">tone_data_to_psg</a></td>
+<td class="comment-1" rowspan="1">Play tone or mute</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41672"></span>A2C8</td>
+<td class="instruction">LD A,$BF</td>
+<td class="comment-1" rowspan="1">Mute channel 2</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41674"></span>A2CA</td>
+<td class="instruction">LD C,$B0</td>
+<td class="comment-1" rowspan="1">Tone 2 attenuation</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41676"></span>A2CC</td>
+<td class="instruction">LD D,$A0</td>
+<td class="comment-1" rowspan="1">Tone 2 frequency</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41678"></span>A2CE</td>
+<td class="instruction">LD IX,(<a href="29300.html">ptr_psg_tone_2_data</a>)</td>
+<td class="comment-1" rowspan="1">IX=<a href="29329.html">tune_data_buffer_3</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41682"></span>A2D2</td>
+<td class="instruction">CALL <a href="41748.html">tone_data_to_psg</a></td>
+<td class="comment-1" rowspan="1">Play tone or mute</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41685"></span>A2D5</td>
+<td class="instruction">LD A,$DF</td>
+<td class="comment-1" rowspan="1">Mute channel 3</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41687"></span>A2D7</td>
+<td class="instruction">LD C,$D0</td>
+<td class="comment-1" rowspan="1">Tone 3 attenuation</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41689"></span>A2D9</td>
+<td class="instruction">LD D,$C0</td>
+<td class="comment-1" rowspan="1">Tone 3 frequency</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41691"></span>A2DB</td>
+<td class="instruction">LD IX,(<a href="29302.html">ptr_psg_tone_3_data</a>)</td>
+<td class="comment-1" rowspan="1">IX=<a href="29339.html">tune_data_buffer_4</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41695"></span>A2DF</td>
+<td class="instruction">CALL <a href="41748.html">tone_data_to_psg</a></td>
+<td class="comment-1" rowspan="1">Play tone or mute</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41698"></span>A2E2</td>
+<td class="instruction">LD A,$FF</td>
+<td class="comment-1" rowspan="1">Mute noise</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41700"></span>A2E4</td>
+<td class="instruction">LD C,$F0</td>
+<td class="comment-1" rowspan="1">Noise attenuation</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41702"></span>A2E6</td>
+<td class="instruction">LD IX,(<a href="29296.html">ptr_psg_noise_data</a>)</td>
+<td class="comment-1" rowspan="1">IX=<a href="29309.html">tune_data_buffer_1</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41706"></span>A2EA</td>
+<td class="instruction">LD E,(IX+$00)</td>
+<td class="comment-1" rowspan="1">Get byte 0</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41709"></span>A2ED</td>
+<td class="instruction">INC E</td>
+<td class="comment-1" rowspan="1">If it was zero</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41710"></span>A2EE</td>
+<td class="instruction">JR NZ,<a href="41715.html">noise_data_to_psg</a></td>
+<td class="comment-1" rowspan="1">Then jump ahead</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41712"></span>A2F0</td>
+<td class="instruction">OUT ($FF),A</td>
+<td class="comment-1" rowspan="1">Else mute</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41714"></span>A2F2</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="41654.html">A2B6</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#41659">Map</a></td>
+<td class="next">
+Next: <a href="41715.html">A2F3</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

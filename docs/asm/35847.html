@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at 8C07</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="35801.html">8BD9</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#35847">Map</a></td>
+<td class="next">
+Next: <a href="35870.html">8C1E</a>
+</td>
+</tr>
+</table>
+<div class="description">8C07: Manage wave = 4</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="35801.html">manage_waves</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">manage_wave_eq_4</td>
+<td class="address-2"><span id="35847"></span>8C07</td>
+<td class="instruction">LD A,(<a href="29163.html">status_flags</a>)</td>
+<td class="comment-1" rowspan="1">Test for chance stage</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35850"></span>8C0A</td>
+<td class="instruction">BIT 3,A</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35852"></span>8C0C</td>
+<td class="instruction">JR NZ,<a href="35870.html">init_mine_sub_stage</a></td>
+<td class="comment-1" rowspan="1">If set, set bit for all waves completed</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35854"></span>8C0E</td>
+<td class="instruction">LD A,(<a href="29227.html">center_map_entries</a>)</td>
+<td class="comment-1" rowspan="1">Number of center enemies</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35857"></span>8C11</td>
+<td class="instruction">CP $06</td>
+<td class="comment-1" rowspan="1">If &gt;= 6,</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35859"></span>8C13</td>
+<td class="instruction">JR NC,<a href="35870.html">init_mine_sub_stage</a></td>
+<td class="comment-1" rowspan="1">Then init mine sub-stage</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35861"></span>8C15</td>
+<td class="instruction">RST $20</td>
+<td class="comment-1" rowspan="1">Random number</td>
+</tr>
+<tr>
+<td class="asm-label">manage_wave_eq_4_0</td>
+<td class="address-2"><span id="35862"></span>8C16</td>
+<td class="instruction">CP $14</td>
+<td class="comment-1" rowspan="1">If &lt; 20,</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35864"></span>8C18</td>
+<td class="instruction">JR C,<a href="35888.html#35902">manage_wave_lt_4_0</a></td>
+<td class="comment-1" rowspan="1">Then skip ahead</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35866"></span>8C1A</td>
+<td class="instruction">SUB $14</td>
+<td class="comment-1" rowspan="1">- 20</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35868"></span>8C1C</td>
+<td class="instruction">JR <a href="35847.html#35862">manage_wave_eq_4_0</a></td>
+<td class="comment-1" rowspan="1">Loop until small enough</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="35801.html">8BD9</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#35847">Map</a></td>
+<td class="next">
+Next: <a href="35870.html">8C1E</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

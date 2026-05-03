@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at A6D2</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="42696.html">A6C8</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#42706">Map</a></td>
+<td class="next">
+Next: <a href="42732.html">A6EC</a>
+</td>
+</tr>
+</table>
+<div class="description">A6D2: Display lives</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routines at <a href="33298.html#33471">init_stage_8</a> and <a href="42732.html">add_score</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">display_lives</td>
+<td class="address-2"><span id="42706"></span>A6D2</td>
+<td class="instruction">LD HL,$1AE2</td>
+<td class="comment-1" rowspan="1">VDP address of 'lives'</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42709"></span>A6D5</td>
+<td class="instruction">LD DE,$0009</td>
+<td class="comment-1" rowspan="1">Count</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42712"></span>A6D8</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">Value</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42713"></span>A6D9</td>
+<td class="instruction">CALL $1F82</td>
+<td class="comment-1" rowspan="1">FILL_VRAM</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42716"></span>A6DC</td>
+<td class="instruction">LD A,(<a href="29183.html">lives</a>)</td>
+<td class="comment-1" rowspan="1">Get lives</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42719"></span>A6DF</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="1">Display one less live</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42720"></span>A6E0</td>
+<td class="instruction">RET Z</td>
+<td class="comment-1" rowspan="1">Return if none to display</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42721"></span>A6E1</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">Count</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42722"></span>A6E2</td>
+<td class="instruction">LD DE,$1AE2</td>
+<td class="comment-1" rowspan="1">VDP address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42725"></span>A6E5</td>
+<td class="instruction">LD A,$21</td>
+<td class="comment-1" rowspan="1">Ship character</td>
+</tr>
+<tr>
+<td class="asm-label">display_lives_0</td>
+<td class="address-2"><span id="42727"></span>A6E7</td>
+<td class="instruction">RST $10</td>
+<td class="comment-1" rowspan="1">Write VDP byte</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42728"></span>A6E8</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Next VDP address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42729"></span>A6E9</td>
+<td class="instruction">DJNZ <a href="42706.html#42727">display_lives_0</a></td>
+<td class="comment-1" rowspan="1">Loop</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42731"></span>A6EB</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="42696.html">A6C8</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#42706">Map</a></td>
+<td class="next">
+Next: <a href="42732.html">A6EC</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

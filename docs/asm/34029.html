@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at 84ED</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="34011.html">84DB</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#34029">Map</a></td>
+<td class="next">
+Next: <a href="34049.html">8501</a>
+</td>
+</tr>
+</table>
+<div class="description">84ED: Clear rows 9 and 14</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routines at <a href="33136.html">lose_life</a> and <a href="33578.html">stage_completed</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">clear_rows_9_and_14</td>
+<td class="address-2"><span id="34029"></span>84ED</td>
+<td class="instruction">LD HL,$1920</td>
+<td class="comment-1" rowspan="1">Name table row 9</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34032"></span>84F0</td>
+<td class="instruction">LD DE,$0020</td>
+<td class="comment-1" rowspan="1">32 bytes</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34035"></span>84F3</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">Clear</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34036"></span>84F4</td>
+<td class="instruction">CALL $1F82</td>
+<td class="comment-1" rowspan="1">FILL_VRAM</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34039"></span>84F7</td>
+<td class="instruction">LD HL,$19C0</td>
+<td class="comment-1" rowspan="1">Name table row 14</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34042"></span>84FA</td>
+<td class="instruction">LD DE,$0020</td>
+<td class="comment-1" rowspan="1">32 bytes</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34045"></span>84FD</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">Clear</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="34046"></span>84FE</td>
+<td class="instruction">JP $1F82</td>
+<td class="comment-1" rowspan="1">FILL_VRAM</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="34011.html">84DB</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#34029">Map</a></td>
+<td class="next">
+Next: <a href="34049.html">8501</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

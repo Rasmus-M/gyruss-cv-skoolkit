@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Data at 7002</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-b">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Data</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="28672.html">7000</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#28674">Map</a></td>
+<td class="next">
+Next: <a href="29058.html">7182</a>
+</td>
+</tr>
+</table>
+<div class="description">7002: Sprite data</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Contains data for 32 sprites, or actually entities, since only those entities with entries in the <a href="29059.html">sprite_allocation_table</a> are rendered as sprites. Other entities have entries in the <a href="29191.html">center_enemy_map</a> and are rendered in a bitmap at the center of the screen.
+</div>
+<div class="paragraph">
+<table class="default">
+<tr>
+<th colspan="1" rowspan="1">Byte offset</th>
+<th colspan="1" rowspan="1">Purpose</th>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$00</td>
+<td class="" colspan="1" rowspan="1">Sprite type, or $FF if not allocated</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$01</td>
+<td class="" colspan="1" rowspan="1">Polar y (depth, -11 is closest, 0 is normal ship position, 116 is furthest away)</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$02</td>
+<td class="" colspan="1" rowspan="1">Polar x (angle, 0 at bottom center, moving clockwise to 16 at the left side, 32 at the top, and 48 at the right side)</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$03</td>
+<td class="" colspan="1" rowspan="1">Movement counter, velocity. For enemy, upper nybble from path data, lower nybble sprite position in wave</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$04</td>
+<td class="" colspan="1" rowspan="1">Loaded pattern index within sprite type, $FF means not loaded</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$05</td>
+<td class="" colspan="1" rowspan="1">Copy of sprite type to check for pattern reload</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$06</td>
+<td class="" colspan="1" rowspan="1">Replacement sprite type when destroyed, or LSB of path address</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$07</td>
+<td class="" colspan="1" rowspan="1">Flags, velocity, or MSB of path address</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$08</td>
+<td class="" colspan="1" rowspan="1">Screen y</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$09</td>
+<td class="" colspan="1" rowspan="1">Screen x</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$0A</td>
+<td class="" colspan="1" rowspan="1">Pattern</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$0B</td>
+<td class="" colspan="1" rowspan="1">Color</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<table class="default">
+<tr>
+<th colspan="1" rowspan="1">Sprite type</th>
+<th colspan="1" rowspan="1">Pattern example</th>
+<th colspan="1" rowspan="1">Description</th>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$00</td>
+<td class="" colspan="1" rowspan="1"><img alt="udg47590_56x4" src="../images/udgs/udg47590_56x4.png" /></td>
+<td class="" colspan="1" rowspan="1">Ship body</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$01</td>
+<td class="" colspan="1" rowspan="1"><img alt="udg47718_56x4" src="../images/udgs/udg47718_56x4.png" /></td>
+<td class="" colspan="1" rowspan="1">Ship exhaust</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$02</td>
+<td class="" colspan="1" rowspan="1"><img alt="udg47846_56x4" src="../images/udgs/udg47846_56x4.png" /></td>
+<td class="" colspan="1" rowspan="1">Shot</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$03</td>
+<td class="" colspan="1" rowspan="1"><img alt="udg47878_56x4" src="../images/udgs/udg47878_56x4.png" /></td>
+<td class="" colspan="1" rowspan="1">Double shot pickup</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$04</td>
+<td class="" colspan="1" rowspan="1"><img alt="udg47886_56x4" src="../images/udgs/udg47886_56x4.png" /></td>
+<td class="" colspan="1" rowspan="1">Dots (another explosion)</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$05</td>
+<td class="" colspan="1" rowspan="1"><img alt="udg47918_56x4" src="../images/udgs/udg47918_56x4.png" /></td>
+<td class="" colspan="1" rowspan="1">Destroyed enemy</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$06</td>
+<td class="" colspan="1" rowspan="1"><img alt="udg47950_56x4" src="../images/udgs/udg47950_56x4.png" /></td>
+<td class="" colspan="1" rowspan="1">Number 5</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$07</td>
+<td class="" colspan="1" rowspan="1"><img alt="udg47958_56x4" src="../images/udgs/udg47958_56x4.png" /></td>
+<td class="" colspan="1" rowspan="1">Number 10</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$08</td>
+<td class="" colspan="1" rowspan="1"><img alt="udg47966_56x4" src="../images/udgs/udg47966_56x4.png" /></td>
+<td class="" colspan="1" rowspan="1">Number 15</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$09</td>
+<td class="" colspan="1" rowspan="1"><img alt="udg47974_56x4" src="../images/udgs/udg47974_56x4.png" /></td>
+<td class="" colspan="1" rowspan="1">Number 20</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$0A</td>
+<td class="" colspan="1" rowspan="1"><img alt="udg47982_56x4" src="../images/udgs/udg47982_56x4.png" /></td>
+<td class="" colspan="1" rowspan="1">Number 25</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$0B</td>
+<td class="" colspan="1" rowspan="1"><img alt="udg47990_56x4" src="../images/udgs/udg47990_56x4.png" /></td>
+<td class="" colspan="1" rowspan="1">Number 30</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$0C</td>
+<td class="" colspan="1" rowspan="1"><img alt="udg47998_56x4" src="../images/udgs/udg47998_56x4.png" /></td>
+<td class="" colspan="1" rowspan="1">Number 00</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$0D</td>
+<td class="" colspan="1" rowspan="1"><img alt="udg48614_56x4" src="../images/udgs/udg48614_56x4.png" /></td>
+<td class="" colspan="1" rowspan="1">Explosion dot</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$0E</td>
+<td class="" colspan="1" rowspan="1"><img alt="udg48006_56x4" src="../images/udgs/udg48006_56x4.png" /></td>
+<td class="" colspan="1" rowspan="1">Enemy</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$0F</td>
+<td class="" colspan="1" rowspan="1"><img alt="udg48134_56x4" src="../images/udgs/udg48134_56x4.png" /></td>
+<td class="" colspan="1" rowspan="1">Enemy</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$10</td>
+<td class="" colspan="1" rowspan="1"><img alt="udg48262_56x4" src="../images/udgs/udg48262_56x4.png" /></td>
+<td class="" colspan="1" rowspan="1">Enemy</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$11</td>
+<td class="" colspan="1" rowspan="1"><img alt="udg48390_56x4" src="../images/udgs/udg48390_56x4.png" /></td>
+<td class="" colspan="1" rowspan="1">Enemy</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$12</td>
+<td class="" colspan="1" rowspan="1"><img alt="udg48518_56x4" src="../images/udgs/udg48518_56x4.png" /></td>
+<td class="" colspan="1" rowspan="1">Enemy missile 1</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$13</td>
+<td class="" colspan="1" rowspan="1"><img alt="udg48550_56x4" src="../images/udgs/udg48550_56x4.png" /></td>
+<td class="" colspan="1" rowspan="1">Enemy missile 2</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$14</td>
+<td class="" colspan="1" rowspan="1"><img alt="udg48582_56x4" src="../images/udgs/udg48582_56x4.png" /></td>
+<td class="" colspan="1" rowspan="1">Meteor</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$15</td>
+<td class="" colspan="1" rowspan="1"><img alt="udg48622_56x4" src="../images/udgs/udg48622_56x4.png" /></td>
+<td class="" colspan="1" rowspan="1">Laser fence end 1</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$16</td>
+<td class="" colspan="1" rowspan="1"><img alt="udg48718_56x4" src="../images/udgs/udg48718_56x4.png" /></td>
+<td class="" colspan="1" rowspan="1">Laser fence end 2</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$17</td>
+<td class="" colspan="1" rowspan="1"><img alt="udg48814_56x4" src="../images/udgs/udg48814_56x4.png" /></td>
+<td class="" colspan="1" rowspan="1">Laser fence center</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$18</td>
+<td class="" colspan="1" rowspan="1"><img alt="udg48910_56x4" src="../images/udgs/udg48910_56x4.png" /></td>
+<td class="" colspan="1" rowspan="1">Star shaped enemy</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$19</td>
+<td class="" colspan="1" rowspan="1"><img alt="udg48942_56x4" src="../images/udgs/udg48942_56x4.png" /></td>
+<td class="" colspan="1" rowspan="1">Three spheres</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$1A</td>
+<td class="" colspan="1" rowspan="1"><img alt="udg48974_56x4" src="../images/udgs/udg48974_56x4.png" /></td>
+<td class="" colspan="1" rowspan="1">Enemy (chance stage) 1</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$1B</td>
+<td class="" colspan="1" rowspan="1"><img alt="udg49006_56x4" src="../images/udgs/udg49006_56x4.png" /></td>
+<td class="" colspan="1" rowspan="1">Enemy (chance stage) 2</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$1C</td>
+<td class="" colspan="1" rowspan="1"><img alt="udg49038_56x4" src="../images/udgs/udg49038_56x4.png" /></td>
+<td class="" colspan="1" rowspan="1">Enemy (chance stage) 3</td>
+</tr>
+</table>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">sprite_data</td>
+<td class="address-1"><span id="28674"></span>7002</td>
+<td class="instruction">DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="28686"></span>700E</td>
+<td class="instruction">DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="28698"></span>701A</td>
+<td class="instruction">DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="28710"></span>7026</td>
+<td class="instruction">DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="28722"></span>7032</td>
+<td class="instruction">DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="28734"></span>703E</td>
+<td class="instruction">DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="28746"></span>704A</td>
+<td class="instruction">DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="28758"></span>7056</td>
+<td class="instruction">DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="28770"></span>7062</td>
+<td class="instruction">DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="28782"></span>706E</td>
+<td class="instruction">DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="28794"></span>707A</td>
+<td class="instruction">DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="28806"></span>7086</td>
+<td class="instruction">DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="28818"></span>7092</td>
+<td class="instruction">DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="28830"></span>709E</td>
+<td class="instruction">DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="28842"></span>70AA</td>
+<td class="instruction">DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="28854"></span>70B6</td>
+<td class="instruction">DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="28866"></span>70C2</td>
+<td class="instruction">DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="28878"></span>70CE</td>
+<td class="instruction">DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="28890"></span>70DA</td>
+<td class="instruction">DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="28902"></span>70E6</td>
+<td class="instruction">DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="28914"></span>70F2</td>
+<td class="instruction">DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="28926"></span>70FE</td>
+<td class="instruction">DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="28938"></span>710A</td>
+<td class="instruction">DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="28950"></span>7116</td>
+<td class="instruction">DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="28962"></span>7122</td>
+<td class="instruction">DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="28974"></span>712E</td>
+<td class="instruction">DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="28986"></span>713A</td>
+<td class="instruction">DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="28998"></span>7146</td>
+<td class="instruction">DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="29010"></span>7152</td>
+<td class="instruction">DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="29022"></span>715E</td>
+<td class="instruction">DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="29034"></span>716A</td>
+<td class="instruction">DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="29046"></span>7176</td>
+<td class="instruction">DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="28672.html">7000</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#28674">Map</a></td>
+<td class="next">
+Next: <a href="29058.html">7182</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

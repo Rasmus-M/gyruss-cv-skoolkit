@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Data at 9F2A</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-b">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Data</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="40682.html">9EEA</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#40746">Map</a></td>
+<td class="next">
+Next: <a href="40766.html">9F3E</a>
+</td>
+</tr>
+</table>
+<div class="description">9F2A: Tune data 1</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Tune data basically consist of pairs of 2 bytes <table class="default">
+<tr>
+<th colspan="1" rowspan="1">Byte offset</th>
+<th colspan="1" rowspan="1">Purpose</th>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$00</td>
+<td class="" colspan="1" rowspan="1">Duration</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1"></td>
+<td class="" colspan="1" rowspan="1">If bit 7 if set, it has a special meaning:</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1"></td>
+<td class="" colspan="1" rowspan="1">1000000: load new address from next two bytes</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1"></td>
+<td class="" colspan="1" rowspan="1">1XXXXXX: subtract XXXXXXX from address</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1"></td>
+<td class="" colspan="1" rowspan="1">1111111: mute channel</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1">$01</td>
+<td class="" colspan="1" rowspan="1">Frequency</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1"></td>
+<td class="" colspan="1" rowspan="1">Bits 6-7 are used directly as bits 8-9 of the PSG frequency</td>
+</tr>
+<tr>
+<td class="default" colspan="1" rowspan="1"></td>
+<td class="" colspan="1" rowspan="1">Bits 0-5 are used as index into <a href="40630.html">frequency_table</a>, which produces bits 0-7 of the PSG frequency</td>
+</tr>
+</table>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">tune_data_1</td>
+<td class="address-1"><span id="40746"></span>9F2A</td>
+<td class="instruction">DEFB $02,$19,$02,$1B,$10,$19,$04,$FF</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40754"></span>9F32</td>
+<td class="instruction">DEFB $04,$1B,$04,$5D,$04,$5E,$04,$60</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40762"></span>9F3A</td>
+<td class="instruction">DEFB $08,$61,$18,$60</td>
+<td class="comment-0" rowspan="1"></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="40682.html">9EEA</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#40746">Map</a></td>
+<td class="next">
+Next: <a href="40766.html">9F3E</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

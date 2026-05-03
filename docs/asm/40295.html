@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at 9D67</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="40253.html">9D3D</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#40295">Map</a></td>
+<td class="next">
+Next: <a href="40337.html">9D91</a>
+</td>
+</tr>
+</table>
+<div class="description">9D67: Execute commands for all sound fx channels</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="39833.html">sound_player</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">execute_sound_fx_commands</td>
+<td class="address-2"><span id="40295"></span>9D67</td>
+<td class="instruction">LD IX,<a href="29373.html">sound_fx_data_buffer_4</a></td>
+<td class="comment-1" rowspan="1">Sound fx data 4 (start at the end)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40299"></span>9D6B</td>
+<td class="instruction">LD B,$04</td>
+<td class="comment-1" rowspan="1">4 channels</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="40301"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="40295.html#40329">execute_sound_fx_commands_1</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">execute_sound_fx_commands_0</td>
+<td class="address-2"><span id="40301"></span>9D6D</td>
+<td class="instruction">LD A,(IX+$05)</td>
+<td class="comment-1" rowspan="1">Get index of sound command to call</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40304"></span>9D70</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="1">Test bits and clear carry</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40305"></span>9D71</td>
+<td class="instruction">JP P,<a href="40295.html#40329">execute_sound_fx_commands_1</a></td>
+<td class="comment-1" rowspan="1">Skip channel if bit 7 is reset</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40308"></span>9D74</td>
+<td class="instruction">RLA</td>
+<td class="comment-1" rowspan="1">Multiply by 2, and shift out bit 7</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40309"></span>9D75</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">DE = A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40310"></span>9D76</td>
+<td class="instruction">LD D,$00</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40312"></span>9D78</td>
+<td class="instruction">LD IY,<a href="40337.html">sound_fx_command_jump_table</a></td>
+<td class="comment-1" rowspan="1">Base address of jump table</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40316"></span>9D7C</td>
+<td class="instruction">ADD IY,DE</td>
+<td class="comment-1" rowspan="1">Add offset</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40318"></span>9D7E</td>
+<td class="instruction">LD L,(IY+$00)</td>
+<td class="comment-1" rowspan="1">Get LSB</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40321"></span>9D81</td>
+<td class="instruction">LD H,(IY+$01)</td>
+<td class="comment-1" rowspan="1">Get MSB</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40324"></span>9D84</td>
+<td class="instruction">LD DE,<a href="40295.html#40329">execute_sound_fx_commands_1</a></td>
+<td class="comment-1" rowspan="1">Return address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40327"></span>9D87</td>
+<td class="instruction">PUSH DE</td>
+<td class="comment-1" rowspan="1">Push return address on stack</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40328"></span>9D88</td>
+<td class="instruction">JP (HL)</td>
+<td class="comment-1" rowspan="1">Jump to sound command</td>
+</tr>
+<tr>
+<td class="asm-label">execute_sound_fx_commands_1</td>
+<td class="address-2"><span id="40329"></span>9D89</td>
+<td class="instruction">LD DE,$FFF8</td>
+<td class="comment-1" rowspan="1">-8</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40332"></span>9D8C</td>
+<td class="instruction">ADD IX,DE</td>
+<td class="comment-1" rowspan="1">Move 8 bytes back</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40334"></span>9D8E</td>
+<td class="instruction">DJNZ <a href="40295.html#40301">execute_sound_fx_commands_0</a></td>
+<td class="comment-1" rowspan="1">Loop for 4 channels</td>
+</tr>
+<tr>
+<td class="asm-label">sound_fx_command_10</td>
+<td class="address-1"><span id="40336"></span>9D90</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="40253.html">9D3D</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#40295">Map</a></td>
+<td class="next">
+Next: <a href="40337.html">9D91</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

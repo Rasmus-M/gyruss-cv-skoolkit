@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at AA7D</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="43133.html">A87D</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#43645">Map</a></td>
+<td class="next">
+Next: <a href="43686.html">AAA6</a>
+</td>
+</tr>
+</table>
+<div class="description">AA7D: Init center enemies</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="32804.html">entry</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">init_center_enemies</td>
+<td class="address-2"><span id="43645"></span>AA7D</td>
+<td class="instruction">LD HL,<a href="29191.html">center_enemy_map</a></td>
+<td class="comment-1" rowspan="1">Set whole <a href="29191.html">center_enemy_map</a> to $FF</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43648"></span>AA80</td>
+<td class="instruction">LD DE,$7208</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43651"></span>AA83</td>
+<td class="instruction">LD BC,$0023</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43654"></span>AA86</td>
+<td class="instruction">LD (HL),$FF</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43656"></span>AA88</td>
+<td class="instruction">LDIR</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43658"></span>AA8A</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">A = 0</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43659"></span>AA8B</td>
+<td class="instruction">LD (<a href="29227.html">center_map_entries</a>),A</td>
+<td class="comment-1" rowspan="1">Clear number of map entries</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43662"></span>AA8E</td>
+<td class="instruction">LD (<a href="29389.html">center_enemy_processed</a>),A</td>
+<td class="comment-1" rowspan="1">Clear center enemy processed</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43665"></span>AA91</td>
+<td class="instruction">LD (<a href="29395.html">y_counter</a>),A</td>
+<td class="comment-1" rowspan="1">Clear y counter</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43668"></span>AA94</td>
+<td class="instruction">LD (<a href="29396.html">x_counter</a>),A</td>
+<td class="comment-1" rowspan="1">Clear x counter</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43671"></span>AA97</td>
+<td class="instruction">INC A</td>
+<td class="comment-1" rowspan="1">A = 1</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43672"></span>AA98</td>
+<td class="instruction">LD (<a href="29394.html">y_counter_direction</a>),A</td>
+<td class="comment-1" rowspan="1">Set y counter direction</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43675"></span>AA9B</td>
+<td class="instruction">LD A,$E0</td>
+<td class="comment-1" rowspan="1">Set first name used for center enemies in buffer 1</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43677"></span>AA9D</td>
+<td class="instruction">LD (<a href="29390.html">center_enemies_name_1</a>),A</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43680"></span>AAA0</td>
+<td class="instruction">ADD A,$10</td>
+<td class="comment-1" rowspan="1">First name used for center enemies in buffer 2</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43682"></span>AAA2</td>
+<td class="instruction">LD (<a href="29391.html">center_enemies_name_2</a>),A</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43685"></span>AAA5</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="43133.html">A87D</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#43645">Map</a></td>
+<td class="next">
+Next: <a href="43686.html">AAA6</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

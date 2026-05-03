@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at 8A2D</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="35307.html">89EB</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#35373">Map</a></td>
+<td class="next">
+Next: <a href="35388.html">8A3C</a>
+</td>
+</tr>
+</table>
+<div class="description">8A2D: Circular enemy movement: Move enemy towards viewer</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="35230.html">handle_sprite_types_18_1C</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">L8A2D</td>
+<td class="address-2"><span id="35373"></span>8A2D</td>
+<td class="instruction">LD A,(IX+$01)</td>
+<td class="comment-1" rowspan="1">Get polar y</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35376"></span>8A30</td>
+<td class="instruction">CP $F2</td>
+<td class="comment-1" rowspan="1">If $F2 (-14)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35378"></span>8A32</td>
+<td class="instruction">JP Z,<a href="34869.html">handle_out_of_screen</a></td>
+<td class="comment-1" rowspan="1">Then jump to handler</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35381"></span>8A35</td>
+<td class="instruction">DEC (IX+$01)</td>
+<td class="comment-1" rowspan="1">Decrement polar y</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35384"></span>8A38</td>
+<td class="instruction">INC (IX+$05)</td>
+<td class="comment-1" rowspan="1">Mark for pattern reload</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35387"></span>8A3B</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return to <a href="35393.html">return_from_sprite_handler</a></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="35307.html">89EB</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#35373">Map</a></td>
+<td class="next">
+Next: <a href="35388.html">8A3C</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

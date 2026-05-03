@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at 8A41</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="35388.html">8A3C</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#35393">Map</a></td>
+<td class="next">
+Next: <a href="35411.html">8A53</a>
+</td>
+</tr>
+</table>
+<div class="description">8A41: Return from sprite handler</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Sprite handler branching out from <a href="34278.html#34304">process_sprites_1</a>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">return_from_sprite_handler</td>
+<td class="address-2"><span id="35393"></span>8A41</td>
+<td class="instruction">LD A,(IX+$00)</td>
+<td class="comment-1" rowspan="1">Get sprite type</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35396"></span>8A44</td>
+<td class="instruction">CP (IX+$05)</td>
+<td class="comment-1" rowspan="1">Same as before?</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35399"></span>8A47</td>
+<td class="instruction">JR Z,<a href="35393.html#35406">return_from_sprite_handler_0</a></td>
+<td class="comment-1" rowspan="1">Skip ahead if so</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35401"></span>8A49</td>
+<td class="instruction">LD (IX+$04),$FF</td>
+<td class="comment-1" rowspan="1">Set loaded patten index to none</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35405"></span>8A4D</td>
+<td class="instruction">RST $30</td>
+<td class="comment-1" rowspan="1">Load sprite pattern</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="35406"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="34429.html">handle_sprite_types_04_0C</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">return_from_sprite_handler_0</td>
+<td class="address-2"><span id="35406"></span>8A4E</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore sprite allocation table address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35407"></span>8A4F</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Increment address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35408"></span>8A50</td>
+<td class="instruction">JP <a href="34278.html#34304">process_sprites_1</a></td>
+<td class="comment-1" rowspan="1">Jump back into loop at <a href="34278.html#34304">process_sprites_1</a></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="35388.html">8A3C</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#35393">Map</a></td>
+<td class="next">
+Next: <a href="35411.html">8A53</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

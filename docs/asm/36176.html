@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at 8D50</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="36129.html">8D21</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#36176">Map</a></td>
+<td class="next">
+Next: <a href="36311.html">8DD7</a>
+</td>
+</tr>
+</table>
+<div class="description">8D50: Create "laser fence" or meteor</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="33000.html">main_loop</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">create_laser_fence_or_meteor</td>
+<td class="address-2"><span id="36176"></span>8D50</td>
+<td class="instruction">LD A,(<a href="29170.html">frame_counter</a>)</td>
+<td class="comment-1" rowspan="1">Frame counter</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36179"></span>8D53</td>
+<td class="instruction">AND $03</td>
+<td class="comment-1" rowspan="1">If not every 4th frame</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36181"></span>8D55</td>
+<td class="instruction">RET NZ</td>
+<td class="comment-1" rowspan="1">Then return</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36182"></span>8D56</td>
+<td class="instruction">LD A,(<a href="29163.html">status_flags</a>)</td>
+<td class="comment-1" rowspan="1">Is it chance stage?</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36185"></span>8D59</td>
+<td class="instruction">BIT 3,A</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36187"></span>8D5B</td>
+<td class="instruction">RET NZ</td>
+<td class="comment-1" rowspan="1">Then return</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36188"></span>8D5C</td>
+<td class="instruction">LD A,(<a href="29279.html">laser_meteor_countdown</a>)</td>
+<td class="comment-1" rowspan="1">Is countdown zero?</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36191"></span>8D5F</td>
+<td class="instruction">OR A</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36192"></span>8D60</td>
+<td class="instruction">JP Z,<a href="36311.html#36356">create_meteor_1</a></td>
+<td class="comment-1" rowspan="1">Then start another countdown</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36195"></span>8D63</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="1">Else decrement it</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36196"></span>8D64</td>
+<td class="instruction">LD (<a href="29279.html">laser_meteor_countdown</a>),A</td>
+<td class="comment-1" rowspan="1">And save it</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36199"></span>8D67</td>
+<td class="instruction">RET NZ</td>
+<td class="comment-1" rowspan="1">If it's still not zero then return</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36200"></span>8D68</td>
+<td class="instruction">CALL <a href="34011.html">stage_data_addr</a></td>
+<td class="comment-1" rowspan="1">Get stage data address in IY</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36203"></span>8D6B</td>
+<td class="instruction">RST $20</td>
+<td class="comment-1" rowspan="1">Random number</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36204"></span>8D6C</td>
+<td class="instruction">AND $E0</td>
+<td class="comment-1" rowspan="1">If any of 3 bits are set</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36206"></span>8D6E</td>
+<td class="instruction">JR NZ,<a href="36311.html">create_meteor</a></td>
+<td class="comment-1" rowspan="1">Then jump to create meteor</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36208"></span>8D70</td>
+<td class="instruction">BIT 0,(IY+$07)</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36212"></span>8D74</td>
+<td class="instruction">JR Z,<a href="36311.html">create_meteor</a></td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36214"></span>8D76</td>
+<td class="instruction">LD HL,<a href="29270.html">other_flags</a></td>
+<td class="comment-1" rowspan="1">If laser fence flag is set</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36217"></span>8D79</td>
+<td class="instruction">BIT 4,(HL)</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36219"></span>8D7B</td>
+<td class="instruction">JR NZ,<a href="36311.html">create_meteor</a></td>
+<td class="comment-1" rowspan="1">Then jump to create meteor</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="36221"></span>
+<div class="comments">
+<div class="paragraph">
+Allocate laser fence
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36221"></span>8D7D</td>
+<td class="instruction">SET 4,(HL)</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36223"></span>8D7F</td>
+<td class="instruction">SET 3,(HL)</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36225"></span>8D81</td>
+<td class="instruction">RST $28</td>
+<td class="comment-1" rowspan="1">Allocate sprite</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36226"></span>8D82</td>
+<td class="instruction">LD (IX+$00),$15</td>
+<td class="comment-1" rowspan="1">Set type to laser fence end 1</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36230"></span>8D86</td>
+<td class="instruction">LD (IX+$01),$25</td>
+<td class="comment-1" rowspan="1">Set polar y</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36234"></span>8D8A</td>
+<td class="instruction">LD (IX+$0B),$0C</td>
+<td class="comment-1" rowspan="1">Set color</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36238"></span>8D8E</td>
+<td class="instruction">RST $20</td>
+<td class="comment-1" rowspan="1">Random number</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36239"></span>8D8F</td>
+<td class="instruction">AND $3F</td>
+<td class="comment-1" rowspan="1">0-63</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36241"></span>8D91</td>
+<td class="instruction">LD (IX+$02),A</td>
+<td class="comment-1" rowspan="1">Set polar x</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36244"></span>8D94</td>
+<td class="instruction">LD (<a href="29282.html">L7262</a>),A</td>
+<td class="comment-1" rowspan="1">Store polar x</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36247"></span>8D97</td>
+<td class="instruction">PUSH AF</td>
+<td class="comment-1" rowspan="1">Save polar x</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36248"></span>8D98</td>
+<td class="instruction">RST $30</td>
+<td class="comment-1" rowspan="1">Load sprite pattern</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36249"></span>8D99</td>
+<td class="instruction">RST $28</td>
+<td class="comment-1" rowspan="1">Allocate sprite</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36250"></span>8D9A</td>
+<td class="instruction">LD (IX+$00),$16</td>
+<td class="comment-1" rowspan="1">Set type to laser fence end 2</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36254"></span>8D9E</td>
+<td class="instruction">LD (IX+$01),$25</td>
+<td class="comment-1" rowspan="1">Set polar y</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36258"></span>8DA2</td>
+<td class="instruction">LD (IX+$0B),$0C</td>
+<td class="comment-1" rowspan="1">Set color</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36262"></span>8DA6</td>
+<td class="instruction">POP AF</td>
+<td class="comment-1" rowspan="1">Restore polar x</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36263"></span>8DA7</td>
+<td class="instruction">PUSH AF</td>
+<td class="comment-1" rowspan="1">Save polar x</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36264"></span>8DA8</td>
+<td class="instruction">ADD A,$08</td>
+<td class="comment-1" rowspan="1">Polar x + 8</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36266"></span>8DAA</td>
+<td class="instruction">AND $3F</td>
+<td class="comment-1" rowspan="1">Mod 64</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36268"></span>8DAC</td>
+<td class="instruction">LD (IX+$02),A</td>
+<td class="comment-1" rowspan="1">Set polar x</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36271"></span>8DAF</td>
+<td class="instruction">LD (<a href="29281.html">L7261</a>),A</td>
+<td class="comment-1" rowspan="1">Store polar x</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36274"></span>8DB2</td>
+<td class="instruction">RST $30</td>
+<td class="comment-1" rowspan="1">Load sprite pattern</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36275"></span>8DB3</td>
+<td class="instruction">RST $28</td>
+<td class="comment-1" rowspan="1">Allocate sprite</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36276"></span>8DB4</td>
+<td class="instruction">LD (IX+$00),$17</td>
+<td class="comment-1" rowspan="1">Set type to laser fence center</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36280"></span>8DB8</td>
+<td class="instruction">LD (IX+$01),$25</td>
+<td class="comment-1" rowspan="1">Set polar y</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36284"></span>8DBC</td>
+<td class="instruction">LD (IX+$0B),$0F</td>
+<td class="comment-1" rowspan="1">Set color</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36288"></span>8DC0</td>
+<td class="instruction">LD (IX+$03),$01</td>
+<td class="comment-1" rowspan="1">Set velocity</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36292"></span>8DC4</td>
+<td class="instruction">POP AF</td>
+<td class="comment-1" rowspan="1">Restore polar x</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36293"></span>8DC5</td>
+<td class="instruction">ADD A,$04</td>
+<td class="comment-1" rowspan="1">Polar x + 4</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36295"></span>8DC7</td>
+<td class="instruction">AND $3F</td>
+<td class="comment-1" rowspan="1">Mod 64</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36297"></span>8DC9</td>
+<td class="instruction">LD (IX+$02),A</td>
+<td class="comment-1" rowspan="1">Set polar x</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36300"></span>8DCC</td>
+<td class="instruction">RST $30</td>
+<td class="comment-1" rowspan="1">Load sprite pattern</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36301"></span>8DCD</td>
+<td class="instruction">LD A,(<a href="29190.html">total_enemies</a>)</td>
+<td class="comment-1" rowspan="1">Total enemies</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36304"></span>8DD0</td>
+<td class="instruction">ADD A,$03</td>
+<td class="comment-1" rowspan="1">Add 3</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36306"></span>8DD2</td>
+<td class="instruction">LD (<a href="29190.html">total_enemies</a>),A</td>
+<td class="comment-1" rowspan="1">Store again</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36309"></span>8DD5</td>
+<td class="instruction">JR <a href="36311.html#36356">create_meteor_1</a></td>
+<td class="comment-1" rowspan="1">Jump to return</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="36129.html">8D21</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#36176">Map</a></td>
+<td class="next">
+Next: <a href="36311.html">8DD7</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

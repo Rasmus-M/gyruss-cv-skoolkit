@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at 8024</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="32801.html">8021</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#32804">Map</a></td>
+<td class="next">
+Next: <a href="33000.html">80E8</a>
+</td>
+</tr>
+</table>
+<div class="description">8024: Entry point</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">entry</td>
+<td class="address-2"><span id="32804"></span>8024</td>
+<td class="instruction">LD SP,<a href="29626.html">L73BA</a></td>
+<td class="comment-1" rowspan="1">Init stack pointer</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32807"></span>8027</td>
+<td class="instruction">OUT ($C0),A</td>
+<td class="comment-1" rowspan="1">Controller enable</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32809"></span>8029</td>
+<td class="instruction">LD HL,<a href="28672.html">center_of_projection</a></td>
+<td class="comment-1" rowspan="1">Clear RAM</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32812"></span>802C</td>
+<td class="instruction">LD DE,$7001</td>
+<td class="comment-1" rowspan="1"><a href="28672.html">center_of_projection</a>+1</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32815"></span>802F</td>
+<td class="instruction">LD BC,$03B9</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32818"></span>8032</td>
+<td class="instruction">LD (HL),L</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32819"></span>8033</td>
+<td class="instruction">LDIR</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32821"></span>8035</td>
+<td class="instruction">LD HL,$8060</td>
+<td class="comment-1" rowspan="1">Set center of projection</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32824"></span>8038</td>
+<td class="instruction">LD (<a href="28672.html">center_of_projection</a>),HL</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32827"></span>803B</td>
+<td class="instruction">CALL <a href="39646.html">init_sound</a></td>
+<td class="comment-1" rowspan="1">Init sound</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32830"></span>803E</td>
+<td class="instruction">CALL <a href="37078.html">start_screen</a></td>
+<td class="comment-1" rowspan="1">Start screen</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32833"></span>8041</td>
+<td class="instruction">LD HL,$2A30</td>
+<td class="comment-1" rowspan="1">180 * 60 frames</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32836"></span>8044</td>
+<td class="instruction">LD (<a href="29271.html">screensaver_countdown</a>),HL</td>
+<td class="comment-1" rowspan="1">Set screensaver countdown</td>
+</tr>
+<tr>
+<td class="asm-label">entry_wait_fire</td>
+<td class="address-2"><span id="32839"></span>8047</td>
+<td class="instruction">HALT</td>
+<td class="comment-1" rowspan="1">Wait for interrupt</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32840"></span>8048</td>
+<td class="instruction">CALL <a href="45055.html">display_stars</a></td>
+<td class="comment-1" rowspan="1">Display stars</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32843"></span>804B</td>
+<td class="instruction">LD HL,$0000</td>
+<td class="comment-1" rowspan="1">Controller 0, segment 0</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32846"></span>804E</td>
+<td class="instruction">CALL $1F79</td>
+<td class="comment-1" rowspan="1">DECODER</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32849"></span>8051</td>
+<td class="instruction">BIT 6,H</td>
+<td class="comment-1" rowspan="1">Test fire</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32851"></span>8053</td>
+<td class="instruction">JR NZ,<a href="32804.html#32868">new_game</a></td>
+<td class="comment-1" rowspan="1">Jump if fire pressed</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32853"></span>8055</td>
+<td class="instruction">LD HL,$0100</td>
+<td class="comment-1" rowspan="1">Controller 1, segment 0</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32856"></span>8058</td>
+<td class="instruction">CALL $1F79</td>
+<td class="comment-1" rowspan="1">DECODER</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32859"></span>805B</td>
+<td class="instruction">BIT 6,H</td>
+<td class="comment-1" rowspan="1">Test fire</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32861"></span>805D</td>
+<td class="instruction">JR Z,<a href="32804.html#32839">entry_wait_fire</a></td>
+<td class="comment-1" rowspan="1">Loop until fire pressed</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32863"></span>805F</td>
+<td class="instruction">LD HL,<a href="29163.html">status_flags</a></td>
+<td class="comment-1" rowspan="1">Set two-player flag</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32866"></span>8062</td>
+<td class="instruction">SET 7,(HL)</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="32868"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="33261.html">wait_for_restart</a>. Fire pressed
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">new_game</td>
+<td class="address-2"><span id="32868"></span>8064</td>
+<td class="instruction">LD HL,$0000</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32871"></span>8067</td>
+<td class="instruction">LD (<a href="29271.html">screensaver_countdown</a>),HL</td>
+<td class="comment-1" rowspan="1">Clear screensaver countdown</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32874"></span>806A</td>
+<td class="instruction">LD HL,$1800</td>
+<td class="comment-1" rowspan="1">Name table address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32877"></span>806D</td>
+<td class="instruction">LD DE,$0300</td>
+<td class="comment-1" rowspan="1">Name table size</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32880"></span>8070</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">Zero</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32881"></span>8071</td>
+<td class="instruction">CALL $1F82</td>
+<td class="comment-1" rowspan="1">FILL_VRAM (clear screen)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32884"></span>8074</td>
+<td class="instruction">LD HL,$201C</td>
+<td class="comment-1" rowspan="1">Last 4 bytes of color table</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32887"></span>8077</td>
+<td class="instruction">LD DE,$0004</td>
+<td class="comment-1" rowspan="1">4 bytes</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32890"></span>807A</td>
+<td class="instruction">LD A,$F1</td>
+<td class="comment-1" rowspan="1">Set to white/black</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32892"></span>807C</td>
+<td class="instruction">CALL $1F82</td>
+<td class="comment-1" rowspan="1">FILL_VRAM</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32895"></span>807F</td>
+<td class="instruction">LD HL,<a href="29169.html">current_player</a></td>
+<td class="comment-1" rowspan="1">Clear RAM  from $71F1</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32898"></span>8082</td>
+<td class="instruction">LD DE,<a href="29170.html">frame_counter</a></td>
+<td class="comment-1" rowspan="1">To $7256</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32901"></span>8085</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32902"></span>8086</td>
+<td class="instruction">LD (HL),A</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32903"></span>8087</td>
+<td class="instruction">LD BC,$0065</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32906"></span>808A</td>
+<td class="instruction">LDIR</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32908"></span>808C</td>
+<td class="instruction">LD A,(<a href="29163.html">status_flags</a>)</td>
+<td class="comment-1" rowspan="1">Clear all but two-player flag</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32911"></span>808F</td>
+<td class="instruction">AND $80</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32913"></span>8091</td>
+<td class="instruction">LD (<a href="29163.html">status_flags</a>),A</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32916"></span>8094</td>
+<td class="instruction">LD A,$05</td>
+<td class="comment-1" rowspan="1">5 Lives</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32918"></span>8096</td>
+<td class="instruction">LD (<a href="29183.html">lives</a>),A</td>
+<td class="comment-1" rowspan="1">Set lives</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32921"></span>8099</td>
+<td class="instruction">INC A</td>
+<td class="comment-1" rowspan="1">Increment to 6</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32922"></span>809A</td>
+<td class="instruction">LD (<a href="29176.html">score_extra_life_1_MSB</a>),A</td>
+<td class="comment-1" rowspan="1">Set <a href="29174.html">score_extra_life_1</a>+2 to 6 (extra life at 60000)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32925"></span>809D</td>
+<td class="instruction">LD (<a href="29182.html">score_extra_life_2_MSB</a>),A</td>
+<td class="comment-1" rowspan="1">Set <a href="29180.html">score_extra_life_2</a>+2 to 6 (extra life at 60000)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32928"></span>80A0</td>
+<td class="instruction">LD A,$01</td>
+<td class="comment-1" rowspan="1">Stage</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32930"></span>80A2</td>
+<td class="instruction">LD (<a href="29184.html">stage</a>),A</td>
+<td class="comment-1" rowspan="1">Set to 1</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32933"></span>80A5</td>
+<td class="instruction">CALL <a href="43645.html">init_center_enemies</a></td>
+<td class="comment-1" rowspan="1">Init variables</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32936"></span>80A8</td>
+<td class="instruction">LD HL,<a href="34108.html">stage_msg</a></td>
+<td class="comment-1" rowspan="1">Display stage message</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32939"></span>80AB</td>
+<td class="instruction">LD DE,$1AF8</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32942"></span>80AE</td>
+<td class="instruction">LD BC,$0005</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32945"></span>80B1</td>
+<td class="instruction">RST $38</td>
+<td class="comment-1" rowspan="1">WRITE_VRAM</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32946"></span>80B2</td>
+<td class="instruction">LD DE,$1802</td>
+<td class="comment-1" rowspan="1">Display '1' at the top left corner</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32949"></span>80B5</td>
+<td class="instruction">LD A,$31</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32951"></span>80B7</td>
+<td class="instruction">RST $10</td>
+<td class="comment-1" rowspan="1">Write VDP byte</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32952"></span>80B8</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Display '-' next to '1'</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32953"></span>80B9</td>
+<td class="instruction">LD A,$2D</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32955"></span>80BB</td>
+<td class="instruction">RST $10</td>
+<td class="comment-1" rowspan="1">Write VDP byte</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32956"></span>80BC</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">Parameter to display score</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32957"></span>80BD</td>
+<td class="instruction">CALL <a href="42649.html">display_score</a></td>
+<td class="comment-1" rowspan="1">Display score player 1</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32960"></span>80C0</td>
+<td class="instruction">LD A,(<a href="29163.html">status_flags</a>)</td>
+<td class="comment-1" rowspan="1">Flags</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32963"></span>80C3</td>
+<td class="instruction">BIT 7,A</td>
+<td class="comment-1" rowspan="1">Test bit for two players</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32965"></span>80C5</td>
+<td class="instruction">JR Z,<a href="32804.html#32992">entry_0</a></td>
+<td class="comment-1" rowspan="1">If bit is reset then skip ahead</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32967"></span>80C7</td>
+<td class="instruction">LD DE,$181E</td>
+<td class="comment-1" rowspan="1">Display '-' at the top right corner</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32970"></span>80CA</td>
+<td class="instruction">LD A,$2D</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32972"></span>80CC</td>
+<td class="instruction">RST $10</td>
+<td class="comment-1" rowspan="1">Write VDP byte</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32973"></span>80CD</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Display '2' next to '-'</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32974"></span>80CE</td>
+<td class="instruction">LD A,$32</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32976"></span>80D0</td>
+<td class="instruction">RST $10</td>
+<td class="comment-1" rowspan="1">Write VDP byte</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32977"></span>80D1</td>
+<td class="instruction">LD A,$01</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32979"></span>80D3</td>
+<td class="instruction">CALL <a href="42649.html">display_score</a></td>
+<td class="comment-1" rowspan="1">Display score player 2</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32982"></span>80D6</td>
+<td class="instruction">LD HL,<a href="29183.html">lives</a></td>
+<td class="comment-1" rowspan="1">Save player data in VDP RAM, starting with lives?</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32985"></span>80D9</td>
+<td class="instruction">LD DE,$1300</td>
+<td class="comment-1" rowspan="1">VDP address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32988"></span>80DC</td>
+<td class="instruction">LD BC,$002D</td>
+<td class="comment-1" rowspan="1">45 bytes</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32991"></span>80DF</td>
+<td class="instruction">RST $38</td>
+<td class="comment-1" rowspan="1">WRITE_VRAM</td>
+</tr>
+<tr>
+<td class="asm-label">entry_0</td>
+<td class="address-2"><span id="32992"></span>80E0</td>
+<td class="instruction">LD A,R</td>
+<td class="comment-1" rowspan="1">Random number seed</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32994"></span>80E2</td>
+<td class="instruction">LD ($731C),A</td>
+<td class="comment-1" rowspan="1">Init random number</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="32997"></span>80E5</td>
+<td class="instruction">CALL <a href="33298.html">init_stage</a></td>
+<td class="comment-1" rowspan="1">Initialize stage</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="32801.html">8021</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#32804">Map</a></td>
+<td class="next">
+Next: <a href="33000.html">80E8</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

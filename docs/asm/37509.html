@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at 9285</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="37461.html">9255</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#37509">Map</a></td>
+<td class="next">
+Next: <a href="37548.html">92AC</a>
+</td>
+</tr>
+</table>
+<div class="description">9285: Copy 135 patterns</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Copy 135 patterns from VDP RAM buffer into pattern table from 128 Used by the routine at <a href="37237.html">display_planet</a>.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">HL</td>
+<td class="register-desc">Pattern generator table destination address ($0400)</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">L9285</td>
+<td class="address-2"><span id="37509"></span>9285</td>
+<td class="instruction">LD DE,$1400</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37512"></span>9288</td>
+<td class="instruction">LD B,$0E</td>
+<td class="comment-1" rowspan="1">Counter</td>
+</tr>
+<tr>
+<td class="asm-label">L9285_0</td>
+<td class="address-2"><span id="37514"></span>928A</td>
+<td class="instruction">PUSH BC</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37515"></span>928B</td>
+<td class="instruction">PUSH DE</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37516"></span>928C</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37517"></span>928D</td>
+<td class="instruction">LD BC,$0048</td>
+<td class="comment-1" rowspan="1">Read 9 patterns from $1400 (?)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37520"></span>9290</td>
+<td class="instruction">LD HL,<a href="29091.html">buffer</a></td>
+<td class="comment-1" rowspan="1">Into buffer</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37523"></span>9293</td>
+<td class="instruction">CALL $1FE2</td>
+<td class="comment-1" rowspan="1">READ_VRAM</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37526"></span>9296</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="1">DE = $0400</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37527"></span>9297</td>
+<td class="instruction">PUSH DE</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37528"></span>9298</td>
+<td class="instruction">LD BC,$0048</td>
+<td class="comment-1" rowspan="1">Write 9 patterns from buffer</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37531"></span>929B</td>
+<td class="instruction">LD HL,<a href="29091.html">buffer</a></td>
+<td class="comment-1" rowspan="1">To $0400 (pattern 128)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37534"></span>929E</td>
+<td class="instruction">RST $38</td>
+<td class="comment-1" rowspan="1">WRITE_VRAM</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37535"></span>929F</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">HL = $0400</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37536"></span>92A0</td>
+<td class="instruction">LD BC,$0048</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37539"></span>92A3</td>
+<td class="instruction">ADD HL,BC</td>
+<td class="comment-1" rowspan="1">Advance 9 patterns, HL = $0448</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37540"></span>92A4</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="1">DE = $1400</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37541"></span>92A5</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37542"></span>92A6</td>
+<td class="instruction">ADD HL,BC</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37543"></span>92A7</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">DE = $1448</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37544"></span>92A8</td>
+<td class="instruction">POP BC</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37545"></span>92A9</td>
+<td class="instruction">DJNZ <a href="37509.html#37514">L9285_0</a></td>
+<td class="comment-1" rowspan="1">Loop 15 times = 135 patterns</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37547"></span>92AB</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="37461.html">9255</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#37509">Map</a></td>
+<td class="next">
+Next: <a href="37548.html">92AC</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at 8AE6</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="35520.html">8AC0</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#35558">Map</a></td>
+<td class="next">
+Next: <a href="35602.html">8B12</a>
+</td>
+</tr>
+</table>
+<div class="description">8AE6: Reset enemy sprite types after dying</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="33081.html">died</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">reset_enemy_sprite_types</td>
+<td class="address-2"><span id="35558"></span>8AE6</td>
+<td class="instruction">LD IX,<a href="28674.html">sprite_data</a></td>
+<td class="comment-1" rowspan="1">Sprite data</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35562"></span>8AEA</td>
+<td class="instruction">LD DE,$000C</td>
+<td class="comment-1" rowspan="1">Size of each sprite</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35565"></span>8AED</td>
+<td class="instruction">LD B,$20</td>
+<td class="comment-1" rowspan="1">32 sprites</td>
+</tr>
+<tr>
+<td class="asm-label">reset_enemy_sprite_types_0</td>
+<td class="address-2"><span id="35567"></span>8AEF</td>
+<td class="instruction">LD A,(IX+$00)</td>
+<td class="comment-1" rowspan="1">Get type</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35570"></span>8AF2</td>
+<td class="instruction">CP $0E</td>
+<td class="comment-1" rowspan="1">If &lt; $0E then move on</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35572"></span>8AF4</td>
+<td class="instruction">JR C,<a href="35558.html#35597">reset_enemy_sprite_types_1</a></td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35574"></span>8AF6</td>
+<td class="instruction">CP $12</td>
+<td class="comment-1" rowspan="1">If &gt;= $12 then move on</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35576"></span>8AF8</td>
+<td class="instruction">JR NC,<a href="35558.html#35597">reset_enemy_sprite_types_1</a></td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35578"></span>8AFA</td>
+<td class="instruction">BIT 6,(IX+$07)</td>
+<td class="comment-1" rowspan="1">For types $0E - $11 (enemies), test flag bit 6</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35582"></span>8AFE</td>
+<td class="instruction">JR NZ,<a href="35558.html#35597">reset_enemy_sprite_types_1</a></td>
+<td class="comment-1" rowspan="1">If not set, move on</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35584"></span>8B00</td>
+<td class="instruction">LD (IX+$00),$10</td>
+<td class="comment-1" rowspan="1">Set type to $10</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35588"></span>8B04</td>
+<td class="instruction">LD (IX+$07),$0C</td>
+<td class="comment-1" rowspan="1">Set flags to $0C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35592"></span>8B08</td>
+<td class="instruction">LD (IX+$04),$FF</td>
+<td class="comment-1" rowspan="1">Set loaded patten index to none</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35596"></span>8B0C</td>
+<td class="instruction">RST $30</td>
+<td class="comment-1" rowspan="1">Load sprite pattern</td>
+</tr>
+<tr>
+<td class="asm-label">reset_enemy_sprite_types_1</td>
+<td class="address-2"><span id="35597"></span>8B0D</td>
+<td class="instruction">ADD IX,DE</td>
+<td class="comment-1" rowspan="1">Next sprite</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35599"></span>8B0F</td>
+<td class="instruction">DJNZ <a href="35558.html#35567">reset_enemy_sprite_types_0</a></td>
+<td class="comment-1" rowspan="1">Loop for 32 sprites</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="35601"></span>8B11</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="35520.html">8AC0</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#35558">Map</a></td>
+<td class="next">
+Next: <a href="35602.html">8B12</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>

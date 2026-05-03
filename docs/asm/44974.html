@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gyruss: Routine at AFAE</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../custom.css" />
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Gyruss</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="44907.html">AF6B</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#44974">Map</a></td>
+<td class="next">
+Next: <a href="44994.html">AFC2</a>
+</td>
+</tr>
+</table>
+<div class="description">AFAE: Flip pattern vertically</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Take a pattern pointed to by <a href="29406.html">pattern_address</a> and flip it vertically (upside down). Returns address of result in <a href="29406.html">pattern_address</a>. Used by the routine at <a href="44692.html">upload_sprite_patterns</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">flip_vertical</td>
+<td class="address-2"><span id="44974"></span>AFAE</td>
+<td class="instruction">LD DE,(<a href="29406.html">pattern_address</a>)</td>
+<td class="comment-1" rowspan="1">DE = source address</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44978"></span>AFB2</td>
+<td class="instruction">LD HL,$0010</td>
+<td class="comment-1" rowspan="1">HL = right after end of destination buffer</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44981"></span>AFB5</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44982"></span>AFB6</td>
+<td class="instruction">LD B,$08</td>
+<td class="comment-1" rowspan="1">8 bytes in pattern</td>
+</tr>
+<tr>
+<td class="asm-label">flip_vertical_0</td>
+<td class="address-2"><span id="44984"></span>AFB8</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="1">Get source byte</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44985"></span>AFB9</td>
+<td class="instruction">DEC HL</td>
+<td class="comment-1" rowspan="1">Destination address moves backwards</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44986"></span>AFBA</td>
+<td class="instruction">LD (HL),A</td>
+<td class="comment-1" rowspan="1">Store result</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44987"></span>AFBB</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Next source</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44988"></span>AFBC</td>
+<td class="instruction">DJNZ <a href="44974.html#44984">flip_vertical_0</a></td>
+<td class="comment-1" rowspan="1">Repeat 8 times</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44990"></span>AFBE</td>
+<td class="instruction">LD (<a href="29406.html">pattern_address</a>),HL</td>
+<td class="comment-1" rowspan="1">Store destination</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44993"></span>AFC1</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1"></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="44907.html">AF6B</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#44974">Map</a></td>
+<td class="next">
+Next: <a href="44994.html">AFC2</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright"></div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.5.</div>
+</footer>
+</body>
+</html>
