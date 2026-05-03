@@ -172,9 +172,10 @@ D $7264 1 = create mines 2 = display mines
 @ $7264 label=mines_action
 B $7264,1,1
 b $7265 Mines are destroyed if bit 0 is set
-@ $7265 destroy_mines_flag
+@ $7265 label=destroy_mines_flag
 B $7265,1,1
 b $7266 Related to when mines reappear
+@ $7266 label=mines_reappear
 B $7266,1,1
 b $7267 Mines movement table offset
 @ $7267 label=mines_movement_table_offset
@@ -225,7 +226,7 @@ D $727A Set to 5 when starting a tune, but any non-zero value could be used. Set
 B $727A,1,1
 b $727B Sound player countdown (tune speed?)
 D $727B Counts down from 5 to zero, and certain sound player actions are only performed when 0.
-@ $727B sound_player_countdown
+@ $727B label=sound_player_countdown
 B $727B,1,1
 b $727C Index of tune playing
 @ $727C label=tune_playing
@@ -257,12 +258,16 @@ b $72BD Sound fx data channel 4
 @ $72BD label=sound_fx_data_buffer_4
 B $72BD,1,1
 w $72BE Byte 1-2 of sound fx data 4
+@ $72BE label=sound_fx_data_buffer_4_12
 W $72BE,2,2
 w $72C0 Byte 3-4 of sound fx data 4
+@ $72C0 label=sound_fx_data_buffer_4_34
 W $72C0,2,2
 b $72C2 Byte 5 of sound fx data 4
+@ $72C2 label=sound_fx_data_buffer_4_5
 B $72C2,1,1
 w $72C3 Byte 6-7 of sound fx data 4
+@ $72C3 label=sound_fx_data_buffer_4_67
 W $72C3,2,2
 w $72C5 Temporary center of projection
 D $72C5 Will be copied to #R$7000
@@ -275,7 +280,7 @@ b $72C8 Temp points to add
 B $72C8,3,3
 b $72CB Update counters countdown
 D $72CB Counter from $0F to $00. Other counters are updated when 0.
-@ $72CB update_counters_countdown
+@ $72CB label=update_counters_countdown
 B $72CB,1,1
 b $72CC Center enemies redraw flag
 @ $72CC label=center_enemies_redraw
@@ -2410,7 +2415,7 @@ b $9046 Mines movement table
 B $9046,16,8
 b $9056 3 spheres background graphics
 D $9056 Organized as 16x16 sprites. #UDGTABLE(no-border, no-border) { #UDGARRAY8,,4($9056-$908D-16)(graphics-9056.png) } { #UDGARRAY8,,4($905E-$9095-16)(graphics-905E.png) } TABLE#
-@ $9056 label=3_spheres_graphics
+@ $9056 label=three_spheres_graphics
 B $9056,64,8
 b $9096 Mine background graphics
 D $9096 Organized as 16x16 sprites. #UDGTABLE(no-border, no-border) { #UDGARRAY8,,4($9096-$90CD-16)(graphics-9096.png) } { #UDGARRAY8,,4($909E-$90D5-16)(graphics-909E.png) } TABLE#
@@ -2574,9 +2579,9 @@ C $9210,2 Space
 C $9212,3 Address in name table (row 7)
 C $9215,3 32 bytes
 C $9218,3 FILL_VRAM
-c $921F Decode and upload patterns
-D $921F Decode and upload patterns to VDP buffer at $1400 Used by the routine at #R$90D6.
-@ $921F decode_and_upload_patterns
+c $921F Decompress and upload patterns
+D $921F Decompress and upload patterns to VDP buffer at $1400. Used by the routine at #R$90D6.
+@ $921F decompress_patterns
 C $921F,3 Number of bytes in block at $9475
 C $9222,3 Save it
 C $9225,1 A = 0
@@ -2715,8 +2720,8 @@ b $946A Earth sprite data
 B $946A,10,8,2
 b $9474 Byte before planet graphics
 B $9474,1,1
-b $9475 Planet graphics - encoded
-D $9475 0 bit means a run: read next 5 bits and add 2. This is the number of repeats. 1 bit means a single byte. Read next 8 bits for the byte to repeat/not repeat.
+b $9475 Planet graphics - compressed
+D $9475 A 0 bit means a run: read next 5 bits and add 2. This is the number of repeats. A 1 bit means a single byte. Read next 8 bits for the byte to repeat/not repeat.
 @ $9475 label=planet_graphics
 B $9475,633,8*79,1
 b $96EE Planet colors
@@ -3220,7 +3225,7 @@ C $9B4F,1 If tune index was > 1 then return
 C $9B50,2 Set C = 5 (sound index)
 C $9B52,2 Skip next
 C $9B54,2 Set C = 9 (sound index)
-C $9B56,3 Jump to central part of play_sound
+C $9B56,3 Play sound
 c $9B59 Increase attenuation for all tune channels
 D $9B59 Used by the routine at #R$9B99.
 @ $9B59 label=dampen_all_tune_channels
@@ -3613,7 +3618,18 @@ C $9E17,4 Else get byte 6-7, e.g. $03C0
 C $9E1B,1 Clear carry
 C $9E1C,2 Subtract it
 C $9E1E,1 Return if < 0
+C $9E1F,4 Set byte 3-4
+C $9E23,4 ...
+C $9E28,3 Size of sound fx data
+C $9E2E,3 Set byte 6-7
 C $9E3F,3 Sound FX done
+C $9E42,2 Sound index
+C $9E45,3 Play sound 9
+C $9E50,2 Divide HL by 4
+C $9E52,2 ...
+C $9E54,2 ...
+C $9E56,2 ...
+C $9E58,3 Set byte 1-2
 c $9E5C Sound FX command 7
 D $9E5C Noise. When mines appear. Generates $FD, $F5, $ED, $E5, ..., and up again.
 R $9E5C I:B Channel index + 1

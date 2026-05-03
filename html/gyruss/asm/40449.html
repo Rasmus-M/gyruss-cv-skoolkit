@@ -51,7 +51,7 @@ Tone.
 <tr>
 <td class="asm-label">sound_fx_command_5_8</td>
 <td class="address-2"><span id="40449"></span>9E01</td>
-<td class="instruction">LD HL,(<a href="29376.html">L72C0</a>)</td>
+<td class="instruction">LD HL,(<a href="29376.html">sound_fx_data_buffer_4_34</a>)</td>
 <td class="comment-1" rowspan="1">Get byte 3-4 of sound fx data 4, e.g. $8080</td>
 </tr>
 <tr>
@@ -63,7 +63,7 @@ Tone.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40454"></span>9E06</td>
-<td class="instruction">LD DE,(<a href="29374.html">L72BE</a>)</td>
+<td class="instruction">LD DE,(<a href="29374.html">sound_fx_data_buffer_4_12</a>)</td>
 <td class="comment-1" rowspan="1">Get byte 1-2 of sound fx data 4, e.g. $00DC</td>
 </tr>
 <tr>
@@ -81,7 +81,7 @@ Tone.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40460"></span>9E0C</td>
-<td class="instruction">LD (<a href="29376.html">L72C0</a>),HL</td>
+<td class="instruction">LD (<a href="29376.html">sound_fx_data_buffer_4_34</a>),HL</td>
 <td class="comment-1" rowspan="1">Save again</td>
 </tr>
 <tr>
@@ -105,7 +105,7 @@ Tone.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40471"></span>9E17</td>
-<td class="instruction">LD DE,(<a href="29379.html">L72C3</a>)</td>
+<td class="instruction">LD DE,(<a href="29379.html">sound_fx_data_buffer_4_67</a>)</td>
 <td class="comment-1" rowspan="1">Else get byte 6-7, e.g. $03C0</td>
 </tr>
 <tr>
@@ -130,13 +130,13 @@ Tone.
 <td class="asm-label">sound_fx_command_5_8_0</td>
 <td class="address-2"><span id="40479"></span>9E1F</td>
 <td class="instruction">LD (IX+$03),$80</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set byte 3-4</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40483"></span>9E23</td>
 <td class="instruction">LD (IX+$04),$80</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -148,7 +148,7 @@ Tone.
 <td class="asm-label"></td>
 <td class="address-1"><span id="40488"></span>9E28</td>
 <td class="instruction">LD DE,$0008</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Size of sound fx data</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -165,8 +165,8 @@ Tone.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40494"></span>9E2E</td>
-<td class="instruction">LD (<a href="29379.html">L72C3</a>),HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD (<a href="29379.html">sound_fx_data_buffer_4_67</a>),HL</td>
+<td class="comment-1" rowspan="1">Set byte 6-7</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -226,7 +226,7 @@ Tone.
 <td class="asm-label"></td>
 <td class="address-1"><span id="40514"></span>9E42</td>
 <td class="instruction">LD C,$09</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Sound index</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -238,7 +238,7 @@ Tone.
 <td class="asm-label"></td>
 <td class="address-1"><span id="40517"></span>9E45</td>
 <td class="instruction">CALL <a href="40104.html#40117">play_sound_no_checks</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Play sound 9</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -274,31 +274,31 @@ Tone.
 <td class="asm-label"></td>
 <td class="address-1"><span id="40528"></span>9E50</td>
 <td class="instruction">SRL H</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Divide HL by 4</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40530"></span>9E52</td>
 <td class="instruction">RR L</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40532"></span>9E54</td>
 <td class="instruction">SRL H</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40534"></span>9E56</td>
 <td class="instruction">RR L</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40536"></span>9E58</td>
-<td class="instruction">LD (<a href="29374.html">L72BE</a>),HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">LD (<a href="29374.html">sound_fx_data_buffer_4_12</a>),HL</td>
+<td class="comment-1" rowspan="1">Set byte 1-2</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
