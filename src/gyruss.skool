@@ -1368,7 +1368,7 @@ c$846B LD A,$02      ; Play a tune
 ;
 ; Used by the routines at #R$8024, #R$8139, #R$832A, #R$832A, #R$846B, #R$A33B
 ; and #R$A3E1.
-@label=update_frame_upload_sprites
+@label=next_frame_upl_sprites
 c$84B1 LD HL,$71F2   ; Update frame counter
  $84B4 INC (HL)      ; ...
  $84B5 LD A,(HL)     ; Get new value
@@ -2869,6 +2869,7 @@ c$8E2D LD A,($71EB)  ; Get flags
 c$8E89 XOR A         ;
  $8E8A LD ($7266),A  ;
 ; This entry point is used by the routines at #R$82BF and #R$8FED.
+@label=init_mine_variables_2
 *$8E8D RST $20       ; Random number
  $8E8E AND $0F       ; 0 - 15
  $8E90 ADD A,$05     ; 5  - 20
@@ -5663,7 +5664,7 @@ c$A6C8 AND $0F       ; Isolate BCD digit
 ; Display lives
 ;
 ; Used by the routines at #R$82BF and #R$A6EC.
-@label=display-lives
+@label=display_lives
 c$A6D2 LD HL,$1AE2   ; VDP address of 'lives'
  $A6D5 LD DE,$0009   ; Count
  $A6D8 XOR A         ; Value
@@ -6130,7 +6131,7 @@ c$AAF1 LD A,($71EB)    ; Is all waves completed flag set?
 ; I:HL Map address
 ; O:D Polar y
 ; O:E Polar x
-@label=polar_coordinates_from_map
+@label=polar_coord_from_map
 c$AB38 PUSH HL       ; Save map address
  $AB39 LD DE,$7207   ; Base address of map
  $AB3C OR A          ; Clear carry
@@ -6757,22 +6758,22 @@ c$AF6B LD HL,($72DE) ; HL = source address
  $AF74 ADD HL,DE     ; ...
  $AF75 LD ($72DE),HL ; Store destination
  $AF78 LD B,$08      ; 8 bytes in pattern
-*$AF7A RL (IY+$00)   ; Shift bit 0 of source byte 0 into carry
- $AF7E RR (HL)       ; Shift carry into bit 0 of destination byte
- $AF80 RL (IY+$01)   ; Shift bit 0 of source byte 1 into carry
- $AF84 RR (HL)       ; Shift carry into bit 0 of destination byte
- $AF86 RL (IY+$02)   ; Shift bit 0 of source byte 2 into carry
- $AF8A RR (HL)       ; Shift carry into bit 0 of destination byte
- $AF8C RL (IY+$03)   ; Shift bit 0 of source byte 3 into carry
- $AF90 RR (HL)       ; Shift carry into bit 0 of destination byte
- $AF92 RL (IY+$04)   ; Shift bit 0 of source byte 4 into carry
- $AF96 RR (HL)       ; Shift carry into bit 0 of destination byte
- $AF98 RL (IY+$05)   ; Shift bit 0 of source byte 5 into carry
- $AF9C RR (HL)       ; Shift carry into bit 0 of destination byte
- $AF9E RL (IY+$06)   ; Shift bit 0 of source byte 6 into carry
- $AFA2 RR (HL)       ; Shift carry into bit 0 of destination byte
- $AFA4 RL (IY+$07)   ; Shift bit 0 of source byte 7 into carry
- $AFA8 RR (HL)       ; Shift carry into bit 0 of destination byte
+*$AF7A RL (IY+$00)   ; Shift bit 7 of source byte 0 into carry
+ $AF7E RR (HL)       ; Shift carry into bit 7 of destination byte
+ $AF80 RL (IY+$01)   ; x2
+ $AF84 RR (HL)       ;...
+ $AF86 RL (IY+$02)   ; x3
+ $AF8A RR (HL)       ; ...
+ $AF8C RL (IY+$03)   ; x4
+ $AF90 RR (HL)       ; ...
+ $AF92 RL (IY+$04)   ; x5
+ $AF96 RR (HL)       ; ...
+ $AF98 RL (IY+$05)   ; x6
+ $AF9C RR (HL)       ; ...
+ $AF9E RL (IY+$06)   ; x7
+ $AFA2 RR (HL)       ; ...
+ $AFA4 RL (IY+$07)   ; x8
+ $AFA8 RR (HL)       ; ...
  $AFAA INC HL        ; Next destination
  $AFAB DJNZ $AF7A    ; Repeat 8 times
  $AFAD RET           ;

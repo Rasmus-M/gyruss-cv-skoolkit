@@ -927,7 +927,7 @@ C $84AC,2 Loop number of ships times
 C $84AE,3 Jump back to complete stage
 c $84B1 Update frames and upload sprites
 D $84B1 Used by the routines at #R$8024, #R$8139, #R$832A, #R$832A, #R$846B, #R$A33B and #R$A3E1.
-@ $84B1 label=update_frame_upload_sprites
+@ $84B1 label=next_frame_upl_sprites
 C $84B1,3 Update frame counter
 C $84B4,1 ...
 C $84B5,1 Get new value
@@ -2211,6 +2211,7 @@ c $8E89 Init mine variables
 D $8E89 Used by the routine at #R$8E2D.
 @ $8E89 label=init_mine_variables
 N $8E8D This entry point is used by the routines at #R$82BF and #R$8FED.
+@ $8E8D label=init_mine_variables_2
 C $8E8D,1 Random number
 C $8E8E,2 0 - 15
 C $8E90,2 5  - 20
@@ -4106,7 +4107,7 @@ C $A6CF,1 Write VDP byte
 C $A6D0,1 Next VDP address
 c $A6D2 Display lives
 D $A6D2 Used by the routines at #R$82BF and #R$A6EC.
-@ $A6D2 label=display-lives
+@ $A6D2 label=display_lives
 C $A6D2,3 VDP address of 'lives'
 C $A6D5,3 Count
 C $A6D8,1 Value
@@ -4440,7 +4441,7 @@ D $AB38 Returns polar sprite coordinates from an entry in the map. Used by the r
 R $AB38 I:HL Map address
 R $AB38 O:D Polar y
 R $AB38 O:E Polar x
-@ $AB38 label=polar_coordinates_from_map
+@ $AB38 label=polar_coord_from_map
 C $AB38,1 Save map address
 C $AB39,3 Base address of map
 C $AB3C,1 Clear carry
@@ -4972,22 +4973,22 @@ C $AF71,3 HL = destination address
 C $AF74,1 ...
 C $AF75,3 Store destination
 C $AF78,2 8 bytes in pattern
-C $AF7A,4 Shift bit 0 of source byte 0 into carry
-C $AF7E,2 Shift carry into bit 0 of destination byte
-C $AF80,4 Shift bit 0 of source byte 1 into carry
-C $AF84,2 Shift carry into bit 0 of destination byte
-C $AF86,4 Shift bit 0 of source byte 2 into carry
-C $AF8A,2 Shift carry into bit 0 of destination byte
-C $AF8C,4 Shift bit 0 of source byte 3 into carry
-C $AF90,2 Shift carry into bit 0 of destination byte
-C $AF92,4 Shift bit 0 of source byte 4 into carry
-C $AF96,2 Shift carry into bit 0 of destination byte
-C $AF98,4 Shift bit 0 of source byte 5 into carry
-C $AF9C,2 Shift carry into bit 0 of destination byte
-C $AF9E,4 Shift bit 0 of source byte 6 into carry
-C $AFA2,2 Shift carry into bit 0 of destination byte
-C $AFA4,4 Shift bit 0 of source byte 7 into carry
-C $AFA8,2 Shift carry into bit 0 of destination byte
+C $AF7A,4 Shift bit 7 of source byte 0 into carry
+C $AF7E,2 Shift carry into bit 7 of destination byte
+C $AF80,4 x2
+C $AF84,2 ...
+C $AF86,4 x3
+C $AF8A,2 ...
+C $AF8C,4 x4
+C $AF90,2 ...
+C $AF92,4 x5
+C $AF96,2 ...
+C $AF98,4 x6
+C $AF9C,2 ...
+C $AF9E,4 x7
+C $AFA2,2 ...
+C $AFA4,4 x8
+C $AFA8,2 ...
 C $AFAA,1 Next destination
 C $AFAB,2 Repeat 8 times
 c $AFAE Flip pattern vertically
