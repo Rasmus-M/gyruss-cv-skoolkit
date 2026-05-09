@@ -6661,7 +6661,7 @@ c$AE94 LD A,($72D5)   ; Get sprite type
  $AEB6 LD HL,($72DC)  ; HL = #R$72E0 initially. Table for storing VDP
                       ; addresses.
  $AEB9 LD DE,($72D8)  ; DE = $2100 initially. Destination in VDP RAM.
- $AEBD LD (HL),E      ; Write destination address to word pointed to table.
+ $AEBD LD (HL),E      ; Write destination address to word pointer to table.
  $AEBE INC HL         ; ...
  $AEBF LD (HL),D      ; ...
  $AEC0 INC HL         ; ...
@@ -6677,7 +6677,7 @@ c$AE94 LD A,($72D5)   ; Get sprite type
  $AED5 LD A,($72D7)   ; Get pattern being processed
  $AED8 INC A          ; Increment
  $AED9 ADD A,A        ; Double
- $AEDA RST $08        ; Add A to HL, so HL not points to a patten pointer in
+ $AEDA RST $08        ; Add A to HL, so HL not points to a pattern pointer in
                       ; #R$B8FA
  $AEDB LD E,(HL)      ; Set DE = pointer to graphics
  $AEDC INC HL         ; ...
@@ -6742,7 +6742,7 @@ c$AE94 LD A,($72D5)   ; Get sprite type
  $AF59 LD A,($72D5)   ; Increment sprite type processed
  $AF5C INC A          ; ...
  $AF5D LD ($72D5),A   ; ...
- $AF60 LD HL,$001D    ; When it's <= $1D (29), which is the last sprite type
+ $AF60 LD HL,$001D    ; When it's > $1D (29), which is the last sprite type
  $AF63 CP L           ; ...
  $AF64 RET C          ; Then return
  $AF65 LD A,$FF       ; Else set it to $FF (done)
