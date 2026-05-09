@@ -2693,7 +2693,7 @@ c$8D21 LD A,($71EB)  ; Are all waves completed?
  $8D35 LD (HL),A     ; Save again
  $8D36 LD IY,($725D) ; Wave data address
  $8D3A LD A,(IY+$03) ; Get bits 4-7 of byte 3
- $8D3D RRA           ; ...
+ $8D3D RRA           ; Shift bits 4-7 into bits 0-4
  $8D3E RRA           ; ...
  $8D3F RRA           ; ...
  $8D40 RRA           ; ...
@@ -3209,7 +3209,7 @@ c$90D6 CALL $1F85    ; MODE_1 (pattern generator table at  $0000, name table at
 *$9167 HALT          ; Wait for interrupt
  $9168 CALL $AFFF    ; Display stars
  $916B CALL $AE94    ;
- $916E RET NC        ; Return is no carry
+ $916E RET NC        ; Return if no carry
  $916F CALL $AE94    ;
  $9172 JR C,$9167    ; Loop until no carry
  $9174 RET           ;
@@ -3229,9 +3229,9 @@ c$9175 ADD A,A       ; a *= 2
  $917E LD D,(HL)     ; Get MSB of planet data
  $917F EX DE,HL      ; Address now in HL
  $9180 CALL $91B4    ; Draw to name table
- $9183 CALL $91CC    ;
- $9186 LD HL,$0400   ;
- $9189 CALL $9285    ;
+ $9183 CALL $91CC    ; Display planet name and sprites
+ $9186 LD HL,$0400   ; Copy 135 patterns
+ $9189 CALL $9285    ; ...
  $918C LD HL,$96EE   ; Planet colors
  $918F LD DE,$2010   ; Address in color table
  $9192 LD BC,$0010   ; 16 color sets
@@ -3342,7 +3342,7 @@ c$920D PUSH HL       ;
 ;
 ; Decompress and upload patterns to VDP buffer at $1400. Used by the routine at
 ; #R$90D6.
-@decompress_patterns
+@label=decompress_patterns
 c$921F LD HL,$0279   ; Number of bytes in block at $9475
  $9222 LD ($726A),HL ; Save it
  $9225 XOR A         ; A = 0
@@ -3371,6 +3371,7 @@ c$921F LD HL,$0279   ; Number of bytes in block at $9475
 ; Write single byte
 ;
 ; Used by the routine at #R$921F.
+@label=decompress_write_byte
 c$924E CALL $9255    ; Get byte to write
  $9251 RST $10       ; Write VDP byte in A to DE
  $9252 INC DE        ; Next VDP address
@@ -3379,7 +3380,7 @@ c$924E CALL $9255    ; Get byte to write
 ; Read B bits into A
 ;
 ; Used by the routines at #R$921F and #R$924E.
-@read_b_bits_into_a
+@label=read_b_bits_into_a
 c$9255 LD B,$08      ; Read 8 bits
 ; This entry point is used by the routine at #R$921F.
 *$9257 XOR A         ; Result
@@ -3413,6 +3414,7 @@ c$9255 LD B,$08      ; Read 8 bits
 ; routine at #R$9175.
 ;
 ; I:HL Pattern generator table destination address ($0400)
+@label=copy_135_patterns
 c$9285 LD DE,$1400   ;
  $9288 LD B,$0E      ; Counter
 *$928A PUSH BC       ;
@@ -3461,6 +3463,7 @@ b$92DE DEFB $80,$14
 ; { #UDGARRAY10,,4($92E0-$9377-16)(graphics-92E0.png) }
 ; { #UDGARRAY10,,4($92E8-$937F-16)(graphics-92E8.png) }
 ; TABLE#
+@label=logo_patterns
 b$92E0 DEFB $7F,$FF,$FF,$FF,$F8,$F8,$F8,$FB
  $92E8 DEFB $FB,$FB,$F8,$F8,$FF,$FF,$FF,$7F
  $92F0 DEFB $FE,$FF,$FF,$FF,$1F,$1F,$00,$FF
@@ -4214,7 +4217,7 @@ c$9AC3 PUSH AF       ;
 
 ; VDP read byte
 ;
-; Used by the routine at #R$AFE5.
+; Used by the routine at #R$B023.
 ;
 ; I:DE Read address
 ; O:A Byte read
@@ -5759,13 +5762,13 @@ c$A73C LD A,($71F2)    ; Get frame counter
  $A757 CP $FF          ; Is it an impossible joystick value, e.g. up + down?
  $A759 JR Z,$A781      ; Then skip ahead
  $A75B SUB (IX+$02)    ; Table value - polar x
- $A75E JR Z,$A781      ; If zero the skip ahead (alredy there)
+ $A75E JR Z,$A781      ; If zero then skip ahead (already there)
  $A760 JR NC,$A766     ; If positive skip ahead
  $A762 LD B,$FF        ; Direction = -1 (anti-clockwise)
  $A764 NEG             ; abs(value - polar x)
 *$A766 CP $21          ; Is the difference < 33?
  $A768 LD A,B          ; Direction
- $A769 JR C,$A76D      ; The skip ahead
+ $A769 JR C,$A76D      ; Then skip ahead
  $A76B NEG             ; Otherwise reverse direction
 *$A76D ADD A,(IX+$02)  ; Polar x + direction
  $A770 AND $3F         ; Mod 64
@@ -6838,7 +6841,7 @@ c$AFFF LD HL,$71EC   ; Counter from 7 to 0
  $B00B JR Z,$B00F    ;
  $B00D LD (HL),$03   ; If bit 0 is set then reset counter to 3
 *$B00F LD C,$00      ; Set mask to undraw
- $B011 CALL $B023    ;
+ $B011 CALL $B023    ; Display star frame
  $B014 LD A,($731A)  ; Get star frame
  $B017 ADD A,$02     ; Add 2
  $B019 CP $0C        ; < 12 ?
