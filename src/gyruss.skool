@@ -812,7 +812,7 @@ c$8024 LD SP,$73BA   ; Init stack pointer
  $8086 LD (HL),A     ; ...
  $8087 LD BC,$0065   ; ...
  $808A LDIR          ; ...
- $808C LD A,($71EB)  ; Clear all but two-player flag
+ $808C LD A,($71EB)  ; Clear all flags but two-player flag
  $808F AND $80       ; ...
  $8091 LD ($71EB),A  ; ...
  $8094 LD A,$05      ; 5 Lives
@@ -822,7 +822,7 @@ c$8024 LD SP,$73BA   ; Init stack pointer
  $809D LD ($71FE),A  ; Set #R$71FC+2 to 6 (extra life at 60000)
  $80A0 LD A,$01      ; Stage
  $80A2 LD ($7200),A  ; Set to 1
- $80A5 CALL $AA7D    ; Init variables
+ $80A5 CALL $AA7D    ; Init center enemies
  $80A8 LD HL,$853C   ; Display stage message
  $80AB LD DE,$1AF8   ; ...
  $80AE LD BC,$0005   ; ...
@@ -846,7 +846,7 @@ c$8024 LD SP,$73BA   ; Init stack pointer
  $80D0 RST $10       ; Write VDP byte
  $80D1 LD A,$01      ;
  $80D3 CALL $A699    ; Display score player 2
- $80D6 LD HL,$71FF   ; Save player data in VDP RAM, starting with lives?
+ $80D6 LD HL,$71FF   ; Save player data in VDP RAM, starting with lives
  $80D9 LD DE,$1300   ; VDP address
  $80DC LD BC,$002D   ; 45 bytes
  $80DF RST $38       ; WRITE_VRAM
@@ -1071,8 +1071,8 @@ c$8212 LD HL,$722E   ; Clear $28 bytes from $722E
  $8284 PUSH HL       ; Save it
  $8285 LD DE,$71A4   ; Buffer address for the string #R$71A3+1
  $8288 LD A,B        ; Restore stage
- $8289 AND $03       ; Clamp to 0, 1, 2, 3 (0 not an option?)
- $828B CP $03        ; If 3 we have reached it's a chance stage
+ $8289 AND $03       ; Clamp to 0, 1, 2, 3
+ $828B CP $03        ; If 3 we have reached a chance stage
  $828D JR Z,$82BF    ; Then jump ahead
  $828F XOR $03       ; Flip the bits, so we know how many warps TO the planet
  $8291 ADD A,$30     ; Add ASCII 0
@@ -6654,7 +6654,7 @@ c$AE94 LD A,($72D5)   ; Get sprite type
  $AEA4 LD ($72D8),HL  ; ...
  $AEA7 LD HL,$72E0    ; Set source to #R$72E0 (pointer to a RAM block)
  $AEAA LD ($72DC),HL  ; ...
-*$AEAD LD A,($72D6)   ; Get transformation process
+*$AEAD LD A,($72D6)   ; Get transformation processed
  $AEB0 LD HL,$72D7    ; OR with pattern processed
  $AEB3 OR (HL)        ; ...
  $AEB4 JR NZ,$AEC4    ; If any is non-zero skip ahead
@@ -6742,9 +6742,9 @@ c$AE94 LD A,($72D5)   ; Get sprite type
  $AF59 LD A,($72D5)   ; Increment sprite type processed
  $AF5C INC A          ; ...
  $AF5D LD ($72D5),A   ; ...
- $AF60 LD HL,$001D    ; When it's > $1D (29), which is the last sprite type
+ $AF60 LD HL,$001D    ; If it's < $1D (29), which is the last sprite type
  $AF63 CP L           ; ...
- $AF64 RET C          ; Then return
+ $AF64 RET C          ; Then return with carry
  $AF65 LD A,$FF       ; Else set it to $FF (done)
  $AF67 LD ($72D5),A   ; ...
  $AF6A RET            ;
