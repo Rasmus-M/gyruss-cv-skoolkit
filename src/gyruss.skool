@@ -157,7 +157,7 @@ b$71EE DEFB $00
 ; Countdown to enemy shooting
 ;
 ; Reset to 2nd byte of stage data. See #R$8541.
-@label=countdown_at_shoot
+@label=countdown_to_shoot
 b$71EF DEFB $00
 
 ; Time to next wave
@@ -812,7 +812,7 @@ c$8024 LD SP,$73BA   ; Init stack pointer
  $8086 LD (HL),A     ; ...
  $8087 LD BC,$0065   ; ...
  $808A LDIR          ; ...
- $808C LD A,($71EB)  ; Clear all but two-player flag
+ $808C LD A,($71EB)  ; Clear all flags but two-player flag
  $808F AND $80       ; ...
  $8091 LD ($71EB),A  ; ...
  $8094 LD A,$05      ; 5 Lives
@@ -822,7 +822,7 @@ c$8024 LD SP,$73BA   ; Init stack pointer
  $809D LD ($71FE),A  ; Set #R$71FC+2 to 6 (extra life at 60000)
  $80A0 LD A,$01      ; Stage
  $80A2 LD ($7200),A  ; Set to 1
- $80A5 CALL $AA7D    ; Init variables
+ $80A5 CALL $AA7D    ; Init center enemies
  $80A8 LD HL,$853C   ; Display stage message
  $80AB LD DE,$1AF8   ; ...
  $80AE LD BC,$0005   ; ...
@@ -846,7 +846,7 @@ c$8024 LD SP,$73BA   ; Init stack pointer
  $80D0 RST $10       ; Write VDP byte
  $80D1 LD A,$01      ;
  $80D3 CALL $A699    ; Display score player 2
- $80D6 LD HL,$71FF   ; Save player data in VDP RAM, starting with lives?
+ $80D6 LD HL,$71FF   ; Save player data in VDP RAM, starting with lives
  $80D9 LD DE,$1300   ; VDP address
  $80DC LD BC,$002D   ; 45 bytes
  $80DF RST $38       ; WRITE_VRAM
@@ -1071,8 +1071,8 @@ c$8212 LD HL,$722E   ; Clear $28 bytes from $722E
  $8284 PUSH HL       ; Save it
  $8285 LD DE,$71A4   ; Buffer address for the string #R$71A3+1
  $8288 LD A,B        ; Restore stage
- $8289 AND $03       ; Clamp to 0, 1, 2, 3 (0 not an option?)
- $828B CP $03        ; If 3 we have reached it's a chance stage
+ $8289 AND $03       ; Clamp to 0, 1, 2, 3
+ $828B CP $03        ; If 3 we have reached a chance stage
  $828D JR Z,$82BF    ; Then jump ahead
  $828F XOR $03       ; Flip the bits, so we know how many warps TO the planet
  $8291 ADD A,$30     ; Add ASCII 0
@@ -1195,8 +1195,8 @@ c$832A LD A,$08        ; Set counter for later
 *$8368 LD A,$05        ; If not planet reached then play sound
  $836A CALL $9EA3      ; ...
 *$836D LD HL,$71EB     ;
- $8370 SET 0,(HL)      ;
- $8372 SET 4,(HL)      ;
+ $8370 SET 0,(HL)      ; Set warp flag
+ $8372 SET 4,(HL)      ; Set stage init flag
  $8374 LD A,($7200)    ; Stage
  $8377 LD B,A          ; B = stage
  $8378 AND $03         ; Stage mod 4
@@ -2411,8 +2411,8 @@ c$8B12 LD L,(IY+$02)   ; Get name table address of 3 x 3 area to clear
  $8B5A ADD IX,DE       ; Buffer address
  $8B5C LD A,(IY+$00)   ; Get screen x
  $8B5F AND $07         ; Pixel offset x
- $8B61 LD B,A          ; B = pixel offset (counter for outer loop)
- $8B62 LD C,$10        ; C = 16 (counter for inner loop)
+ $8B61 LD B,A          ; B = pixel offset (counter for inner loop)
+ $8B62 LD C,$10        ; C = 16 (counter for outer loop)
  $8B64 POP IY          ; Restore background patterns address
 *$8B66 PUSH BC         ; Save counters
  $8B67 LD C,$00        ; C = 0
@@ -2693,7 +2693,7 @@ c$8D21 LD A,($71EB)  ; Are all waves completed?
  $8D35 LD (HL),A     ; Save again
  $8D36 LD IY,($725D) ; Wave data address
  $8D3A LD A,(IY+$03) ; Get bits 4-7 of byte 3
- $8D3D RRA           ; ...
+ $8D3D RRA           ; Shift bits 4-7 into bits 0-4
  $8D3E RRA           ; ...
  $8D3F RRA           ; ...
  $8D40 RRA           ; ...
@@ -3209,7 +3209,7 @@ c$90D6 CALL $1F85    ; MODE_1 (pattern generator table at  $0000, name table at
 *$9167 HALT          ; Wait for interrupt
  $9168 CALL $AFFF    ; Display stars
  $916B CALL $AE94    ;
- $916E RET NC        ; Return is no carry
+ $916E RET NC        ; Return if no carry
  $916F CALL $AE94    ;
  $9172 JR C,$9167    ; Loop until no carry
  $9174 RET           ;
@@ -3229,9 +3229,9 @@ c$9175 ADD A,A       ; a *= 2
  $917E LD D,(HL)     ; Get MSB of planet data
  $917F EX DE,HL      ; Address now in HL
  $9180 CALL $91B4    ; Draw to name table
- $9183 CALL $91CC    ;
- $9186 LD HL,$0400   ;
- $9189 CALL $9285    ;
+ $9183 CALL $91CC    ; Display planet name and sprites
+ $9186 LD HL,$0400   ; Copy 135 patterns
+ $9189 CALL $9285    ; ...
  $918C LD HL,$96EE   ; Planet colors
  $918F LD DE,$2010   ; Address in color table
  $9192 LD BC,$0010   ; 16 color sets
@@ -3342,7 +3342,7 @@ c$920D PUSH HL       ;
 ;
 ; Decompress and upload patterns to VDP buffer at $1400. Used by the routine at
 ; #R$90D6.
-@decompress_patterns
+@label=decompress_patterns
 c$921F LD HL,$0279   ; Number of bytes in block at $9475
  $9222 LD ($726A),HL ; Save it
  $9225 XOR A         ; A = 0
@@ -3371,6 +3371,7 @@ c$921F LD HL,$0279   ; Number of bytes in block at $9475
 ; Write single byte
 ;
 ; Used by the routine at #R$921F.
+@label=decompress_write_byte
 c$924E CALL $9255    ; Get byte to write
  $9251 RST $10       ; Write VDP byte in A to DE
  $9252 INC DE        ; Next VDP address
@@ -3379,7 +3380,7 @@ c$924E CALL $9255    ; Get byte to write
 ; Read B bits into A
 ;
 ; Used by the routines at #R$921F and #R$924E.
-@read_b_bits_into_a
+@label=read_b_bits_into_a
 c$9255 LD B,$08      ; Read 8 bits
 ; This entry point is used by the routine at #R$921F.
 *$9257 XOR A         ; Result
@@ -3413,6 +3414,7 @@ c$9255 LD B,$08      ; Read 8 bits
 ; routine at #R$9175.
 ;
 ; I:HL Pattern generator table destination address ($0400)
+@label=copy_135_patterns
 c$9285 LD DE,$1400   ;
  $9288 LD B,$0E      ; Counter
 *$928A PUSH BC       ;
@@ -3461,6 +3463,7 @@ b$92DE DEFB $80,$14
 ; { #UDGARRAY10,,4($92E0-$9377-16)(graphics-92E0.png) }
 ; { #UDGARRAY10,,4($92E8-$937F-16)(graphics-92E8.png) }
 ; TABLE#
+@label=logo_patterns
 b$92E0 DEFB $7F,$FF,$FF,$FF,$F8,$F8,$F8,$FB
  $92E8 DEFB $FB,$FB,$F8,$F8,$FF,$FF,$FF,$7F
  $92F0 DEFB $FE,$FF,$FF,$FF,$1F,$1F,$00,$FF
@@ -4214,7 +4217,7 @@ c$9AC3 PUSH AF       ;
 
 ; VDP read byte
 ;
-; Used by the routine at #R$AFE5.
+; Used by the routine at #R$B023.
 ;
 ; I:DE Read address
 ; O:A Byte read
@@ -5759,13 +5762,13 @@ c$A73C LD A,($71F2)    ; Get frame counter
  $A757 CP $FF          ; Is it an impossible joystick value, e.g. up + down?
  $A759 JR Z,$A781      ; Then skip ahead
  $A75B SUB (IX+$02)    ; Table value - polar x
- $A75E JR Z,$A781      ; If zero the skip ahead (alredy there)
+ $A75E JR Z,$A781      ; If zero then skip ahead (already there)
  $A760 JR NC,$A766     ; If positive skip ahead
  $A762 LD B,$FF        ; Direction = -1 (anti-clockwise)
  $A764 NEG             ; abs(value - polar x)
 *$A766 CP $21          ; Is the difference < 33?
  $A768 LD A,B          ; Direction
- $A769 JR C,$A76D      ; The skip ahead
+ $A769 JR C,$A76D      ; Then skip ahead
  $A76B NEG             ; Otherwise reverse direction
 *$A76D ADD A,(IX+$02)  ; Polar x + direction
  $A770 AND $3F         ; Mod 64
@@ -6651,14 +6654,14 @@ c$AE94 LD A,($72D5)   ; Get sprite type
  $AEA4 LD ($72D8),HL  ; ...
  $AEA7 LD HL,$72E0    ; Set source to #R$72E0 (pointer to a RAM block)
  $AEAA LD ($72DC),HL  ; ...
-*$AEAD LD A,($72D6)   ; Get transformation process
+*$AEAD LD A,($72D6)   ; Get transformation processed
  $AEB0 LD HL,$72D7    ; OR with pattern processed
  $AEB3 OR (HL)        ; ...
  $AEB4 JR NZ,$AEC4    ; If any is non-zero skip ahead
  $AEB6 LD HL,($72DC)  ; HL = #R$72E0 initially. Table for storing VDP
                       ; addresses.
  $AEB9 LD DE,($72D8)  ; DE = $2100 initially. Destination in VDP RAM.
- $AEBD LD (HL),E      ; Write destination address to word pointed to table.
+ $AEBD LD (HL),E      ; Write destination address to word pointer to table.
  $AEBE INC HL         ; ...
  $AEBF LD (HL),D      ; ...
  $AEC0 INC HL         ; ...
@@ -6674,7 +6677,7 @@ c$AE94 LD A,($72D5)   ; Get sprite type
  $AED5 LD A,($72D7)   ; Get pattern being processed
  $AED8 INC A          ; Increment
  $AED9 ADD A,A        ; Double
- $AEDA RST $08        ; Add A to HL, so HL not points to a patten pointer in
+ $AEDA RST $08        ; Add A to HL, so HL not points to a pattern pointer in
                       ; #R$B8FA
  $AEDB LD E,(HL)      ; Set DE = pointer to graphics
  $AEDC INC HL         ; ...
@@ -6739,9 +6742,9 @@ c$AE94 LD A,($72D5)   ; Get sprite type
  $AF59 LD A,($72D5)   ; Increment sprite type processed
  $AF5C INC A          ; ...
  $AF5D LD ($72D5),A   ; ...
- $AF60 LD HL,$001D    ; When it's <= $1D (29), which is the last sprite type
+ $AF60 LD HL,$001D    ; If it's < $1D (29), which is the last sprite type
  $AF63 CP L           ; ...
- $AF64 RET C          ; Then return
+ $AF64 RET C          ; Then return with carry
  $AF65 LD A,$FF       ; Else set it to $FF (done)
  $AF67 LD ($72D5),A   ; ...
  $AF6A RET            ;
@@ -6833,12 +6836,12 @@ c$AFFF LD HL,$71EC   ; Counter from 7 to 0
  $B002 DEC (HL)      ; Count down
  $B003 RET P         ; Return
  $B004 LD (HL),$07   ; Reset counter to 7
- $B006 LD A,($71EB)  ; Get some flag
- $B009 BIT 0,A       ; Test bit 0
- $B00B JR Z,$B00F    ;
- $B00D LD (HL),$03   ; If bit 0 is set then reset counter to 3
+ $B006 LD A,($71EB)  ; Test warp flag
+ $B009 BIT 0,A       ; ...
+ $B00B JR Z,$B00F    ; If bit 0 is set then reset counter to 3
+ $B00D LD (HL),$03   ; ...
 *$B00F LD C,$00      ; Set mask to undraw
- $B011 CALL $B023    ;
+ $B011 CALL $B023    ; Display star frame
  $B014 LD A,($731A)  ; Get star frame
  $B017 ADD A,$02     ; Add 2
  $B019 CP $0C        ; < 12 ?
