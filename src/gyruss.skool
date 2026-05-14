@@ -157,7 +157,7 @@ b$71EE DEFB $00
 ; Countdown to enemy shooting
 ;
 ; Reset to 2nd byte of stage data. See #R$8541.
-@label=countdown_at_shoot
+@label=countdown_to_shoot
 b$71EF DEFB $00
 
 ; Time to next wave
@@ -1195,8 +1195,8 @@ c$832A LD A,$08        ; Set counter for later
 *$8368 LD A,$05        ; If not planet reached then play sound
  $836A CALL $9EA3      ; ...
 *$836D LD HL,$71EB     ;
- $8370 SET 0,(HL)      ;
- $8372 SET 4,(HL)      ;
+ $8370 SET 0,(HL)      ; Set warp flag
+ $8372 SET 4,(HL)      ; Set stage init flag
  $8374 LD A,($7200)    ; Stage
  $8377 LD B,A          ; B = stage
  $8378 AND $03         ; Stage mod 4
@@ -2411,8 +2411,8 @@ c$8B12 LD L,(IY+$02)   ; Get name table address of 3 x 3 area to clear
  $8B5A ADD IX,DE       ; Buffer address
  $8B5C LD A,(IY+$00)   ; Get screen x
  $8B5F AND $07         ; Pixel offset x
- $8B61 LD B,A          ; B = pixel offset (counter for outer loop)
- $8B62 LD C,$10        ; C = 16 (counter for inner loop)
+ $8B61 LD B,A          ; B = pixel offset (counter for inner loop)
+ $8B62 LD C,$10        ; C = 16 (counter for outer loop)
  $8B64 POP IY          ; Restore background patterns address
 *$8B66 PUSH BC         ; Save counters
  $8B67 LD C,$00        ; C = 0
@@ -6836,10 +6836,10 @@ c$AFFF LD HL,$71EC   ; Counter from 7 to 0
  $B002 DEC (HL)      ; Count down
  $B003 RET P         ; Return
  $B004 LD (HL),$07   ; Reset counter to 7
- $B006 LD A,($71EB)  ; Get some flag
- $B009 BIT 0,A       ; Test bit 0
- $B00B JR Z,$B00F    ;
- $B00D LD (HL),$03   ; If bit 0 is set then reset counter to 3
+ $B006 LD A,($71EB)  ; Test warp flag
+ $B009 BIT 0,A       ; ...
+ $B00B JR Z,$B00F    ; If bit 0 is set then reset counter to 3
+ $B00D LD (HL),$03   ; ...
 *$B00F LD C,$00      ; Set mask to undraw
  $B011 CALL $B023    ; Display star frame
  $B014 LD A,($731A)  ; Get star frame
