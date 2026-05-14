@@ -45,7 +45,7 @@ Copy 135 patterns from VDP RAM buffer into pattern table from 128 Used by the ro
 </td>
 </tr>
 <tr>
-<td class="asm-label">L9285</td>
+<td class="asm-label">copy_135_patterns</td>
 <td class="address-2"><span id="37509"></span>9285</td>
 <td class="instruction">LD DE,$1400</td>
 <td class="comment-1" rowspan="1"></td>
@@ -57,7 +57,7 @@ Copy 135 patterns from VDP RAM buffer into pattern table from 128 Used by the ro
 <td class="comment-1" rowspan="1">Counter</td>
 </tr>
 <tr>
-<td class="asm-label">L9285_0</td>
+<td class="asm-label">copy_135_patterns_0</td>
 <td class="address-2"><span id="37514"></span>928A</td>
 <td class="instruction">PUSH BC</td>
 <td class="comment-1" rowspan="1"></td>
@@ -173,7 +173,7 @@ Copy 135 patterns from VDP RAM buffer into pattern table from 128 Used by the ro
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37545"></span>92A9</td>
-<td class="instruction">DJNZ <a href="37509.html#37514">L9285_0</a></td>
+<td class="instruction">DJNZ <a href="37509.html#37514">copy_135_patterns_0</a></td>
 <td class="comment-1" rowspan="1">Loop 15 times = 135 patterns</td>
 </tr>
 <tr>

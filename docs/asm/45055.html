@@ -63,25 +63,25 @@ Used by the routines at <a href="32804.html">entry</a>, <a href="33081.html">die
 <td class="asm-label"></td>
 <td class="address-1"><span id="45062"></span>B006</td>
 <td class="instruction">LD A,(<a href="29163.html">status_flags</a>)</td>
-<td class="comment-1" rowspan="1">Get some flag</td>
+<td class="comment-1" rowspan="1">Test warp flag</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45065"></span>B009</td>
 <td class="instruction">BIT 0,A</td>
-<td class="comment-1" rowspan="1">Test bit 0</td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45067"></span>B00B</td>
 <td class="instruction">JR Z,<a href="45055.html#45071">display_stars_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If bit 0 is set then reset counter to 3</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45069"></span>B00D</td>
 <td class="instruction">LD (HL),$03</td>
-<td class="comment-1" rowspan="1">If bit 0 is set then reset counter to 3</td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label">display_stars_0</td>
@@ -93,7 +93,7 @@ Used by the routines at <a href="32804.html">entry</a>, <a href="33081.html">die
 <td class="asm-label"></td>
 <td class="address-1"><span id="45073"></span>B011</td>
 <td class="instruction">CALL <a href="45091.html">display_star_frame</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Display star frame</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

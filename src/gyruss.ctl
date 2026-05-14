@@ -36,7 +36,7 @@ D $71EE Decremented when #R$85E6 is called, and it reset to first byte of level 
 B $71EE,1,1
 b $71EF Countdown to enemy shooting
 D $71EF Reset to 2nd byte of stage data. See #R$8541.
-@ $71EF label=countdown_at_shoot
+@ $71EF label=countdown_to_shoot
 B $71EF,1,1
 b $71F0 Time to next wave
 D $71F0 Reset to 6th byte of stage data. See #R$8541.
@@ -436,7 +436,7 @@ C $8085,1 ...
 C $8086,1 ...
 C $8087,3 ...
 C $808A,2 ...
-C $808C,3 Clear all but two-player flag
+C $808C,3 Clear all flags but two-player flag
 C $808F,2 ...
 C $8091,3 ...
 C $8094,2 5 Lives
@@ -446,7 +446,7 @@ C $809A,3 Set #R$71F6+2 to 6 (extra life at 60000)
 C $809D,3 Set #R$71FC+2 to 6 (extra life at 60000)
 C $80A0,2 Stage
 C $80A2,3 Set to 1
-C $80A5,3 Init variables
+C $80A5,3 Init center enemies
 C $80A8,3 Display stage message
 C $80AB,3 ...
 C $80AE,3 ...
@@ -469,7 +469,7 @@ C $80CD,1 Display '2' next to '-'
 C $80CE,2 ...
 C $80D0,1 Write VDP byte
 C $80D3,3 Display score player 2
-C $80D6,3 Save player data in VDP RAM, starting with lives?
+C $80D6,3 Save player data in VDP RAM, starting with lives
 C $80D9,3 VDP address
 C $80DC,3 45 bytes
 C $80DF,1 WRITE_VRAM
@@ -665,8 +665,8 @@ C $8283,1 Add planet data address
 C $8284,1 Save it
 C $8285,3 Buffer address for the string #R$71A3+1
 C $8288,1 Restore stage
-C $8289,2 Clamp to 0, 1, 2, 3 (0 not an option?)
-C $828B,2 If 3 we have reached it's a chance stage
+C $8289,2 Clamp to 0, 1, 2, 3
+C $828B,2 If 3 we have reached a chance stage
 C $828D,2 Then jump ahead
 C $828F,2 Flip the bits, so we know how many warps TO the planet
 C $8291,2 Add ASCII 0
@@ -778,6 +778,8 @@ C $8361,2 Play tune 1
 C $8363,3 ...
 C $8368,2 If not planet reached then play sound
 C $836A,3 ...
+C $8370,2 Set warp flag
+C $8372,2 Set stage init flag
 C $8374,3 Stage
 C $8377,1 B = stage
 C $8378,2 Stage mod 4
@@ -1799,8 +1801,8 @@ C $8B58,2 ...
 C $8B5A,2 Buffer address
 C $8B5C,3 Get screen x
 C $8B5F,2 Pixel offset x
-C $8B61,1 B = pixel offset (counter for outer loop)
-C $8B62,2 C = 16 (counter for inner loop)
+C $8B61,1 B = pixel offset (counter for inner loop)
+C $8B62,2 C = 16 (counter for outer loop)
 C $8B64,2 Restore background patterns address
 C $8B66,1 Save counters
 C $8B67,2 C = 0
@@ -2057,7 +2059,7 @@ C $8D34,1 Add outcoming enemies
 C $8D35,1 Save again
 C $8D36,4 Wave data address
 C $8D3A,3 Get bits 4-7 of byte 3
-C $8D3D,1 ...
+C $8D3D,1 Shift bits 4-7 into bits 0-4
 C $8D3E,1 ...
 C $8D3F,1 ...
 C $8D40,1 ...
@@ -2481,7 +2483,7 @@ C $9166,1 WRITE_REGISTER
 @ $9167 label=start_screen_loop
 C $9167,1 Wait for interrupt
 C $9168,3 Display stars
-C $916E,1 Return is no carry
+C $916E,1 Return if no carry
 C $9172,2 Loop until no carry
 c $9175 Display planet
 D $9175 Used by the routines at #R$832A, #R$83D0 and #R$90D6.
@@ -2495,6 +2497,9 @@ C $917C,1 Get LSB of planet data
 C $917E,1 Get MSB of planet data
 C $917F,1 Address now in HL
 C $9180,3 Draw to name table
+C $9183,3 Display planet name and sprites
+C $9186,3 Copy 135 patterns
+C $9189,3 ...
 C $918C,3 Planet colors
 C $918F,3 Address in color table
 C $9192,3 16 color sets
@@ -2582,7 +2587,7 @@ C $9215,3 32 bytes
 C $9218,3 FILL_VRAM
 c $921F Decompress and upload patterns
 D $921F Decompress and upload patterns to VDP buffer at $1400. Used by the routine at #R$90D6.
-@ $921F decompress_patterns
+@ $921F label=decompress_patterns
 C $921F,3 Number of bytes in block at $9475
 C $9222,3 Save it
 C $9225,1 A = 0
@@ -2609,13 +2614,14 @@ C $924A,2 Loop B times
 C $924C,2 Loop
 c $924E Write single byte
 D $924E Used by the routine at #R$921F.
+@ $924E label=decompress_write_byte
 C $924E,3 Get byte to write
 C $9251,1 Write VDP byte in A to DE
 C $9252,1 Next VDP address
 C $9253,2 Loop
 c $9255 Read B bits into A
 D $9255 Used by the routines at #R$921F and #R$924E.
-@ $9255 read_b_bits_into_a
+@ $9255 label=read_b_bits_into_a
 C $9255,2 Read 8 bits
 N $9257 This entry point is used by the routine at #R$921F.
 C $9257,1 Result
@@ -2644,6 +2650,7 @@ C $9282,2 Repeat for n bits
 c $9285 Copy 135 patterns
 D $9285 Copy 135 patterns from VDP RAM buffer into pattern table from 128 Used by the routine at #R$9175.
 R $9285 I:HL Pattern generator table destination address ($0400)
+@ $9285 label=copy_135_patterns
 C $9288,2 Counter
 C $928D,3 Read 9 patterns from $1400 (?)
 C $9290,3 Into buffer
@@ -2671,6 +2678,7 @@ b $92DE Gyruss logo
 B $92DE,2,2
 b $92E0 Logo patterns
 D $92E0 #UDGTABLE(no-border, no-border) { #UDGARRAY10,,4($92E0-$9377-16)(graphics-92E0.png) } { #UDGARRAY10,,4($92E8-$937F-16)(graphics-92E8.png) } TABLE#
+@ $92E0 label=logo_patterns
 B $92E0,160,8
 b $9380 Gyruss logo names
 B $9380,24,8
@@ -3162,7 +3170,7 @@ C $9AC8,2 Setup write address
 C $9ACA,2 Set MSB of VDP address
 C $9ACD,2 Write byte
 c $9AD0 VDP read byte
-D $9AD0 Used by the routine at #R$AFE5.
+D $9AD0 Used by the routine at #R$B023.
 R $9AD0 I:DE Read address
 R $9AD0 O:A Byte read
 @ $9AD0 label=vdp_read_byte
@@ -4187,13 +4195,13 @@ C $A756,1 Get table value, which is the value of polar x to move towards
 C $A757,2 Is it an impossible joystick value, e.g. up + down?
 C $A759,2 Then skip ahead
 C $A75B,3 Table value - polar x
-C $A75E,2 If zero the skip ahead (alredy there)
+C $A75E,2 If zero then skip ahead (already there)
 C $A760,2 If positive skip ahead
 C $A762,2 Direction = -1 (anti-clockwise)
 C $A764,2 abs(value - polar x)
 C $A766,2 Is the difference < 33?
 C $A768,1 Direction
-C $A769,2 The skip ahead
+C $A769,2 Then skip ahead
 C $A76B,2 Otherwise reverse direction
 C $A76D,3 Polar x + direction
 C $A770,2 Mod 64
@@ -4876,13 +4884,13 @@ C $AEA1,3 Yes - set it to $2100
 C $AEA4,3 ...
 C $AEA7,3 Set source to #R$72E0 (pointer to a RAM block)
 C $AEAA,3 ...
-C $AEAD,3 Get transformation process
+C $AEAD,3 Get transformation processed
 C $AEB0,3 OR with pattern processed
 C $AEB3,1 ...
 C $AEB4,2 If any is non-zero skip ahead
 C $AEB6,3 HL = #R$72E0 initially. Table for storing VDP addresses.
 C $AEB9,4 DE = $2100 initially. Destination in VDP RAM.
-C $AEBD,1 Write destination address to word pointed to table.
+C $AEBD,1 Write destination address to word pointer to table.
 C $AEBE,1 ...
 C $AEBF,1 ...
 C $AEC0,1 ...
@@ -4898,7 +4906,7 @@ C $AED2,3 Save address of pointer (control word)
 C $AED5,3 Get pattern being processed
 C $AED8,1 Increment
 C $AED9,1 Double
-C $AEDA,1 Add A to HL, so HL not points to a patten pointer in #R$B8FA
+C $AEDA,1 Add A to HL, so HL not points to a pattern pointer in #R$B8FA
 C $AEDB,1 Set DE = pointer to graphics
 C $AEDC,1 ...
 C $AEDD,1 ...
@@ -4958,9 +4966,9 @@ C $AF56,3 Set transformation processed to zero
 C $AF59,3 Increment sprite type processed
 C $AF5C,1 ...
 C $AF5D,3 ...
-C $AF60,3 When it's <= $1D (29), which is the last sprite type
+C $AF60,3 If it's < $1D (29), which is the last sprite type
 C $AF63,1 ...
-C $AF64,1 Then return
+C $AF64,1 Then return with carry
 C $AF65,2 Else set it to $FF (done)
 C $AF67,3 ...
 c $AF6B Rotate pattern
@@ -5031,10 +5039,12 @@ C $AFFF,3 Counter from 7 to 0
 C $B002,1 Count down
 C $B003,1 Return
 C $B004,2 Reset counter to 7
-C $B006,3 Get some flag
-C $B009,2 Test bit 0
-C $B00D,2 If bit 0 is set then reset counter to 3
+C $B006,3 Test warp flag
+C $B009,2 ...
+C $B00B,2 If bit 0 is set then reset counter to 3
+C $B00D,2 ...
 C $B00F,2 Set mask to undraw
+C $B011,3 Display star frame
 C $B014,3 Get star frame
 C $B017,2 Add 2
 C $B019,2 < 12 ?

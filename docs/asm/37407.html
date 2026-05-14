@@ -36,7 +36,7 @@ Decompress and upload patterns to VDP buffer at $1400. Used by the routine at <a
 </td>
 </tr>
 <tr>
-<td class="asm-label">L921F</td>
+<td class="asm-label">decompress_patterns</td>
 <td class="address-2"><span id="37407"></span>921F</td>
 <td class="instruction">LD HL,$0279</td>
 <td class="comment-1" rowspan="1">Number of bytes in block at $9475</td>
@@ -76,13 +76,13 @@ Decompress and upload patterns to VDP buffer at $1400. Used by the routine at <a
 <span id="37423"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="37454.html">L924E</a>.
+This entry point is used by the routine at <a href="37454.html">decompress_write_byte</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L921F_0</td>
+<td class="asm-label">decompress_patterns_0</td>
 <td class="address-2"><span id="37423"></span>922F</td>
 <td class="instruction">LD A,($726B)</td>
 <td class="comment-1" rowspan="1">MSB of counter</td>
@@ -108,7 +108,7 @@ This entry point is used by the routine at <a href="37454.html">L924E</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37430"></span>9236</td>
-<td class="instruction">CALL <a href="37461.html#37463">L9255_0</a></td>
+<td class="instruction">CALL <a href="37461.html#37463">read_b_bits_into_a_0</a></td>
 <td class="comment-1" rowspan="1">Read it into A</td>
 </tr>
 <tr>
@@ -120,7 +120,7 @@ This entry point is used by the routine at <a href="37454.html">L924E</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37434"></span>923A</td>
-<td class="instruction">JR NZ,<a href="37454.html">L924E</a></td>
+<td class="instruction">JR NZ,<a href="37454.html">decompress_write_byte</a></td>
 <td class="comment-1" rowspan="1">Otherwise jump to write a single byte</td>
 </tr>
 <tr>
@@ -132,7 +132,7 @@ This entry point is used by the routine at <a href="37454.html">L924E</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37438"></span>923E</td>
-<td class="instruction">CALL <a href="37461.html#37463">L9255_0</a></td>
+<td class="instruction">CALL <a href="37461.html#37463">read_b_bits_into_a_0</a></td>
 <td class="comment-1" rowspan="1">Read them into A</td>
 </tr>
 <tr>
@@ -150,7 +150,7 @@ This entry point is used by the routine at <a href="37454.html">L924E</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37444"></span>9244</td>
-<td class="instruction">CALL <a href="37461.html">L9255</a></td>
+<td class="instruction">CALL <a href="37461.html">read_b_bits_into_a</a></td>
 <td class="comment-1" rowspan="1">Get byte to write in A</td>
 </tr>
 <tr>
@@ -160,7 +160,7 @@ This entry point is used by the routine at <a href="37454.html">L924E</a>.
 <td class="comment-1" rowspan="1">Restore number of repeats</td>
 </tr>
 <tr>
-<td class="asm-label">L921F_1</td>
+<td class="asm-label">decompress_patterns_1</td>
 <td class="address-2"><span id="37448"></span>9248</td>
 <td class="instruction">RST $10</td>
 <td class="comment-1" rowspan="1">Write VDP byte in A to DE</td>
@@ -174,13 +174,13 @@ This entry point is used by the routine at <a href="37454.html">L924E</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37450"></span>924A</td>
-<td class="instruction">DJNZ <a href="37407.html#37448">L921F_1</a></td>
+<td class="instruction">DJNZ <a href="37407.html#37448">decompress_patterns_1</a></td>
 <td class="comment-1" rowspan="1">Loop B times</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37452"></span>924C</td>
-<td class="instruction">JR <a href="37407.html#37423">L921F_0</a></td>
+<td class="instruction">JR <a href="37407.html#37423">decompress_patterns_0</a></td>
 <td class="comment-1" rowspan="1">Loop</td>
 </tr>
 </table>

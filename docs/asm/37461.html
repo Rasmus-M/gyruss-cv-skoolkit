@@ -30,13 +30,13 @@ Next: <a href="37509.html">9285</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="37407.html">L921F</a> and <a href="37454.html">L924E</a>.
+Used by the routines at <a href="37407.html">decompress_patterns</a> and <a href="37454.html">decompress_write_byte</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L9255</td>
+<td class="asm-label">read_b_bits_into_a</td>
 <td class="address-2"><span id="37461"></span>9255</td>
 <td class="instruction">LD B,$08</td>
 <td class="comment-1" rowspan="1">Read 8 bits</td>
@@ -46,19 +46,19 @@ Used by the routines at <a href="37407.html">L921F</a> and <a href="37454.html">
 <span id="37463"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="37407.html">L921F</a>.
+This entry point is used by the routine at <a href="37407.html">decompress_patterns</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L9255_0</td>
+<td class="asm-label">read_b_bits_into_a_0</td>
 <td class="address-2"><span id="37463"></span>9257</td>
 <td class="instruction">XOR A</td>
 <td class="comment-1" rowspan="1">Result</td>
 </tr>
 <tr>
-<td class="asm-label">L9255_1</td>
+<td class="asm-label">read_b_bits_into_a_1</td>
 <td class="address-2"><span id="37464"></span>9258</td>
 <td class="instruction">PUSH BC</td>
 <td class="comment-1" rowspan="1">Push number of bits to read</td>
@@ -84,7 +84,7 @@ This entry point is used by the routine at <a href="37407.html">L921F</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37470"></span>925E</td>
-<td class="instruction">JP P,<a href="37461.html#37489">L9255_2</a></td>
+<td class="instruction">JP P,<a href="37461.html#37489">read_b_bits_into_a_2</a></td>
 <td class="comment-1" rowspan="1">Skip ahead if there are still bits left</td>
 </tr>
 <tr>
@@ -130,7 +130,7 @@ This entry point is used by the routine at <a href="37407.html">L921F</a>.
 <td class="comment-1" rowspan="1">8 bits - 1 left</td>
 </tr>
 <tr>
-<td class="asm-label">L9255_2</td>
+<td class="asm-label">read_b_bits_into_a_2</td>
 <td class="address-2"><span id="37489"></span>9271</td>
 <td class="instruction">LD (<a href="29292.html">decoder_bits_left</a>),A</td>
 <td class="comment-1" rowspan="1">Save bits left</td>
@@ -186,7 +186,7 @@ This entry point is used by the routine at <a href="37407.html">L921F</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="37506"></span>9282</td>
-<td class="instruction">DJNZ <a href="37461.html#37464">L9255_1</a></td>
+<td class="instruction">DJNZ <a href="37461.html#37464">read_b_bits_into_a_1</a></td>
 <td class="comment-1" rowspan="1">Repeat for n bits</td>
 </tr>
 <tr>

@@ -105,7 +105,7 @@ Fill VDP RAM from $2100 to $3868 with sprite patterns that may be rotated and fl
 <td class="asm-label">upload_sprite_patterns_0</td>
 <td class="address-2"><span id="44717"></span>AEAD</td>
 <td class="instruction">LD A,(<a href="29398.html">transformation_processed</a>)</td>
-<td class="comment-1" rowspan="1">Get transformation process</td>
+<td class="comment-1" rowspan="1">Get transformation processed</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -141,7 +141,7 @@ Fill VDP RAM from $2100 to $3868 with sprite patterns that may be rotated and fl
 <td class="asm-label"></td>
 <td class="address-1"><span id="44733"></span>AEBD</td>
 <td class="instruction">LD (HL),E</td>
-<td class="comment-1" rowspan="1">Write destination address to word pointed to table.</td>
+<td class="comment-1" rowspan="1">Write destination address to word pointer to table.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -237,7 +237,7 @@ Fill VDP RAM from $2100 to $3868 with sprite patterns that may be rotated and fl
 <td class="asm-label"></td>
 <td class="address-1"><span id="44762"></span>AEDA</td>
 <td class="instruction">RST $08</td>
-<td class="comment-1" rowspan="1">Add A to HL, so HL not points to a patten pointer in <a href="47354.html">graphics_pointers_table</a></td>
+<td class="comment-1" rowspan="1">Add A to HL, so HL not points to a pattern pointer in <a href="47354.html">graphics_pointers_table</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -603,7 +603,7 @@ Fill VDP RAM from $2100 to $3868 with sprite patterns that may be rotated and fl
 <td class="asm-label"></td>
 <td class="address-1"><span id="44896"></span>AF60</td>
 <td class="instruction">LD HL,$001D</td>
-<td class="comment-1" rowspan="1">When it's &lt;= $1D (29), which is the last sprite type</td>
+<td class="comment-1" rowspan="1">If it's &lt; $1D (29), which is the last sprite type</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -615,7 +615,7 @@ Fill VDP RAM from $2100 to $3868 with sprite patterns that may be rotated and fl
 <td class="asm-label"></td>
 <td class="address-1"><span id="44900"></span>AF64</td>
 <td class="instruction">RET C</td>
-<td class="comment-1" rowspan="1">Then return</td>
+<td class="comment-1" rowspan="1">Then return with carry</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
