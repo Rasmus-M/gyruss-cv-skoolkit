@@ -74,14 +74,14 @@ Used by the routine at <a href="34278.html">process_sprites</a>.
 <tr>
 <td class="asm-label">all_sprites_processed_0</td>
 <td class="address-2"><span id="35426"></span>8A62</td>
-<td class="instruction">LD A,(<a href="29280.html">sprite_countdown_2</a>)</td>
+<td class="instruction">LD A,(<a href="29280.html">attack_countdown</a>)</td>
 <td class="comment-1" rowspan="1">Get sprite countdown 2</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35429"></span>8A65</td>
 <td class="instruction">OR A</td>
-<td class="comment-1" rowspan="1">Return is not zero</td>
+<td class="comment-1" rowspan="1">Return if not zero</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -122,7 +122,7 @@ Used by the routine at <a href="34278.html">process_sprites</a>.
 <tr>
 <td class="asm-label">all_sprites_processed_1</td>
 <td class="address-2"><span id="35442"></span>8A72</td>
-<td class="instruction">LD (<a href="29280.html">sprite_countdown_2</a>),A</td>
+<td class="instruction">LD (<a href="29280.html">attack_countdown</a>),A</td>
 <td class="comment-1" rowspan="1">Save sprite countdown 2</td>
 </tr>
 <tr>

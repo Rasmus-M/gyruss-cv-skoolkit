@@ -56,7 +56,7 @@ Used by the routine at <a href="34704.html">handle_sprite_types_0E_11</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35075"></span>8903</td>
-<td class="instruction">CALL <a href="35446.html">create_enemy_shot</a></td>
+<td class="instruction">CALL <a href="35446.html">maybe_create_enemy_shot</a></td>
 <td class="comment-1" rowspan="1">Create enemy shot</td>
 </tr>
 <tr>
@@ -103,7 +103,7 @@ This entry point is used by the routine at <a href="35115.html">L892B</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="35092"></span>8914</td>
 <td class="instruction">JR NC,<a href="35126.html">move_animate_sprite_along_path</a></td>
-<td class="comment-1" rowspan="1">If upper nybble &gt;= 0, then jump to move sprite</td>
+<td class="comment-1" rowspan="1">If upper nybble &gt;= 1, then jump to move sprite</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">

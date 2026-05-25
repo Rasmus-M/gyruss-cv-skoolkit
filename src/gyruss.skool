@@ -316,7 +316,7 @@ b$7255 DEFB $00
 ; { $02 | Set when mines exist }
 ; { $03 | Ever set? Reset when laser fence destroyed }
 ; { $04 | Set when laser fence exists }
-; { $05 | Set when stage starts. Reset when wave starts. Set when enemy hit }
+; { $05 | Extra points flag. Set when stage starts. Reset when wave starts. Set when enemy hit. Set when enemy returns to map. }
 ; { $06 | Set when wave starts }
 ; { $07 | Unused }
 ; TABLE#
@@ -356,17 +356,19 @@ w$725D DEFW $0000
 @label=laser_meteor_countdown
 b$725F DEFB $00
 
-; Sprite countdown 2
+; Attack countdown
 ;
 ; Decremented when #R$85E6 is called, and it reset to first byte of level data
-; (x2) by #R$8A53. One action at #R$87C1 is only executed when counter is zero.
-@label=sprite_countdown_2
+; (x2) by #R$8A53.
+@label=attack_countdown
 b$7260 DEFB $00
 
 ; Laser fence end 2 polar x
+@label=laser_fence_2_x
 b$7261 DEFB $00
 
 ; Laser fence end 1 polar x
+@label=laser_fence_1_x
 b$7262 DEFB $00
 
 ; Countdown. Mines are destroyed when zero.
@@ -462,7 +464,7 @@ b$727A DEFB $00
 b$727B DEFB $00
 
 ; Index of tune playing
-@label=tune_playing
+@label=tune_index
 b$727C DEFB $00
 
 ; Tune data channel 1
@@ -547,6 +549,7 @@ w$72C3 DEFW $0000
 w$72C5 DEFW $0000
 
 ; Temp sprite data
+@label=tmp_sprite_data
 b$72C7 DEFB $00
 
 ; Temp points to add
@@ -581,20 +584,20 @@ b$72CF DEFB $00
 @label=center_enemies_pattern
 w$72D0 DEFW $0000
 
-; Y counter direction
-@label=y_counter_direction
+; Center y direction
+@label=center_y_direction
 b$72D2 DEFB $00
 
-; Y counter
+; Center y offset
 ;
 ; Goes -1, 0, 1, 0, -1, 0, 1, 0, ...
-@label=y_counter
+@label=center_y_offset
 b$72D3 DEFB $00
 
-; X counter
+; Center x offset
 ;
 ; Counter $00 - $3F
-@label=x_counter
+@label=center_x_offset
 b$72D4 DEFB $00
 
 ; Sprite type processed
@@ -902,19 +905,19 @@ c$8139 CALL $9B87    ; Stop tune
  $8149 CALL $8AE6    ; Update sprite types $0F - $11
  $814C CALL $A3E1    ; Explosion
 *$814F LD A,($722C)  ; Get active enemies
- $8152 OR A          ;
- $8153 JR NZ,$815E   ;
+ $8152 OR A          ; Is it zero?
+ $8153 JR NZ,$815E   ; If not then keep waiting
  $8155 LD A,($7206)  ; Get total enemies
- $8158 LD HL,$722B   ;
- $815B CP (HL)       ;
- $815C JR Z,$8170    ;
-*$815E HALT          ;
+ $8158 LD HL,$722B   ; Get center map entries
+ $815B CP (HL)       ; Are all enemies in the center?
+ $815C JR Z,$8170    ; If so then jump to lose life
+*$815E HALT          ; Wait interrupt
  $815F CALL $AFFF    ; Display stars
  $8162 CALL $85E6    ; Process sprites
- $8165 CALL $8E2D    ;
+ $8165 CALL $8E2D    ; Create or display mines
  $8168 CALL $AB72    ; Display center enemies
  $816B CALL $84B1    ; Upload sprites
- $816E JR $814F      ;
+ $816E JR $814F      ; Loop until clear
 
 ; Lose life
 ;
@@ -945,7 +948,7 @@ c$8170 CALL $8D21    ; Reset outcoming enemies
  $819D LD HL,$71EB   ; Test for two players
  $81A0 BIT 7,(HL)    ; ...
  $81A2 JP Z,$81ED    ; If not, wait for restart
- $81A5 BIT 5,(HL)    ; Is one player already game over=
+ $81A5 BIT 5,(HL)    ; Is one player already game over?
  $81A7 JP NZ,$81ED   ; If so, wait for restart
  $81AA SET 5,(HL)    ; Else flag that one player game over
  $81AC JR $81B9      ; And switch player
@@ -957,7 +960,7 @@ c$8170 CALL $8D21    ; Reset outcoming enemies
 c$81AE LD A,($71EB)  ; Test for two players
  $81B1 BIT 7,A       ; ...
  $81B3 JR Z,$81E2    ; Skip ahead if one player
- $81B5 BIT 5,(HL)    ; Test for ?
+ $81B5 BIT 5,(HL)    ; Is one player already game over?
  $81B7 JR NZ,$81E2   ; Skip ahead if not set
 ; This entry point is used by the routine at #R$8170.
 *$81B9 LD HL,$71A3   ; Restore player data from VDP RAM into buffer
@@ -1457,11 +1460,11 @@ c$8501 PUSH IX       ;
  $851F RST $18       ; WRITE_REGISTER
 *$8520 JR $8520      ; Loop
 *$8522 CALL $9B99    ; Sound player
- $8525 LD A,($71EB)  ;
- $8528 BIT 6,A       ;
+ $8525 LD A,($71EB)  ; Check bit for main loop
+ $8528 BIT 6,A       ; If not set the read VDP status
  $852A CALL Z,$1FDC  ; READ_REGISTER
- $852D LD HL,$725A   ;
- $8530 SET 0,(HL)    ;
+ $852D LD HL,$725A   ; Set interrupt flag
+ $8530 SET 0,(HL)    ; ...
  $8532 POP AF        ;
  $8533 POP BC        ;
  $8534 POP DE        ;
@@ -1579,7 +1582,7 @@ c$85E6 LD HL,$71EE     ; Decrement counter 1
  $8624 LD A,(IX+$00)   ; Get sprite type
  $8627 LD (IX+$05),A   ; Copy it to byte 5
  $862A CP $7F          ; Is it to be deallocated?
- $862C JP NZ,$865A     ; If not, jump ahead
+ $862C JP NZ,$865A     ; If not, jump to handlers
 ; This entry point is used by the routines at #R$8654, #R$8673, #R$867D and
 ; #R$8815.
 @label=deallocate_sprite
@@ -1813,17 +1816,17 @@ c$8790 CP $0E          ; Is sprite type < $0E
  $8795 CP $12          ; Is sprite type >= $12
  $8797 JP NC,$899E     ; If so, jump ahead
 ; Sprite type $0E - $11 (enemies)
- $879A BIT 7,(IX+$07)  ; Check bit 7 of flags
- $879E JP NZ,$88FE     ; Update sprite path
+ $879A BIT 7,(IX+$07)  ; Check bit 7 to see if a path address is set
+ $879E JP NZ,$88FE     ; If set, update sprite path
  $87A1 BIT 7,(IX+$01)  ; Check bit 7 of polar y
  $87A5 JP NZ,$8825     ; If set, move towards viewer
  $87A8 BIT 6,(IX+$07)  ; Check bit 6 of flags
- $87AC JR NZ,$87D5     ; Create map entry for enemy sprite
+ $87AC JR NZ,$87D5     ; If set, create map entry for enemy sprite
  $87AE BIT 2,(IX+$07)  ; Check bit 2 of flags
- $87B2 JP NZ,$8825     ; Move towards viewer
+ $87B2 JP NZ,$8825     ; If set, move towards viewer
  $87B5 BIT 0,(IX+$07)  ; Check bit 0 of flags
- $87B9 JP NZ,$885F     ; Create enemy shot and ...
- $87BC LD A,($7260)    ; Sprite countdown 2
+ $87B9 JP NZ,$885F     ; If set, create enemy shot and move
+ $87BC LD A,($7260)    ; Attack countdown
  $87BF OR A            ; Return if not zero
  $87C0 RET NZ          ; ...
  $87C1 CALL $8A76      ; Create enemy shot
@@ -1841,7 +1844,7 @@ c$8790 CP $0E          ; Is sprite type < $0E
 ; #R$8790.
 ;
 ; I: IX Sprite data of enemy
-@label=create_map_entry_for_sprite
+@label=move_towards_center
 c$87D5 LD A,($71EE)    ; Return if countdown
  $87D8 OR A            ; is not zero
  $87D9 RET NZ          ; ...
@@ -1854,7 +1857,7 @@ c$87D5 LD A,($71EE)    ; Return if countdown
  $87E8 JR Z,$87F5      ; Break out if found
  $87EA INC HL          ; Next map address
  $87EB DJNZ $87E7      ; Loop up to 36 times
- $87ED LD A,(IX+$0A)   ; Get pattern
+ $87ED LD A,(IX+$0A)   ; Get pattern (already set?)
  $87F0 OR $80          ; Set bit 7
  $87F2 JP $AAA6        ; Add pattern to map. Return to #R$8A41
 *$87F5 CALL $AB38      ; Now DE contains polar y,x
@@ -1866,7 +1869,7 @@ c$87D5 LD A,($71EE)    ; Return if countdown
 ; Move towards y
  $8805 LD A,(IX+$01)   ; Get polar y
  $8808 CP D            ; Compare with polar y from map
- $8809 JR Z,$8815      ; If same, jump ahead
+ $8809 JR Z,$8815      ; If same, return enemy to map
  $880B JR C,$8811      ; If less than, skip to increment polar y
  $880D DEC (IX+$01)    ; Decrement polar y
  $8810 RET             ; Return to #R$8A41
@@ -1878,6 +1881,7 @@ c$87D5 LD A,($71EE)    ; Return if countdown
 ; Used by the routine at #R$8801.
 ;
 ; I:IX Sprite data of enemy
+; I:HL Map address
 @label=return_enemy_to_map
 c$8815 LD A,(IX+$0B) ; Get color (why not pattern?)
  $8818 LD (HL),A     ; Set in map
@@ -1924,11 +1928,12 @@ c$8835 BIT 3,(IX+$07)  ; If a flag is reset
  $885A SET 5,(HL)      ; ...
  $885C JP $8654        ; Deallocate and return
 
-; Enemy movement: Create enemy shot and move
+; Enemy movement: Create enemy shot and move towards player.
 ;
 ; Used by the routine at #R$8790. Called and jumped.
 ;
 ; I:IX Sprite data of enemy
+@label=create_enemy_shot_and_move
 c$885F CALL $8A76      ; Create enemy shot
  $8862 LD A,(IX+$01)   ; Get polar y
  $8865 CP $22          ; Is it < $22
@@ -2038,7 +2043,7 @@ c$88FE LD A,($71EE)  ;
 ; This entry point is used by the routine at #R$892B.
 *$890F SUB $10       ; Decrement upper nybble
  $8911 LD (IX+$03),A ; Store again
- $8914 JR NC,$8936   ; If upper nybble >= 0, then jump to move sprite
+ $8914 JR NC,$8936   ; If upper nybble >= 1, then jump to move sprite
 ; This entry point is used by the routine at #R$8986.
 *$8916 INC HL        ; Else increment path address
  $8917 LD (IX+$06),L ; Set path address
@@ -2269,7 +2274,7 @@ c$8A53 CALL $84DB    ; Get stage data address in IY
  $8A5C LD A,(IY+$00) ; Reset to first byte of stage data (speed?)
  $8A5F LD ($71EE),A  ; ...
 *$8A62 LD A,($7260)  ; Get sprite countdown 2
- $8A65 OR A          ; Return is not zero
+ $8A65 OR A          ; Return if not zero
  $8A66 RET NZ        ; ...
  $8A67 LD A,($7203)  ; Get stage data index
  $8A6A CP $02        ; Compare to 2
@@ -2279,10 +2284,10 @@ c$8A53 CALL $84DB    ; Get stage data address in IY
 *$8A72 LD ($7260),A  ; Save sprite countdown 2
  $8A75 RET           ; Return from sprite processing
 
-; Create enemy shot
+; Create enemy shot if conditions are met
 ;
 ; Used by the routines at #R$8790, #R$885F and #R$88FE.
-@label=create_enemy_shot
+@label=maybe_create_enemy_shot
 c$8A76 LD A,($71EF)    ; Is countdown zero?
  $8A79 OR A            ; ...
  $8A7A RET NZ          ; Return if not
@@ -2324,23 +2329,23 @@ c$8A76 LD A,($71EF)    ; Is countdown zero?
 ; I:A Polar x to move towards
 @label=move_towards_x
 c$8AC0 LD B,$01       ; Direction = 1
- $8AC2 SUB (IX+$02)   ; Desired x - x
+ $8AC2 SUB (IX+$02)   ; Distance = desired x - x
  $8AC5 RET Z          ; Return if same
- $8AC6 JR NC,$8ACC    ; Jump if desired >= x
+ $8AC6 JR NC,$8ACC    ; Jump if distance > 0
  $8AC8 LD B,$FF       ; Direction = -1
- $8ACA NEG            ; x = -x
-*$8ACC CP $21         ; Compare with top center
+ $8ACA NEG            ; abs(distance)
+*$8ACC CP $21         ; Is it longer than half way around?
  $8ACE LD A,B         ; A = direction
- $8ACF JR C,$8AD3     ; Jump if left half
- $8AD1 NEG            ; Invert direction in right half
+ $8ACF JR C,$8AD3     ; Jump if not
+ $8AD1 NEG            ; Else switch direction
 *$8AD3 LD B,A         ; B = direction
  $8AD4 ADD A,(IX+$02) ; Direction + x
  $8AD7 AND $3F        ; Mod 64
  $8AD9 LD (IX+$02),A  ; Save new x
  $8ADC LD A,$10       ; $10
  $8ADE ADD A,B        ; $10 + direction, i.e. $0F or $11
- $8ADF LD (IX+$00),A  ; Change sprite type?
- $8AE2 INC (IX+$05)   ; Increment counter
+ $8ADF LD (IX+$00),A  ; Change sprite type
+ $8AE2 INC (IX+$05)   ; Mark for pattern reload
  $8AE5 RET            ;
 
 ; Reset enemy sprite types after dying
@@ -2501,9 +2506,9 @@ c$8BD9 LD A,($71EB)  ; Check bit for all waves completed
  $8BF9 LD ($71F0),A  ; Save counter again
 *$8BFC LD A,($7201)  ; Get wave
  $8BFF CP $04        ; Compare to 4
- $8C01 JR C,$8C30    ; If < 4, jump ahead
- $8C03 JR Z,$8C07    ; If = 4, jump ahead
- $8C05 JR $8C1E      ; If > 4, jump ahead
+ $8C01 JR C,$8C30    ; If < 4, jump to handler
+ $8C03 JR Z,$8C07    ; If = 4, jump to handler
+ $8C05 JR $8C1E      ; If > 4 then all waves completed
 
 ; Manage wave = 4
 ;
@@ -2511,21 +2516,21 @@ c$8BD9 LD A,($71EB)  ; Check bit for all waves completed
 @label=manage_wave_eq_4
 c$8C07 LD A,($71EB)  ; Test for chance stage
  $8C0A BIT 3,A       ; ...
- $8C0C JR NZ,$8C1E   ; If set, set bit for all waves completed
+ $8C0C JR NZ,$8C1E   ; If set, then all waves completed
  $8C0E LD A,($722B)  ; Number of center enemies
  $8C11 CP $06        ; If >= 6,
- $8C13 JR NC,$8C1E   ; Then init mine sub-stage
+ $8C13 JR NC,$8C1E   ; Then all waves completed
  $8C15 RST $20       ; Random number
 *$8C16 CP $14        ; If < 20,
  $8C18 JR C,$8C3E    ; Then skip ahead
- $8C1A SUB $14       ; - 20
+ $8C1A SUB $14       ; Else subtract 20
  $8C1C JR $8C16      ; Loop until small enough
 
-; Init mine sub-stage
+; All waves completed
 ;
 ; Used by the routines at #R$8BD9 and #R$8C07. Init mine sub-stage when wave >
 ; 4 or wave = 4 and not chance stage.
-@label=init_mine_sub_stage
+@label=all_waves_completed
 c$8C1E XOR A         ; A = 0
  $8C1F LD ($725C),A  ; Reset outcoming enemies
  $8C22 LD ($71F0),A  ; Reset counter
@@ -2818,7 +2823,7 @@ b$8E25 DEFB $42,$41,$40,$00,$42,$42,$40,$42
 @label=create_or_display_mines
 c$8E2D LD A,($71EB)  ; Get flags
  $8E30 BIT 1,A       ; If all waves completed bit is not set
- $8E32 JR Z,$8E89    ; Then init variables
+ $8E32 JR Z,$8E89    ; Then init variables and return
  $8E34 LD A,($7264)  ; Get mines action (0-2)
  $8E37 CP $01        ; If 1
  $8E39 JP Z,$8E9D    ; Then create mines
@@ -2982,6 +2987,7 @@ c$8F0F PUSH BC       ; Save color
 ; Display mines
 ;
 ; Used by the routine at #R$8E2D.
+@label=display_mines
 c$8F55 CALL $900E     ; Create shot from mine
  $8F58 LD IY,$7237    ; Mine data
  $8F5C LD B,$03       ; 3 mines
@@ -3057,6 +3063,7 @@ c$8F55 CALL $900E     ; Create shot from mine
 ; Destroy mine
 ;
 ; Used by the routine at #R$8F55.
+@label=destroy_mine
 c$8FED DEC (IY+$07)    ;
  $8FF0 JR NZ,$8FAE     ;
  $8FF2 LD (IY+$04),$00 ;
@@ -3074,6 +3081,7 @@ c$8FED DEC (IY+$07)    ;
 ; Create shot from mine
 ;
 ; Used by the routines at #R$8E9D and #R$8F55.
+@label=create_shot_from_mine
 c$900E LD HL,$7269     ; Decrement countdown
  $9011 DEC (HL)        ; ...
  $9012 RET NZ          ; Return if not 0
@@ -4343,7 +4351,7 @@ c$9B99 CALL $A2BB      ; Send data for all channels to PSG
  $9B9C CALL $9D67      ; Execute commands for all sound fx channels
  $9B9F LD A,($727A)    ; Is tune playing?
  $9BA2 AND A           ; ...
- $9BA3 RET Z           ; Return is not
+ $9BA3 RET Z           ; Return if not
  $9BA4 CALL $9B59      ; Dampen all tune channels
  $9BA7 LD HL,$727B     ; Decrement overall countdown
  $9BAA DEC (HL)        ; ...
@@ -4380,7 +4388,7 @@ c$9B99 CALL $A2BB      ; Send data for all channels to PSG
 ; Used by the routine at #R$9B99.
 c$9BD9 JP P,$9BF8    ; If > 0 then jump ahead to loop
  $9BDC AND $7F       ; Negative - clear sign
- $9BDE JR Z,$9BF1    ; If bit 7 was
+ $9BDE JR Z,$9BF1    ; If byte was $80, jump ahead
  $9BE0 LD E,A        ; Save value
  $9BE1 LD A,($727C)  ; Get tune playing
  $9BE4 CP $05        ; If not 5
@@ -4508,7 +4516,7 @@ c$9C7E LD E,(IX+$08) ; Copy byte 8 (speed) to countdown
 ; Handle relative jump
 ;
 ; Used by the routines at #R$9BF8 and #R$9C46.
-@label=update_counter_and_loop
+@label=update_counter_and_jump
 c$9C92 LD E,A        ; Save tune byte
  $9C93 LD A,(IX+$09) ; Get countdown
  $9C96 AND A         ; Was it zero?
@@ -4533,19 +4541,19 @@ c$9CA0 LD (IX+$09),E ; Set countdown to tune byte
 ;
 ; Used by the routine at #R$9EA3.
 ;
-; I:C Index of sound (1-9), maybe 1 is no sound?
-@label=play_sound
+; I:C Index of sound FX (1-9), maybe 1 is no sound?
+@label=play_sound_fx
 c$9CA8 LD A,($727C)  ; Get tune playing
  $9CAB AND A         ; If zero
  $9CAC RET Z         ; Then return
  $9CAD CP $06        ; Are we playing tune 6?
  $9CAF JR Z,$9CB5    ; Then skip ahead
- $9CB1 LD A,C        ; A = index of sound
+ $9CB1 LD A,C        ; A = index of sound FX
  $9CB2 CP $02        ; Is it < 2?
  $9CB4 RET C         ; Then return
 ; This entry point is used by the routines at #R$9B54 and #R$9E01.
-@label=play_sound_no_checks
-*$9CB5 LD A,C        ; A = index of sound
+@label=play_sound_fx_2
+*$9CB5 LD A,C        ; A = index of sound FX
  $9CB6 PUSH AF       ; Save index
  $9CB7 CALL $9CBF    ; Call next routine
  $9CBA POP AF        ; Restore index
@@ -4558,7 +4566,8 @@ c$9CA8 LD A,($727C)  ; Get tune playing
 ;
 ; Used by the routine at #R$9CA8.
 ;
-; label=init_play_sound_fx
+; I:A Index of sound FX
+@label=init_sound_fx
 c$9CBF RLCA          ; Multiply by 8
  $9CC0 RLCA          ; ...
  $9CC1 RLCA          ; ...
@@ -4594,6 +4603,7 @@ c$9CBF RLCA          ; Multiply by 8
 ;
 ; Byte 0 in each row is the channel. Rows are copied into the corresponding
 ; sound fx data buffer.
+; Byte 5 - $80 is the index into #R$9D91.
 ; #TABLE(default, default)
 ; { =h Index | =h Played when }
 ; { $00 | None }
@@ -4774,6 +4784,7 @@ c$9DE8 DEC (IX+$03)  ; Decrement frequency LSB (starts at $00)
  $9DF9 AND $F0       ; Return if attenuation has no rolled over to 0
  $9DFB RET NZ        ; ...
 ; This entry point is used by the routines at #R$9DA7 and #R$9DC4.
+@label=current_sound_fx_done
 *$9DFC LD A,B        ; Channel index + 1
  $9DFD DEC A         ; Channel index
  $9DFE JP $9D3D      ; Sound fx done
@@ -4797,13 +4808,13 @@ c$9E01 LD HL,($72C0)   ; Get byte 3-4 of sound fx data 4, e.g. $8080
  $9E17 LD DE,($72C3)   ; Else get byte 6-7, e.g. $03C0
  $9E1B AND A           ; Clear carry
  $9E1C SBC HL,DE       ; Subtract it
- $9E1E RET C           ; Return if < 0
+ $9E1E RET C           ; Return if de > hl
 *$9E1F LD (IX+$03),$80 ; Set byte 3-4
  $9E23 LD (IX+$04),$80 ; ...
  $9E27 EX DE,HL        ;
- $9E28 LD DE,$0008     ; Size of sound fx data
- $9E2B AND A           ;
- $9E2C SBC HL,DE       ;
+ $9E28 LD DE,$0008     ; Subtract 8
+ $9E2B AND A           ; ...
+ $9E2C SBC HL,DE       ; ...
  $9E2E LD ($72C3),HL   ; Set byte 6-7
  $9E31 LD A,H          ;
  $9E32 AND A           ;
@@ -4820,7 +4831,7 @@ c$9E01 LD HL,($72C0)   ; Get byte 3-4 of sound fx data 4, e.g. $8080
  $9E48 POP BC          ;
  $9E49 RET             ;
 *$9E4A LD DE,$0080     ;
- $9E4D AND A           ;
+ $9E4D AND A           ; Clear carry
  $9E4E SBC HL,DE       ;
  $9E50 SRL H           ; Divide HL by 4
  $9E52 RR L            ; ...
@@ -4849,7 +4860,7 @@ c$9E5C LD A,(IX+$02)   ; Get byte 2 (starts with $00)
 
 ; Sound FX command 9
 ;
-; Tone (silent). Increases frequency up to $016C.
+; Tone. Increases frequency up to $016C.
 ;
 ; I:B Channel index + 1
 ; I:IX Sound fx data
@@ -5742,7 +5753,8 @@ c$A6EC PUSH DE       ;
 
 ; Control ship
 ;
-; Control ship movement and fire using controllers Used by the routines at
+; Control ship movement and fire using controllers.
+; Used by the routines at
 ; #R$8024, #R$832A, #R$832A, #R$846B and #R$A33B.
 @label=control_ship
 c$A73C LD A,($71F2)    ; Get frame counter
@@ -6016,8 +6028,8 @@ c$AA7D LD HL,$7207   ; Set whole #R$7207 to $FF
  $AA8A XOR A         ; A = 0
  $AA8B LD ($722B),A  ; Clear number of map entries
  $AA8E LD ($72CD),A  ; Clear center enemy processed
- $AA91 LD ($72D3),A  ; Clear y counter
- $AA94 LD ($72D4),A  ; Clear x counter
+ $AA91 LD ($72D3),A  ; Clear y offset
+ $AA94 LD ($72D4),A  ; Clear x offset
  $AA97 INC A         ; A = 1
  $AA98 LD ($72D2),A  ; Set y counter direction
  $AA9B LD A,$E0      ; Set first name used for center enemies in buffer 1
@@ -6104,8 +6116,8 @@ c$AAF1 LD A,($71EB)    ; Is all waves completed flag set?
  $AB09 LD HL,$722A     ; End of #R$7207
  $AB0C LD B,$24        ; Size of map
  $AB0E LD A,$80        ; Value to compare with
-*$AB10 CP (HL)         ; Test byte
- $AB11 JR NC,$AB17     ; If >= $80 then skip ahead
+*$AB10 CP (HL)         ; Test map byte
+ $AB11 JR NC,$AB17     ; If map byte <= $80 then found
  $AB13 DEC HL          ; Previous byte
  $AB14 DJNZ $AB10      ; Loop through whole map
  $AB16 RET             ; Not found - return
@@ -6119,7 +6131,7 @@ c$AAF1 LD A,($71EB)    ; Is all waves completed flag set?
  $AB23 LD (IX+$01),D   ; Set polar x
  $AB26 LD (IX+$00),$10 ; Set sprite type
  $AB2A POP AF          ; Restore value from map
- $AB2B LD (IX+$0B),A   ; Use it as color (may temporary since it's >= $80?)
+ $AB2B LD (IX+$0B),A   ; Use it as color (maybe temporary since it's >= $80?)
  $AB2E SET 0,(IX+$07)  ; Set flag
  $AB32 RST $30         ; Load sprite pattern
  $AB33 LD HL,$722C     ; Increment number of active enemies
@@ -6142,12 +6154,12 @@ c$AB38 PUSH HL       ; Save map address
  $AB3F ADD HL,HL     ; x2 = offset
  $AB40 LD DE,$AC87   ; Table address
  $AB43 ADD HL,DE     ; Add offset
- $AB44 LD A,($72D4)  ; Get x counter
+ $AB44 LD A,($72D4)  ; Get x offset
  $AB47 ADD A,(HL)    ; Add table value
  $AB48 AND $3F       ; Mod 64
  $AB4A LD E,A        ; Store in E
  $AB4B INC HL        ; Next table address
- $AB4C LD A,($72D3)  ; Get y counter
+ $AB4C LD A,($72D3)  ; Get y offset
  $AB4F ADD A,(HL)    ; Add table value
  $AB50 LD D,A        ; Store in D
  $AB51 POP HL        ; Restore map address
@@ -6187,10 +6199,10 @@ c$AB72 LD HL,$72CB   ; Countdown for when to update counters
  $AB75 DEC (HL)      ; -1
  $AB76 JP P,$ABA0    ; If > 0, then don't update other counters
  $AB79 LD (HL),$0F   ; Reset to 15
- $AB7B LD A,($72D3)  ; Y counter
+ $AB7B LD A,($72D3)  ; Y offset
  $AB7E LD HL,$72D2   ; Add direction 1 or -1
  $AB81 ADD A,(HL)    ; ...
- $AB82 LD ($72D3),A  ; Store y counter
+ $AB82 LD ($72D3),A  ; Store y offset
  $AB85 JP P,$AB8A    ; If y counter > 0 then skip ahead
  $AB88 NEG           ; Else make positive
 *$AB8A CP $01        ; If not 1
@@ -6198,10 +6210,10 @@ c$AB72 LD HL,$72CB   ; Countdown for when to update counters
  $AB8E LD A,(HL)     ; IF 1, get direction
  $AB8F NEG           ; Reverse direction
  $AB91 LD (HL),A     ; Store direction
- $AB92 LD A,($72D4)  ; x counter
+ $AB92 LD A,($72D4)  ; x offset
  $AB95 INC A         ; +1
  $AB96 AND $3F       ; Mod 64
- $AB98 LD ($72D4),A  ; Store x counter
+ $AB98 LD ($72D4),A  ; Store x offset
 *$AB9B LD HL,$72CC   ; Set flag
  $AB9E SET 0,(HL)    ; ...
 *$ABA0 LD A,($72CD)  ; Get enemy to process
@@ -6486,8 +6498,8 @@ c$AD49 PUSH HL         ;
 
 ; Load sprite pattern (RST $30)
 ;
-; Ensure sprite pattern is loaded and set screen position Used by the routine
-; at #R$801B.
+; Ensure sprite pattern is loaded and set screen position.
+; Used by the routine at #R$801B.
 ;
 ; I:IX Pointer to sprite data
 @label=load_sprite_pattern
@@ -6505,40 +6517,40 @@ c$AD8B PUSH HL       ;
  $AD9D ADD HL,DE     ; HL now points to graphics pointer (control word)
  $AD9E LD A,(IX+$01) ; Get polar y, which determines which scale we want
  $ADA1 LD DE,$0000   ; Pattern index within sprite type
- $ADA4 BIT 7,A       ; If bit 7 of polar y is set, skip ahead with E=0
+ $ADA4 BIT 7,A       ; If bit 7 of polar y is set, skip ahead with scale=0
  $ADA6 JR NZ,$ADB7   ; ...
  $ADA8 CP $15        ; Skip ahead if polar y < 21
  $ADAA JR C,$ADB7    ; ...
- $ADAC INC E         ; Else set E = 1
+ $ADAC INC E         ; Else set scale = 1
  $ADAD CP $1A        ; Skip ahead if polar y < 26
  $ADAF JR C,$ADB7    ; ...
- $ADB1 INC E         ; Else set E = 2
+ $ADB1 INC E         ; Else set scale = 2
  $ADB2 CP $22        ; Skip ahead if polar y < 34
  $ADB4 JR C,$ADB7    ; ...
- $ADB6 INC E         ; Else set E = 3
-*$ADB7 LD A,E        ; A = pattern index
- $ADB8 CP (HL)       ; Compare with control word LSB (number of patterns for
+ $ADB6 INC E         ; Else set scale = 3
+*$ADB7 LD A,E        ; A = scale
+ $ADB8 CP (HL)       ; Compare with control word LSB (number of scales for
                      ; sprite type)
- $ADB9 JR C,$ADBD    ; Jump if number of patterns > pattern index (?)
- $ADBB LD A,(HL)     ; Get number of patterns
- $ADBC DEC A         ; Minus 1
-*$ADBD INC HL        ; Advance to MSB (transformation)
- $ADBE LD B,(HL)     ; B = transformation
- $ADBF LD C,A        ; C = number of patterns - 1
+ $ADB9 JR C,$ADBD    ; If number of scales > wanted scale, skip next
+ $ADBB LD A,(HL)     ; Requested scale is unavailable
+ $ADBC DEC A         ; so choose the last one.
+*$ADBD INC HL        ; Advance to MSB (rotations)
+ $ADBE LD B,(HL)     ; B = rotations (0 = 2^0 = 1 or 2 = 2^2 = 4)
+ $ADBF LD C,A        ; C = scale
  $ADC0 LD A,(IX+$02) ; Get polar x
  $ADC3 ADD A,$02     ; Plus 2
  $ADC5 AND $3F       ; Mod 64
  $ADC7 LD (IX+$05),A ; Save in sprite data
- $ADCA INC B         ; If transformation = 0
+ $ADCA INC B         ; If rotations > 0
  $ADCB DEC B         ; ...
  $ADCC JR NZ,$ADD1   ; Then skip ahead
- $ADCE XOR A         ; Else set A = 0
+ $ADCE XOR A         ; Else set rotation offset = 0
  $ADCF JR $ADD7      ; And skip ahead
 *$ADD1 SRL A         ; Divide polar x by 2
- $ADD3 DJNZ $ADD1    ; B times
+ $ADD3 DJNZ $ADD1    ; B (rotations) times
  $ADD5 ADD A,A       ; * 4
  $ADD6 ADD A,A       ; ...
-*$ADD7 ADD A,C       ; + number of patterns - 1
+*$ADD7 ADD A,C       ; + scale
  $ADD8 LD B,A        ; Copy result into B, which is the index of pattern to
                      ; fetch within sprite type
  $ADD9 CP (IX+$04)   ; Same as existing?
@@ -6585,7 +6597,7 @@ c$AD8B PUSH HL       ;
  $AE2E LD A,(IX+$04) ; Pattern index
  $AE31 AND $03       ; Mod 4
  $AE33 JR NZ,$AE3F   ; If not zero, skip ahead
- $AE35 LD A,(IX+$05) ; Get polar x (saved by #R$ADC7?)
+ $AE35 LD A,(IX+$05) ; Get polar x (saved by #R$ADC7)
  $AE38 RRA           ; / 2
  $AE39 AND $1E       ; 0, 2, 4 ... $1E
  $AE3B LD HL,$AFDF   ; #R$AFDD+2

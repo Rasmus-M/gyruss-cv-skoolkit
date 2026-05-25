@@ -36,7 +36,7 @@ D $71EE Decremented when #R$85E6 is called, and it reset to first byte of level 
 B $71EE,1,1
 b $71EF Countdown to enemy shooting
 D $71EF Reset to 2nd byte of stage data. See #R$8541.
-@ $71EF label=countdown_at_shoot
+@ $71EF label=countdown_to_shoot
 B $71EF,1,1
 b $71F0 Time to next wave
 D $71F0 Reset to 6th byte of stage data. See #R$8541.
@@ -130,7 +130,7 @@ b $7255 Enemies destroyed in chance stage
 @ $7255 label=bonus_enemies_hit
 B $7255,1,1
 b $7256 Other flags
-D $7256 #TABLE(default, default) { =h Bit | =h Purpose } { $00 | Fire pressed last time } { $01 | Double shot pickup } { $02 | Set when mines exist } { $03 | Ever set? Reset when laser fence destroyed } { $04 | Set when laser fence exists } { $05 | Set when stage starts. Reset when wave starts. Set when enemy hit } { $06 | Set when wave starts } { $07 | Unused } TABLE#
+D $7256 #TABLE(default, default) { =h Bit | =h Purpose } { $00 | Fire pressed last time } { $01 | Double shot pickup } { $02 | Set when mines exist } { $03 | Ever set? Reset when laser fence destroyed } { $04 | Set when laser fence exists } { $05 | Extra points flag. Set when stage starts. Reset when wave starts. Set when enemy hit. Set when enemy returns to map. } { $06 | Set when wave starts } { $07 | Unused } TABLE#
 @ $7256 label=other_flags
 B $7256,1,1
 w $7257 Countdown to screen off
@@ -156,13 +156,15 @@ W $725D,2,2
 b $725F Laser fence/meteor countdown
 @ $725F label=laser_meteor_countdown
 B $725F,1,1
-b $7260 Sprite countdown 2
-D $7260 Decremented when #R$85E6 is called, and it reset to first byte of level data (x2) by #R$8A53. One action at #R$87C1 is only executed when counter is zero.
-@ $7260 label=sprite_countdown_2
+b $7260 Attack countdown
+D $7260 Decremented when #R$85E6 is called, and it reset to first byte of level data (x2) by #R$8A53.
+@ $7260 label=attack_countdown
 B $7260,1,1
 b $7261 Laser fence end 2 polar x
+@ $7261 label=laser_fence_2_x
 B $7261,1,1
 b $7262 Laser fence end 1 polar x
+@ $7262 label=laser_fence_1_x
 B $7262,1,1
 b $7263 Countdown. Mines are destroyed when zero.
 @ $7263 label=mines_time_left
@@ -229,7 +231,7 @@ D $727B Counts down from 5 to zero, and certain sound player actions are only pe
 @ $727B label=sound_player_countdown
 B $727B,1,1
 b $727C Index of tune playing
-@ $727C label=tune_playing
+@ $727C label=tune_index
 B $727C,1,1
 b $727D Tune data channel 1
 D $727D #TABLE(default, default) { =h Byte | =h Purpose } { $00 | $00 for tone/noise else mute } { $01 | LSB of ... } { $02 | MSB of ... } { $03 | Frequency LSB } { $04 | Bits 4-7 attenuation, bits 0-3 frequency MSB or noise value  } { $05 | Countdown until next note } { $06 | Attenuation. Initialized to $50 } { $07 | Countdown for when to increase attenuation } { $08 | Speed. Initialized to $05 } { $09 | Countdown for relative loops } TABLE#
@@ -274,6 +276,7 @@ D $72C5 Will be copied to #R$7000
 @ $72C5 label=tmp_center_of_projection
 W $72C5,2,2
 b $72C7 Temp sprite data
+@ $72C7 label=tmp_sprite_data
 B $72C7,1,1
 b $72C8 Temp points to add
 @ $72C8 label=points_to_add
@@ -298,16 +301,16 @@ B $72CF,1,1
 w $72D0 Pattern table address of center enemies
 @ $72D0 label=center_enemies_pattern
 W $72D0,2,2
-b $72D2 Y counter direction
-@ $72D2 label=y_counter_direction
+b $72D2 Center y direction
+@ $72D2 label=center_y_direction
 B $72D2,1,1
-b $72D3 Y counter
+b $72D3 Center y offset
 D $72D3 Goes -1, 0, 1, 0, -1, 0, 1, 0, ...
-@ $72D3 label=y_counter
+@ $72D3 label=center_y_offset
 B $72D3,1,1
-b $72D4 X counter
+b $72D4 Center x offset
 D $72D4 Counter $00 - $3F
-@ $72D4 label=x_counter
+@ $72D4 label=center_x_offset
 B $72D4,1,1
 b $72D5 Sprite type processed
 D $72D5 Sprite type processed by #R$AE94
@@ -436,7 +439,7 @@ C $8085,1 ...
 C $8086,1 ...
 C $8087,3 ...
 C $808A,2 ...
-C $808C,3 Clear all but two-player flag
+C $808C,3 Clear all flags but two-player flag
 C $808F,2 ...
 C $8091,3 ...
 C $8094,2 5 Lives
@@ -446,7 +449,7 @@ C $809A,3 Set #R$71F6+2 to 6 (extra life at 60000)
 C $809D,3 Set #R$71FC+2 to 6 (extra life at 60000)
 C $80A0,2 Stage
 C $80A2,3 Set to 1
-C $80A5,3 Init variables
+C $80A5,3 Init center enemies
 C $80A8,3 Display stage message
 C $80AB,3 ...
 C $80AE,3 ...
@@ -469,7 +472,7 @@ C $80CD,1 Display '2' next to '-'
 C $80CE,2 ...
 C $80D0,1 Write VDP byte
 C $80D3,3 Display score player 2
-C $80D6,3 Save player data in VDP RAM, starting with lives?
+C $80D6,3 Save player data in VDP RAM, starting with lives
 C $80D9,3 VDP address
 C $80DC,3 45 bytes
 C $80DF,1 WRITE_VRAM
@@ -520,11 +523,19 @@ C $8146,3 READ_REGISTER
 C $8149,3 Update sprite types $0F - $11
 C $814C,3 Explosion
 C $814F,3 Get active enemies
+C $8152,1 Is it zero?
+C $8153,2 If not then keep waiting
 C $8155,3 Get total enemies
+C $8158,3 Get center map entries
+C $815B,1 Are all enemies in the center?
+C $815C,2 If so then jump to lose life
+C $815E,1 Wait interrupt
 C $815F,3 Display stars
 C $8162,3 Process sprites
+C $8165,3 Create or display mines
 C $8168,3 Display center enemies
 C $816B,3 Upload sprites
+C $816E,2 Loop until clear
 c $8170 Lose life
 D $8170 Used by the routine at #R$8139.
 @ $8170 label=lose_life
@@ -551,7 +562,7 @@ C $819A,3 Clear rows 9 and 14
 C $819D,3 Test for two players
 C $81A0,2 ...
 C $81A2,3 If not, wait for restart
-C $81A5,2 Is one player already game over=
+C $81A5,2 Is one player already game over?
 C $81A7,3 If so, wait for restart
 C $81AA,2 Else flag that one player game over
 C $81AC,2 And switch player
@@ -561,7 +572,7 @@ D $81AE Used by the routine at #R$8170.
 C $81AE,3 Test for two players
 C $81B1,2 ...
 C $81B3,2 Skip ahead if one player
-C $81B5,2 Test for ?
+C $81B5,2 Is one player already game over?
 C $81B7,2 Skip ahead if not set
 N $81B9 This entry point is used by the routine at #R$8170.
 C $81B9,3 Restore player data from VDP RAM into buffer
@@ -665,8 +676,8 @@ C $8283,1 Add planet data address
 C $8284,1 Save it
 C $8285,3 Buffer address for the string #R$71A3+1
 C $8288,1 Restore stage
-C $8289,2 Clamp to 0, 1, 2, 3 (0 not an option?)
-C $828B,2 If 3 we have reached it's a chance stage
+C $8289,2 Clamp to 0, 1, 2, 3
+C $828B,2 If 3 we have reached a chance stage
 C $828D,2 Then jump ahead
 C $828F,2 Flip the bits, so we know how many warps TO the planet
 C $8291,2 Add ASCII 0
@@ -778,6 +789,8 @@ C $8361,2 Play tune 1
 C $8363,3 ...
 C $8368,2 If not planet reached then play sound
 C $836A,3 ...
+C $8370,2 Set warp flag
+C $8372,2 Set stage init flag
 C $8374,3 Stage
 C $8377,1 B = stage
 C $8378,2 Stage mod 4
@@ -992,7 +1005,11 @@ C $851C,3 Black border
 C $851F,1 WRITE_REGISTER
 C $8520,2 Loop
 C $8522,3 Sound player
+C $8525,3 Check bit for main loop
+C $8528,2 If not set the read VDP status
 C $852A,3 READ_REGISTER
+C $852D,3 Set interrupt flag
+C $8530,2 ...
 t $853C STAGE message
 @ $853C label=stage_msg
 T $853C,5,5
@@ -1070,7 +1087,7 @@ C $8623,1 ...
 C $8624,3 Get sprite type
 C $8627,3 Copy it to byte 5
 C $862A,2 Is it to be deallocated?
-C $862C,3 If not, jump ahead
+C $862C,3 If not, jump to handlers
 N $862F This entry point is used by the routines at #R$8654, #R$8673, #R$867D and #R$8815.
 @ $862F label=deallocate_sprite
 C $862F,4 Set as not allocated
@@ -1278,17 +1295,17 @@ C $8792,3 If so, jump ahead
 C $8795,2 Is sprite type >= $12
 C $8797,3 If so, jump ahead
 N $879A Sprite type $0E - $11 (enemies)
-C $879A,4 Check bit 7 of flags
-C $879E,3 Update sprite path
+C $879A,4 Check bit 7 to see if a path address is set
+C $879E,3 If set, update sprite path
 C $87A1,4 Check bit 7 of polar y
 C $87A5,3 If set, move towards viewer
 C $87A8,4 Check bit 6 of flags
-C $87AC,2 Create map entry for enemy sprite
+C $87AC,2 If set, create map entry for enemy sprite
 C $87AE,4 Check bit 2 of flags
-C $87B2,3 Move towards viewer
+C $87B2,3 If set, move towards viewer
 C $87B5,4 Check bit 0 of flags
-C $87B9,3 Create enemy shot and ...
-C $87BC,3 Sprite countdown 2
+C $87B9,3 If set, create enemy shot and move
+C $87BC,3 Attack countdown
 C $87BF,1 Return if not zero
 C $87C0,1 ...
 C $87C1,3 Create enemy shot
@@ -1301,7 +1318,7 @@ C $87D4,1 Return to #R$8A41
 c $87D5 Create map entry for enemy sprite
 D $87D5 Search for a value (pattern OR $80) in map. If not found, allocate an entry. If found, calculate coordinates and move towards them. Used by the routine at #R$8790.
 R $87D5 I: IX Sprite data of enemy
-@ $87D5 label=create_map_entry_for_sprite
+@ $87D5 label=move_towards_center
 C $87D5,3 Return if countdown
 C $87D8,1 is not zero
 C $87D9,1 ...
@@ -1314,7 +1331,7 @@ C $87E7,1 Check entry
 C $87E8,2 Break out if found
 C $87EA,1 Next map address
 C $87EB,2 Loop up to 36 times
-C $87ED,3 Get pattern
+C $87ED,3 Get pattern (already set?)
 C $87F0,2 Set bit 7
 C $87F2,3 Add pattern to map. Return to #R$8A41
 C $87F5,3 Now DE contains polar y,x
@@ -1326,7 +1343,7 @@ C $8801,4 Change sprite type to enemy
 N $8805 Move towards y
 C $8805,3 Get polar y
 C $8808,1 Compare with polar y from map
-C $8809,2 If same, jump ahead
+C $8809,2 If same, return enemy to map
 C $880B,2 If less than, skip to increment polar y
 C $880D,3 Decrement polar y
 C $8810,1 Return to #R$8A41
@@ -1335,6 +1352,7 @@ C $8814,1 Return to #R$8A41
 c $8815 Enemy movement: Return enemy to map
 D $8815 Used by the routine at #R$8801.
 R $8815 I:IX Sprite data of enemy
+R $8815 I:HL Map address
 @ $8815 label=return_enemy_to_map
 C $8815,3 Get color (why not pattern?)
 C $8818,1 Set in map
@@ -1374,9 +1392,10 @@ C $8856,1 ...
 C $8857,3 Set flag
 C $885A,2 ...
 C $885C,3 Deallocate and return
-c $885F Enemy movement: Create enemy shot and move
+c $885F Enemy movement: Create enemy shot and move towards player.
 D $885F Used by the routine at #R$8790. Called and jumped.
 R $885F I:IX Sprite data of enemy
+@ $885F label=create_enemy_shot_and_move
 C $885F,3 Create enemy shot
 C $8862,3 Get polar y
 C $8865,2 Is it < $22
@@ -1467,7 +1486,7 @@ C $890C,3 Get counter
 N $890F This entry point is used by the routine at #R$892B.
 C $890F,2 Decrement upper nybble
 C $8911,3 Store again
-C $8914,2 If upper nybble >= 0, then jump to move sprite
+C $8914,2 If upper nybble >= 1, then jump to move sprite
 N $8916 This entry point is used by the routine at #R$8986.
 C $8916,1 Else increment path address
 C $8917,3 Set path address
@@ -1670,7 +1689,7 @@ C $8A5A,2 No, skip ahead
 C $8A5C,3 Reset to first byte of stage data (speed?)
 C $8A5F,3 ...
 C $8A62,3 Get sprite countdown 2
-C $8A65,1 Return is not zero
+C $8A65,1 Return if not zero
 C $8A66,1 ...
 C $8A67,3 Get stage data index
 C $8A6A,2 Compare to 2
@@ -1679,9 +1698,9 @@ C $8A6F,2 If stage index >= 2, then skip ahead
 C $8A71,1 Else multiply by 2
 C $8A72,3 Save sprite countdown 2
 C $8A75,1 Return from sprite processing
-c $8A76 Create enemy shot
+c $8A76 Create enemy shot if conditions are met
 D $8A76 Used by the routines at #R$8790, #R$885F and #R$88FE.
-@ $8A76 label=create_enemy_shot
+@ $8A76 label=maybe_create_enemy_shot
 C $8A76,3 Is countdown zero?
 C $8A79,1 ...
 C $8A7A,1 Return if not
@@ -1719,23 +1738,23 @@ R $8AC0 I:IX Sprite data
 R $8AC0 I:A Polar x to move towards
 @ $8AC0 label=move_towards_x
 C $8AC0,2 Direction = 1
-C $8AC2,3 Desired x - x
+C $8AC2,3 Distance = desired x - x
 C $8AC5,1 Return if same
-C $8AC6,2 Jump if desired >= x
+C $8AC6,2 Jump if distance > 0
 C $8AC8,2 Direction = -1
-C $8ACA,2 x = -x
-C $8ACC,2 Compare with top center
+C $8ACA,2 abs(distance)
+C $8ACC,2 Is it longer than half way around?
 C $8ACE,1 A = direction
-C $8ACF,2 Jump if left half
-C $8AD1,2 Invert direction in right half
+C $8ACF,2 Jump if not
+C $8AD1,2 Else switch direction
 C $8AD3,1 B = direction
 C $8AD4,3 Direction + x
 C $8AD7,2 Mod 64
 C $8AD9,3 Save new x
 C $8ADC,2 $10
 C $8ADE,1 $10 + direction, i.e. $0F or $11
-C $8ADF,3 Change sprite type?
-C $8AE2,3 Increment counter
+C $8ADF,3 Change sprite type
+C $8AE2,3 Mark for pattern reload
 c $8AE6 Reset enemy sprite types after dying
 D $8AE6 Used by the routine at #R$8139.
 @ $8AE6 label=reset_enemy_sprite_types
@@ -1799,8 +1818,8 @@ C $8B58,2 ...
 C $8B5A,2 Buffer address
 C $8B5C,3 Get screen x
 C $8B5F,2 Pixel offset x
-C $8B61,1 B = pixel offset (counter for outer loop)
-C $8B62,2 C = 16 (counter for inner loop)
+C $8B61,1 B = pixel offset (counter for inner loop)
+C $8B62,2 C = 16 (counter for outer loop)
 C $8B64,2 Restore background patterns address
 C $8B66,1 Save counters
 C $8B67,2 C = 0
@@ -1884,26 +1903,26 @@ C $8BF6,3 If negative, skip ahead
 C $8BF9,3 Save counter again
 C $8BFC,3 Get wave
 C $8BFF,2 Compare to 4
-C $8C01,2 If < 4, jump ahead
-C $8C03,2 If = 4, jump ahead
-C $8C05,2 If > 4, jump ahead
+C $8C01,2 If < 4, jump to handler
+C $8C03,2 If = 4, jump to handler
+C $8C05,2 If > 4 then all waves completed
 c $8C07 Manage wave = 4
 D $8C07 Used by the routine at #R$8BD9.
 @ $8C07 label=manage_wave_eq_4
 C $8C07,3 Test for chance stage
 C $8C0A,2 ...
-C $8C0C,2 If set, set bit for all waves completed
+C $8C0C,2 If set, then all waves completed
 C $8C0E,3 Number of center enemies
 C $8C11,2 If >= 6,
-C $8C13,2 Then init mine sub-stage
+C $8C13,2 Then all waves completed
 C $8C15,1 Random number
 C $8C16,2 If < 20,
 C $8C18,2 Then skip ahead
-C $8C1A,2 - 20
+C $8C1A,2 Else subtract 20
 C $8C1C,2 Loop until small enough
-c $8C1E Init mine sub-stage
+c $8C1E All waves completed
 D $8C1E Used by the routines at #R$8BD9 and #R$8C07. Init mine sub-stage when wave > 4 or wave = 4 and not chance stage.
-@ $8C1E label=init_mine_sub_stage
+@ $8C1E label=all_waves_completed
 C $8C1E,1 A = 0
 C $8C1F,3 Reset outcoming enemies
 C $8C22,3 Reset counter
@@ -2057,7 +2076,7 @@ C $8D34,1 Add outcoming enemies
 C $8D35,1 Save again
 C $8D36,4 Wave data address
 C $8D3A,3 Get bits 4-7 of byte 3
-C $8D3D,1 ...
+C $8D3D,1 Shift bits 4-7 into bits 0-4
 C $8D3E,1 ...
 C $8D3F,1 ...
 C $8D40,1 ...
@@ -2165,7 +2184,7 @@ D $8E2D Used by the routines at #R$80E8, #R$8139 and #R$A3E1.
 @ $8E2D label=create_or_display_mines
 C $8E2D,3 Get flags
 C $8E30,2 If all waves completed bit is not set
-C $8E32,2 Then init variables
+C $8E32,2 Then init variables and return
 C $8E34,3 Get mines action (0-2)
 C $8E37,2 If 1
 C $8E39,3 Then create mines
@@ -2309,6 +2328,7 @@ C $8F4F,3 Set name
 C $8F52,3 Display background patterns
 c $8F55 Display mines
 D $8F55 Used by the routine at #R$8E2D.
+@ $8F55 label=display_mines
 C $8F55,3 Create shot from mine
 C $8F58,4 Mine data
 C $8F5C,2 3 mines
@@ -2381,6 +2401,7 @@ C $8FE8,1 Else reset
 C $8FE9,3 Save offset
 c $8FED Destroy mine
 D $8FED Used by the routine at #R$8F55.
+@ $8FED label=destroy_mine
 C $8FFA,3 Decrement total enemies
 C $8FFD,1 ...
 C $8FFE,3 Decrement mines left
@@ -2389,6 +2410,7 @@ C $9004,3 Clear mines flag
 C $9007,2 ...
 c $900E Create shot from mine
 D $900E Used by the routines at #R$8E9D and #R$8F55.
+@ $900E label=create_shot_from_mine
 C $900E,3 Decrement countdown
 C $9011,1 ...
 C $9012,1 Return if not 0
@@ -2481,7 +2503,7 @@ C $9166,1 WRITE_REGISTER
 @ $9167 label=start_screen_loop
 C $9167,1 Wait for interrupt
 C $9168,3 Display stars
-C $916E,1 Return is no carry
+C $916E,1 Return if no carry
 C $9172,2 Loop until no carry
 c $9175 Display planet
 D $9175 Used by the routines at #R$832A, #R$83D0 and #R$90D6.
@@ -2495,6 +2517,9 @@ C $917C,1 Get LSB of planet data
 C $917E,1 Get MSB of planet data
 C $917F,1 Address now in HL
 C $9180,3 Draw to name table
+C $9183,3 Display planet name and sprites
+C $9186,3 Copy 135 patterns
+C $9189,3 ...
 C $918C,3 Planet colors
 C $918F,3 Address in color table
 C $9192,3 16 color sets
@@ -2582,7 +2607,7 @@ C $9215,3 32 bytes
 C $9218,3 FILL_VRAM
 c $921F Decompress and upload patterns
 D $921F Decompress and upload patterns to VDP buffer at $1400. Used by the routine at #R$90D6.
-@ $921F decompress_patterns
+@ $921F label=decompress_patterns
 C $921F,3 Number of bytes in block at $9475
 C $9222,3 Save it
 C $9225,1 A = 0
@@ -2609,13 +2634,14 @@ C $924A,2 Loop B times
 C $924C,2 Loop
 c $924E Write single byte
 D $924E Used by the routine at #R$921F.
+@ $924E label=decompress_write_byte
 C $924E,3 Get byte to write
 C $9251,1 Write VDP byte in A to DE
 C $9252,1 Next VDP address
 C $9253,2 Loop
 c $9255 Read B bits into A
 D $9255 Used by the routines at #R$921F and #R$924E.
-@ $9255 read_b_bits_into_a
+@ $9255 label=read_b_bits_into_a
 C $9255,2 Read 8 bits
 N $9257 This entry point is used by the routine at #R$921F.
 C $9257,1 Result
@@ -2644,6 +2670,7 @@ C $9282,2 Repeat for n bits
 c $9285 Copy 135 patterns
 D $9285 Copy 135 patterns from VDP RAM buffer into pattern table from 128 Used by the routine at #R$9175.
 R $9285 I:HL Pattern generator table destination address ($0400)
+@ $9285 label=copy_135_patterns
 C $9288,2 Counter
 C $928D,3 Read 9 patterns from $1400 (?)
 C $9290,3 Into buffer
@@ -2671,6 +2698,7 @@ b $92DE Gyruss logo
 B $92DE,2,2
 b $92E0 Logo patterns
 D $92E0 #UDGTABLE(no-border, no-border) { #UDGARRAY10,,4($92E0-$9377-16)(graphics-92E0.png) } { #UDGARRAY10,,4($92E8-$937F-16)(graphics-92E8.png) } TABLE#
+@ $92E0 label=logo_patterns
 B $92E0,160,8
 b $9380 Gyruss logo names
 B $9380,24,8
@@ -3162,7 +3190,7 @@ C $9AC8,2 Setup write address
 C $9ACA,2 Set MSB of VDP address
 C $9ACD,2 Write byte
 c $9AD0 VDP read byte
-D $9AD0 Used by the routine at #R$AFE5.
+D $9AD0 Used by the routine at #R$B023.
 R $9AD0 I:DE Read address
 R $9AD0 O:A Byte read
 @ $9AD0 label=vdp_read_byte
@@ -3264,7 +3292,7 @@ C $9B99,3 Send data for all channels to PSG
 C $9B9C,3 Execute commands for all sound fx channels
 C $9B9F,3 Is tune playing?
 C $9BA2,1 ...
-C $9BA3,1 Return is not
+C $9BA3,1 Return if not
 C $9BA4,3 Dampen all tune channels
 C $9BA7,3 Decrement overall countdown
 C $9BAA,1 ...
@@ -3299,7 +3327,7 @@ c $9BD9 Handle frequency byte when tune index >= 3
 D $9BD9 Used by the routine at #R$9B99.
 C $9BD9,3 If > 0 then jump ahead to loop
 C $9BDC,2 Negative - clear sign
-C $9BDE,2 If bit 7 was
+C $9BDE,2 If byte was $80, jump ahead
 C $9BE0,1 Save value
 C $9BE1,3 Get tune playing
 C $9BE4,2 If not 5
@@ -3409,7 +3437,7 @@ C $9C8D,2 ...
 C $9C8F,2 Loop for 4 channels
 c $9C92 Handle relative jump
 D $9C92 Used by the routines at #R$9BF8 and #R$9C46.
-@ $9C92 label=update_counter_and_loop
+@ $9C92 label=update_counter_and_jump
 C $9C92,1 Save tune byte
 C $9C93,3 Get countdown
 C $9C96,1 Was it zero?
@@ -3427,19 +3455,19 @@ C $9CA4,2 Set MSB of offset
 C $9CA6,1 Add offset to address
 c $9CA8 Play sound FX
 D $9CA8 Used by the routine at #R$9EA3.
-R $9CA8 I:C Index of sound (1-9), maybe 1 is no sound?
-@ $9CA8 label=play_sound
+R $9CA8 I:C Index of sound FX (1-9), maybe 1 is no sound?
+@ $9CA8 label=play_sound_fx
 C $9CA8,3 Get tune playing
 C $9CAB,1 If zero
 C $9CAC,1 Then return
 C $9CAD,2 Are we playing tune 6?
 C $9CAF,2 Then skip ahead
-C $9CB1,1 A = index of sound
+C $9CB1,1 A = index of sound FX
 C $9CB2,2 Is it < 2?
 C $9CB4,1 Then return
 N $9CB5 This entry point is used by the routines at #R$9B54 and #R$9E01.
-@ $9CB5 label=play_sound_no_checks
-C $9CB5,1 A = index of sound
+@ $9CB5 label=play_sound_fx_2
+C $9CB5,1 A = index of sound FX
 C $9CB6,1 Save index
 C $9CB7,3 Call next routine
 C $9CBA,1 Restore index
@@ -3448,7 +3476,8 @@ C $9CBD,1 Return if not
 C $9CBE,1 Index + 1 (now 10) (continue into #R$9CBF)
 c $9CBF Copy data from #R$9CE7 to sound fx channel, and change pointer from sound data to sound fx data
 D $9CBF Used by the routine at #R$9CA8.
-R $9CBF label=init_play_sound_fx
+R $9CBF I:A Index of sound FX
+@ $9CBF label=init_sound_fx
 C $9CBF,1 Multiply by 8
 C $9CC0,1 ...
 C $9CC1,1 ...
@@ -3479,7 +3508,7 @@ C $9CE3,1 Set pointer LSB
 C $9CE4,1 Next address
 C $9CE5,1 Set pointer MSB
 b $9CE7 Sound fx data
-D $9CE7 Byte 0 in each row is the channel. Rows are copied into the corresponding sound fx data buffer. #TABLE(default, default) { =h Index | =h Played when } { $00 | None } { $01 | Shot hit center enemy } { $02 | New wave } { $03 | Explosion } { $04 | Shot hit enemy } { $05 | Stage completed } { $06 | Extra life } { $07 | Mines appear, ship appear } { $08 | Shot hit mine } { $09 | Part of tune } { $0A | None } TABLE#
+D $9CE7 Byte 0 in each row is the channel. Rows are copied into the corresponding sound fx data buffer. Byte 5 - $80 is the index into #R$9D91. #TABLE(default, default) { =h Index | =h Played when } { $00 | None } { $01 | Shot hit center enemy } { $02 | New wave } { $03 | Explosion } { $04 | Shot hit enemy } { $05 | Stage completed } { $06 | Extra life } { $07 | Mines appear, ship appear } { $08 | Shot hit mine } { $09 | Part of tune } { $0A | None } TABLE#
 @ $9CE7 label=sound_fx_data_table
 B $9CE7,86,8*10,6
 c $9D3D Sound fx done
@@ -3598,6 +3627,7 @@ C $9DF6,3 Store again
 C $9DF9,2 Return if attenuation has no rolled over to 0
 C $9DFB,1 ...
 N $9DFC This entry point is used by the routines at #R$9DA7 and #R$9DC4.
+@ $9DFC label=current_sound_fx_done
 C $9DFC,1 Channel index + 1
 C $9DFD,1 Channel index
 C $9DFE,3 Sound fx done
@@ -3618,14 +3648,17 @@ C $9E15,2 Then skip ahead
 C $9E17,4 Else get byte 6-7, e.g. $03C0
 C $9E1B,1 Clear carry
 C $9E1C,2 Subtract it
-C $9E1E,1 Return if < 0
+C $9E1E,1 Return if de > hl
 C $9E1F,4 Set byte 3-4
 C $9E23,4 ...
-C $9E28,3 Size of sound fx data
+C $9E28,3 Subtract 8
+C $9E2B,1 ...
+C $9E2C,2 ...
 C $9E2E,3 Set byte 6-7
 C $9E3F,3 Sound FX done
 C $9E42,2 Sound index
 C $9E45,3 Play sound 9
+C $9E4D,1 Clear carry
 C $9E50,2 Divide HL by 4
 C $9E52,2 ...
 C $9E54,2 ...
@@ -3646,7 +3679,7 @@ C $9E6C,3 Byte 2 = byte 2 + byte 3 from before
 C $9E6F,2 Set bits 0 and 3
 C $9E71,3 Save in attenuation/noise control
 c $9E75 Sound FX command 9
-D $9E75 Tone (silent). Increases frequency up to $016C.
+D $9E75 Tone. Increases frequency up to $016C.
 R $9E75 I:B Channel index + 1
 R $9E75 I:IX Sound fx data
 @ $9E75 label=sound_fx_command_9
@@ -4170,7 +4203,7 @@ C $A731,3 Display lives
 C $A734,2 Play a sound
 C $A736,3 ...
 c $A73C Control ship
-D $A73C Control ship movement and fire using controllers Used by the routines at #R$8024, #R$832A, #R$832A, #R$846B and #R$A33B.
+D $A73C Control ship movement and fire using controllers. Used by the routines at #R$8024, #R$832A, #R$832A, #R$846B and #R$A33B.
 @ $A73C label=control_ship
 C $A73C,3 Get frame counter
 C $A73F,2 Test bit 0
@@ -4187,13 +4220,13 @@ C $A756,1 Get table value, which is the value of polar x to move towards
 C $A757,2 Is it an impossible joystick value, e.g. up + down?
 C $A759,2 Then skip ahead
 C $A75B,3 Table value - polar x
-C $A75E,2 If zero the skip ahead (alredy there)
+C $A75E,2 If zero then skip ahead (already there)
 C $A760,2 If positive skip ahead
 C $A762,2 Direction = -1 (anti-clockwise)
 C $A764,2 abs(value - polar x)
 C $A766,2 Is the difference < 33?
 C $A768,1 Direction
-C $A769,2 The skip ahead
+C $A769,2 Then skip ahead
 C $A76B,2 Otherwise reverse direction
 C $A76D,3 Polar x + direction
 C $A770,2 Mod 64
@@ -4347,8 +4380,8 @@ C $AA88,2 ...
 C $AA8A,1 A = 0
 C $AA8B,3 Clear number of map entries
 C $AA8E,3 Clear center enemy processed
-C $AA91,3 Clear y counter
-C $AA94,3 Clear x counter
+C $AA91,3 Clear y offset
+C $AA94,3 Clear x offset
 C $AA97,1 A = 1
 C $AA98,3 Set y counter direction
 C $AA9B,2 Set first name used for center enemies in buffer 1
@@ -4416,8 +4449,8 @@ C $AB08,1 ...
 C $AB09,3 End of #R$7207
 C $AB0C,2 Size of map
 C $AB0E,2 Value to compare with
-C $AB10,1 Test byte
-C $AB11,2 If >= $80 then skip ahead
+C $AB10,1 Test map byte
+C $AB11,2 If map byte <= $80 then found
 C $AB13,1 Previous byte
 C $AB14,2 Loop through whole map
 C $AB16,1 Not found - return
@@ -4431,7 +4464,7 @@ C $AB20,3 Set polar x
 C $AB23,3 Set polar x
 C $AB26,4 Set sprite type
 C $AB2A,1 Restore value from map
-C $AB2B,3 Use it as color (may temporary since it's >= $80?)
+C $AB2B,3 Use it as color (maybe temporary since it's >= $80?)
 C $AB2E,4 Set flag
 C $AB32,1 Load sprite pattern
 C $AB33,3 Increment number of active enemies
@@ -4449,12 +4482,12 @@ C $AB3D,2 Map address - map base (offset 0 - 35)
 C $AB3F,1 x2 = offset
 C $AB40,3 Table address
 C $AB43,1 Add offset
-C $AB44,3 Get x counter
+C $AB44,3 Get x offset
 C $AB47,1 Add table value
 C $AB48,2 Mod 64
 C $AB4A,1 Store in E
 C $AB4B,1 Next table address
-C $AB4C,3 Get y counter
+C $AB4C,3 Get y offset
 C $AB4F,1 Add table value
 C $AB50,1 Store in D
 C $AB51,1 Restore map address
@@ -4481,10 +4514,10 @@ C $AB72,3 Countdown for when to update counters
 C $AB75,1 -1
 C $AB76,3 If > 0, then don't update other counters
 C $AB79,2 Reset to 15
-C $AB7B,3 Y counter
+C $AB7B,3 Y offset
 C $AB7E,3 Add direction 1 or -1
 C $AB81,1 ...
-C $AB82,3 Store y counter
+C $AB82,3 Store y offset
 C $AB85,3 If y counter > 0 then skip ahead
 C $AB88,2 Else make positive
 C $AB8A,2 If not 1
@@ -4492,10 +4525,10 @@ C $AB8C,2 Then skip ahead
 C $AB8E,1 IF 1, get direction
 C $AB8F,2 Reverse direction
 C $AB91,1 Store direction
-C $AB92,3 x counter
+C $AB92,3 x offset
 C $AB95,1 +1
 C $AB96,2 Mod 64
-C $AB98,3 Store x counter
+C $AB98,3 Store x offset
 C $AB9B,3 Set flag
 C $AB9E,2 ...
 C $ABA0,3 Get enemy to process
@@ -4729,7 +4762,7 @@ C $AD7B,4 Set counter to 0
 C $AD7F,4 Set loaded patten index to none
 C $AD83,4 Set y
 c $AD8B Load sprite pattern (RST $30)
-D $AD8B Ensure sprite pattern is loaded and set screen position Used by the routine at #R$801B.
+D $AD8B Ensure sprite pattern is loaded and set screen position. Used by the routine at #R$801B.
 R $AD8B I:IX Pointer to sprite data
 @ $AD8B label=load_sprite_pattern
 C $AD90,3 DE = Sprite type
@@ -4741,39 +4774,39 @@ C $AD9A,3 Table of pointers to graphics
 C $AD9D,1 HL now points to graphics pointer (control word)
 C $AD9E,3 Get polar y, which determines which scale we want
 C $ADA1,3 Pattern index within sprite type
-C $ADA4,2 If bit 7 of polar y is set, skip ahead with E=0
+C $ADA4,2 If bit 7 of polar y is set, skip ahead with scale=0
 C $ADA6,2 ...
 C $ADA8,2 Skip ahead if polar y < 21
 C $ADAA,2 ...
-C $ADAC,1 Else set E = 1
+C $ADAC,1 Else set scale = 1
 C $ADAD,2 Skip ahead if polar y < 26
 C $ADAF,2 ...
-C $ADB1,1 Else set E = 2
+C $ADB1,1 Else set scale = 2
 C $ADB2,2 Skip ahead if polar y < 34
 C $ADB4,2 ...
-C $ADB6,1 Else set E = 3
-C $ADB7,1 A = pattern index
-C $ADB8,1 Compare with control word LSB (number of patterns for sprite type)
-C $ADB9,2 Jump if number of patterns > pattern index (?)
-C $ADBB,1 Get number of patterns
-C $ADBC,1 Minus 1
-C $ADBD,1 Advance to MSB (transformation)
-C $ADBE,1 B = transformation
-C $ADBF,1 C = number of patterns - 1
+C $ADB6,1 Else set scale = 3
+C $ADB7,1 A = scale
+C $ADB8,1 Compare with control word LSB (number of scales for sprite type)
+C $ADB9,2 If number of scales > wanted scale, skip next
+C $ADBB,1 Requested scale is unavailable
+C $ADBC,1 so choose the last one.
+C $ADBD,1 Advance to MSB (rotations)
+C $ADBE,1 B = rotations (0 = 2^0 = 1 or 2 = 2^2 = 4)
+C $ADBF,1 C = scale
 C $ADC0,3 Get polar x
 C $ADC3,2 Plus 2
 C $ADC5,2 Mod 64
 C $ADC7,3 Save in sprite data
-C $ADCA,1 If transformation = 0
+C $ADCA,1 If rotations > 0
 C $ADCB,1 ...
 C $ADCC,2 Then skip ahead
-C $ADCE,1 Else set A = 0
+C $ADCE,1 Else set rotation offset = 0
 C $ADCF,2 And skip ahead
 C $ADD1,2 Divide polar x by 2
-C $ADD3,2 B times
+C $ADD3,2 B (rotations) times
 C $ADD5,1 * 4
 C $ADD6,1 ...
-C $ADD7,1 + number of patterns - 1
+C $ADD7,1 + scale
 C $ADD8,1 Copy result into B, which is the index of pattern to fetch within sprite type
 C $ADD9,3 Same as existing?
 C $ADDC,2 If so, skip ahead
@@ -4819,7 +4852,7 @@ C $AE2B,3 If sprite type is ship exhaust, set HL to table address
 C $AE2E,3 Pattern index
 C $AE31,2 Mod 4
 C $AE33,2 If not zero, skip ahead
-C $AE35,3 Get polar x (saved by #R$ADC7?)
+C $AE35,3 Get polar x (saved by #R$ADC7)
 C $AE38,1 / 2
 C $AE39,2 0, 2, 4 ... $1E
 C $AE3B,3 #R$AFDD+2
@@ -4876,13 +4909,13 @@ C $AEA1,3 Yes - set it to $2100
 C $AEA4,3 ...
 C $AEA7,3 Set source to #R$72E0 (pointer to a RAM block)
 C $AEAA,3 ...
-C $AEAD,3 Get transformation process
+C $AEAD,3 Get transformation processed
 C $AEB0,3 OR with pattern processed
 C $AEB3,1 ...
 C $AEB4,2 If any is non-zero skip ahead
 C $AEB6,3 HL = #R$72E0 initially. Table for storing VDP addresses.
 C $AEB9,4 DE = $2100 initially. Destination in VDP RAM.
-C $AEBD,1 Write destination address to word pointed to table.
+C $AEBD,1 Write destination address to word pointer to table.
 C $AEBE,1 ...
 C $AEBF,1 ...
 C $AEC0,1 ...
@@ -4898,7 +4931,7 @@ C $AED2,3 Save address of pointer (control word)
 C $AED5,3 Get pattern being processed
 C $AED8,1 Increment
 C $AED9,1 Double
-C $AEDA,1 Add A to HL, so HL not points to a patten pointer in #R$B8FA
+C $AEDA,1 Add A to HL, so HL not points to a pattern pointer in #R$B8FA
 C $AEDB,1 Set DE = pointer to graphics
 C $AEDC,1 ...
 C $AEDD,1 ...
@@ -4958,9 +4991,9 @@ C $AF56,3 Set transformation processed to zero
 C $AF59,3 Increment sprite type processed
 C $AF5C,1 ...
 C $AF5D,3 ...
-C $AF60,3 When it's <= $1D (29), which is the last sprite type
+C $AF60,3 If it's < $1D (29), which is the last sprite type
 C $AF63,1 ...
-C $AF64,1 Then return
+C $AF64,1 Then return with carry
 C $AF65,2 Else set it to $FF (done)
 C $AF67,3 ...
 c $AF6B Rotate pattern
@@ -5031,10 +5064,12 @@ C $AFFF,3 Counter from 7 to 0
 C $B002,1 Count down
 C $B003,1 Return
 C $B004,2 Reset counter to 7
-C $B006,3 Get some flag
-C $B009,2 Test bit 0
-C $B00D,2 If bit 0 is set then reset counter to 3
+C $B006,3 Test warp flag
+C $B009,2 ...
+C $B00B,2 If bit 0 is set then reset counter to 3
+C $B00D,2 ...
 C $B00F,2 Set mask to undraw
+C $B011,3 Display star frame
 C $B014,3 Get star frame
 C $B017,2 Add 2
 C $B019,2 < 12 ?

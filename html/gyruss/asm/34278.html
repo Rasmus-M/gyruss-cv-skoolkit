@@ -50,7 +50,7 @@ Used by the routines at <a href="32804.html">entry</a>, <a href="33081.html">die
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34282"></span>85EA</td>
-<td class="instruction">LD HL,<a href="29280.html">sprite_countdown_2</a></td>
+<td class="instruction">LD HL,<a href="29280.html">attack_countdown</a></td>
 <td class="comment-1" rowspan="1">Decrement counter 2</td>
 </tr>
 <tr>
@@ -62,7 +62,7 @@ Used by the routines at <a href="32804.html">entry</a>, <a href="33081.html">die
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34286"></span>85EE</td>
-<td class="instruction">LD A,(<a href="29167.html">countdown_at_shoot</a>)</td>
+<td class="instruction">LD A,(<a href="29167.html">countdown_to_shoot</a>)</td>
 <td class="comment-1" rowspan="1">Decrement counter stopping at 0</td>
 </tr>
 <tr>
@@ -80,7 +80,7 @@ Used by the routines at <a href="32804.html">entry</a>, <a href="33081.html">die
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34293"></span>85F5</td>
-<td class="instruction">LD (<a href="29167.html">countdown_at_shoot</a>),A</td>
+<td class="instruction">LD (<a href="29167.html">countdown_to_shoot</a>),A</td>
 <td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
@@ -265,7 +265,7 @@ This entry point is used by the routine at <a href="35393.html">return_from_spri
 <td class="asm-label"></td>
 <td class="address-1"><span id="34348"></span>862C</td>
 <td class="instruction">JP NZ,<a href="34394.html">handle_sprite_type_02</a></td>
-<td class="comment-1" rowspan="1">If not, jump ahead</td>
+<td class="comment-1" rowspan="1">If not, jump to handlers</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">

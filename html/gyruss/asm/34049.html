@@ -165,13 +165,13 @@ Calls sound player and handles screen saver Used by the routine at <a href="3280
 <td class="asm-label"></td>
 <td class="address-1"><span id="34085"></span>8525</td>
 <td class="instruction">LD A,(<a href="29163.html">status_flags</a>)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Check bit for main loop</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34088"></span>8528</td>
 <td class="instruction">BIT 6,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If not set the read VDP status</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -183,13 +183,13 @@ Calls sound player and handles screen saver Used by the routine at <a href="3280
 <td class="asm-label"></td>
 <td class="address-1"><span id="34093"></span>852D</td>
 <td class="instruction">LD HL,<a href="29274.html">interrupt_flag</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set interrupt flag</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34096"></span>8530</td>
 <td class="instruction">SET 0,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

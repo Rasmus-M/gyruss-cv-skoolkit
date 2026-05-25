@@ -147,19 +147,19 @@ Used by the routine at <a href="33000.html">main_loop</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="35841"></span>8C01</td>
 <td class="instruction">JR C,<a href="35888.html">manage_wave_lt_4</a></td>
-<td class="comment-1" rowspan="1">If &lt; 4, jump ahead</td>
+<td class="comment-1" rowspan="1">If &lt; 4, jump to handler</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35843"></span>8C03</td>
 <td class="instruction">JR Z,<a href="35847.html">manage_wave_eq_4</a></td>
-<td class="comment-1" rowspan="1">If = 4, jump ahead</td>
+<td class="comment-1" rowspan="1">If = 4, jump to handler</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35845"></span>8C05</td>
-<td class="instruction">JR <a href="35870.html">init_mine_sub_stage</a></td>
-<td class="comment-1" rowspan="1">If &gt; 4, jump ahead</td>
+<td class="instruction">JR <a href="35870.html">all_waves_completed</a></td>
+<td class="comment-1" rowspan="1">If &gt; 4 then all waves completed</td>
 </tr>
 </table>
 <table class="asm-navigation">

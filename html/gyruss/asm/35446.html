@@ -24,21 +24,21 @@ Next: <a href="35520.html">8AC0</a>
 </td>
 </tr>
 </table>
-<div class="description">8A76: Create enemy shot</div>
+<div class="description">8A76: Create enemy shot if conditions are met</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="34704.html">handle_sprite_types_0E_11</a>, <a href="34911.html">L885F</a> and <a href="35070.html">update_sprite_path</a>.
+Used by the routines at <a href="34704.html">handle_sprite_types_0E_11</a>, <a href="34911.html">create_enemy_shot_and_move</a> and <a href="35070.html">update_sprite_path</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">create_enemy_shot</td>
+<td class="asm-label">maybe_create_enemy_shot</td>
 <td class="address-2"><span id="35446"></span>8A76</td>
-<td class="instruction">LD A,(<a href="29167.html">countdown_at_shoot</a>)</td>
+<td class="instruction">LD A,(<a href="29167.html">countdown_to_shoot</a>)</td>
 <td class="comment-1" rowspan="1">Is countdown zero?</td>
 </tr>
 <tr>
@@ -140,7 +140,7 @@ Used by the routines at <a href="34704.html">handle_sprite_types_0E_11</a>, <a h
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35483"></span>8A9B</td>
-<td class="instruction">LD (<a href="29167.html">countdown_at_shoot</a>),A</td>
+<td class="instruction">LD (<a href="29167.html">countdown_to_shoot</a>),A</td>
 <td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
