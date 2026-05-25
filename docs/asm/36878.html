@@ -30,13 +30,13 @@ Next: <a href="36934.html">9046</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="36509.html">create_mines</a> and <a href="36693.html">L8F55</a>.
+Used by the routines at <a href="36509.html">create_mines</a> and <a href="36693.html">display_mines</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">L900E</td>
+<td class="asm-label">create_shot_from_mine</td>
 <td class="address-2"><span id="36878"></span>900E</td>
 <td class="instruction">LD HL,<a href="29289.html">mine_countdown_to_shoot</a></td>
 <td class="comment-1" rowspan="1">Decrement countdown</td>
@@ -74,7 +74,7 @@ Used by the routines at <a href="36509.html">create_mines</a> and <a href="36693
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36893"></span>901D</td>
-<td class="instruction">JR Z,<a href="36878.html#36921">L900E_0</a></td>
+<td class="instruction">JR Z,<a href="36878.html#36921">create_shot_from_mine_0</a></td>
 <td class="comment-1" rowspan="1">Skip ahead if not</td>
 </tr>
 <tr>
@@ -138,7 +138,7 @@ Used by the routines at <a href="36509.html">create_mines</a> and <a href="36693
 <td class="comment-1" rowspan="1">Load sprite pattern</td>
 </tr>
 <tr>
-<td class="asm-label">L900E_0</td>
+<td class="asm-label">create_shot_from_mine_0</td>
 <td class="address-2"><span id="36921"></span>9039</td>
 <td class="instruction">CALL <a href="34011.html">stage_data_addr</a></td>
 <td class="comment-1" rowspan="1">Get stage data address in IY</td>

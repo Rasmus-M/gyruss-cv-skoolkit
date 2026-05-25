@@ -39,15 +39,15 @@ Used by the routine at <a href="40611.html">call_play_sound</a>.
 </tr>
 <tr>
 <td class="register">C</td>
-<td class="register-desc">Index of sound (1-9), maybe 1 is no sound?</td>
+<td class="register-desc">Index of sound FX (1-9), maybe 1 is no sound?</td>
 </tr>
 </table>
 </td>
 </tr>
 <tr>
-<td class="asm-label">play_sound</td>
+<td class="asm-label">play_sound_fx</td>
 <td class="address-2"><span id="40104"></span>9CA8</td>
-<td class="instruction">LD A,(<a href="29308.html">tune_playing</a>)</td>
+<td class="instruction">LD A,(<a href="29308.html">tune_index</a>)</td>
 <td class="comment-1" rowspan="1">Get tune playing</td>
 </tr>
 <tr>
@@ -71,14 +71,14 @@ Used by the routine at <a href="40611.html">call_play_sound</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40111"></span>9CAF</td>
-<td class="instruction">JR Z,<a href="40104.html#40117">play_sound_no_checks</a></td>
+<td class="instruction">JR Z,<a href="40104.html#40117">play_sound_fx_2</a></td>
 <td class="comment-1" rowspan="1">Then skip ahead</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40113"></span>9CB1</td>
 <td class="instruction">LD A,C</td>
-<td class="comment-1" rowspan="1">A = index of sound</td>
+<td class="comment-1" rowspan="1">A = index of sound FX</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -103,10 +103,10 @@ This entry point is used by the routines at <a href="39693.html#39764">play_tune
 </td>
 </tr>
 <tr>
-<td class="asm-label">play_sound_no_checks</td>
+<td class="asm-label">play_sound_fx_2</td>
 <td class="address-2"><span id="40117"></span>9CB5</td>
 <td class="instruction">LD A,C</td>
-<td class="comment-1" rowspan="1">A = index of sound</td>
+<td class="comment-1" rowspan="1">A = index of sound FX</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -117,7 +117,7 @@ This entry point is used by the routines at <a href="39693.html#39764">play_tune
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40119"></span>9CB7</td>
-<td class="instruction">CALL <a href="40127.html">L9CBF</a></td>
+<td class="instruction">CALL <a href="40127.html">init_sound_fx</a></td>
 <td class="comment-1" rowspan="1">Call next routine</td>
 </tr>
 <tr>
@@ -142,7 +142,7 @@ This entry point is used by the routines at <a href="39693.html#39764">play_tune
 <td class="asm-label"></td>
 <td class="address-1"><span id="40126"></span>9CBE</td>
 <td class="instruction">INC A</td>
-<td class="comment-1" rowspan="1">Index + 1 (now 10) (continue into <a href="40127.html">L9CBF</a>)</td>
+<td class="comment-1" rowspan="1">Index + 1 (now 10) (continue into <a href="40127.html">init_sound_fx</a>)</td>
 </tr>
 </table>
 <table class="asm-navigation">

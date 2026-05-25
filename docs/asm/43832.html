@@ -30,7 +30,7 @@ Next: <a href="43859.html">AB53</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Returns polar sprite coordinates from an entry in the map. Used by the routines at <a href="34773.html#34805">create_map_entry_for_sprite_1</a>, <a href="39009.html">handle_shot_collision</a>, <a href="43761.html#43799">create_sprite_from_map_entry_1</a> and <a href="43890.html">display_center_enemies</a>.
+Returns polar sprite coordinates from an entry in the map. Used by the routines at <a href="34773.html#34805">move_towards_center_1</a>, <a href="39009.html">handle_shot_collision</a>, <a href="43761.html#43799">create_sprite_from_map_entry_1</a> and <a href="43890.html">display_center_enemies</a>.
 </div>
 </div>
 <table class="input">
@@ -102,8 +102,8 @@ Returns polar sprite coordinates from an entry in the map. Used by the routines 
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43844"></span>AB44</td>
-<td class="instruction">LD A,(<a href="29396.html">x_counter</a>)</td>
-<td class="comment-1" rowspan="1">Get x counter</td>
+<td class="instruction">LD A,(<a href="29396.html">center_x_offset</a>)</td>
+<td class="comment-1" rowspan="1">Get x offset</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -132,8 +132,8 @@ Returns polar sprite coordinates from an entry in the map. Used by the routines 
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43852"></span>AB4C</td>
-<td class="instruction">LD A,(<a href="29395.html">y_counter</a>)</td>
-<td class="comment-1" rowspan="1">Get y counter</td>
+<td class="instruction">LD A,(<a href="29395.html">center_y_offset</a>)</td>
+<td class="comment-1" rowspan="1">Get y offset</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

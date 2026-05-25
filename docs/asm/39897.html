@@ -51,7 +51,7 @@ Used by the routine at <a href="39833.html">sound_player</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="39902"></span>9BDE</td>
 <td class="instruction">JR Z,<a href="39897.html#39921">L9BD9_0</a></td>
-<td class="comment-1" rowspan="1">If bit 7 was</td>
+<td class="comment-1" rowspan="1">If byte was $80, jump ahead</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -62,7 +62,7 @@ Used by the routine at <a href="39833.html">sound_player</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39905"></span>9BE1</td>
-<td class="instruction">LD A,(<a href="29308.html">tune_playing</a>)</td>
+<td class="instruction">LD A,(<a href="29308.html">tune_index</a>)</td>
 <td class="comment-1" rowspan="1">Get tune playing</td>
 </tr>
 <tr>

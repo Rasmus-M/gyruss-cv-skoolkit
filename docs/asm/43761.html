@@ -129,13 +129,13 @@ Search for value &gt;= $80 in map and deallocate if found. Then allocate a sprit
 <td class="asm-label">create_sprite_from_map_entry_0</td>
 <td class="address-2"><span id="43792"></span>AB10</td>
 <td class="instruction">CP (HL)</td>
-<td class="comment-1" rowspan="1">Test byte</td>
+<td class="comment-1" rowspan="1">Test map byte</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="43793"></span>AB11</td>
 <td class="instruction">JR NC,<a href="43761.html#43799">create_sprite_from_map_entry_1</a></td>
-<td class="comment-1" rowspan="1">If &gt;= $80 then skip ahead</td>
+<td class="comment-1" rowspan="1">If map byte &lt;= $80 then found</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -223,7 +223,7 @@ Create sprite
 <td class="asm-label"></td>
 <td class="address-1"><span id="43819"></span>AB2B</td>
 <td class="instruction">LD (IX+$0B),A</td>
-<td class="comment-1" rowspan="1">Use it as color (may temporary since it's &gt;= $80?)</td>
+<td class="comment-1" rowspan="1">Use it as color (maybe temporary since it's &gt;= $80?)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

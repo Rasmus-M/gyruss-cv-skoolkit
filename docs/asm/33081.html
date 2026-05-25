@@ -93,13 +93,13 @@ Used by the routine at <a href="33000.html">main_loop</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="33106"></span>8152</td>
 <td class="instruction">OR A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Is it zero?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33107"></span>8153</td>
 <td class="instruction">JR NZ,<a href="33081.html#33118">died_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If not then keep waiting</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -111,25 +111,25 @@ Used by the routine at <a href="33000.html">main_loop</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="33112"></span>8158</td>
 <td class="instruction">LD HL,<a href="29227.html">center_map_entries</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Get center map entries</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33115"></span>815B</td>
 <td class="instruction">CP (HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Are all enemies in the center?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="33116"></span>815C</td>
 <td class="instruction">JR Z,<a href="33136.html">lose_life</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">If so then jump to lose life</td>
 </tr>
 <tr>
 <td class="asm-label">died_1</td>
 <td class="address-2"><span id="33118"></span>815E</td>
 <td class="instruction">HALT</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Wait interrupt</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -147,7 +147,7 @@ Used by the routine at <a href="33000.html">main_loop</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="33125"></span>8165</td>
 <td class="instruction">CALL <a href="36397.html">create_or_display_mines</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Create or display mines</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -165,7 +165,7 @@ Used by the routine at <a href="33000.html">main_loop</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="33134"></span>816E</td>
 <td class="instruction">JR <a href="33081.html#33103">died_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Loop until clear</td>
 </tr>
 </table>
 <table class="asm-navigation">

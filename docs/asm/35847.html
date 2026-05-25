@@ -50,8 +50,8 @@ Used by the routine at <a href="35801.html">manage_waves</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35852"></span>8C0C</td>
-<td class="instruction">JR NZ,<a href="35870.html">init_mine_sub_stage</a></td>
-<td class="comment-1" rowspan="1">If set, set bit for all waves completed</td>
+<td class="instruction">JR NZ,<a href="35870.html">all_waves_completed</a></td>
+<td class="comment-1" rowspan="1">If set, then all waves completed</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -68,8 +68,8 @@ Used by the routine at <a href="35801.html">manage_waves</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35859"></span>8C13</td>
-<td class="instruction">JR NC,<a href="35870.html">init_mine_sub_stage</a></td>
-<td class="comment-1" rowspan="1">Then init mine sub-stage</td>
+<td class="instruction">JR NC,<a href="35870.html">all_waves_completed</a></td>
+<td class="comment-1" rowspan="1">Then all waves completed</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -93,7 +93,7 @@ Used by the routine at <a href="35801.html">manage_waves</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="35866"></span>8C1A</td>
 <td class="instruction">SUB $14</td>
-<td class="comment-1" rowspan="1">- 20</td>
+<td class="comment-1" rowspan="1">Else subtract 20</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
