@@ -124,7 +124,7 @@ Tone.
 <td class="asm-label"></td>
 <td class="address-1"><span id="40478"></span>9E1E</td>
 <td class="instruction">RET C</td>
-<td class="comment-1" rowspan="1">Return if &lt; 0</td>
+<td class="comment-1" rowspan="1">Return if de &gt; hl</td>
 </tr>
 <tr>
 <td class="asm-label">sound_fx_command_5_8_0</td>
@@ -148,19 +148,19 @@ Tone.
 <td class="asm-label"></td>
 <td class="address-1"><span id="40488"></span>9E28</td>
 <td class="instruction">LD DE,$0008</td>
-<td class="comment-1" rowspan="1">Size of sound fx data</td>
+<td class="comment-1" rowspan="1">Subtract 8</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40491"></span>9E2B</td>
 <td class="instruction">AND A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40492"></span>9E2C</td>
 <td class="instruction">SBC HL,DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -219,7 +219,7 @@ Tone.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40511"></span>9E3F</td>
-<td class="instruction">JP NZ,<a href="40424.html#40444">sound_fx_command_0_1</a></td>
+<td class="instruction">JP NZ,<a href="40424.html#40444">current_sound_fx_done</a></td>
 <td class="comment-1" rowspan="1">Sound FX done</td>
 </tr>
 <tr>
@@ -237,7 +237,7 @@ Tone.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40517"></span>9E45</td>
-<td class="instruction">CALL <a href="40104.html#40117">play_sound_no_checks</a></td>
+<td class="instruction">CALL <a href="40104.html#40117">play_sound_fx_2</a></td>
 <td class="comment-1" rowspan="1">Play sound 9</td>
 </tr>
 <tr>
@@ -262,7 +262,7 @@ Tone.
 <td class="asm-label"></td>
 <td class="address-1"><span id="40525"></span>9E4D</td>
 <td class="instruction">AND A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Clear carry</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

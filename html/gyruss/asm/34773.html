@@ -45,7 +45,7 @@ Search for a value (pattern OR $80) in map. If not found, allocate an entry. If 
 </td>
 </tr>
 <tr>
-<td class="asm-label">create_map_entry_for_sprite</td>
+<td class="asm-label">move_towards_center</td>
 <td class="address-2"><span id="34773"></span>87D5</td>
 <td class="instruction">LD A,(<a href="29166.html">sprite_countdown</a>)</td>
 <td class="comment-1" rowspan="1">Return if countdown</td>
@@ -93,7 +93,7 @@ Search for a value (pattern OR $80) in map. If not found, allocate an entry. If 
 <td class="comment-1" rowspan="1">Address of map</td>
 </tr>
 <tr>
-<td class="asm-label">create_map_entry_for_sprite_0</td>
+<td class="asm-label">move_towards_center_0</td>
 <td class="address-2"><span id="34791"></span>87E7</td>
 <td class="instruction">CP (HL)</td>
 <td class="comment-1" rowspan="1">Check entry</td>
@@ -101,7 +101,7 @@ Search for a value (pattern OR $80) in map. If not found, allocate an entry. If 
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34792"></span>87E8</td>
-<td class="instruction">JR Z,<a href="34773.html#34805">create_map_entry_for_sprite_1</a></td>
+<td class="instruction">JR Z,<a href="34773.html#34805">move_towards_center_1</a></td>
 <td class="comment-1" rowspan="1">Break out if found</td>
 </tr>
 <tr>
@@ -113,14 +113,14 @@ Search for a value (pattern OR $80) in map. If not found, allocate an entry. If 
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34795"></span>87EB</td>
-<td class="instruction">DJNZ <a href="34773.html#34791">create_map_entry_for_sprite_0</a></td>
+<td class="instruction">DJNZ <a href="34773.html#34791">move_towards_center_0</a></td>
 <td class="comment-1" rowspan="1">Loop up to 36 times</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34797"></span>87ED</td>
 <td class="instruction">LD A,(IX+$0A)</td>
-<td class="comment-1" rowspan="1">Get pattern</td>
+<td class="comment-1" rowspan="1">Get pattern (already set?)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -135,7 +135,7 @@ Search for a value (pattern OR $80) in map. If not found, allocate an entry. If 
 <td class="comment-1" rowspan="1">Add pattern to map. Return to <a href="35393.html">return_from_sprite_handler</a></td>
 </tr>
 <tr>
-<td class="asm-label">create_map_entry_for_sprite_1</td>
+<td class="asm-label">move_towards_center_1</td>
 <td class="address-2"><span id="34805"></span>87F5</td>
 <td class="instruction">CALL <a href="43832.html">polar_coord_from_map</a></td>
 <td class="comment-1" rowspan="1">Now DE contains polar y,x</td>
@@ -155,7 +155,7 @@ Search for a value (pattern OR $80) in map. If not found, allocate an entry. If 
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34812"></span>87FC</td>
-<td class="instruction">JR Z,<a href="34773.html#34817">create_map_entry_for_sprite_2</a></td>
+<td class="instruction">JR Z,<a href="34773.html#34817">move_towards_center_2</a></td>
 <td class="comment-1" rowspan="1">If same, skip ahead</td>
 </tr>
 <tr>
@@ -165,7 +165,7 @@ Search for a value (pattern OR $80) in map. If not found, allocate an entry. If 
 <td class="comment-1" rowspan="1">Else jump out to <a href="35520.html">move_towards_x</a></td>
 </tr>
 <tr>
-<td class="asm-label">create_map_entry_for_sprite_2</td>
+<td class="asm-label">move_towards_center_2</td>
 <td class="address-2"><span id="34817"></span>8801</td>
 <td class="instruction">LD (IX+$00),$0E</td>
 <td class="comment-1" rowspan="1">Change sprite type to enemy</td>
@@ -196,12 +196,12 @@ Move towards y
 <td class="asm-label"></td>
 <td class="address-1"><span id="34825"></span>8809</td>
 <td class="instruction">JR Z,<a href="34837.html">return_enemy_to_map</a></td>
-<td class="comment-1" rowspan="1">If same, jump ahead</td>
+<td class="comment-1" rowspan="1">If same, return enemy to map</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34827"></span>880B</td>
-<td class="instruction">JR C,<a href="34773.html#34833">create_map_entry_for_sprite_3</a></td>
+<td class="instruction">JR C,<a href="34773.html#34833">move_towards_center_3</a></td>
 <td class="comment-1" rowspan="1">If less than, skip to increment polar y</td>
 </tr>
 <tr>
@@ -217,7 +217,7 @@ Move towards y
 <td class="comment-1" rowspan="1">Return to <a href="35393.html">return_from_sprite_handler</a></td>
 </tr>
 <tr>
-<td class="asm-label">create_map_entry_for_sprite_3</td>
+<td class="asm-label">move_towards_center_3</td>
 <td class="address-2"><span id="34833"></span>8811</td>
 <td class="instruction">INC (IX+$01)</td>
 <td class="comment-1" rowspan="1">Increment polar y</td>

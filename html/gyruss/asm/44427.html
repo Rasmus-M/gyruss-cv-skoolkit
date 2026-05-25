@@ -30,7 +30,7 @@ Next: <a href="44628.html">AE54</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Ensure sprite pattern is loaded and set screen position Used by the routine at <a href="32795.html">L801B</a>.
+Ensure sprite pattern is loaded and set screen position. Used by the routine at <a href="32795.html">L801B</a>.
 </div>
 </div>
 <table class="input">
@@ -126,7 +126,7 @@ Ensure sprite pattern is loaded and set screen position Used by the routine at <
 <td class="asm-label"></td>
 <td class="address-1"><span id="44452"></span>ADA4</td>
 <td class="instruction">BIT 7,A</td>
-<td class="comment-1" rowspan="1">If bit 7 of polar y is set, skip ahead with E=0</td>
+<td class="comment-1" rowspan="1">If bit 7 of polar y is set, skip ahead with scale=0</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -150,7 +150,7 @@ Ensure sprite pattern is loaded and set screen position Used by the routine at <
 <td class="asm-label"></td>
 <td class="address-1"><span id="44460"></span>ADAC</td>
 <td class="instruction">INC E</td>
-<td class="comment-1" rowspan="1">Else set E = 1</td>
+<td class="comment-1" rowspan="1">Else set scale = 1</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -168,7 +168,7 @@ Ensure sprite pattern is loaded and set screen position Used by the routine at <
 <td class="asm-label"></td>
 <td class="address-1"><span id="44465"></span>ADB1</td>
 <td class="instruction">INC E</td>
-<td class="comment-1" rowspan="1">Else set E = 2</td>
+<td class="comment-1" rowspan="1">Else set scale = 2</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -186,55 +186,55 @@ Ensure sprite pattern is loaded and set screen position Used by the routine at <
 <td class="asm-label"></td>
 <td class="address-1"><span id="44470"></span>ADB6</td>
 <td class="instruction">INC E</td>
-<td class="comment-1" rowspan="1">Else set E = 3</td>
+<td class="comment-1" rowspan="1">Else set scale = 3</td>
 </tr>
 <tr>
 <td class="asm-label">load_sprite_pattern_0</td>
 <td class="address-2"><span id="44471"></span>ADB7</td>
 <td class="instruction">LD A,E</td>
-<td class="comment-1" rowspan="1">A = pattern index</td>
+<td class="comment-1" rowspan="1">A = scale</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44472"></span>ADB8</td>
 <td class="instruction">CP (HL)</td>
-<td class="comment-1" rowspan="1">Compare with control word LSB (number of patterns for sprite type)</td>
+<td class="comment-1" rowspan="1">Compare with control word LSB (number of scales for sprite type)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44473"></span>ADB9</td>
 <td class="instruction">JR C,<a href="44427.html#44477">load_sprite_pattern_1</a></td>
-<td class="comment-1" rowspan="1">Jump if number of patterns &gt; pattern index (?)</td>
+<td class="comment-1" rowspan="1">If number of scales &gt; wanted scale, skip next</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44475"></span>ADBB</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1">Get number of patterns</td>
+<td class="comment-1" rowspan="1">Requested scale is unavailable</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44476"></span>ADBC</td>
 <td class="instruction">DEC A</td>
-<td class="comment-1" rowspan="1">Minus 1</td>
+<td class="comment-1" rowspan="1">so choose the last one.</td>
 </tr>
 <tr>
 <td class="asm-label">load_sprite_pattern_1</td>
 <td class="address-2"><span id="44477"></span>ADBD</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1">Advance to MSB (transformation)</td>
+<td class="comment-1" rowspan="1">Advance to MSB (rotations)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44478"></span>ADBE</td>
 <td class="instruction">LD B,(HL)</td>
-<td class="comment-1" rowspan="1">B = transformation</td>
+<td class="comment-1" rowspan="1">B = rotations (0 = 2^0 = 1 or 2 = 2^2 = 4)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44479"></span>ADBF</td>
 <td class="instruction">LD C,A</td>
-<td class="comment-1" rowspan="1">C = number of patterns - 1</td>
+<td class="comment-1" rowspan="1">C = scale</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -264,7 +264,7 @@ Ensure sprite pattern is loaded and set screen position Used by the routine at <
 <td class="asm-label"></td>
 <td class="address-1"><span id="44490"></span>ADCA</td>
 <td class="instruction">INC B</td>
-<td class="comment-1" rowspan="1">If transformation = 0</td>
+<td class="comment-1" rowspan="1">If rotations &gt; 0</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -282,7 +282,7 @@ Ensure sprite pattern is loaded and set screen position Used by the routine at <
 <td class="asm-label"></td>
 <td class="address-1"><span id="44494"></span>ADCE</td>
 <td class="instruction">XOR A</td>
-<td class="comment-1" rowspan="1">Else set A = 0</td>
+<td class="comment-1" rowspan="1">Else set rotation offset = 0</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -300,7 +300,7 @@ Ensure sprite pattern is loaded and set screen position Used by the routine at <
 <td class="asm-label"></td>
 <td class="address-1"><span id="44499"></span>ADD3</td>
 <td class="instruction">DJNZ <a href="44427.html#44497">load_sprite_pattern_2</a></td>
-<td class="comment-1" rowspan="1">B times</td>
+<td class="comment-1" rowspan="1">B (rotations) times</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -318,7 +318,7 @@ Ensure sprite pattern is loaded and set screen position Used by the routine at <
 <td class="asm-label">load_sprite_pattern_3</td>
 <td class="address-2"><span id="44503"></span>ADD7</td>
 <td class="instruction">ADD A,C</td>
-<td class="comment-1" rowspan="1">+ number of patterns - 1</td>
+<td class="comment-1" rowspan="1">+ scale</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -594,7 +594,7 @@ Ensure sprite pattern is loaded and set screen position Used by the routine at <
 <td class="asm-label"></td>
 <td class="address-1"><span id="44597"></span>AE35</td>
 <td class="instruction">LD A,(IX+$05)</td>
-<td class="comment-1" rowspan="1">Get polar x (saved by <a href="44427.html#44487">ADC7</a>?)</td>
+<td class="comment-1" rowspan="1">Get polar x (saved by <a href="44427.html#44487">ADC7</a>)</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

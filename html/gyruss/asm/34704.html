@@ -86,13 +86,13 @@ Sprite type $0E - $11 (enemies)
 <td class="asm-label"></td>
 <td class="address-1"><span id="34714"></span>879A</td>
 <td class="instruction">BIT 7,(IX+$07)</td>
-<td class="comment-1" rowspan="1">Check bit 7 of flags</td>
+<td class="comment-1" rowspan="1">Check bit 7 to see if a path address is set</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34718"></span>879E</td>
 <td class="instruction">JP NZ,<a href="35070.html">update_sprite_path</a></td>
-<td class="comment-1" rowspan="1">Update sprite path</td>
+<td class="comment-1" rowspan="1">If set, update sprite path</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -115,8 +115,8 @@ Sprite type $0E - $11 (enemies)
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34732"></span>87AC</td>
-<td class="instruction">JR NZ,<a href="34773.html">create_map_entry_for_sprite</a></td>
-<td class="comment-1" rowspan="1">Create map entry for enemy sprite</td>
+<td class="instruction">JR NZ,<a href="34773.html">move_towards_center</a></td>
+<td class="comment-1" rowspan="1">If set, create map entry for enemy sprite</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -128,7 +128,7 @@ Sprite type $0E - $11 (enemies)
 <td class="asm-label"></td>
 <td class="address-1"><span id="34738"></span>87B2</td>
 <td class="instruction">JP NZ,<a href="34853.html">move_towards_viewer</a></td>
-<td class="comment-1" rowspan="1">Move towards viewer</td>
+<td class="comment-1" rowspan="1">If set, move towards viewer</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -139,14 +139,14 @@ Sprite type $0E - $11 (enemies)
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34745"></span>87B9</td>
-<td class="instruction">JP NZ,<a href="34911.html">L885F</a></td>
-<td class="comment-1" rowspan="1">Create enemy shot and ...</td>
+<td class="instruction">JP NZ,<a href="34911.html">create_enemy_shot_and_move</a></td>
+<td class="comment-1" rowspan="1">If set, create enemy shot and move</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34748"></span>87BC</td>
-<td class="instruction">LD A,(<a href="29280.html">sprite_countdown_2</a>)</td>
-<td class="comment-1" rowspan="1">Sprite countdown 2</td>
+<td class="instruction">LD A,(<a href="29280.html">attack_countdown</a>)</td>
+<td class="comment-1" rowspan="1">Attack countdown</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -163,7 +163,7 @@ Sprite type $0E - $11 (enemies)
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="34753"></span>87C1</td>
-<td class="instruction">CALL <a href="35446.html">create_enemy_shot</a></td>
+<td class="instruction">CALL <a href="35446.html">maybe_create_enemy_shot</a></td>
 <td class="comment-1" rowspan="1">Create enemy shot</td>
 </tr>
 <tr>

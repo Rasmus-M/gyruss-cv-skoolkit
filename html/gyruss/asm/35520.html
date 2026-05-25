@@ -30,7 +30,7 @@ Next: <a href="35558.html">8AE6</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="34704.html">handle_sprite_types_0E_11</a>, <a href="34773.html#34805">create_map_entry_for_sprite_1</a>, <a href="34936.html">L8878</a> and <a href="35028.html">L88D4</a>.
+Used by the routines at <a href="34704.html">handle_sprite_types_0E_11</a>, <a href="34773.html#34805">move_towards_center_1</a>, <a href="34936.html">L8878</a> and <a href="35028.html">L88D4</a>.
 </div>
 </div>
 <table class="input">
@@ -58,7 +58,7 @@ Used by the routines at <a href="34704.html">handle_sprite_types_0E_11</a>, <a h
 <td class="asm-label"></td>
 <td class="address-1"><span id="35522"></span>8AC2</td>
 <td class="instruction">SUB (IX+$02)</td>
-<td class="comment-1" rowspan="1">Desired x - x</td>
+<td class="comment-1" rowspan="1">Distance = desired x - x</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -70,7 +70,7 @@ Used by the routines at <a href="34704.html">handle_sprite_types_0E_11</a>, <a h
 <td class="asm-label"></td>
 <td class="address-1"><span id="35526"></span>8AC6</td>
 <td class="instruction">JR NC,<a href="35520.html#35532">move_towards_x_0</a></td>
-<td class="comment-1" rowspan="1">Jump if desired &gt;= x</td>
+<td class="comment-1" rowspan="1">Jump if distance &gt; 0</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -82,13 +82,13 @@ Used by the routines at <a href="34704.html">handle_sprite_types_0E_11</a>, <a h
 <td class="asm-label"></td>
 <td class="address-1"><span id="35530"></span>8ACA</td>
 <td class="instruction">NEG</td>
-<td class="comment-1" rowspan="1">x = -x</td>
+<td class="comment-1" rowspan="1">abs(distance)</td>
 </tr>
 <tr>
 <td class="asm-label">move_towards_x_0</td>
 <td class="address-2"><span id="35532"></span>8ACC</td>
 <td class="instruction">CP $21</td>
-<td class="comment-1" rowspan="1">Compare with top center</td>
+<td class="comment-1" rowspan="1">Is it longer than half way around?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -100,13 +100,13 @@ Used by the routines at <a href="34704.html">handle_sprite_types_0E_11</a>, <a h
 <td class="asm-label"></td>
 <td class="address-1"><span id="35535"></span>8ACF</td>
 <td class="instruction">JR C,<a href="35520.html#35539">move_towards_x_1</a></td>
-<td class="comment-1" rowspan="1">Jump if left half</td>
+<td class="comment-1" rowspan="1">Jump if not</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35537"></span>8AD1</td>
 <td class="instruction">NEG</td>
-<td class="comment-1" rowspan="1">Invert direction in right half</td>
+<td class="comment-1" rowspan="1">Else switch direction</td>
 </tr>
 <tr>
 <td class="asm-label">move_towards_x_1</td>
@@ -148,13 +148,13 @@ Used by the routines at <a href="34704.html">handle_sprite_types_0E_11</a>, <a h
 <td class="asm-label"></td>
 <td class="address-1"><span id="35551"></span>8ADF</td>
 <td class="instruction">LD (IX+$00),A</td>
-<td class="comment-1" rowspan="1">Change sprite type?</td>
+<td class="comment-1" rowspan="1">Change sprite type</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="35554"></span>8AE2</td>
 <td class="instruction">INC (IX+$05)</td>
-<td class="comment-1" rowspan="1">Increment counter</td>
+<td class="comment-1" rowspan="1">Mark for pattern reload</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
