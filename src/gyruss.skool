@@ -1,4 +1,5 @@
 @start
+@set-handle-unsupported-macros=1
 @org
 ; Unused
 s$4000 DEFS $3000
