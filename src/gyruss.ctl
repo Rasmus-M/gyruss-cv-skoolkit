@@ -86,11 +86,11 @@ b $7204 Number of times died within stage
 @ $7204 label=stage_death_count
 B $7204,1,1
 b $7205 Completed stages
-D $7205 When stage reaches 24, this number is added here, and stage is reset to 0
+D $7205 When stage reaches 24, this number is added here, and stage is reset to 0.
 @ $7205 label=completed_stages
 B $7205,1,1
 b $7206 Number of enemies
-D $7206 Including enemies at the center of the screen
+D $7206 Including enemies at the center of the screen.
 @ $7206 label=total_enemies
 B $7206,1,1
 b $7207 Map of center enemies
@@ -117,7 +117,7 @@ D $7237 3x9 bytes #TABLE(default, default) { =h Byte | =h Purpose } { $00 | Scre
 @ $7237 label=mines_background_data
 B $7237,27,9
 b $7252 Active enemy shots
-D $7252 Set to $FF during explosion
+D $7252 Set to $FF during explosion.
 @ $7252 label=active_enemy_shots
 B $7252,1,1
 b $7253 Number of active shots
@@ -204,7 +204,7 @@ b $726F Temporary polar x
 @ $726F label=temp_polar_x
 B $726F,1,1
 w $7270 Pointer to data for PSG noise generator
-D $7270 Points to #R$727D for tune. Changed (by #R$9CE3) to #R$72A5 for sound fx
+D $7270 Points to #R$727D for tune. Changed (by #R$9CE3) to #R$72A5 for sound fx.
 @ $7270 label=ptr_psg_noise_data
 W $7270,2,2
 w $7272 Pointer to data for PSG tone generator 1
@@ -223,7 +223,7 @@ b $7278 Last noise operation
 @ $7278 label=last_noise_operation
 B $7278,2,2
 b $727A Is a tune playing?
-D $727A Set to 5 when starting a tune, but any non-zero value could be used. Set to 0 when stopping a tune
+D $727A Set to 5 when starting a tune, but any non-zero value could be used. Set to 0 when stopping a tune.
 @ $727A label=is_tune_playing
 B $727A,1,1
 b $727B Sound player countdown (tune speed?)
@@ -309,35 +309,35 @@ D $72D3 Goes -1, 0, 1, 0, -1, 0, 1, 0, ...
 @ $72D3 label=center_y_offset
 B $72D3,1,1
 b $72D4 Center x offset
-D $72D4 Counter $00 - $3F
+D $72D4 Counter $00 - $3F.
 @ $72D4 label=center_x_offset
 B $72D4,1,1
 b $72D5 Sprite type processed
-D $72D5 Sprite type processed by #R$AE94
+D $72D5 Sprite type processed by #R$AE94.
 @ $72D5 label=sprite_type_processed
 B $72D5,1,1
 b $72D6 Transformation processed
-D $72D6 Transformation processed by #R$AE94
+D $72D6 Transformation processed by #R$AE94.
 @ $72D6 label=transformation_processed
 B $72D6,1,1
 b $72D7 Pattern index
-D $72D7 Pattern index (within sprite type) processed by #R$AE94
+D $72D7 Pattern index (within sprite type) processed by #R$AE94.
 @ $72D7 label=pattern_processed
 B $72D7,1,1
 w $72D8 Destination address in VDP
-D $72D8 Destination address in VDP used by #R$AE94
+D $72D8 Destination address in VDP used by #R$AE94.
 @ $72D8 label=upload_destination
 W $72D8,2,2
 w $72DA Graphics pointer address
-D $72DA Pointer to first entry in R#$B8FA for the current sprite type processed by #R$AE94
+D $72DA Pointer to first entry in R#$B8FA for the current sprite type processed by #R$AE94.
 @ $72DA label=graphics_pointer_address
 W $72DA,2,2
 w $72DC Source address
-D $72DC Source address used by #R$AE94
+D $72DC Source address used by #R$AE94.
 @ $72DC label=upload_source
 W $72DC,2,2
 w $72DE Pattern address
-D $72DE Pattern address used by #R$AE94
+D $72DE Pattern address used by #R$AE94.
 @ $72DE label=pattern_address
 W $72DE,2,2
 w $72E0 Sprite patterns addresses in VDP
@@ -1182,7 +1182,7 @@ C $86D5,2 Add 8
 C $86D7,3 Set screen x of new sprite
 C $86DA,1 Pop return address
 C $86DB,3 Jump back into sprite handler loop
-c $86DE Handle sprite type  $14
+c $86DE Handle sprite type $14
 D $86DE Used by the routine at #R$867D.
 R $86DE I:A Sprite type
 R $86DE I:IX Sprite data
@@ -2667,10 +2667,11 @@ C $927E,2 Rotate bit 0 into carry
 C $9280,1 Rotate carry into result
 C $9281,1 Pop number of bits to read
 C $9282,2 Repeat for n bits
-c $9285 Copy 135 patterns
-D $9285 Copy 135 patterns from VDP RAM buffer into pattern table from 128 Used by the routine at #R$9175.
+c $9285 Copy planet patterns
+D $9285 Copy 135 patterns from VDP RAM buffer into pattern table from 128. Used by the routine at #R$9175.
 R $9285 I:HL Pattern generator table destination address ($0400)
-@ $9285 label=copy_135_patterns
+@ $9285 label=copy_planet_patterns
+C $9285,3 Source
 C $9288,2 Counter
 C $928D,3 Read 9 patterns from $1400 (?)
 C $9290,3 Into buffer

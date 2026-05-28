@@ -226,13 +226,13 @@ b$7204 DEFB $00
 
 ; Completed stages
 ;
-; When stage reaches 24, this number is added here, and stage is reset to 0
+; When stage reaches 24, this number is added here, and stage is reset to 0.
 @label=completed_stages
 b$7205 DEFB $00
 
 ; Number of enemies
 ;
-; Including enemies at the center of the screen
+; Including enemies at the center of the screen.
 @label=total_enemies
 b$7206 DEFB $00
 
@@ -291,7 +291,7 @@ b$7237 DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00
 
 ; Active enemy shots
 ;
-; Set to $FF during explosion
+; Set to $FF during explosion.
 @label=active_enemy_shots
 b$7252 DEFB $00
 
@@ -423,7 +423,7 @@ b$726F DEFB $00
 
 ; Pointer to data for PSG noise generator
 ;
-; Points to #R$727D for tune. Changed (by #R$9CE3) to #R$72A5 for sound fx
+; Points to #R$727D for tune. Changed (by #R$9CE3) to #R$72A5 for sound fx.
 @label=ptr_psg_noise_data
 w$7270 DEFW $0000
 
@@ -452,7 +452,7 @@ b$7278 DEFB $00,$00
 ; Is a tune playing?
 ;
 ; Set to 5 when starting a tune, but any non-zero value could be used. Set to 0
-; when stopping a tune
+; when stopping a tune.
 @label=is_tune_playing
 b$727A DEFB $00
 
@@ -596,50 +596,50 @@ b$72D3 DEFB $00
 
 ; Center x offset
 ;
-; Counter $00 - $3F
+; Counter $00 - $3F.
 @label=center_x_offset
 b$72D4 DEFB $00
 
 ; Sprite type processed
 ;
-; Sprite type processed by #R$AE94
+; Sprite type processed by #R$AE94.
 @label=sprite_type_processed
 b$72D5 DEFB $00
 
 ; Transformation processed
 ;
-; Transformation processed by #R$AE94
+; Transformation processed by #R$AE94.
 @label=transformation_processed
 b$72D6 DEFB $00
 
 ; Pattern index
 ;
-; Pattern index (within sprite type) processed by #R$AE94
+; Pattern index (within sprite type) processed by #R$AE94.
 @label=pattern_processed
 b$72D7 DEFB $00
 
 ; Destination address in VDP
 ;
-; Destination address in VDP used by #R$AE94
+; Destination address in VDP used by #R$AE94.
 @label=upload_destination
 w$72D8 DEFW $0000
 
 ; Graphics pointer address
 ;
 ; Pointer to first entry in R#$B8FA for the current sprite type processed by
-; #R$AE94
+; #R$AE94.
 @label=graphics_pointer_address
 w$72DA DEFW $0000
 
 ; Source address
 ;
-; Source address used by #R$AE94
+; Source address used by #R$AE94.
 @label=upload_source
 w$72DC DEFW $0000
 
 ; Pattern address
 ;
-; Pattern address used by #R$AE94
+; Pattern address used by #R$AE94.
 @label=pattern_address
 w$72DE DEFW $0000
 
@@ -1689,7 +1689,7 @@ c$867D CP $04          ; Is sprite type < $04
  $86DA POP BC          ; Pop return address
  $86DB JP $8A4E        ; Jump back into sprite handler loop
 
-; Handle sprite type  $14
+; Handle sprite type $14
 ;
 ; Used by the routine at #R$867D.
 ;
@@ -3416,14 +3416,14 @@ c$9255 LD B,$08      ; Read 8 bits
  $9282 DJNZ $9258    ; Repeat for n bits
  $9284 RET           ;
 
-; Copy 135 patterns
+; Copy planet patterns
 ;
-; Copy 135 patterns from VDP RAM buffer into pattern table from 128 Used by the
-; routine at #R$9175.
+; Copy 135 patterns from VDP RAM buffer into pattern table from 128.
+; Used by the routine at #R$9175.
 ;
 ; I:HL Pattern generator table destination address ($0400)
-@label=copy_135_patterns
-c$9285 LD DE,$1400   ;
+@label=copy_planet_patterns
+c$9285 LD DE,$1400   ; Source
  $9288 LD B,$0E      ; Counter
 *$928A PUSH BC       ;
  $928B PUSH DE       ;
